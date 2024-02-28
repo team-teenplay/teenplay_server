@@ -16,8 +16,7 @@ class Festival(Period):
     host_phone = models.TextField()
     provider_info = models.TextField()
     provider_url = models.TextField()
-    thumbnail_stored_name = models.TextField()
-    thumbnail_path = models.TextField()
+    thumbnail_path = models.ImageField(upload_to='festival/%Y/%m/%d')
     # 0: 삭제, 1: 게시중
     status = models.BooleanField(default=1, null=False, blank=False)
 
