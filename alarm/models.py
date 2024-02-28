@@ -20,7 +20,7 @@ class Alarm(Period):
     #     8. 모임 틴플레이 알림
     #     9. 모임 가입 관련 알림
     #     10. 활동 참가신청 관련 알림
-    category = models.IntegerField(null=False, blank=False)
+    alarm_type = models.IntegerField(null=False, blank=False)
     sender = models.ForeignKey(Member, related_name='sender', null=False, blank=False, on_delete=models.PROTECT)
     receiver = models.ForeignKey(Member, related_name='receiver', null=False, blank=False, on_delete=models.PROTECT)
 
