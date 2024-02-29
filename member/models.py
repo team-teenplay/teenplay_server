@@ -29,9 +29,16 @@ class Member(Period):
     member_privacy_agree = models.BooleanField(default=0)
     # -1: 정지, 0: 탈퇴, 1: 활동중
     status = models.SmallIntegerField(choices=MEMBER_STATUS, default=1)
-    # 프사
-    profile_path = models.ImageField(upload_to='member/%Y/%m/%d')
 
     class Meta:
         db_table = 'tbl_member'
 
+
+class MemberProfile(Period):
+    # 프사
+    profile_path = models.ImageField(null=False, blank=False, upload_to='member/%Y/%m/%d')
+    # 0: 프사 없음, 1: 프사 있음
+    member_privacy_agree = models.BooleanField(null=False, blank=False, default=1)
+
+    class Meta:
+        db_table = 'tbl_member_profile'
