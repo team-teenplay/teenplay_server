@@ -2,7 +2,8 @@ from django.db import models
 
 from club.models import Club
 from member.models import Member
-from teenplay_server.models import Period, Category
+from teenplay_server.models import Category
+from teenplay_server.period import Period
 
 
 class ClubPost(Period):

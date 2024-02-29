@@ -1,7 +1,7 @@
 from django.db import models
 from member.models import Member
-from search.models import Like
-from teenplay_server.models import Period, Category
+from teenplay_server.models import Category, Like
+from teenplay_server.period import Period
 
 
 class Wishlist(Period):
@@ -19,9 +19,7 @@ class Wishlist(Period):
 
 class WishListLike(Like):
     wishlist = models.ForeignKey(Wishlist, null=False, blank=False, on_delete=models.PROTECT)
-    member = models.ForeignKey(Member, null=False, blank=False, on_delete=models.PROTECT)
     # 0: 삭제, 1: 좋아요
-    status = models.BooleanField(default=1, null=False, blank=False)
 
     class Meta:
         db_table = 'tbl_wishlist_like'
