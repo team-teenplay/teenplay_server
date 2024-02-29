@@ -8,8 +8,8 @@ from teenplay_server.models import Period, Like
 class TeenPlay(Period):
     teenplay_title = models.TextField(null=False, blank=False)
     club = models.ForeignKey(Club, null=False, blank=False, on_delete=models.PROTECT)
-    video_path = models.ImageField(upload_to='teenplay/%Y/%m/%d')
-    thumbnail_path = models.ImageField(upload_to='teenplay/%Y/%m/%d')
+    video_path = models.ImageField(upload_to='teenplay_video/%Y/%m/%d')
+    thumbnail_path = models.ImageField(upload_to='teenplay_thumbnail/%Y/%m/%d')
     # 0: 삭제, 1: 게시중
     status = models.BooleanField(default=1, null=False, blank=False)
 

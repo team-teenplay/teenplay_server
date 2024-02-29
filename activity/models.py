@@ -52,7 +52,7 @@ class ActivityLike(Like):
 
 
 class ActivityMember(Period):
-    STATUS = {
+    ACTIVITY_MEMBER_STATUS = {
         (-1, '참가대기'),
         (0, '취소'),
         (1, '참가중')
@@ -61,7 +61,7 @@ class ActivityMember(Period):
     member = models.ForeignKey(Member, null=False, blank=False, on_delete=models.PROTECT)
     activity = models.ForeignKey(Activity, null=False, blank=False, on_delete=models.PROTECT)
     # -1: 참가대기, 0: 취소, 1: 참가중
-    status = models.BooleanField(choices=STATUS, default=0, null=False, blank=False)
+    status = models.SmallIntegerField(choices=ACTIVITY_MEMBER_STATUS, default=0, null=False, blank=False)
 
     class Meta:
         db_table = 'tbl_activity_member'

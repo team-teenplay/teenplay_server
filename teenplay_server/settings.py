@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'alarm',
     'notice',
     'wishlist',
-    'club_post',
     'activity',
     'pay',
     'festival',
