@@ -1,5 +1,6 @@
 from django.db import models
 
+from member.managers import MemberManager
 from teenplay_server.period import Period
 
 
@@ -29,6 +30,9 @@ class Member(Period):
     member_privacy_agree = models.BooleanField(default=0)
     # -1: 정지, 0: 탈퇴, 1: 활동중
     status = models.SmallIntegerField(choices=MEMBER_STATUS, default=1)
+
+    objects = models.Manager()
+    enabled_objects = MemberManager()
 
     class Meta:
         db_table = 'tbl_member'
