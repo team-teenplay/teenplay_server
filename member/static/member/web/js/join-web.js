@@ -49,29 +49,29 @@ nameInput.addEventListener("keyup", (e) => {
     allCheck();
 });
 
-// 비밀번호 글자수 검사
-let passwordValue = false;
-// 비밀번호 입력 쿼리
-const passwordInput = document.querySelector(".password-input");
-// 비밀번호 에러 메시지 쿼리
-const passwordLengthError = document.querySelector(".password-length-error");
-
-// 비밀번호 입력 시 이벤트 발생
-// 값이 6보다 적으면 에러 메시지 활성화
-passwordInput.addEventListener("keyup", (e) => {
-    if (e.target.value) {
-        if (e.target.value.length < 6) {
-            passwordLengthError.classList.remove("hidden");
-            passwordInput.classList.add("color");
-            passwordValue = false;
-        } else {
-            passwordLengthError.classList.add("hidden");
-            passwordInput.classList.remove("color");
-            passwordValue = true;
-        }
-    }
-    allCheck();
-});
+// // 비밀번호 글자수 검사
+// let passwordValue = false;
+// // 비밀번호 입력 쿼리
+// const passwordInput = document.querySelector(".password-input");
+// // 비밀번호 에러 메시지 쿼리
+// const passwordLengthError = document.querySelector(".password-length-error");
+//
+// // 비밀번호 입력 시 이벤트 발생
+// // 값이 6보다 적으면 에러 메시지 활성화
+// passwordInput.addEventListener("keyup", (e) => {
+//     if (e.target.value) {
+//         if (e.target.value.length < 6) {
+//             passwordLengthError.classList.remove("hidden");
+//             passwordInput.classList.add("color");
+//             passwordValue = false;
+//         } else {
+//             passwordLengthError.classList.add("hidden");
+//             passwordInput.classList.remove("color");
+//             passwordValue = true;
+//         }
+//     }
+//     allCheck();
+// });
 
 // 약관동의
 NodeList.prototype.filter = Array.prototype.filter;
@@ -92,7 +92,7 @@ essentialAgreement.forEach((agreement) => {
 // 모든 값에 오류가 없으면 회원가입 버튼 활성화
 // 오류가 있으면 비활성화
 function allCheck() {
-    if (emailValue && nameValue && passwordValue && essentialValue) {
+    if (emailValue && nameValue && essentialValue) {
         joinButton.classList.remove("disabled");
         return;
     }
