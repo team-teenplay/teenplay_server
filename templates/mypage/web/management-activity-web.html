@@ -1,15 +1,11 @@
-<!DOCTYPE html>
-<html lang="en" style="height: 100%">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>틴플 :: 활동 관리</title>
-        <link href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT/fonts/static/woff2/SUIT.css" rel="stylesheet" />
-        <link rel="shortcut icon" href="/staticfiles/images/teenplay_logo/logo1.png" type="image/x-icon" />
-        <link rel="stylesheet" href="/staticfiles/css/mypage/web/management-activity-web.css" />
-    </head>
+{% extends 'mypage/web/base.html' %}
+{% load static %}
+{% block static %}
+        <link rel="stylesheet" href="{% static 'member/web/css/management-activity-web.css' %}">
+{% endblock %}
+
+{% block title %}틴플:: 활동 관리{% endblock %}
+{% block content %}
     <body style="position: relative; min-height: 100%; top: 0px">
         <!-- 헤더 부분 -->
         <header></header>
@@ -414,7 +410,8 @@
             </div>
         </main>
         <!-- 푸터 부분 -->
-        <footer></footer>
-    </body>
-    <script src="/staticfiles/js/mypage/web/management-activity-web.js"></script>
-</html>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'member/web/js/management-activity-web.js' %}"></script>
+{% endblock %}
