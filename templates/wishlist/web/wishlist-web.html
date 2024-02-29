@@ -1,9 +1,12 @@
- {% block static %}<link rel="stylesheet" href="/staticfiles/css/open-wishlist/web/open-wishlist-web.css" />{% endblock %}
-        <title>{% block title %}틴플 :: 공개 위시리스트{% endblock %}</title>
-    </head>
-    <body class="body">
-        <!-- 헤더 부분 -->
-        <header></header>
+{% extends 'wishlist/web/base-web.html' %}
+{% load static %} 
+{% block static %}
+    <link rel="stylesheet" href="/wishlist/static/wishlist/web/css/wishlist-web.css" />
+{% endblock %}
+
+{% block title %}틴플 :: 공개 위시리스트{% endblock %}
+
+{% block content %}
         <!-- 메인 부분 -->
         <main class="main">
             <div class="main-screen-all-warp">
@@ -323,8 +326,6 @@
                 </div>
             </div>
         </main>
-        <!-- 풋터 부분 -->
-        <footer></footer>
         <!-- 위시리스트 입력 모달창 부분 (미로그인 시) -->
         <!-- <div class="modal-login hidden">
             <div class="modal-full-wrap" role="dialog" aria-modal="true" data-headlessui-state="open" aria-labelledby="headlessui-dialog-title-42" aria-describedby="headlessui-description-43">
@@ -584,7 +585,8 @@
                 </div>
             </div>
         </div>
-    </body>
+{% endblock %}
+{% block js %}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="/staticfiles/js/open-wishlist/web/open-wishlist-web.js"></script>
-</html>
+    <script src="/wishlist/static/wishlist/web/js/wishlist-web.js"></script>
+{% endblock %}
