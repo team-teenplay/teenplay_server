@@ -2,7 +2,6 @@ from django.db import models
 from member.models import Member
 from teenplay_server.models import Category, Like
 from teenplay_server.period import Period
-from wishlist.managers import WishListManager
 
 
 class Wishlist(Period):
@@ -13,9 +12,6 @@ class Wishlist(Period):
     category = models.ForeignKey(Category, null=False, blank=False, on_delete=models.PROTECT)
     # 0: 삭제, 1: 게시중
     status = models.BooleanField(default=1, null=False, blank=False)
-
-    objects = models.Manager()
-    enabled_objects = WishListManager()
 
     class Meta:
         db_table = 'tbl_wishlist'
@@ -36,9 +32,6 @@ class WishlistReply(Period):
     # 0: 삭제, 1: 게시중
     status = models.BooleanField(default=1, null=False, blank=False)
 
-    objects = models.Manager()
-    enabled_objects = WishListManager()
-
     class Meta:
         db_table = 'tbl_wishlist_reply'
 
@@ -48,9 +41,6 @@ class WishlistTag(Period):
     wishlist = models.ForeignKey(Wishlist, null=False, blank=False, on_delete=models.PROTECT)
     # 0: 삭제
     status = models.BooleanField(default=1, null=False, blank=False)
-
-    objects = models.Manager()
-    enabled_objects = WishListManager()
 
     class Meta:
         db_table = 'tbl_wishlist_tag'
