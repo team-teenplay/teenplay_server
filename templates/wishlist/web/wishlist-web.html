@@ -1,14 +1,5 @@
-<!DOCTYPE html>
-<html lang="en" style="height: 100%" data-headlessui-focus-visible>
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <link rel="shortcut icon" href="/staticfiles/images/teenplay_logo/logo1.png" />
-        <link href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT/fonts/static/woff2/SUIT.css" rel="stylesheet" />
-        <link rel="stylesheet" href="/staticfiles/css/open-wishlist/web/open-wishlist-web.css" />
-        <title>틴플 :: 공개 위시리스트</title>
+ {% block static %}<link rel="stylesheet" href="/staticfiles/css/open-wishlist/web/open-wishlist-web.css" />{% endblock %}
+        <title>{% block title %}틴플 :: 공개 위시리스트{% endblock %}</title>
     </head>
     <body class="body">
         <!-- 헤더 부분 -->
