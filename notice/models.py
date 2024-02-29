@@ -1,6 +1,6 @@
 from django.db import models
 
-from teenplay_server.models import Period
+from teenplay_server.period import Period
 
 
 class Notice(Period):

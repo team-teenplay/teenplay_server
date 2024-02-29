@@ -2,8 +2,7 @@ from django.db import models
 
 from club.models import Club
 from member.models import Member
-from search.models import Like
-from teenplay_server.models import Period
+from teenplay_server.models import Period, Like
 
 
 class TeenPlay(Period):

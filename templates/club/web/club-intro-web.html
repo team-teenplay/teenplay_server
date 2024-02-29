@@ -1,21 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>틴플 :: 모임 소개</title>
-        <link rel="shortcut icon" href="/staticfiles/images/teenplay_logo/logo1.png" type="image/x-icon" />
-        <link href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/static/woff2/SUIT.css" rel="stylesheet" />
-        <link rel="stylesheet" href="/club/web/css/club-intro-web.css" />
-        <link rel="stylesheet" href="/staticfiles/css/fix/header.css" />
-    </head>
-    <body class loaded style="position: relative; min-height: 100%; top: 0px">
-        <!-- 헤더 -->
-        <header id="header"></header>
-        <!-- 모임 소개 페이지 시작 -->
-        <main class="intro-wrap">
+{% extends 'club/web/base-web.html' %}
+{% load static %}
+{% block static %}
+    <link rel="stylesheet" href="{% static 'club/web/css/club-intro-web.css' %}">
+{% endblock %}
+
+{% block title %}틴플 :: 모임 소개{% endblock %}
+
+{% block main %}
+    <main class="intro-wrap">
             <section class="top-banner">
                 <div class="top-banner-wrap">
                     <div class="top-banner-container">
@@ -305,8 +297,8 @@
                 </div>
             </section>
         </main>
-        <!-- 푸터 들어갈 자리 -->
-        <footer></footer>
-    </body>
-    <script src="/club/web/js/club-intro-web.js"></script>
-</html>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'club/web/js/club-intro-web.js' %}"></script>
+{% endblock %}

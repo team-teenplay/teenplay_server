@@ -1,7 +1,7 @@
 from django.db import models
 
 from member.models import Member
-from teenplay_server.models import Period
+from teenplay_server.period import Period
 
 
 class Alarm(Period):

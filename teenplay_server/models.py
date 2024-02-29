@@ -1,14 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
-
-class Period(models.Model):
-    created_date = models.DateTimeField(null=False, auto_now_add=True)
-    updated_date = models.DateTimeField(null=False, default=timezone.now)
-
-    class Meta:
-        # 추상 모델을 설정(migrate 시 해당 모델의 테이블 생성X)
-        abstract = True
+from member.models import Member
+from teenplay_server.period import Period
 
 
 class Category(Period):
@@ -27,3 +21,12 @@ class Region(Period):
 
     class Meta:
         db_table = 'tbl_region'
+
+
+class Like(Period):
+    member = models.ForeignKey(Member, null=False, blank=False, on_delete=models.PROTECT)
+    status = models.BooleanField(default=1, null=False, blank=False)
+
+    class Meta:
+        # 추상 모델을 설정(migrate 시 해당 모델의 테이블 생성X)
+        abstract = True
