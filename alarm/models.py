@@ -1,5 +1,6 @@
 from django.db import models
 
+from alarm.managers import AlarmManager
 from member.models import Member
 from teenplay_server.period import Period
 
@@ -23,6 +24,9 @@ class Alarm(Period):
     alarm_type = models.IntegerField(null=False, blank=False)
     sender = models.ForeignKey(Member, related_name='sender', null=False, blank=False, on_delete=models.PROTECT)
     receiver = models.ForeignKey(Member, related_name='receiver', null=False, blank=False, on_delete=models.PROTECT)
+
+    objects = models.Manager()
+    enabled_objects = AlarmManager()
 
     class Meta:
         db_table = 'tbl_alarm'

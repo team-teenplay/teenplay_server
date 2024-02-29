@@ -1,6 +1,7 @@
 from django.db import models
 
-
+from activity.managers import ActivityManager, ActivityImageManager, ActivityLikeManager, ActivityMemberManager, \
+    ActivityReplyManager
 from club.models import Club
 from festival.models import Festival
 from member.models import Member
@@ -28,6 +29,9 @@ class Activity(Period):
     # 0: 삭제, 1: 활동중
     status = models.BooleanField(default=1, null=False, blank=False)
 
+    objects = models.Manager()
+    enabled_objects = ActivityManager()
+
     class Meta:
         db_table = 'tbl_activity'
 
@@ -39,6 +43,9 @@ class ActivityImage(Period):
     # 0: 삭제
     status = models.BooleanField(default=1, null=False, blank=False)
 
+    objects = models.Manager()
+    enabled_objects = ActivityImageManager()
+
     class Meta:
         db_table = 'tbl_activity_image'
 
@@ -46,6 +53,9 @@ class ActivityImage(Period):
 class ActivityLike(Like):
     activity = models.ForeignKey(Activity, null=False, blank=False, on_delete=models.PROTECT)
     # 0: 삭제, 1: 좋아요
+
+    objects = models.Manager()
+    enabled_objects = ActivityLikeManager()
 
     class Meta:
         db_table = 'tbl_activity_like'
@@ -63,6 +73,9 @@ class ActivityMember(Period):
     # -1: 참가대기, 0: 취소, 1: 참가중
     status = models.SmallIntegerField(choices=ACTIVITY_MEMBER_STATUS, default=0, null=False, blank=False)
 
+    objects = models.Manager()
+    enabled_objects = ActivityMemberManager()
+
     class Meta:
         db_table = 'tbl_activity_member'
 
@@ -73,6 +86,9 @@ class ActivityReply(Period):
     reply_content = models.TextField(null=False, blank=False)
     # 0: 삭제, 1: 게시중
     status = models.BooleanField(default=1, null=False, blank=False)
+
+    objects = models.Manager()
+    enabled_objects = ActivityReplyManager()
 
     class Meta:
         db_table = 'tbl_activity_reply'
