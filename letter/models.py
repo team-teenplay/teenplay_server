@@ -13,6 +13,7 @@ class Letter(Period):
 
     class Meta:
         db_table = 'tbl_letter'
+        ordering = ['-id']
 
 
 class ReceivedLetter(Period):
