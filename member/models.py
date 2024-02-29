@@ -44,5 +44,8 @@ class MemberProfile(Period):
     # 0: 프사 없음, 1: 프사 있음
     member_privacy_agree = models.BooleanField(null=False, blank=False, default=1)
 
+    objects = models.Manager()
+    enabled_objects = MemberManager()
+
     class Meta:
         db_table = 'tbl_member_profile'
