@@ -1,17 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="shortcut icon" href="/staticfiles/images/teenplay_logo/logo1.png" type="image/x-icon" />
-        <link rel="stylesheet" href="/staticfiles/css/festival/festival-detail.css" />
-        <link rel="stylesheet" href="/staticfiles/css/festival/web/festival-detail-web.css" />
-        <title>틴플 :: 지역축제</title>
-    </head>
-    <body>
-        <header></header>
-        <main>
-            <div class="main-festival">
+{% extends 'main/web/base.html' %}
+{% load static %}
+{% block static %}
+    <link rel="stylesheet" href="{% static 'public/web/css/main-web.css' %}">
+{% endblock %}
+{% block title %}지역축제{% endblock %}
+{% block main %}
+    <div class="main-festival">
                 <div class="main-festival-top">
                     <div class="main-festival-top-sub">진행중</div>
                     <!-- 축제 제목 -->
@@ -333,9 +327,30 @@
                     </button>
                 </div>
             </div>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'public/web/js/main-web.js' %}"></script>
+    <script src="{% static 'public/web/js/main-post-scroll-web.js' %}"></script>
+{% endblock %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="shortcut icon" href="/staticfiles/images/teenplay_logo/logo1.png" type="image/x-icon" />
+        <link rel="stylesheet" href="/staticfiles/css/festival/festival-detail.css" />
+        <link rel="stylesheet" href="/festival/web/css/festival-detail-web.css" />
+        <title>틴플 :: 지역축제</title>
+    </head>
+    <body>
+        <header></header>
+        <main>
+            
         </main>
         <footer></footer>
     </body>
-    <script src="/staticfiles/js/festival/web/festival-detail/festival-detail-button-web.js"></script>
-    <script src="/staticfiles/js/festival/web/festival-detail/festival-detail-like-web.js"></script>
+    <script src="/festival/web/js/festival-detail/festival-detail-button-web.js"></script>
+    <script src="/festival/web/js/festival-detail/festival-detail-like-web.js"></script>
 </html>
