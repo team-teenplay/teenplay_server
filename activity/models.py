@@ -5,8 +5,8 @@ from club.models import Club
 from festival.models import Festival
 from member.models import Member
 from pay.models import Pay
-from search.models import Like
-from teenplay_server.models import Period, Category
+from teenplay_server.models import Category, Like
+from teenplay_server.period import Period
 
 
 class Activity(Period):

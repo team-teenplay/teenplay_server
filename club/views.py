@@ -4,4 +4,4 @@ from django.views import View
 
 class ClubIntroView(View):
     def get(self, request):
-        return render(request, 'club/web/')
+        return render(request, 'club/web/club-intro-web.html')
