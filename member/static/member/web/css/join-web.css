@@ -589,12 +589,13 @@ a {
 .join-wrap.disabled {
     border-color: #F2F4F5;
     background-color: #F2F4F5;
+    cursor: not-allowed;
 }
 
-.join-wrap.disabled:hover {
-    border-color: #C2C2C2;
-    background-color: #C2C2C2;
-}
+/*.join-wrap.disabled:hover {*/
+/*    border-color: #C2C2C2;*/
+/*    background-color: #C2C2C2;*/
+/*}*/
 
 /* 하단 부분 */
 .width-full {

@@ -604,3 +604,8 @@ div.oauth-wrap {
     justify-content: space-between;
     margin-top: 100px;
 }
+
+.duplicate_error {
+    color: #CE201B;
+    margin-top: 30px;
+}
