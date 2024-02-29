@@ -93,56 +93,54 @@
 {#                                    </div>#}
 {#                                </form>#}
 {#                            </div>#}
-                            <!-- SNS 회원가입 부분 -->
-                            <form class="sns-join-container" action="/Account/ExternalLogin?way=sign" method="post">
-                                <input type="hidden" value="o3MfpQ0fEaOuMnpUzNHcti0uUBpFfcNdA7YGfjD5J-Qiti31M8dXjwWW2aY4FtAyIO00KLFAIRBT4QBk8U0GS-Tw0GbWNuYXNwFl5nhPKp41">
-                                <div class="sns-button-items">
-                                    <!-- 카카오 버튼 -->
-                                    <button class="sns-button kakao" type="button" onclick="kakaoLogin()">
-                                        <svg class="kakao-img" version="1.1" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="m9.9999 2c5.0494 0 9.143 3.2827 9.143 7.3313 0 4.0487-4.0933 7.3313-9.143 7.3313a11.083 10.938 0 0 1-2.3926-0.26349c-0.44435-0.090231-3.4195 1.8254-4.0549 1.5791-0.44801-0.17145 1.3175-2.5653 0.75427-2.9109a6.9487 6.8574 0 0 1-3.4496-5.7359c0-4.0487 4.0933-7.3313 9.143-7.3313z" fill="#ffd95f" stroke-width=".90556"></path>
-                                        </svg>
-                                        <span class="kakao-text">
-                                            <span>카카오로 시작하기</span>
-                                        </span>
-                                    </button>
-                                    <button class="sns-button naver" type="button" onclick="naverLogin()">
-                                        <svg class="naver-img" version="1.1" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="m12.849 10.563-5.9315-8.5627h-4.9174v16h5.1511v-8.5627l5.9315 8.5627h4.9174v-15.998h-5.1511z" fill="#03cf5d" stroke-width="1.0187"></path>
-                                        </svg>
-                                        <span class="naver-text">
-                                            <span>네이버로 시작하기</span>
-                                        </span>
-                                    </button>
-                                    <button class="sns-button google" type="button" onclick="googleLogin()">
-                                        <img class="google-img" src="https://www.google.com/favicon.ico">
-                                        <span class="google-text">
-                                            <span>구글로 시작하기</span>
-                                        </span>
-                                    </button>
-                                </div>
-                            </form>
                             <!-- SNS 로그인 부분 -->
-                            <div class="oauth-wrap">
-                                <form action="{% provider_login_url 'kakao' %}" method="post">
-                                    {% csrf_token %}
-                                    <button>
-                                      <img src="{% static 'public/web/images/social/kakao-login.png' %}" alt="" width="275px">
-                                    </button>
-                                </form>
-                                <form action="{% provider_login_url 'google' %}" method="post">
-                                    {% csrf_token %}
-                                    <button>
-                                      <img src="{% static 'public/web/images/social/google-login.png' %}" alt="" width="40px">
-                                    </button>
-                                </form>
-                                <form action="{% provider_login_url 'naver' %}" method="post">
-                                    {% csrf_token %}
-                                    <button>
-                                      <img src="{% static 'public/web/images/social/naver-login.png' %}" alt="" width="40px">
-                                    </button>
-                                </form>
-                            </div>
+                                <div class="sns-login-all-wrap">
+                                    <div class="sns-login-wrap">
+                                        <!-- SNS 로그인 글씨 부분 -->
+                                        <div class="sns-text-container">
+{#                                            <span>SNS 계정으로 로그인/회원가입</span>#}
+                                        </div>
+                                        <!-- SNS 로그인 아이콘 부분 -->
+                                        <div class="sns-icon-container">
+                                            <!-- 구글 로그인 부분 -->
+                                            <form action="{% provider_login_url 'google' %}" method="post">
+                                                {% csrf_token %}
+                                                <div class="sns-icon">
+                                                    <button class="google-button">
+                                                        <img class="google-icon" src="https://www.google.com/favicon.ico">
+                                                            <path data-name="사각형 5227" d="M0 0h21v18H0z" style="fill: none;"></path>
+                                                            <path data-name="패스 5638" d="m170.744 255.583-5.837-8.385h-4.839v15.668h5.069v-8.385l5.837 8.385h4.839V247.2h-5.069z" transform="translate(-157.569 -246.197)" style="fill: rgb(255, 255, 255);"></path>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                            <!-- 네이버 로그인 부분 -->
+                                            <form action="{% provider_login_url 'naver' %}" method="post">
+                                                {% csrf_token %}
+                                                <div class="sns-icon icon-margin">
+                                                    <button class="naver-button">
+                                                        <svg class="naver-icon" xmlns="http://www.w3.org/2000/svg" data-name="그룹 8392" width="21" height="18" viewBox="0 0 21 18">
+                                                            <path data-name="사각형 5227" d="M0 0h21v18H0z" style="fill: none;"></path>
+                                                            <path data-name="패스 5638" d="m170.744 255.583-5.837-8.385h-4.839v15.668h5.069v-8.385l5.837 8.385h4.839V247.2h-5.069z" transform="translate(-157.569 -246.197)" style="fill: rgb(255, 255, 255);"></path>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                            <!-- 카카오 로그인 부분 -->
+                                            <form action="{% provider_login_url 'kakao' %}" method="post">
+                                                {% csrf_token %}
+                                                <div class="sns-icon icon-margin">
+                                                    <button class="kakao-button">
+                                                        <svg class="kakao-icon" xmlns="http://www.w3.org/2000/svg" data-name="그룹 8392" width="21" height="18" viewBox="0 0 21 18">
+                                                            <path data-name="패스 5635" d="M10.538 1.713c4.418 0 8 2.91 8 6.5s-3.582 6.5-8 6.5a9.7 9.7 0 0 1-2.094-.234c-.389-.08-2.992 1.618-3.548 1.4-.392-.152 1.153-2.274.66-2.581a6.08 6.08 0 0 1-3.018-5.085c0-3.59 3.582-6.5 8-6.5z"></path>
+                                                            <path data-name="사각형 5227" d="M0 0h21v18H0z" style="fill: none;"></path>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             <!-- 회원가입 부분 -->
 {#                            <div class="sign-up-wrap">#}
 {#                                <!-- 회원가입 버튼 -->#}

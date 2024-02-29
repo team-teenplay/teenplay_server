@@ -8,4 +8,10 @@ class OAuthLoginView(View):
         user = SocialAccount.objects.get(user=request.user)
         provider = user.provider
         data = user.extra_data
-        return render(request, 'member/web/join-web.html')
+        data = {
+            'provider': provider,
+            'member_email': data['email'],
+            'member_name': data['name']
+        }
+
+        return render(request, 'member/web/join-web.html', {'data': data})
