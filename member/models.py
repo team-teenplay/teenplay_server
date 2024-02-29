@@ -42,7 +42,7 @@ class MemberProfile(Period):
     # 프사
     profile_path = models.ImageField(null=False, blank=False, upload_to='member/%Y/%m/%d')
     # 0: 프사 없음, 1: 프사 있음
-    member_privacy_agree = models.BooleanField(null=False, blank=False, default=1)
+    status = models.BooleanField(null=False, blank=False, default=1)
 
     objects = models.Manager()
     enabled_objects = MemberManager()

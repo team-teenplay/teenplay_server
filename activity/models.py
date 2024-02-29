@@ -62,11 +62,11 @@ class ActivityLike(Like):
 
 
 class ActivityMember(Period):
-    ACTIVITY_MEMBER_STATUS = {
+    ACTIVITY_MEMBER_STATUS = [
         (-1, '참가대기'),
         (0, '취소'),
         (1, '참가중')
-    }
+    ]
 
     member = models.ForeignKey(Member, null=False, blank=False, on_delete=models.PROTECT)
     activity = models.ForeignKey(Activity, null=False, blank=False, on_delete=models.PROTECT)
