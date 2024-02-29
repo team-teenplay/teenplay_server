@@ -20,11 +20,11 @@ class Club(Period):
 
 
 class ClubMember(Period):
-    CLUB_MEMBER_STATUS = {
+    CLUB_MEMBER_STATUS = [
         (-1, '가입대기'),
         (0, '탈퇴'),
         (1, '가입중')
-    }
+    ]
 
     club = models.ForeignKey(Club, null=False, blank=False, on_delete=models.PROTECT)
     member = models.ForeignKey(Member, null=False, blank=False, on_delete=models.PROTECT)

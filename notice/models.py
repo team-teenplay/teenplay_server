@@ -4,10 +4,10 @@ from teenplay_server.period import Period
 
 
 class Notice(Period):
-    NOTICE_TYPE = {
+    NOTICE_TYPE = [
         (0, '공지사항'),
         (1, ' 자주 묻는 질문')
-    }
+    ]
 
     notice_title = models.TextField(null=False, blank=False)
     notice_content = models.TextField(null=False, blank=False)
