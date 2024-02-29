@@ -4,10 +4,6 @@ from member.models import Member
 from teenplay_server.period import Period
 
 
-# class Search(Period):
-#     pass
-
-
 class RecentSearch(Period):
     member = models.ForeignKey(Member, null=False, blank=False, on_delete=models.PROTECT)
     keyword = models.TextField(null=False, blank=False)
