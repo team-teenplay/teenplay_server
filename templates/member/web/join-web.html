@@ -17,17 +17,12 @@
                                 <span>회원가입</span>
                             </h1>
                         </div>
-                        <!-- 구분선 -->
-                        <div class="line-container">
-                            <div class="line"></div>
-                            <div class="line-text">
-                                <span>또는</span>
-                            </div>
-                            <div class="line"></div>
-                        </div>
                         <!-- 회원가입 부분 -->
-                        <form class="input-all-wrap" novalidate>
+                        <form class="input-all-wrap" action="/member/join/" method="post" novalidate>
+                            {% csrf_token %}
                             <div class="input-wrap">
+                                <!-- 멤버 sns 종류 -->
+                                <input name="member-type" type="hidden" value="{{ member_type }}">
                                 <!-- 이메일 입력 부분 -->
                                 <div class="email-container">
                                     <div class="email-content">
@@ -36,7 +31,7 @@
                                                 <span>이메일(ID)</span>
                                             </label>
                                         </div>
-                                        <input class="input email-input" readonly id="email" tabindex="1" autocomplete="off" type="email">
+                                        <input class="input email-input" name="member-email" value="{{ member_email }}" readonly id="email" tabindex="1" autocomplete="off" type="email">
                                         <div class="input-error noemail hidden">
                                             <span>항목을 입력하세요</span>
                                         </div>
@@ -56,7 +51,7 @@
                                                 <span>2자 이상</span>
                                             </span>
                                         </div>
-                                        <input class="input name-input" id="name" tabindex="2" autocomplete="off" type="text">
+                                        <input class="input name-input" name="member-name" id="name" value="{{ member_nickname }}" tabindex="2" autocomplete="false" type="text">
                                         <div class="input-error noname hidden">
                                             <div >항목을 입력하세요</div>
                                         </div>
@@ -65,26 +60,6 @@
                                         </div>
                                     </div>
                                 </div>
-{#                                <!-- 비밀번호 입력 부분 -->#}
-{#                                <div class="password-container">#}
-{#                                    <div class="password-content">#}
-{#                                        <div class="password-text-divison">#}
-{#                                            <label class="password-text" for="password">#}
-{#                                                <span>비밀번호</span>#}
-{#                                            </label>#}
-{#                                            <span class="password-explain">#}
-{#                                                <span>6자 이상</span>#}
-{#                                            </span>#}
-{#                                        </div>#}
-{#                                        <input class="input password-input" id="passowrd" tabindex="3" autocomplete="off" type="password">#}
-{#                                        <div class="input-error nopassword hidden">#}
-{#                                            <div>항목을 입력하세요</div>#}
-{#                                        </div>#}
-{#                                        <div class="password-length-error hidden">#}
-{#                                            <span>6자 이상으로 작성하세요</span>#}
-{#                                        </div>#}
-{#                                    </div>#}
-{#                                </div>#}
                                 <!-- 약관동의 부분 -->
                                 <div class="agreement-container">
                                     <p>
@@ -140,7 +115,7 @@
                                     <div class="agreement-content">
                                         <div class="agreement-divison-content">
                                             <div class="agreement-divison">
-                                                <input class="agreement-button" id="choice-agreement-send" tabindex="4" type="checkbox" value="true" data-gtm-form-interact-field-id="3">
+                                                <input name="marketing-agree" class="agreement-button" id="choice-agreement-send" tabindex="4" type="checkbox" value="true" data-gtm-form-interact-field-id="3">
                                                 <label class="agreement-text" for="choice-agreement-send">
                                                     <span>[선택] 마케팅 정보 수신동의</span>
                                                 </label>
@@ -156,7 +131,7 @@
                                     <div class="agreement-content">
                                         <div class="agreement-divison-content">
                                             <div class="agreement-divison">
-                                                <input class="agreement-button" id="choice-agreement-user" tabindex="4" type="checkbox" value="true" data-gtm-form-interact-field-id="4">
+                                                <input name="privacy-agree" class="agreement-button" id="choice-agreement-user" tabindex="4" type="checkbox" value="true" data-gtm-form-interact-field-id="4">
                                                 <label class="agreement-text" for="choice-agreement-user">
                                                     <span>[선택] 개인정보 수집·이용 동의서</span>
                                                 </label>
