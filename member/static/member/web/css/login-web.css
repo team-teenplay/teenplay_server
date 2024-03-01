@@ -440,12 +440,13 @@ button, select {
 .login-button.disabled {
     border-color: #F2F4F5;
     background-color: #F2F4F5;
+    cursor: not-allowed;
 }
 
-.login-button.disabled:hover {
-    border-color: #C2C2C2;
-    background-color: #C2C2C2;
-}
+/*.login-button.disabled:hover {*/
+/*    border-color: #C2C2C2;*/
+/*    background-color: #C2C2C2;*/
+/*}*/
 
 /* SNS 로그인 부분 */
 .sns-login-all-wrap {
@@ -589,4 +590,22 @@ button, select {
 
 .sign-up:hover {
     background-color: #FFF0EE;
+}
+
+.oauth-wrap button {
+    background: none;
+    padding: 0;
+}
+
+div.oauth-wrap {
+    display: flex;
+    align-items: center;
+    height: 70px;
+    justify-content: space-between;
+    margin-top: 100px;
+}
+
+.duplicate_error {
+    color: #CE201B;
+    margin-top: 30px;
 }

@@ -30,6 +30,8 @@ class Member(Period):
     member_privacy_agree = models.BooleanField(default=0)
     # -1: 정지, 0: 탈퇴, 1: 활동중
     status = models.SmallIntegerField(choices=MEMBER_STATUS, default=1)
+    # google, kakao, naver
+    member_type = models.CharField(max_length=10, null=False, blank=False)
 
     objects = models.Manager()
     enabled_objects = MemberManager()
