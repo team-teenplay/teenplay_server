@@ -58,4 +58,4 @@ class AdminAccount(Period):
     admin_name = models.TextField(blank=False, null=False)
 
     class Meta:
-        db_table: 'tbl_admin_account'
+        db_table = 'tbl_admin_account'
