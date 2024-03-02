@@ -1,19 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <!-- 로고 만들어지면 href수정 -->
-        <link rel="shortcut icon" href="/staticfiles/images/teenplay_logo/logo1.png" type="image/x-icon" />
-        <link rel="stylesheet" href="/staticfiles/css/admin/web/meeting/meeting-web.css" />
-        <title>틴플 :: 관리자 페이지</title>
-    </head>
-    <body>
-        <!-- 헤더 먼저 해야합니다. 나중에 색상은 바꿔야합니다! -->
+{% extends 'admin/web/base-web.html' %}
+{% load static %}
+{% block static %}
+    <link rel="stylesheet" href="{% static 'admin/web/css/meeting/meeting-web.css' %}">
+{% endblock %}
+{% block title %}틴플 :: 관리자 페이지{% endblock %}
+{% block content %}
+    <!-- 헤더 먼저 해야합니다. 나중에 색상은 바꿔야합니다! -->
         <header class="header-all">
             <div class="header-logo-text">
                 <a href="" class="header-logo">
-                    <img class="header-logo-icon" src="/staticfiles/images/teenplay_logo/logo4.png" alt="로고" />
+                    <img class="header-logo-icon" src="{% static 'public/web/images/logo/logo4.png' %}" alt="로고" />
                 </a>
                 <div class="header-slash">|</div>
                 <div class="header-admin-text">
@@ -292,11 +288,13 @@
             <!-- 모달 뒷배경 -->
             <div id="admin-user-modal-backdrop" class="hidden"></div>
         </main>
-    </body>
-    <script src="/staticfiles/js/admin/web/meeting/admin-meeting-delete-web.js"></script>
-    <script src="/staticfiles/js/admin/web/meeting/admin-meeting-addimg-web.js"></script>
-    <script src="/staticfiles/js/admin/web/meeting/admin-meeting-bottem-web.js"></script>
-    <script src="/staticfiles/js/admin/web/meeting/admin-meeting-button-web.js"></script>
-    <script src="/staticfiles/js/admin/web/meeting/admin-meeting-modal-web.js"></script>
-    <script src="/staticfiles/js/admin/web/meeting/admin-meeting-search-web.js"></script>
-</html>
+{% endblock %}
+{% block js %}
+    <script src="{% static 'admin/web/js/meeting/admin-meeting-addimg-web.js' %}"></script>
+    <script src="{% static 'admin/web/js/meeting/admin-meeting-bottem-web.js' %}"></script>
+    <script src="{% static 'admin/web/js/meeting/admin-meeting-button-web.js' %}"></script>
+    <script src="{% static 'admin/web/js/meeting/admin-meeting-delete-web.js' %}"></script>
+    <script src="{% static 'admin/web/js/meeting/admin-meeting-modal-web.js' %}"></script>
+    <script src="{% static 'admin/web/js/meeting/admin-meeting-redbox-web.js' %}"></script>
+    <script src="{% static 'admin/web/js/meeting/admin-meeting-search-web.js' %}"></script>
+{% endblock %}

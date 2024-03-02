@@ -1,5 +1,6 @@
 from django.db import models
 
+from festival.managers import FestivalManager
 from teenplay_server.period import Period
 
 
@@ -19,6 +20,9 @@ class Festival(Period):
     thumbnail_path = models.ImageField(upload_to='festival/%Y/%m/%d')
     # 0: 삭제, 1: 게시중
     status = models.BooleanField(default=1, null=False, blank=False)
+
+    object = models.Manager()
+    enabled_objects = FestivalManager()
 
     class Meta:
         db_table = 'tbl_festival'
