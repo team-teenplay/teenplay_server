@@ -1,24 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>틴플 :: 모임 개설하기</title>
-        <link rel="shortcut icon" href="/staticfiles/images/teenplay_logo/logo1.png" type="image/x-icon" />
-        <link href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/static/woff2/SUIT.css" rel="stylesheet" />
-        <link rel="stylesheet" href="/club/web/css/club-create-web.css" />
-    </head>
-    <body>
-        <!-- 헤더 -->
-        <header id="header"></header>
-        <!-- 모임개설 페이지 시작 -->
-        <main class="club-create">
-            <div id="app">
-                <div class="create-container">
-                    <!-- (서버담당을 위해 작성합니다. 배포 시 주석을 지웁시다.) -->
-                    <!-- 1단계: 모임 이름 작성 -->
+{% extends 'club/web/base-web.html' %}
+{% load static %}
+{% block static %}
+    <link rel="stylesheet" href="{% static 'club/web/css/club-create-web.css' %}">
+{% endblock %}
+
+{% block title %}틴플 :: 모임 개설하기{% endblock %}
+
+{% block main %}
+    <main class="club-create">
+        <div id="app">
+            <div class="create-container">
+                <!-- (서버담당을 위해 작성합니다. 배포 시 주석을 지웁시다.) -->
+                <!-- 1단계: 모임 이름 작성 -->
+                <form name="club-create-form" action="{% url 'club:create' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
                     <div class="name-form-wrap">
                         <div class="name-form-title-wrap">
                             <span class="name-form-title">새로운 모임을 개설</span>
@@ -43,12 +38,12 @@
                                 <div class="name-form-input-wrap">
                                     <div>
                                         <div>
-                                            <input type="text" class="name-form-input" placeholder="ex) 틴플레이" maxlength="10" />
+                                            <input name="club-name" type="text" class="name-form-input" placeholder="ex) 틴플레이" maxlength="10" />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="name-form-button-wrap">
-                                    <button class="name-form-button disabled">다음</button>
+                                    <button type="button" class="name-form-button disabled">다음</button>
                                 </div>
                             </div>
                             <div class="name-form-img-wrap">
@@ -86,7 +81,7 @@
                                 <div class="desc-form-input-wrap">
                                     <div>
                                         <div>
-                                            <input type="text" class="desc-form-input" placeholder="우리 모임을 한 마디로 표현한다면?" maxlength="100" />
+                                            <input name="club-intro" type="text" class="desc-form-input" placeholder="우리 모임을 한 마디로 표현한다면?" maxlength="100" />
                                         </div>
                                     </div>
                                 </div>
@@ -130,11 +125,11 @@
                                         <div class="cover-upload-wrap">모임 커버 업로드</div>
                                         <span class="upload-span-gray">&nbsp;&nbsp; 2000*263 이상 (7.6:1) </span>
                                         <div class="cover-hidden">
-                                            <input type="file" id="background-image" data-ratio="7.6:1" accept="image/*" />
+                                            <input name="club-banner" type="file" id="background-image" data-ratio="7.6:1" accept="image/*" />
                                         </div>
                                         <div class="cover-delete-wrap">
-                                            <img src="/staticfiles/images/club/club-create/cover_delete_icon_white.png" class="cover-delete" />
-                                            <img src="/staticfiles/images/club/club-detail/teenplay_delete_icon_hover.png" class="cover-delete-hover" />
+                                            <img src="{% static 'club/web/images/club-create/cover_delete_icon_white.png' %}" class="cover-delete" />
+                                            <img src="{% static 'club/web/images/club-detail/teenplay_delete_icon_hover.png' %}" class="cover-delete-hover" />
                                         </div>
                                     </div>
                                     <div class="club-detail-wrap">
@@ -143,12 +138,12 @@
                                             <div class="img-form-img-wrap">
                                                 <img src="https://event-us.kr/Content/neweventus/image/hostcenter/hostcenter_create_upload_01.png" alt="썸네일" class="img-form-thumbnail" />
                                                 <div class="profile-delete-wrap">
-                                                    <img src="/staticfiles/images/club/club-create/cover_delete_icon_white.png" class="profile-delete" />
-                                                    <img src="/staticfiles/images/club/club-detail/teenplay_delete_icon_hover.png" class="profile-delete-hover" />
+                                                    <img src="{% static 'club/web/images/club-create/cover_delete_icon_white.png' %}" class="profile-delete" />
+                                                    <img src="{% static 'club/web/images/club-detail/teenplay_delete_icon_hover.png' %}" class="profile-delete-hover" />
                                                 </div>
                                             </div>
                                             <div class="img-form-hidden">
-                                                <input type="file" id="profile-image" accept="image/*" data-ratio="1:1" />
+                                                <input name="club-profile" type="file" id="profile-image" accept="image/*" data-ratio="1:1" />
                                             </div>
                                         </div>
                                         <div class="club-detail-title-wrap">
@@ -181,11 +176,12 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
-        </main>
-        <!-- 푸터 들어갈 자리 -->
-        <footer></footer>
-    </body>
-    <script src="/club/web/js/club-create-web.js"></script>
-</html>
+        </div>
+    </main>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'club/web/js/club-create-web.js' %}"></script>
+{% endblock %}

@@ -239,3 +239,9 @@ dragDropBox.addEventListener("drop", (e) => {
     sizeErrorMsg.style.display = "none";
     // 서버 작업은 여기에 fetch로 작성한 후 썸네일을 받아와 화면에 표시합니다.
 });
+
+const imgFormBtn = document.querySelector('.img-form-button');
+const clubCreateForm = document.querySelector('form[name=club-create-form]')
+imgFormBtn.addEventListener("click", (e) => {
+    clubCreateForm.submit()
+})

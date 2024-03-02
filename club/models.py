@@ -18,6 +18,9 @@ class Club(Period):
     class Meta:
         db_table = 'tbl_club'
 
+    def get_absolute_url(self):
+        return f'/club/detail/?id={self.id}'
+
 
 class ClubMember(Period):
     CLUB_MEMBER_STATUS = [
