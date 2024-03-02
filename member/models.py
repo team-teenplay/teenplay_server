@@ -51,3 +51,11 @@ class MemberProfile(Period):
 
     class Meta:
         db_table = 'tbl_member_profile'
+
+class AdminAccount(Period):
+    admin_id = models.TextField(blank=False, null=False)
+    admin_password = models.TextField(blank=False, null=False)
+    admin_name = models.TextField(blank=False, null=False)
+
+    class Meta:
+        db_table = 'tbl_admin_account'
