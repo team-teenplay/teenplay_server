@@ -9,10 +9,13 @@ html {
     -ms-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
     line-height: 1.5;
-    font-family: "Roboto", sans-serif;
     font-weight: normal;
     color: #333;
     font-size: 16px;
+}
+
+header, footer {
+    font-family: SUIT, sans-serif !important;
 }
 
 :root {
@@ -86,9 +89,8 @@ a {
 }
 
 a {
-    text-decoration: none;
-    color: #039be5;
-    text-decoration: none;
+    text-decoration: none !important;
+    color: #171717 !important;
     -webkit-tap-highlight-color: transparent;
     background-color: transparent;
 }
@@ -403,9 +405,9 @@ textarea {
 }
 
 .hint-text {
-    text-decoration: underline;
-    font-size: 14px;
-    color: #878d91;
+    text-decoration: underline !important;
+    font-size: 14px !important;
+    color: #878d91 !important;
 }
 
 .setting-box {
@@ -1575,7 +1577,7 @@ select {
     padding: 0 0.75rem;
     min-height: 1px;
     padding-top: 10px !important;
-    display: none;
+    display: block;
 }
 
 .location-name-title,
@@ -1614,7 +1616,7 @@ select {
     padding: 0 0.75rem;
     min-height: 1px;
     padding-top: 10px !important;
-    display: none;
+    display: block;
 }
 
 .activity-event-map {
@@ -2178,4 +2180,24 @@ input {
     top: 0;
     position: absolute;
     background-image: url("/staticfiles/images/activity-new/cancel.png");
+}
+
+.other-category-box {
+    outline: none !important;
+}
+
+.other-category-box:focus {
+    outline: none !important;
+}
+
+.item-link {
+    color: rgb(135 141 145 / var(--tw-text-opacity)) !important;
+}
+
+.all-categories-link {
+    color: #ce201b !important;
+}
+
+.club-create-link {
+    color: #CE201B !important;
 }

@@ -8,7 +8,7 @@
                 <a class="post-category" href="">
                     <span>공지사항</span>
                 </a>
-                <a class="new-notice-title" href="">[긴급] 일부 계정 이메일 수신 불가 안내 - 개선 완료</a>
+                <a class="new-notice-title" href=""></a>
             </div>
         </div>
     </div>
@@ -18,7 +18,7 @@
             <div class="footer-main-box">
                 <div class="company-service-box">
                     <!-- 각 이동할 페이지 링크 필요 -->
-                    <a href="">
+                    <a href="{% url 'company' %}">
                         <span>회사 소개</span>
                     </a>
                     <a href="{% url 'club:intro' %}">
@@ -78,7 +78,7 @@
                 <div class="company-info-box">
                     <div>
                         <!-- 메인 페이지 주소 필요 -->
-                        <a class="company-name" href="">
+                        <a class="company-name" href="/">
                             <span>틴플</span>
                         </a>
                     </div>
@@ -133,3 +133,4 @@
         </div>
     </div>
 </footer>
+<script src="{% static 'public/web/js/footer-web.js' %}"></script>
