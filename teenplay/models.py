@@ -2,7 +2,7 @@ from django.db import models
 
 from club.models import Club
 from member.models import Member
-from teenplay.managers import TeenplayManager
+# from teenplay.managers import TeenplayManager
 from teenplay_server.models import Period, Like
 
 
