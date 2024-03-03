@@ -2179,7 +2179,7 @@ input {
     right: 5px;
     top: 0;
     position: absolute;
-    background-image: url("/staticfiles/images/activity-new/cancel.png");
+    background-image: url("/static/activity/web/images/cancel.png");
 }
 
 .other-category-box {

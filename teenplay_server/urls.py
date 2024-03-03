@@ -19,8 +19,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-from main.views import MainView
-from teenplay_server.views import AdminLoginView, AdminUserView
+from main.views import MainView, FooterNoticeLatestAPI
+from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroductionView, CompanyNoticeListAPI
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -32,6 +32,11 @@ urlpatterns = [
     path('admin/login/', AdminLoginView.as_view(), name='admin-login'),
     path('admin/user/', AdminUserView.as_view(), name='admin-user'),
     path('terms/', include('terms.urls')),
+    path('activity/', include('activity.urls'), name='activity'),
+    path('company/', CompanyIntroductionView.as_view(), name='company'),
+    path('company/notice/<int:page>/', CompanyNoticeListAPI.as_view(), name='company-api'),
+    path('footer/notice/', FooterNoticeLatestAPI.as_view(), name='footer-notice-api'),
+    path('pay/', include('pay.urls'), name='pay'),
     path('', MainView.as_view())
 ]
 

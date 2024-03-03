@@ -389,8 +389,23 @@ const pay = async () => {
         if(confirmedData.event === 'done') {
             const memberId = document.getElementById("member-id").value;
             if (memberId){
-                fetch()
+                fetch(`/pay/create/?memberId=${memberId}`)
+                    .then((response) => response.json())
+                    .then((pay) => {
+                        createActivity(pay);
+                    })
             }
         }
 
 };
+
+const createActivity = (pay) => {
+    if (pay) {
+        const activityForm = document.querySelector("form[name=activity-create]")
+        let payInput = document.createElement("input")
+        payInput.setAttribute("type", "hidden");
+        payInput.setAttribute("name", "pay-id");
+        activityForm.appendChild(payInput);
+        activityForm.submit();
+    }
+}
