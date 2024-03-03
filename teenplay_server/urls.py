@@ -23,7 +23,7 @@ from main.views import MainView
 from teenplay_server.views import AdminLoginView, AdminUserView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     path('club/', include('club.urls')),
     path('member/', include('member.urls')),
     path('accounts/', include('allauth.urls')),
