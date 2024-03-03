@@ -20,11 +20,26 @@ class AdminLoginView(View):
 
         admin = AdminAccount.objects.filter(**data)
 
-        url = 'admin/web/admin-login-web.html'
+        context = {'admin_data' : None}
 
         if admin.exists():
-            request.session['admin'] = AdminAccountSerializer(admin.first()).data
+            admin_data = AdminAccountSerializer(admin.first()).data
+            context['admin_data'] = admin_data
 
-            url = 'admin/user-web.html'
+        return render(request, 'admin/web/user-web.html', context)
 
-        return redirect(url)
+        # url = 'admin/web/admin-login-web.html'
+        #
+        # if admin.exists():
+        #     request.session['admin'] = AdminAccountSerializer(admin.first()).data
+        #
+        #     url = 'admin/web/user-web.html'
+        #
+        # return redirect(url)
+
+
+# 관리자 유저 페이지로 이동
+class AdminUserView(View):
+    def get(self, request):
+        return render(request, 'admin/web/user-web.html')
+
