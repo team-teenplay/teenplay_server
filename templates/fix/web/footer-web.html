@@ -8,7 +8,7 @@
                 <a class="post-category" href="">
                     <span>공지사항</span>
                 </a>
-                <a class="new-notice-title" href="">[긴급] 일부 계정 이메일 수신 불가 안내 - 개선 완료</a>
+                <a class="new-notice-title" href=""></a>
             </div>
         </div>
     </div>
@@ -18,10 +18,10 @@
             <div class="footer-main-box">
                 <div class="company-service-box">
                     <!-- 각 이동할 페이지 링크 필요 -->
-                    <a href="">
+                    <a href="{% url 'company' %}">
                         <span>회사 소개</span>
                     </a>
-                    <a href="">
+                    <a href="{% url 'club:intro' %}">
                         <span>모임 소개</span>
                     </a>
                     <a href="">
@@ -54,7 +54,7 @@
                                 </td>
                                 <td class="inquiry-service-email">
                                     <!-- 문의 받을 메일주소 작성 필요 -->
-                                    <a class="send-email-link" href="mailto:kjkj0724@gmail.com">kjkj0724@gmail.com</a>
+                                    <a class="send-email-link" href="mailto:teenplay.help@gmail.com">teenplay.help@gmail.com</a>
                                 </td>
                             </tr>
                         </tbody>
@@ -78,7 +78,7 @@
                 <div class="company-info-box">
                     <div>
                         <!-- 메인 페이지 주소 필요 -->
-                        <a class="company-name" href="">
+                        <a class="company-name" href="/">
                             <span>틴플</span>
                         </a>
                     </div>
@@ -106,23 +106,23 @@
                 </div>
                 <div class="terms-box">
                     <!-- 서비스 이용 약관 링크 필요 -->
-                    <a href="">
+                    <a href="{% url 'terms:service' %}" target="_blank">
                         <span>서비스 이용 약관</span>
                     </a>
                     <!-- 개인정보처리방침 링크 필요 -->
-                    <a href="" target="_blank" style="font-weight: 700">
+                    <a href="{% url 'terms:privacy' %}" target="_blank" style="font-weight: 700">
                         <span>개인정보처리방침</span>
                     </a>
                     <!-- 전자금융거래 이용약관 링크 필요 -->
-                    <a href="">
+                    <a href="{% url 'terms:e-banking' %}" target="_blank">
                         <span>전자금융거래 이용약관</span>
                     </a>
                     <!-- 취소 및 환불 약관 링크 필요 -->
-                    <a href="">
+                    <a href="{% url 'terms:refund' %}" target="_blank">
                         <span>취소 및 환불 약관</span>
                     </a>
                     <!-- 이메일 주소 무단수집 거부 링크 필요 -->
-                    <a href="">
+                    <a href="{% url 'terms:email' %}" target="_blank">
                         <span>이메일 주소 무단수집 거부</span>
                     </a>
                 </div>
@@ -133,3 +133,4 @@
         </div>
     </div>
 </footer>
+<script src="{% static 'public/web/js/footer-web.js' %}"></script>
