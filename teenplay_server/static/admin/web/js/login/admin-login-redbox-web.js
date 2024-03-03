@@ -16,7 +16,7 @@ function applyStyles(inputElement, redBoxElement) {
     }
 }
 
-// 축제 제목
+// 입력 박스(아이디)
 var inputElementTitle = document.querySelector(".main-login-id");
 var redBoxElementTitle = document.getElementById("red-id");
 inputElementTitle.addEventListener("input", function () {
@@ -26,7 +26,7 @@ inputElementTitle.addEventListener("blur", function () {
     applyStyles(inputElementTitle, redBoxElementTitle);
 });
 
-// 축제 내용
+// 입력 박스(비밀번호)
 var inputElementContent = document.querySelector(".main-login-pw");
 var redBoxElementContent = document.getElementById("red-pw");
 inputElementContent.addEventListener("input", function () {

@@ -20,7 +20,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 from main.views import MainView
-from teenplay_server.views import AdminLoginView
+from teenplay_server.views import AdminLoginView, AdminUserView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +30,8 @@ urlpatterns = [
     path('oauth/', include('oauth.urls')),
     path('teenplay/', include('teenplay.urls')),
     path('admin/login/', AdminLoginView.as_view(), name='admin-login'),
+    path('admin/user/', AdminUserView.as_view(), name='admin-user'),
+    path('terms/', include('terms.urls')),
     path('', MainView.as_view())
 ]
 
