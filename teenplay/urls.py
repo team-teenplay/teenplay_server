@@ -12,7 +12,6 @@ urlpatterns = [
     # path('all/<int:number>', TeenplayMainListView.as_view(), name='teenplay-main-list'),
     path('all/random', TeenPlayRandomList.as_view(), name= 'teenplay-main'),
     path('list/<int:teenplay_id>/', TeenplayListView.as_view(), name='teenplay-list'),
-    path('/new/', TeenplayLikeAPIView.as_view(), name='teenplay-like-button')
 ]
 
 
