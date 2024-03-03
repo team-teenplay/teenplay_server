@@ -241,7 +241,7 @@ button, input, optgroup, select, textarea {
 }
 
 .play-item {
-    height: 500vh;
+    height: 1000vh;
     display: flex;
     border-bottom-left-radius: 0;
     background-color: transparent;
