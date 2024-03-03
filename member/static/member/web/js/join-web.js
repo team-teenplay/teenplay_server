@@ -30,6 +30,26 @@ nameInput.addEventListener("keyup", (e) => {
     allCheck();
 });
 
+// 전화번호 입력 시 이벤트 발생
+// 전화번호 글자수 검사
+let phoneValue = false;
+// 전화번호 정규식(숫자만)
+let phoneRegex = /^[0-9]*$/;
+// 전화번호 입력 쿼리
+const phoneInput = document.querySelector(".phone-input")
+phoneInput.addEventListener("keyup", (e) => {
+    if (e.target.value){
+        if (!phoneRegex.test(e.target.value) || e.target.value.length < 10){
+            phoneInput.classList.add("color")
+            phoneValue = false;
+        } else {
+            phoneInput.classList.remove("color");
+            phoneValue = true;
+        }
+    }
+    allCheck();
+})
+
 
 // 약관동의
 NodeList.prototype.filter = Array.prototype.filter;
@@ -52,7 +72,7 @@ essentialAgreement.forEach((agreement) => {
 // 오류가 있으면 비활성화
 
 function allCheck() {
-    if (nameValue && essentialValue) {
+    if (nameValue && phoneValue && essentialValue) {
         joinButton.classList.remove("disabled");
         flag = true;
         return;
