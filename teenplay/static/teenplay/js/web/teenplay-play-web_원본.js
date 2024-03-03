@@ -161,11 +161,11 @@ slideWrap.addEventListener("wheel", (e) => {
         pauseIcons[idx].style.display = "block";
         playIcons[idx].style.display = "none";
     }
-    if (idx == videoWraps.length-2){
-        setTimeout( () => {
-            getTeenplay(showTeenplay)
-        },2000)
-    }
+    // if (idx == videoWraps.length-2){
+    //     setTimeout( () => {
+    //         getTeenplay(showTeenplay)
+    //     },2000)
+    // }
 });
 
 // 좋아요 아이콘 클릭 시 반영
@@ -202,21 +202,6 @@ const showTeenplay = (teenplay) => {
     // transform 부분에서 변하는 값이 추가 되어야 함
     // forEach에 대한 index 값을 다시 정의 해서 확인 해야함
     const playItemsWidth = document.querySelector(".play-items")
-    ///
-    const pauseIconsNew = document.querySelectorAll(".pause");
-    const playIconsNew = document.querySelectorAll(".restart");
-    const videosNew = document.querySelectorAll(".play-video");
-    const videoInfosNew = document.querySelectorAll(".play-info-wrap");
-    const controlButtonsNew = document.querySelectorAll(".play-control-wrap");
-    const progressBarsNew = document.querySelectorAll(".progress-bar-now");
-    const muteIconsNew = document.querySelectorAll(".mute");
-    const unmuteIconsNew = document.querySelectorAll(".unmute");
-    const videoWrapsNew = document.querySelectorAll(".play-each");
-    const slideWrapNew = document.querySelector(".play-items");
-    const slideContainerNew = document.querySelector(".play-item");
-    const likeBtnsNew = document.querySelectorAll(".play-like-btn");
-    const emptyHeartNew = document.querySelectorAll(".play-like-icon.empty");
-    const fullHeartNew = document.querySelectorAll(".play-like-icon.full");
     playItemsWidth.style.maxWidth += '2921px'
 
     playWrap.innerHTML += `  
@@ -321,5 +306,6 @@ const showTeenplay = (teenplay) => {
     `
 }
 
-
+console.log(videoWraps.length)
+idx = videoWraps.length - 1;
 // getTeenplay(showTeenplay)
