@@ -32,15 +32,9 @@ class ClubTestCase(TestCase):
     #     club_activity_count=Count('activity')).values(*columns)
 
     member = Member.objects.get(id=8)
-    # club_member = ClubMember.objects.filter(member=member)
-    # join_status = [
-    #     '가입대기',
-    #     '탈퇴',
-    #     '가입중'
-    # ]
-    #
-    # if club[0]['owner_id'] != member.id:
-    #     if not club_member.exists() or not club_member.first().status:
-    #         pass
+    club_member = ClubMember.objects.filter(member=member)
 
-    # print(club_member.first().status)
+    if club_member.exists():
+        if club_member.first().status:
+            print('')
+

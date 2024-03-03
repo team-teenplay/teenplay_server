@@ -68,16 +68,14 @@ class ClubDetailView(View):
 
         member = Member(**request.session['member'])
         club_member = ClubMember.objects.filter(member=member)
-        if club[0]['owner_id'] != member.id:
-            print('들어옴')
-            if ClubMember.objects.filter(member=member).exists():
-                pass
+        club_member_status = True
 
-
+        if club_member.exists():
+            club_member_status = club_member.first().status
 
         context = {
             'club_list': list(club),
-
+            'club_member_status': club_member_status
         }
 
         return render(request, 'club/web/club-detail-web.html', context)
