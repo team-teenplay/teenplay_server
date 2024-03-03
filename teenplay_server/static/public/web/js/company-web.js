@@ -164,15 +164,15 @@ goTopIcon.addEventListener("click", () => {
 });
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// 맴버 more button
-let memberMoreButton = document.querySelector(".member-more-btn-box");
-memberMoreButton.addEventListener("click", (e) => {
-    let memberDisplay = document.querySelectorAll(".member-display.hidden");
-    memberDisplay.forEach((member) => {
-        member.classList.remove("hidden");
-        memberMoreButton.classList.add("hidden");
-    });
-});
+// // 맴버 more button
+// let memberMoreButton = document.querySelector(".member-more-btn-box");
+// memberMoreButton.addEventListener("click", (e) => {
+//     let memberDisplay = document.querySelectorAll(".member-display.hidden");
+//     memberDisplay.forEach((member) => {
+//         member.classList.remove("hidden");
+//         memberMoreButton.classList.add("hidden");
+//     });
+// });
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // 카카오 맵

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -5,8 +6,8 @@
         <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <link rel="shortcut icon" href="/staticfiles/images/teenplay_logo/logo1.png" type="image/x-icon" />
-        <link rel="stylesheet" href="/staticfiles/css/company-info/web/company-web.css" />
+        <link rel="shortcut icon" href="{% static 'public/web/images/logo/logo1.png' %}" type="image/x-icon" />
+        <link rel="stylesheet" href="{% static 'public/web/css/company-web.css' %}" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
         <title>주식회사 틴플</title>
     </head>
@@ -23,7 +24,7 @@
                                         <div class="h-left-box">
                                             <div class="logo-box" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
                                                 <div class="logo">
-                                                    <img class="logo-icon" src="/staticfiles/images/teenplay_logo/logo2.png" alt="company-logo" />
+                                                    <img class="logo-icon" src="{% static 'public/web/images/logo/logo2.png' %}" alt="company-logo" />
                                                 </div>
                                                 <div class="logo-name">주식회사 틴플</div>
                                             </div>
@@ -65,11 +66,11 @@
                                 <div class="description-cover"></div>
                                 <div class="description-container">
                                     <pre class="description-text">
-이벤터스는 기업 및 기관에서 주최하는 비즈니스 이벤트(MICE)에서 발생하는 과도한 비용, 비효율성, 불명확한 데이터 3가지의 문제를 디지털 전환(Platform, SaaS 도입)을 통해 해결하는 이벤트 테크 스타트업입니다.
+틴플레이는 기업 및 기관에서 주최하는 비즈니스 이벤트(MICE)에서 발생하는 과도한 비용, 비효율성, 불명확한 데이터 3가지의 문제를 디지털 전환(Platform, SaaS 도입)을 통해 해결하는 모임/활동 테크 스타트업입니다.
 
-행사를 개설하여 참가자를 모집하고 행사를 홍보할 수 있는 No.1 Event Platform과 행사 운영 과정에서의 업무들을 자동화하고 데이터를 축적할 수 있는 No.1 Event SaaS(소프트웨어)를 국내에서 유일하게 All-in-one으로 제공하고 있습니다.
+활동을 개설하여 참가자를 모집하고 활동을 홍보할 수 있는 No.1 Activity Platform과 활동 운영 과정에서의 업무들을 자동화하고 데이터를 축적할 수 있는 No.1 Activity SaaS(소프트웨어)를 국내에서 유일하게 All-in-one으로 제공하고 있습니다.
 
-이벤터스는 온라인ㆍ오프라인ㆍ하이브리드 모든 형식의 행사에서 사용할 수 있습니다. IBM, Wework, 삼성SDS, 야놀자, 경기도, 한국관광공사, KAIST, 동아일보, 농협은행, 신한카드, 삼성병원, 화우, 코엑스 등 14,000명의 고객을 보유하고 있습니다.
+틴플레이는 온라인ㆍ오프라인ㆍ하이브리드 모든 형식의 활동에서 사용할 수 있습니다. IBM, Wework, 삼성SDS, 야놀자, 경기도, 한국관광공사, KAIST, 동아일보, 농협은행, 신한카드, 삼성병원, 화우, 코엑스 등 14,000명의 고객을 보유하고 있습니다.
                                 </pre
                                     >
                                 </div>
@@ -123,7 +124,7 @@
                                                     </div>
                                                     <div class="history-item-two">
                                                         <div class="history-item-two-year">03</div>
-                                                        <div class="history-item-two-content">온라인으로 행사 진행이 가능한 "이벤터스 웨비나" 신규 런칭</div>
+                                                        <div class="history-item-two-content">온라인으로 활동 진행이 가능한 "틴플레이 웨비나" 신규 런칭</div>
                                                     </div>
                                                     <div class="history-item-two">
                                                         <div class="history-item-two-year">03</div>
@@ -173,7 +174,7 @@
                                                     </div>
                                                     <div class="history-item-four">
                                                         <div class="history-item-four-year">05</div>
-                                                        <div class="history-item-four-content">이벤터스(구 위딧소프트)로 상호 변경</div>
+                                                        <div class="history-item-four-content">틴플레이(구 틴플)로 상호 변경</div>
                                                     </div>
                                                     <div class="history-item-four">
                                                         <div class="history-item-four-year">04</div>
@@ -189,7 +190,7 @@
                                                     </div>
                                                     <div class="history-item-four">
                                                         <div class="history-item-four-year">01</div>
-                                                        <div class="history-item-four-content">이벤터스, 행사 홍보 및 참가자 모집 플랫폼 무료로 변경</div>
+                                                        <div class="history-item-four-content">틴플레이, 행사 홍보 및 참가자 모집 플랫폼 무료로 변경</div>
                                                     </div>
                                                 </div>
                                                 <div class="year-base-history-group-five">
@@ -208,7 +209,7 @@
                                                     </div>
                                                     <div class="history-item-five">
                                                         <div class="history-item-five-year">07</div>
-                                                        <div class="history-item-five-content">EvSquare, 맞춤형 행사지원 플랫폼 "이벤터스"로 브랜드 리뉴얼 및 서비스 확장</div>
+                                                        <div class="history-item-five-content">TpSquare, 맞춤형 행사지원 플랫폼 "틴플레이"로 브랜드 리뉴얼 및 서비스 확장</div>
                                                     </div>
                                                 </div>
                                                 <div class="year-base-history-group-six">
@@ -235,7 +236,7 @@
                                                     </div>
                                                     <div class="history-item-six">
                                                         <div class="history-item-six-year">04</div>
-                                                        <div class="history-item-six-content">행사전용 클라우드 서비스 "EvSquare" 서비스 시작</div>
+                                                        <div class="history-item-six-content">활동전용 클라우드 서비스 "TpSquare" 서비스 시작</div>
                                                     </div>
                                                     <div class="history-item-six">
                                                         <div class="history-item-six-year">04</div>
@@ -281,7 +282,7 @@
                                                     </div>
                                                     <div class="history-item-eight">
                                                         <div class="history-item-eight-year">09</div>
-                                                        <div class="history-item-eight-content">위딧소프트(현 이벤터스) 법인 설립</div>
+                                                        <div class="history-item-eight-content">틴플(현 틴플레이) 법인 설립</div>
                                                     </div>
                                                     <div class="history-item-eight">
                                                         <div class="history-item-eight-year">07</div>
@@ -309,9 +310,9 @@
                                                         </div>
                                                         <div class="member-image-picture" style="background-image: url('https://file.zillinks.com/prod/uploads/08129030c4072b9c1fd1cfe9833cd8a2_A4Jw9gZglgNgpgSQLYHMg.png')"></div>
                                                     </div>
-                                                    <div class="member-name">Younghak Ahn</div>
-                                                    <div class="member-position">플랫폼 사업팀</div>
-                                                    <div class="member-appointment">총괄 리더 & 대표</div>
+                                                    <div class="member-name">Seogyeong Song</div>
+                                                    <div class="member-position">AI 국비 1팀</div>
+                                                    <div class="member-appointment">팀장</div>
                                                 </div>
                                                 <div class="member">
                                                     <div class="member-profile-image-box">
@@ -320,9 +321,9 @@
                                                         </div>
                                                         <div class="member-image-picture" style="background-image: url('https://file.zillinks.com/prod/uploads/cae97f5bc6e16a73c6b4281fee322701_profileImg.png')"></div>
                                                     </div>
-                                                    <div class="member-name">HyunNa Cho</div>
-                                                    <div class="member-position">플랫폼 사업팀</div>
-                                                    <div class="member-appointment">세일즈 매니저</div>
+                                                    <div class="member-name">Hyun Yang</div>
+                                                    <div class="member-position">AI 국비 1팀</div>
+                                                    <div class="member-appointment">부팀장</div>
                                                 </div>
                                                 <div class="member">
                                                     <div class="member-profile-image-box">
@@ -331,9 +332,9 @@
                                                         </div>
                                                         <div class="member-image-picture" style="background-image: url('https://file.zillinks.com/prod/uploads/8d48d6872403631efa7dea3673574ed2_A4Jw9gZglgNgpgSQLYHMg.png')"></div>
                                                     </div>
-                                                    <div class="member-name">Juhyeon Lee</div>
-                                                    <div class="member-position">플랫폼 사업팀</div>
-                                                    <div class="member-appointment">마케팅 매니저</div>
+                                                    <div class="member-name">Gyoungdeok Seo</div>
+                                                    <div class="member-position">AI 국비 1팀</div>
+                                                    <div class="member-appointment">팀원</div>
                                                 </div>
                                                 <div class="member">
                                                     <div class="member-profile-image-box">
@@ -342,9 +343,9 @@
                                                         </div>
                                                         <div class="member-image-picture" style="background-image: url('https://file.zillinks.com/prod/uploads/e6c9c88846934bdd91496b4e52613104_profileImg.png')"></div>
                                                     </div>
-                                                    <div class="member-name">Jeongeun Kim</div>
-                                                    <div class="member-position">플랫폼 사업팀</div>
-                                                    <div class="member-appointment">CX 매니저</div>
+                                                    <div class="member-name">Kwanik Cho</div>
+                                                    <div class="member-position">AI 국비 1팀</div>
+                                                    <div class="member-appointment">팀원</div>
                                                 </div>
                                                 <div class="member-display hidden">
                                                     <div class="member-profile-image-box">
@@ -353,9 +354,9 @@
                                                         </div>
                                                         <div class="member-image-picture" style="background-image: url('https://file.zillinks.com/prod/uploads/d8ce74089b5bb58f114f050194456979_profileImg.png')"></div>
                                                     </div>
-                                                    <div class="member-name">Jeongho Choi</div>
-                                                    <div class="member-position">플랫폼 사업팀</div>
-                                                    <div class="member-appointment">개발 리더</div>
+                                                    <div class="member-name">Kyusan Kim</div>
+                                                    <div class="member-position">AI 국비 1팀</div>
+                                                    <div class="member-appointment">팀원</div>
                                                 </div>
                                                 <div class="member-display hidden">
                                                     <div class="member-profile-image-box">
@@ -364,14 +365,14 @@
                                                         </div>
                                                         <div class="member-image-picture" style="background-image: url('https://file.zillinks.com/prod/uploads/a3c2e690ff264a06f3b6891efdc968bc_A4Jw9gZglgNgpgSQLYHMg.png')"></div>
                                                     </div>
-                                                    <div class="member-name">Junho Moon</div>
-                                                    <div class="member-position">플랫폼 사업팀</div>
-                                                    <div class="member-appointment">개발 매니저</div>
+                                                    <div class="member-name">Jiwon Park</div>
+                                                    <div class="member-position">AI 국비 1팀</div>
+                                                    <div class="member-appointment">팀원</div>
                                                 </div>
                                             </div>
-                                            <div class="member-more-btn-box">
-                                                <div class="more-btn">More Team.. (4/6)</div>
-                                            </div>
+{#                                            <div class="member-more-btn-box">#}
+{#                                                <div class="more-btn">More Team.. (4/6)</div>#}
+{#                                            </div>#}
                                         </div>
                                     </div>
                                     <div class="teams-member-pop">

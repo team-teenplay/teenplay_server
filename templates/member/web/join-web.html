@@ -71,7 +71,7 @@
                                                 <span>'-', '.' 등 기호 없이 입력</span>
                                             </span>
                                         </div>
-                                        <input class="input phone-input" name="member-phone" id="phone" maxlength="11" tabindex="2" autocomplete="false" type="text">
+                                        <input class="input phone-input" name="member-phone" id="phone" maxlength="11" tabindex="2" autocomplete="off" type="text">
                                     </div>
                                 </div>
                                 <!-- 약관동의 부분 -->
@@ -100,7 +100,7 @@
                                                     <span>[필수] 이용약관</span>
                                                 </label>
                                                 <div class="agreement-add-text">
-                                                    <a class="agreement-add-link" href="https://event-us.kr/legal/service">
+                                                    <a class="agreement-add-link" href="{% url 'terms:service' %}" target="_blank">
                                                         <span>보기</span>
                                                     </a>
                                                 </div>
@@ -117,7 +117,7 @@
                                                     <span>[필수] 개인정보 수집·이용 동의서</span>
                                                 </label>
                                                 <div class="agreement-add-text">
-                                                    <a class="agreement-add-link" href="https://app.catchsecu.com/document/C/f796ce0cc983aef">
+                                                    <a class="agreement-add-link" href="{% url 'terms:privacy' %}" target="_blank">
                                                         <span>보기</span>
                                                     </a>
                                                 </div>
@@ -134,7 +134,7 @@
                                                     <span>[선택] 마케팅 정보 수신동의</span>
                                                 </label>
                                                 <div class="agreement-add-text">
-                                                    <a class="agreement-add-link" href="https://event-us.kr/l/marketing">
+                                                    <a class="agreement-add-link" href="{% url 'terms:marketing' %}" target="_blank">
                                                         <span>보기</span>
                                                     </a>
                                                 </div>
@@ -150,7 +150,7 @@
                                                     <span>[선택] 개인정보 수집·이용 동의서</span>
                                                 </label>
                                                 <div class="agreement-add-text">
-                                                    <a class="agreement-add-link" href="https://app.catchsecu.com/document/C/f796ce0cc983aef">
+                                                    <a class="agreement-add-link" href="{% url 'terms:privacy' %}" target="_blank">
                                                         <span>보기</span>
                                                     </a>
                                                 </div>
@@ -177,7 +177,7 @@
                         <div class="footer-container">
                             <!-- 푸터 로고 부분 -->
                             <div class="footer-logo-item">
-                                <a href="https://event-us.kr/">
+                                <a href="/">
                                     <img class="footer-logo" src="{% static 'public/web/images/logo/logo2.png' %}" viewBox="0 0 56.965 25.467">
                                 </a>
                             </div>
