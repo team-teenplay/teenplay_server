@@ -1,7 +1,12 @@
+from django.db import transaction
+from django.db.models import Count, F
 from django.shortcuts import render, redirect
 from django.views import View
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from club.models import Club
+from activity.models import Activity
+from club.models import Club, ClubMember
 from member.models import Member
 
 
@@ -14,6 +19,7 @@ class ClubCreateView(View):
     def get(self, request):
         return render(request, 'club/web/club-create-web.html')
 
+    @transaction.atomic
     def post(self, request):
         data = request.POST
         file = request.FILES
@@ -35,16 +41,51 @@ class ClubCreateView(View):
 
 class ClubDetailView(View):
     def get(self, request):
-        club = Club.objects.get(id=request.GET['id'])
+        club_id = request.GET['id']
+        columns = [
+            'id',
+            'club_name',
+            'club_intro',
+            'club_info',
+            'owner_id',
+            'owner_name',
+            'owner_email',
+            'owner_phone',
+            'club_profile_path',
+            'club_banner_path',
+            'club_member_count',
+            'club_activity_count'
+        ]
+
+        club = Club.objects.filter(id=club_id)\
+            .annotate(
+            owner_id=F('member__id'),
+            owner_name=F('member__member_nickname'),
+            owner_email=F('member__member_email'),
+            owner_phone=F('member__member_phone'),
+            club_member_count=Count('clubmember'),
+            club_activity_count=Count('activity')).values(*columns)
+
+        member = Member(**request.session['member'])
+        club_member = ClubMember.objects.filter(member=member)
+        club_member_status = True
+
+        if club_member.exists():
+            club_member_status = club_member.first().status
 
         context = {
-            'club': club,
-            'club_activities': list(club.activity_set.all()),
-            'club_notices': list(club.clubnotice_set.all()),
-            'club_teenplays': list(club.teenplay_set.all())
+            'club_list': list(club),
+            'club_member_status': club_member_status
         }
 
         return render(request, 'club/web/club-detail-web.html', context)
+
+
+class ClubAPI(APIView):
+    def get(self, request, club_id):
+        club = Club.objects.filter(id=club_id).values().first()
+
+        return Response(club)
 
 
 class ClubPrPostsView(View):
