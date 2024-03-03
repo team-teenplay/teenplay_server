@@ -23,8 +23,7 @@ from main.views import MainView
 from teenplay_server.views import AdminLoginView, AdminUserView
 
 urlpatterns = [
-    path('activity/', include('activity.urls'), name='activity'),
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     path('club/', include('club.urls')),
     path('member/', include('member.urls')),
     path('accounts/', include('allauth.urls')),
@@ -33,9 +32,6 @@ urlpatterns = [
     path('admin/login/', AdminLoginView.as_view(), name='admin-login'),
     path('admin/user/', AdminUserView.as_view(), name='admin-user'),
     path('terms/', include('terms.urls')),
-    path('company/', CompanyIntroductionView.as_view(), name='company'),
-    path('company/notice/<int:page>/', CompanyNoticeListAPI.as_view(), name='company-api'),
-    path('footer/notice/', FooterNoticeLatestAPI.as_view(), name='footer-notice-api'),
     path('', MainView.as_view())
 ]
 
