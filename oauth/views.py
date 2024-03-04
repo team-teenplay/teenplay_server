@@ -42,5 +42,11 @@ class OAuthLoginView(View):
         member = Member.enabled_objects.filter(**data)
 
         request.session['member'] = MemberSerializer(member.first()).data
-        return redirect('/')
+        path = "/"
+        previous_uri = request.session.get('previous_uri')
+        if previous_uri is not None:
+            path = previous_uri
+            del request.session['previous_uri']
+
+        return redirect(path)
 

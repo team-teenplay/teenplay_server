@@ -47,8 +47,8 @@ urlpatterns = [
     path('terms/', include('terms.urls')),
     path('activity/', include('activity.urls'), name='activity'),
     path('company/', CompanyIntroductionView.as_view(), name='company'),
-    path('company/notice/<int:page>/', CompanyNoticeListAPI.as_view(), name='company-api'),
-    path('footer/notice/', FooterNoticeLatestAPI.as_view(), name='footer-notice-api'),
+    path('company/notice/api/<int:page>/', CompanyNoticeListAPI.as_view(), name='company-api'),
+    path('footer/notice/api/', FooterNoticeLatestAPI.as_view(), name='footer-notice-api'),
     path('pay/', include('pay.urls'), name='pay'),
     path('', MainView.as_view())
 ]

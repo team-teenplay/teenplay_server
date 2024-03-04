@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="{% static 'public/web/css/header-web.css' %}">
     <link rel="stylesheet" href="{% static 'public/web/css/footer-web.css' %}">
 {% endblock %}
-{% block title %}틴플 : 활동 신규 작성{% endblock %}
+{% block title %}틴플 :: 활동 신규 작성{% endblock %}
 {% block content %}
     <main id="main-section">
         <div id="host-center">
@@ -412,6 +412,7 @@
     </main>
 {% endblock %}
 {% block js %}
+    <script>`{{ club }}`</script>
     <script src="{% static 'activity/web/js/activity-new-web.js' %}"></script>
 {% endblock %}
 

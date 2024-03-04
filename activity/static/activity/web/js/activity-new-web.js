@@ -385,10 +385,11 @@ const pay = () => {
     }).done(function (data) {
         const memberId = document.getElementById("member-id").value;
             if (memberId){
-                fetch(`/pay/create/?memberId=${memberId}`)
+                fetch(`/pay/create/api/?memberId=${memberId}`)
                     .then((response) => response.json())
                     .then((pay) => {
-                        console.log('결제 성공?')
+                        if (pay === null) return;
+                        console.log('결제 성공')
                         console.log(pay);
                         // createActivity(pay);
                     })
@@ -397,11 +398,12 @@ const pay = () => {
 };
 
 const createActivity = (pay) => {
-    if (pay) {
+    if (pay !== null) {
         const activityForm = document.querySelector("form[name=activity-create]")
         let payInput = document.createElement("input")
         payInput.setAttribute("type", "hidden");
         payInput.setAttribute("name", "pay-id");
+        payInput.setAttribute("value", pay.id)
         activityForm.appendChild(payInput);
         activityForm.submit();
     }

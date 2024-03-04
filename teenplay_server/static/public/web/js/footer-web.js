@@ -1,6 +1,6 @@
 // 푸터에 공지사항 최신 1개 가져오기
 const getNotice = (callback) => {
-    fetch(`/footer/notice/`)
+    fetch(`/footer/notice/api/`)
         .then((response) => response.json())
         .then((notice_info) => {
             if (callback) {
