@@ -113,7 +113,7 @@ function manageScroll(e) {
 let idx = 0;
 let check = true;
 let isFetchingTeenplay = false;
-let pageNumber = 1;
+let pageNumber = 5;
 slideWrap.addEventListener("wheel", (e) => {
     manageScroll(e);
     if (!check) return;
@@ -164,6 +164,7 @@ slideWrap.addEventListener("wheel", (e) => {
         setTimeout( () => {
             isFetchingTeenplay = true;
             getTeenplay(showTeenplay)
+            pageNumber += 3
         },500)
     }
 });
@@ -645,10 +646,7 @@ const showTeenplay = (teenplay) => {
             playIcons[idx].style.display = "none";
         }
 
-        number = videoWraps.length
-        console.log('page', pageNumber)
-        console.log('number', number-7)
-        if (idx == videoWraps.length-1 && !isFetchingTeenplayAnother) {
+        if (idx == videoWraps.length-1 && !isFetchingTeenplayAnother && idx == pageNumber-1) {
             isFetchingTeenplayAnother = true;
             // 해당 부분 호출 시 item height 의 max 를 늘려줘야 함
             let currentHeight = parseInt(window.getComputedStyle(slideContainer).height);
@@ -663,7 +661,6 @@ const showTeenplay = (teenplay) => {
                 isFetchingTeenplayAnother = false;
                 getTeenplay(showTeenplay)
                 pageNumber += 3
-                console.log("우웨웨웨웨웩!!!!")
             }, 500)
         }
     });
