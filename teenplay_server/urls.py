@@ -30,7 +30,7 @@ urlpatterns = [
     path('member/', include('member.urls')),
     path('accounts/', include('allauth.urls')),
     path('oauth/', include('oauth.urls')),
-    path('teenplay/', include('teenplay.urls')),
+    path('teenplay/', include('teenplay.urls-web')),
     path('admin/login/', AdminLoginView.as_view(), name='admin-login'),
     path('admin/user/', AdminUserView.as_view(), name='admin-user'),
     path('admin/message/', AdminMessageView.as_view(), name='admin-message'),
