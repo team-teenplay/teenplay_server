@@ -356,47 +356,44 @@ cancelExpand.addEventListener("click", (e) => {
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // 부트 페이 연동
-const pay = async () => {
-    const response = await Bootpay.requestPayment({
+const pay = () => {
+    BootPay.request({
+        price: 1000,
         application_id: "65e44626e57a7e001be3736d",
-        price: 20000,
-        order_name: `${activityTitle.value} 개설`,
-        order_id: "",
-        pg: "다날",
-        method: "카드",
-        tax_free: 0,
-        user: {
-            id: "회원아이디",
-            username: "회원이름",
-            phone: "01000000000",
-            email: "test@test.com",
-        },
+        name: `${activityTitle.value} 개설`,
+        order_id: "1",
+        pg: "danal",
+        show_agree_window: 0,
         items: [
-            {
-                id: "item_id",
-                name: "테스트아이템",
-                qty: 1,
-                price: 1000,
-            },
         ],
-        extra: {
-            open_type: "iframe",
-            card_quota: "0,2,3",
-            escrow: false,
-        },
-    });
-    const confirmedData = await Bootpay.confirm() //결제를 승인한다
-        if(confirmedData.event === 'done') {
-            const memberId = document.getElementById("member-id").value;
+        user_info: {
+            email: '',
+            phone: '',
+            username: '',
+            addr: ''
+        }
+    }).error(function (data) {
+        var msg = "결제 에러입니다.: " + JSON.stringify(data);
+        alert(msg);
+        console.log(data);
+    }).cancel(function (data) {
+        var msg = "결제 취소입니다.: " + JSON.stringify(data);
+        alert(msg);
+        console.log(data);
+    }).confirm(function (data) {
+        BootPay.transactionConfirm(data);
+    }).done(function (data) {
+        const memberId = document.getElementById("member-id").value;
             if (memberId){
                 fetch(`/pay/create/?memberId=${memberId}`)
                     .then((response) => response.json())
                     .then((pay) => {
-                        createActivity(pay);
+                        console.log('결제 성공?')
+                        console.log(pay);
+                        // createActivity(pay);
                     })
             }
-        }
-
+    })
 };
 
 const createActivity = (pay) => {

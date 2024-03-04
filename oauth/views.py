@@ -26,9 +26,9 @@ class OAuthLoginView(View):
             member_email = data['email']
             member_name = data['name']
 
-        user = User.objects.filter(email=member_email)
-        if user.exists():
-            user.first().delete()
+        # user = User.objects.filter(email=member_email)
+        # if user.exists():
+        #     user.first().delete()
 
         data = {
             'member_type': provider,
