@@ -10,15 +10,10 @@ from teenplay.models import TeenPlay
 from teenplay.serializers import TeenplaySerializer
 
 
-# 메인페이지에서 틴플레이 선택 시 random으로 선택 후 틴플레이 보여주는 작업,
-# 최초 10개를 가져와서 해당 리스트에 맞게 뿌려주고 싶은데 방법이 있을까....
 class TeenplayMainListWebView(View):
     def get(self, request):
         return render(request, 'teenplay/web/teenplay-play-web.html')
 
-class TeenplayMainListAppView(View):
-    def get(self, request):
-        return render(request, 'teenplay/web/teenplay-play-web.html')
 
 class TeenplayMainListAPIView(APIView):
     def get(self, reqeust):
@@ -41,4 +36,10 @@ class TeenplayMainListAPIView(APIView):
 # id 값은 세션의 값을 가져와서 넣어줘야한다
 # 모두 비동기 함수를 사용해야한다.
 # member teenplay , status
+
+#모바일######################################################################################################################################
+class TeenplayMainListAppView(View):
+    def get(self, request):
+        return render(request, 'teenplay/web/teenplay-play-web.html')
+
 
