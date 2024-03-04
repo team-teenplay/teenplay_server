@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.db.models import Count, F
+from django.db.models import Count, F, Q
 from django.shortcuts import render, redirect
 from django.views import View
 from rest_framework.response import Response
@@ -63,7 +63,7 @@ class ClubDetailView(View):
             owner_name=F('member__member_nickname'),
             owner_email=F('member__member_email'),
             owner_phone=F('member__member_phone'),
-            club_member_count=Count('clubmember'),
+            club_member_count=Count('clubmember', filter=Q(clubmember__status=1)),
             club_activity_count=Count('activity')).values(*columns)
 
         member = Member(**request.session['member'])

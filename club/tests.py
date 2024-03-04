@@ -1,4 +1,4 @@
-from django.db.models import Count, F
+from django.db.models import Count, F, Q
 from django.test import TestCase
 
 from club.models import Club, ClubMember
@@ -22,19 +22,21 @@ class ClubTestCase(TestCase):
         'club_activity_count'
     ]
 
-    # club = Club.objects.filter(id=club_id) \
-    #     .annotate(
-    #     owner_id=F('member__id'),
-    #     owner_name=F('member__member_nickname'),
-    #     owner_email=F('member__member_email'),
-    #     owner_phone=F('member__member_phone'),
-    #     club_member_count=Count('clubmember'),
-    #     club_activity_count=Count('activity')).values(*columns)
+    club = Club.objects.filter(id=club_id) \
+        .annotate(
+        owner_id=F('member__id'),
+        owner_name=F('member__member_nickname'),
+        owner_email=F('member__member_email'),
+        owner_phone=F('member__member_phone'),
+        club_member_count=Count('clubmember', filter=Q(clubmember__status=1)),
+        club_activity_count=Count('activity')).values(*columns)
 
-    member = Member.objects.get(id=8)
-    club_member = ClubMember.objects.filter(member=member)
+    print(club)
 
-    if club_member.exists():
-        if club_member.first().status:
-            print('')
+    # member = Member.objects.get(id=8)
+    # club_member = ClubMember.objects.filter(member=member)
+    #
+    # if club_member.exists():
+    #     if club_member.first().status:
+    #         print(club_member.first().status)
 
