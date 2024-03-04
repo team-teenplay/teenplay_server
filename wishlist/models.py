@@ -1,6 +1,7 @@
 from django.db import models
 from member.models import Member
-from teenplay_server.models import Category, Like
+from teenplay_server.category import Category
+from teenplay_server.models import Like
 from teenplay_server.period import Period
 
 
