@@ -20,7 +20,9 @@ from django.contrib import admin
 from django.urls import path, include
 
 from main.views import MainView, FooterNoticeLatestAPI
-from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroductionView, CompanyNoticeListAPI
+from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroductionView, CompanyNoticeListAPI, \
+    AdminMessageView, AdminTeenplayView, AdminPromoteView, AdminActivityView, AdminWishlistView, AdminMeetingView, \
+    AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -31,6 +33,17 @@ urlpatterns = [
     path('teenplay/', include('teenplay.urls')),
     path('admin/login/', AdminLoginView.as_view(), name='admin-login'),
     path('admin/user/', AdminUserView.as_view(), name='admin-user'),
+    path('admin/message/', AdminMessageView.as_view(), name='admin-message'),
+    path('admin/teenplay/', AdminTeenplayView.as_view(), name='admin-teenplay'),
+    path('admin/promote/', AdminPromoteView.as_view(), name='admin-promote'),
+    path('admin/activity/', AdminActivityView.as_view(), name='admin-activity'),
+    path('admin/wishlist/', AdminWishlistView.as_view(), name='admin-wishlist'),
+    path('admin/meeting/', AdminMeetingView.as_view(), name='admin-meeting'),
+    path('admin/festival/', AdminFestivalView.as_view(), name='admin-festival'),
+    path('admin/festival/write/', AdminFestivalWrite.as_view(), name='admin-festival-write'),
+    path('admin/notice/', AdminNoticeView.as_view(), name='admin-notice'),
+    path('admin/notice/write/', AdminNoticeWriteView.as_view(), name='admin-notice-write'),
+    path('admin/comment/', AdminCommentView.as_view(), name='admin-comment'),
     path('terms/', include('terms.urls')),
     path('activity/', include('activity.urls'), name='activity'),
     path('company/', CompanyIntroductionView.as_view(), name='company'),
