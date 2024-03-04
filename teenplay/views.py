@@ -1,3 +1,4 @@
+from django.db.models import Count, Q
 from django.shortcuts import render, redirect
 from django.views import View
 from rest_framework.response import Response
@@ -6,21 +7,28 @@ from random import randint
 
 from club.models import Club
 from member.models import Member
-from teenplay.models import TeenPlay
+from teenplay.models import TeenPlay, TeenPlayLike
 from teenplay.serializers import TeenplaySerializer
 
 
 class TeenplayMainListWebView(View):
     def get(self, request):
         teenplay_count = TeenPlay.objects.all().count()
+
         teenplay_list = []
         for number in range(5):
+            like_count = {}
+
             radiant_teenplay = randint(1, teenplay_count)
-            teenplay = TeenPlay.objects.filter(id=radiant_teenplay).values('video_path', 'club__club_name', 'club__club_intro','club__club_profile_path')
-            teenplay_list.append(list(teenplay)[0])
+            teenplay = TeenPlay.objects.filter(id=radiant_teenplay, status=1).annotate(likes=Count('teenplaylike__status',filter=Q(teenplaylike__status=1))).values('video_path', 'club__club_name', 'club__club_intro','club__club_profile_path','club_id','likes')
+            member_like = TeenPlayLike.objects.filter(member_id=radiant_teenplay, status=1).exists()
+            like_count['like_check']= member_like
+            teenplay_like={**like_count, **teenplay[0]}
+            teenplay_list.append(teenplay_like)
+
+
 
         context = teenplay_list
-        print(context)
         return render(request, 'teenplay/web/teenplay-play-web.html', {'context': context})
 
 
