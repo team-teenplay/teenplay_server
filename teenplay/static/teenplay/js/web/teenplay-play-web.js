@@ -91,8 +91,8 @@ videos.forEach((video, i) => {
 
 function slideNext(idx) {
     slideContainer.style.transition = `all 0.5s ease-in`;
-    // slideContainer.style.transform = `translateY(-${window.innerHeight * idx}px)`;
-    slideContainer.style.transform = `translateY(-${674* idx}px)`;
+    slideContainer.style.transform = `translateY(-${window.innerHeight * idx}px)`;
+    // slideContainer.style.transform = `translateY(-${674* idx}px)`;
     videoWraps[idx - 1].classList.remove("playing");
     videoWraps[idx].classList.add("playing");
 }
@@ -113,6 +113,7 @@ function manageScroll(e) {
 let idx = 0;
 let check = true;
 let isFetchingTeenplay = false;
+let pageNumber = 1;
 slideWrap.addEventListener("wheel", (e) => {
     manageScroll(e);
     if (!check) return;
@@ -140,7 +141,6 @@ slideWrap.addEventListener("wheel", (e) => {
         globalThis.flags[idx] = false;
         pauseIcons[idx].style.display = "block";
         playIcons[idx].style.display = "none";
-        console.log("down2", idx, videoWraps.length)
 
     } else {
         setTimeout(() => {
@@ -159,7 +159,6 @@ slideWrap.addEventListener("wheel", (e) => {
         globalThis.flags[idx] = false;
         pauseIcons[idx].style.display = "block";
         playIcons[idx].style.display = "none";
-        console.log("up2", idx, videoWraps.length)
     }
     if (idx === videoWraps.length-1 && !isFetchingTeenplay && idx===4){
         setTimeout( () => {
@@ -220,7 +219,7 @@ const showTeenplay = (teenplay) => {
                             <div class="play-writer-image-container">
                                 <!-- 모임 프사 -->
 <!--                                <img src="{% static 'teenplay/image/teenplay_example_1_profile.jpg' %}" class="play-writer-image" />-->
-                                <img src="/teenplay/static/teenplay/image/teenplay_example_1_profile.jpg" class="play-writer-image" />
+<!--                                <img src="/teenplay/static/teenplay/image/teenplay_example_1_profile.jpg" class="play-writer-image" />-->
                             </div>
                         </a>
                         <div class="play-writer-container">
@@ -318,7 +317,7 @@ const showTeenplay = (teenplay) => {
                             <div class="play-writer-image-container">
                                 <!-- 모임 프사 -->
 <!--                                <img src="{% static 'teenplay/image/teenplay_example_1_profile.jpg' %}" class="play-writer-image" />-->
-                                <img src="/teenplay/static/teenplay/image/teenplay_example_1_profile.jpg" class="play-writer-image" />
+<!--                                <img src="/teenplay/static/teenplay/image/teenplay_example_1_profile.jpg" class="play-writer-image" />-->
                             </div>
                         </a>
                         <div class="play-writer-container">
@@ -416,7 +415,7 @@ const showTeenplay = (teenplay) => {
                             <div class="play-writer-image-container">
                                 <!-- 모임 프사 -->
 <!--                                <img src="{% static 'teenplay/image/teenplay_example_1_profile.jpg' %}" class="play-writer-image" />-->
-                                <img src="/teenplay/static/teenplay/image/teenplay_example_1_profile.jpg" class="play-writer-image" />
+<!--                                <img src="/teenplay/static/teenplay/image/teenplay_example_1_profile.jpg" class="play-writer-image" />-->
                             </div>
                         </a>
                         <div class="play-writer-container">
@@ -512,7 +511,6 @@ const showTeenplay = (teenplay) => {
     let likeBtns = document.querySelectorAll(".play-like-btn");
     let emptyHeart = document.querySelectorAll(".play-like-icon.empty");
     let fullHeart = document.querySelectorAll(".play-like-icon.full");
-
 
     videoWraps.forEach((videoWrap, i) => {
         if (!videoWrap.classList.contains("playing")) {
@@ -627,7 +625,6 @@ const showTeenplay = (teenplay) => {
             globalThis.flags[idx] = false;
             pauseIcons[idx].style.display = "block";
             playIcons[idx].style.display = "none";
-            console.log("down", idx, videoWraps.length)
 
         } else {
             setTimeout(() => {
@@ -646,25 +643,26 @@ const showTeenplay = (teenplay) => {
             globalThis.flags[idx] = false;
             pauseIcons[idx].style.display = "block";
             playIcons[idx].style.display = "none";
-            console.log('up', idx, videoWraps.length)
         }
 
-
+        number = videoWraps.length
+        console.log('page', pageNumber)
+        console.log('number', number-7)
         if (idx == videoWraps.length-1 && !isFetchingTeenplayAnother) {
             isFetchingTeenplayAnother = true;
             // 해당 부분 호출 시 item height 의 max 를 늘려줘야 함
             let currentHeight = parseInt(window.getComputedStyle(slideContainer).height);
             // 현재 뷰포트의 높이를 가져오기
             let viewportHeight = window.innerHeight;
-            // 기존 높이에 674px를 더한 후 이를 vh 단위로 변환
-            let newHeightInVh = ((currentHeight + 674 * 3) / viewportHeight) * 100;
+            // 기존 높이에 674px (953px)를 더한 후 이를 vh 단위로 변환
+            let newHeightInVh = ((currentHeight + 953 * 3) / viewportHeight) * 100;
             // 새로운 높이를 설정
             slideContainer.style.height = newHeightInVh + "vh";
 
             setTimeout(() => {
-                console.log(idx, videoWraps.length)
                 isFetchingTeenplayAnother = false;
                 getTeenplay(showTeenplay)
+                pageNumber += 3
                 console.log("우웨웨웨웨웩!!!!")
             }, 500)
         }
