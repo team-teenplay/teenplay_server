@@ -1,17 +1,13 @@
 from django.contrib import admin
 from django.urls import path, include
 
-from teenplay.views import TeenplayMainListView, TeenplayListView, TeenPlayRandomList, TeenplayMainListAPIView
-from teenplay.views import TeenplayLikeAPIView
+from teenplay.views import TeenplayMainListAppView, TeenplayMainListAPIView
 
-app_name = 'teenplay'
+app_name = 'app-teenplay'
 
 urlpatterns = [
-    path('all/', TeenplayMainListView.as_view(), name='teenplay-main-list'),
+    path('all/', TeenplayMainListAppView.as_view(), name='teenplay-main-list'),
     path('all/new/', TeenplayMainListAPIView.as_view(), name='teenplay-main-list-new'),
-    # path('all/<int:number>', TeenplayMainListView.as_view(), name='teenplay-main-list'),
-    path('all/random', TeenPlayRandomList.as_view(), name= 'teenplay-main'),
-    path('list/<int:teenplay_id>/', TeenplayListView.as_view(), name='teenplay-list'),
 ]
 
 

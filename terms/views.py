@@ -2,36 +2,36 @@ from django.shortcuts import render
 from django.views import View
 
 
-class ServiceTermsView(View):
+class ServiceTermsWebView(View):
     def get(self, request):
-        return render(request, 'terms/service-terms-web.html')
+        return render(request, 'terms/web/service-terms-web.html')
 
 
-class RefundTermsView(View):
+class RefundTermsWebView(View):
     def get(self, request):
-        return render(request, 'terms/refund-terms-web.html')
+        return render(request, 'terms/web/refund-terms-web.html')
 
 
-class PrivacyTermsView(View):
+class PrivacyTermsWebView(View):
     def get(self, request):
-        return render(request, 'terms/privacyprovision-web.html')
+        return render(request, 'terms/web/privacyprovision-web.html')
 
 
-class MarketingTermsView(View):
+class MarketingTermsWebView(View):
     def get(self, request):
-        return render(request, 'terms/marketing-terms-web.html')
+        return render(request, 'terms/web/marketing-terms-web.html')
 
 
-class InformationTermsView(View):
+class InformationTermsWebView(View):
     def get(self, request):
-        return render(request, 'terms/information-web.html')
+        return render(request, 'terms/web/information-web.html')
 
 
-class EmailTermsView(View):
+class EmailTermsWebView(View):
     def get(self, request):
-        return render(request, 'terms/email-terms-web.html')
+        return render(request, 'terms/web/email-terms-web.html')
 
 
-class EBankingTermsView(View):
+class EBankingTermsWebView(View):
     def get(self, request):
-        return render(request, 'terms/e-banking-terms-web.html')
+        return render(request, 'terms/web/e-banking-terms-web.html')
