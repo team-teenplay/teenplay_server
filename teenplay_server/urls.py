@@ -26,7 +26,8 @@ from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroduc
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path('club/', include('club.urls')),
+    path('club/', include('club.urls-web')),
+    path('app/club/', include('club.urls-app')),
     path('member/', include('member.urls-web')),
     path('app/member/', include('member.urls-app')),
     path('accounts/', include('allauth.urls')),
