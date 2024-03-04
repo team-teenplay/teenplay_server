@@ -16,14 +16,15 @@ class TeenplayMainListWebView(View):
 
 
 class TeenplayMainListAPIView(APIView):
+    # 해당 url 로 호출을 받으면
     def get(self, reqeust):
         teenplay = TeenPlay.objects.all().count()
         radiant_teenplay = randint(1, teenplay)
         teenplay_number = radiant_teenplay
 
-        teenplay = TeenPlay.objects.get(pk=teenplay_number)
+        teenplay = TeenPlay.objects.get(id=teenplay_number).values('video_path', 'club__club_name', 'club_club_intro', 'club__club_profile_path')
+        print(teenplay)
         teenplay = TeenplaySerializer(teenplay).data
-        tendata= teenplay['video_path']
         return Response(teenplay)
 
 
