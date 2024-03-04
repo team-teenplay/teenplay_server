@@ -6,12 +6,12 @@ from festival.models import Festival
 
 
 # web-festival 페이지 이동
-class FestivalListView(View):
+class FestivalListWebView(View):
     def get(self, request):
         return render(request, 'festival/web/festival-web.html')
 
 
-class FestivalListAPI(APIView):
+class FestivalListWebAPI(APIView):
     def get(self, request, page):
         # post_count = 3
         #
@@ -32,11 +32,24 @@ class FestivalListAPI(APIView):
 
 
 # web-festival-detail 페이지 이동
-class FestivalDetailView(View):
+class FestivalDetailtWebView(View):
     def get(self, request):
         return render(request, 'festival/web/festival-detail-web.html')
 
 
-class FestivalDetailAPI(APIView):
+class FestivalDetailtWebAPI(APIView):
     def get(self, request, post):
         pass
+
+
+class FestivalListAppView(View):
+    pass
+
+class FestivalListAppAPI(View):
+    pass
+
+class FestivalDetailAppView(View):
+    pass
+
+class FestivalDetailAppAPI(View):
+    pass
