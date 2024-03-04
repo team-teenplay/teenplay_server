@@ -6,7 +6,8 @@ from club.models import Club
 from festival.models import Festival
 from member.models import Member
 from pay.models import Pay
-from teenplay_server.models import Category, Like
+from teenplay_server.category import Category
+from teenplay_server.models import Like
 from teenplay_server.period import Period
 
 
