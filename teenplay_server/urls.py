@@ -22,7 +22,7 @@ from django.urls import path, include
 from main.views import MainView, FooterNoticeLatestAPI
 from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroductionView, CompanyNoticeListAPI, \
     AdminMessageView, AdminTeenplayView, AdminPromoteView, AdminActivityView, AdminWishlistView, AdminMeetingView, \
-    AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView
+    AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView, AdminUserAPI
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -31,8 +31,14 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('oauth/', include('oauth.urls')),
     path('teenplay/', include('teenplay.urls-web')),
+    path('app/teenplay/', include('teenplay.urls-app')),
+    path('notice/', include('notice.urls-web')),
+    path('app/notice/', include('notice.urls-app')),
+    path('festival/', include('festival.urls-web')),
+    path('app/festival/', include('festival.urls-app')),
     path('admin/login/', AdminLoginView.as_view(), name='admin-login'),
     path('admin/user/', AdminUserView.as_view(), name='admin-user'),
+    path('admin/user/<int:page>/', AdminUserAPI.as_view(), name='admin-user-api'),
     path('admin/message/', AdminMessageView.as_view(), name='admin-message'),
     path('admin/teenplay/', AdminTeenplayView.as_view(), name='admin-teenplay'),
     path('admin/promote/', AdminPromoteView.as_view(), name='admin-promote'),
