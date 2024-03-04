@@ -27,7 +27,8 @@ from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroduc
 urlpatterns = [
     # path('admin/', admin.site.urls),
     path('club/', include('club.urls')),
-    path('member/', include('member.urls')),
+    path('member/', include('member.urls-web')),
+    path('app/member/', include('member.urls-app')),
     path('accounts/', include('allauth.urls')),
     path('oauth/', include('oauth.urls')),
     path('teenplay/', include('teenplay.urls-web')),
@@ -50,12 +51,15 @@ urlpatterns = [
     path('admin/notice/', AdminNoticeView.as_view(), name='admin-notice'),
     path('admin/notice/write/', AdminNoticeWriteView.as_view(), name='admin-notice-write'),
     path('admin/comment/', AdminCommentView.as_view(), name='admin-comment'),
-    path('terms/', include('terms.urls')),
-    path('activity/', include('activity.urls'), name='activity'),
+    path('terms/', include('terms.urls-web')),
+    path('app/terms/', include('terms.urls-app')),
+    path('activity/', include('activity.urls-web')),
+    path('app/activity/', include('activity.urls-app')),
     path('company/', CompanyIntroductionView.as_view(), name='company'),
+    path('app/company/', CompanyIntroductionView.as_view(), name='company'),
     path('company/notice/api/<int:page>/', CompanyNoticeListAPI.as_view(), name='company-api'),
     path('footer/notice/api/', FooterNoticeLatestAPI.as_view(), name='footer-notice-api'),
-    path('pay/', include('pay.urls'), name='pay'),
+    path('pay/', include('pay.urls')),
     path('', MainView.as_view())
 ]
 

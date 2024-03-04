@@ -3,7 +3,7 @@ from django.urls import path, include
 
 from teenplay.views import TeenplayMainListAppView, TeenplayMainListAPIView
 
-app_name = 'teenplay'
+app_name = 'app-teenplay'
 
 urlpatterns = [
     path('all/', TeenplayMainListAppView.as_view(), name='teenplay-main-list'),

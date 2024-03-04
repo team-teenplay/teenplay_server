@@ -11,5 +11,5 @@ urlpatterns = [
     path('list/<int:page>', FestivalListWebAPI.as_view(), name='festival-list-api'),
     # detail 페이지 이동 후 detail 페이지 경로 가져오기
     path('detail/', FestivalDetailtWebView.as_view(), name='festival-detail'),
-    path('detail/<int: post>', FestivalDetailtWebAPI.as_view(), name='festival-detail-api'),
+    path('detail/<int:post>', FestivalDetailtWebAPI.as_view(), name='festival-detail-api'),
 ]
