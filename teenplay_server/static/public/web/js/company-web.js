@@ -197,7 +197,7 @@ const noticeMoreBtn = document.querySelector(".news-more-btn-box")
 
 let page = 1;
 const getNoticeList = (callback) => {
-    fetch(`/company/notice/${page}`)
+    fetch(`/company/notice/api/${page}`)
         .then((response) => response.json())
         .then((notice_info) => {
             if (callback) {
