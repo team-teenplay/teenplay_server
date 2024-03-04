@@ -1,16 +1,16 @@
 {% load static %}
 <header id="header">
-    <!-- 배너 부분 로컬 회원중 인증을 하지 않았을 때 표시 -->
-    <div class="banner-wrap">
-        <span> <span class="name_size">서경덕</span>님 </span>
-        <span class="certify-message">qwer1234@gmail.com 이메일을 확인하여 인증을 완료해주세요.</span>
-        <a class="send-email">
-            인증 메일 발송하기
-            <svg xmlns="http://www.w3.org/2000/svg" class="arrow" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-            </svg>
-        </a>
-    </div>
+{#    <!-- 배너 부분 로컬 회원중 인증을 하지 않았을 때 표시 -->#}
+{#    <div class="banner-wrap">#}
+{#        <span> <span class="name_size">서경덕</span>님 </span>#}
+{#        <span class="certify-message">qwer1234@gmail.com 이메일을 확인하여 인증을 완료해주세요.</span>#}
+{#        <a class="send-email">#}
+{#            인증 메일 발송하기#}
+{#            <svg xmlns="http://www.w3.org/2000/svg" class="arrow" viewBox="0 0 20 20" fill="currentColor">#}
+{#                <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>#}
+{#            </svg>#}
+{#        </a>#}
+{#    </div>#}
     <!-- 네비 부분 -->
     <nav>
         <div class="main-nav-wrap">
@@ -221,7 +221,7 @@
             <div class="dividing-line">|</div>
             <div class="clup-open">
                 <!-- 모임개설 페이지 입력 필요 -->
-                <a href="">
+                <a href="{% url 'club:intro' %}" class="club-create-link">
                     <span>모임개설</span>
                 </a>
             </div>

@@ -127,11 +127,14 @@ const memberProfileClick = document.querySelectorAll(".member");
 const memberPop = document.querySelector(".teams-member-pop");
 const memberPopBk = document.querySelector(".member-pop-background");
 const memberPopIcon = document.querySelector(".pop-member-btn-close");
-memberProfileClick.forEach((members) => {
+const memberPopupImage = document.querySelector(".pop-member-image-picture");
+const memberImages = document.querySelectorAll(".member-image-picture")
+memberProfileClick.forEach((members, i) => {
     members.addEventListener("click", (e) => {
         memberPop.style.display = "flex";
         memberPop.style.alignItems = "center";
         memberPop.style.justifyContent = "center";
+        memberPopupImage.style.backgroundImage = memberImages[i].style.backgroundImage;
     });
 });
 
@@ -175,12 +178,68 @@ memberMoreButton.addEventListener("click", (e) => {
 });
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// 카카오 맵
-var mapContainer = document.getElementById("map"), // 지도를 표시할 div
-    mapOption = {
-        center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-        level: 3, // 지도의 확대 레벨
-    };
+// // 카카오 맵
+// var mapContainer = document.getElementById("map"), // 지도를 표시할 div
+//     mapOption = {
+//         center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+//         level: 3, // 지도의 확대 레벨
+//     };
+//
+// // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+// var map = new kakao.maps.Map(mapContainer, mapOption);
 
-// 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
-var map = new kakao.maps.Map(mapContainer, mapOption);
+
+// 공지사항 목록 불러오기
+
+
+// 공지사항 더보기버튼
+const noticeMoreBtn = document.querySelector(".news-more-btn-box")
+
+let page = 1;
+const getNoticeList = (callback) => {
+    fetch(`/company/notice/${page}`)
+        .then((response) => response.json())
+        .then((notice_info) => {
+            if (callback) {
+                callback(notice_info);
+            }
+        });
+};
+
+// 각 공지사항 클릭 시 링크 연결은 공지사항 페이지 작업 끝나고 하도록 하겠습니다.
+const showNoticeList = (notice_info) => {
+    if (!notice_info.hasNext){
+        noticeMoreBtn.style.display = "none";
+    }
+    let notices = notice_info.notices;
+    const newsBox = document.querySelector(".news-box")
+    notices.forEach((notice) => {
+        newsBox.innerHTML += `
+            <a class="news-list" href="" target="_blank">
+                <div class="news-head">
+                    <div class="news-date">${notice.created_date.slice(0, 10)}</div>
+                </div>
+                <div class="news-body">
+                    <div class="news-subject">${notice.notice_title}</div>
+                    <div class="news-description">
+                        ${notice.notice_content}
+                    </div>
+                </div>
+            </a>
+        `
+    })
+    updateNoticeCount(notice_info.total);
+}
+
+getNoticeList(showNoticeList);
+
+// 버튼 안의 숫자 바꾸기
+const noticeMoreBtnCount = document.querySelector(".news-more-btn")
+const updateNoticeCount = (total) => {
+    const nowShowingCount = document.querySelectorAll(".news-list").length;
+    noticeMoreBtnCount.innerText = `More Notices.. (${nowShowingCount}/${total})`
+}
+noticeMoreBtn.addEventListener("click", (e) => {
+    page++;
+    getNoticeList(showNoticeList);
+})

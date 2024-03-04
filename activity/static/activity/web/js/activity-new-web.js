@@ -56,7 +56,7 @@ jQuery(document).on("focus", ".timepicker", function () {
     var input = jQuery(this);
     // input 요소의 위치와 값을 로그에 출력
     var clickX = jQuery(input).offset().left;
-    var clickY = jQuery(input).offset().top + jQuery(input).outerHeight() - 70;
+    var clickY = jQuery(input).offset().top + jQuery(input).outerHeight();
     setTimeout(function () {
         jQuery(".ui-timepicker-container").css({ left: clickX + "px", top: clickY });
     }, 0);
@@ -110,9 +110,10 @@ let selectBox = document.querySelector(".subject-category");
 let errorMessagesBoxAddress = document.querySelector(".error-message-box-address");
 let errorMessagesBoxLocation = document.querySelector(".error-message-box-location");
 
-let locationMapTitleInputText = document.querySelector(".location-map-title-input-text");
+// let locationMapTitleInputText = document.querySelector(".location-map-title-input-text");
 let locationNameInputText = document.querySelector(".location-name-input-text");
 let locationContentInputText = document.querySelector(".location-content-input-text");
+
 
 // 결제하기 버튼을 클릭했을 때 입력되지 않은 경고 문구 값 나오기
 clickOpenButton.addEventListener("click", (e) => {
@@ -140,32 +141,26 @@ clickOpenButton.addEventListener("click", (e) => {
         }
     });
 
-    if (locationSelect.value === "place" && locationMapTitleInputText.value === "" && locationNameInputText.value === "") {
-        errorMessagesBoxAddress.style.display = "block";
-        errorMessagesBoxLocation.style.display = "block";
-        locationMapTitleInputText.classList.add("border-color");
-        locationNameInputText.classList.add("border-color");
-    } else if (locationMapTitleInputText.value != "" && locationNameInputText.value === "") {
-        errorMessagesBoxLocation.style.display = "block";
-        locationNameInputText.classList.add("border-color");
-    }
+    // if (locationSelect.value === "place" && locationMapTitleInputText.value === "" && locationNameInputText.value === "") {
+    //     errorMessagesBoxAddress.style.display = "block";
+    //     errorMessagesBoxLocation.style.display = "block";
+    //     locationMapTitleInputText.classList.add("border-color");
+    //     locationNameInputText.classList.add("border-color");
+    // } else if (locationMapTitleInputText.value != "" && locationNameInputText.value === "") {
+    //     errorMessagesBoxLocation.style.display = "block";
+    //     locationNameInputText.classList.add("border-color");
+    // }
 
-    if (locationSelect.value === "direct" && locationNameInputText.value === "") {
-        errorMessagesBoxLocation.style.display = "block";
-        locationNameInputText.classList.add("border-color");
-    }
+    // if (locationSelect.value === "direct" && locationNameInputText.value === "") {
+    //     errorMessagesBoxLocation.style.display = "block";
+    //     locationNameInputText.classList.add("border-color");
+    // }
 
     let dateBoxAllArray = [...document.querySelectorAll(".date-box")];
     let timeBoxAllArray = [...document.querySelectorAll(".date-box")];
 
     if (activityTitle.value != "" && selectBox.value != "disabled" && dateBoxAllArray.every((date) => date.value != "") && timeBoxAllArray.every((time) => time.value != "")) {
-        if (locationSelect.value === "place" && locationMapTitleInputText.value != "" && locationNameInputText.value != "") {
-            pay();
-        } else if (locationSelect.value === "direct" && locationNameInputText.value === "") {
-            pay();
-        } else {
-            pay();
-        }
+        pay();
     } else {
         window.scrollTo({
             top: 0,
@@ -208,10 +203,6 @@ activityTitle.addEventListener("keyup", () => {
 });
 
 // 장소 입력 시 경고창 해제
-locationMapTitleInputText.addEventListener("keyup", () => {
-    errorMessagesBoxAddress.style.display = "none";
-    locationMapTitleInputText.classList.remove("border-color");
-});
 locationNameInputText.addEventListener("keyup", () => {
     errorMessagesBoxLocation.style.display = "none";
     locationNameInputText.classList.remove("border-color");
@@ -219,30 +210,30 @@ locationNameInputText.addEventListener("keyup", () => {
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// 장소 선택에 따른 지도/ 장소 input 보여주기
-let locationSelect = document.querySelector(".location-select-default");
-let locationMap = document.querySelector(".activity-map-col");
-let locationMapInput = document.querySelector(".input-location-map-title-col");
-let locationText = document.querySelector(".input-location-name-col");
-let locationTextDetail = document.querySelector(".input-location-content-col");
-locationSelect.addEventListener("change", () => {
-    if (locationSelect.value == "place") {
-        locationMapInput.style.display = "block";
-        locationMap.style.display = "block";
-        locationText.style.display = "block";
-        locationTextDetail.style.display = "block";
-    } else if (locationSelect.value == "direct") {
-        locationMapInput.style.display = "none";
-        locationMap.style.display = "none";
-        locationText.style.display = "block";
-        locationTextDetail.style.display = "block";
-    } else {
-        locationMapInput.style.display = "none";
-        locationMap.style.display = "none";
-        locationText.style.display = "none";
-        locationTextDetail.style.display = "none";
-    }
-});
+// // 장소 선택에 따른 지도/ 장소 input 보여주기
+// let locationSelect = document.querySelector(".location-select-default");
+// let locationMap = document.querySelector(".activity-map-col");
+// let locationMapInput = document.querySelector(".input-location-map-title-col");
+// let locationText = document.querySelector(".input-location-name-col");
+// let locationTextDetail = document.querySelector(".input-location-content-col");
+// locationSelect.addEventListener("change", () => {
+//     if (locationSelect.value == "place") {
+//         locationMapInput.style.display = "block";
+//         locationMap.style.display = "block";
+//         locationText.style.display = "block";
+//         locationTextDetail.style.display = "block";
+//     } else if (locationSelect.value == "direct") {
+//         locationMapInput.style.display = "none";
+//         locationMap.style.display = "none";
+//         locationText.style.display = "block";
+//         locationTextDetail.style.display = "block";
+//     } else {
+//         locationMapInput.style.display = "none";
+//         locationMap.style.display = "none";
+//         locationText.style.display = "none";
+//         locationTextDetail.style.display = "none";
+//     }
+// });
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -367,10 +358,10 @@ cancelExpand.addEventListener("click", (e) => {
 // 부트 페이 연동
 const pay = async () => {
     const response = await Bootpay.requestPayment({
-        application_id: "59a4d323396fa607cbe75de4",
-        price: 1000,
-        order_name: "테스트결제",
-        order_id: "TEST_ORDER_ID",
+        application_id: "65e44626e57a7e001be3736d",
+        price: 20000,
+        order_name: `${activityTitle.value} 개설`,
+        order_id: "",
         pg: "다날",
         method: "카드",
         tax_free: 0,
@@ -394,4 +385,27 @@ const pay = async () => {
             escrow: false,
         },
     });
+    const confirmedData = await Bootpay.confirm() //결제를 승인한다
+        if(confirmedData.event === 'done') {
+            const memberId = document.getElementById("member-id").value;
+            if (memberId){
+                fetch(`/pay/create/?memberId=${memberId}`)
+                    .then((response) => response.json())
+                    .then((pay) => {
+                        createActivity(pay);
+                    })
+            }
+        }
+
 };
+
+const createActivity = (pay) => {
+    if (pay) {
+        const activityForm = document.querySelector("form[name=activity-create]")
+        let payInput = document.createElement("input")
+        payInput.setAttribute("type", "hidden");
+        payInput.setAttribute("name", "pay-id");
+        activityForm.appendChild(payInput);
+        activityForm.submit();
+    }
+}

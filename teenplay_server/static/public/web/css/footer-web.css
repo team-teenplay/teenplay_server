@@ -136,12 +136,12 @@ table {
 
 .post-category {
     --tw-text-opacity: 1;
-    color: rgb(135 141 145/var(--tw-text-opacity));
+    color: rgb(135 141 145/var(--tw-text-opacity)) !important;
 }
 
 .post-category:hover {
     --tw-text-opacity: 1;
-    color: rgb(77 82 86/var(--tw-text-opacity));
+    color: rgb(77 82 86/var(--tw-text-opacity)) !important;
 }
 
 .new-notice-title {
@@ -149,7 +149,7 @@ table {
     margin-right: calc(1rem*var(--tw-space-x-reverse));
     margin-left: calc(1rem*(1 - var(--tw-space-x-reverse)));
     --tw-text-opacity: 1;
-    color: rgb(135 141 145/var(--tw-text-opacity));
+    color: rgb(135 141 145/var(--tw-text-opacity)) !important;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -157,12 +157,12 @@ table {
 
 .new-notice-title:hover {
     --tw-text-opacity: 1;
-    color: rgb(77 82 86/var(--tw-text-opacity));
+    color: rgb(77 82 86/var(--tw-text-opacity)) !important;
 }
 
 .footer-wrap {
     --tw-bg-opacity: 1;
-    background-color: rgb(248 250 251/var(--tw-bg-opacity));
+    background-color: rgb(248 250 251/var(--tw-bg-opacity)) !important;
 }
 
 .footer-container {
@@ -189,21 +189,21 @@ table {
     margin-top: calc(1rem*(1 - var(--tw-space-y-reverse)));
     margin-bottom: calc(1rem*var(--tw-space-y-reverse));
     --tw-text-opacity: 1;
-    color: rgb(135 141 145/var(--tw-text-opacity));
+    color: rgb(135 141 145/var(--tw-text-opacity)) !important;
 }
 
 .inquiry-service-chetbot {
-    padding-left: 0.5rem;
+    padding-left: 0.5rem !important;
     display: flex;
 }
 
 .chetbot-link, .send-email-link {
     --tw-text-opacity: 1;
-    color: rgb(23 23 23/var(--tw-text-opacity));
+    color: rgb(23 23 23/var(--tw-text-opacity)) !important;
 }
 
 .available-time, .inquiry-service-email {
-    padding-left: 0.5rem;
+    padding-left: 0.5rem !important;
 }
 
 .advertising-service-box {
@@ -220,7 +220,7 @@ table {
     --tw-border-opacity: 1;
     border-color: rgb(245 242 255/var(--tw-border-opacity));
     --tw-text-opacity: 1;
-    color: rgb(92 63 191/var(--tw-text-opacity));
+    color: rgb(92 63 191/var(--tw-text-opacity)) !important;
     font-size: .8125rem;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
@@ -260,14 +260,14 @@ table {
 
 .company-name {
     --tw-text-opacity: 1;
-    color: rgb(135 141 145/var(--tw-text-opacity));
+    color: rgb(135 141 145/var(--tw-text-opacity)) !important;
     font-size: 1rem;
     line-height: 1.5rem;
 }
 
 .company-name:hover {
     --tw-text-opacity: 1;
-    color: rgb(77 82 86/var(--tw-text-opacity));
+    color: rgb(77 82 86/var(--tw-text-opacity)) !important;
 }
 
 .company-infos {
@@ -275,7 +275,7 @@ table {
     margin-top: calc(0.25rem*(1 - var(--tw-space-y-reverse)));
     margin-bottom: calc(0.25rem*var(--tw-space-y-reverse));
     --tw-text-opacity: 1;
-    color: rgb(135 141 145/var(--tw-text-opacity));
+    color: rgb(135 141 145/var(--tw-text-opacity)) !important;
     font-size: .8125rem;
 }
 
@@ -326,5 +326,9 @@ table {
     font-size: .9375rem;
     order: 1;
     --tw-text-opacity: 1;
-    color: rgb(135 141 145/var(--tw-text-opacity));
+    color: rgb(135 141 145/var(--tw-text-opacity)) !important;
+}
+
+td, th {
+    padding: 1px !important;
 }

@@ -2,7 +2,7 @@ from django.db import models
 
 from club.managers import ClubManager, ClubMemberManager
 from member.models import Member
-from teenplay_server.models import Category
+from teenplay_server.category import Category
 from teenplay_server.period import Period
 
 

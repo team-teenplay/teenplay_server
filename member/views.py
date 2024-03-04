@@ -36,7 +36,8 @@ class MemberJoinView(View):
             'member_nickname': data['member-name'],
             'member_marketing_agree': marketing_agree,
             'member_privacy_agree': privacy_agree,
-            'member_type': data['member-type']
+            'member_type': data['member-type'],
+            'member_phone': data['member-phone']
         }
 
         member = Member.objects.create(**data)
