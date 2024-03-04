@@ -12,7 +12,17 @@ from teenplay.serializers import TeenplaySerializer
 
 class TeenplayMainListWebView(View):
     def get(self, request):
-        return render(request, 'teenplay/web/teenplay-play-web.html')
+        teenplay_count = TeenPlay.objects.all().count()
+        teenplay_list = []
+        for number in range(5):
+            radiant_teenplay = randint(1, teenplay_count)
+            teenplay = TeenPlay.objects.filter(id=radiant_teenplay).values('video_path', 'club__club_name', 'club__club_intro','club__club_profile_path')
+            teenplay_list.append(list(teenplay)[0])
+
+        context = teenplay_list
+        print(context)
+        return render(request, 'teenplay/web/teenplay-play-web.html', {'context': context})
+
 
 
 class TeenplayMainListAPIView(APIView):
@@ -22,8 +32,7 @@ class TeenplayMainListAPIView(APIView):
         radiant_teenplay = randint(1, teenplay)
         teenplay_number = radiant_teenplay
 
-        teenplay = TeenPlay.objects.get(id=teenplay_number).values('video_path', 'club__club_name', 'club_club_intro', 'club__club_profile_path')
-        print(teenplay)
+        teenplay = TeenPlay.objects.get(id=teenplay_number)
         teenplay = TeenplaySerializer(teenplay).data
         return Response(teenplay)
 

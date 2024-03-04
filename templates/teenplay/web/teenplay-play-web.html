@@ -25,7 +25,7 @@
                                                 <div class="video-wrap">
                                                     <!-- 비디오 -->
                                                     <video class="play-video" preload loop autoplay>
-                                                        <source src="/upload/teenplay_video/2024/03/02/teenplay_example_1.mov" type="video/mp4" />
+                                                        <source src="/upload/{{ context.0.video_path}}" type="video/mp4" />
                                                     </video>
                                                 </div>
                                             </div>
@@ -37,14 +37,14 @@
                                                         <a href="" class="play-writer-image-wrap">
                                                             <div class="play-writer-image-container">
                                                                 <!-- 모임 프사 -->
-                                                                <img src="{% static 'teenplay/image/teenplay_example_1_profile.jpg' %}" class="play-writer-image" />
+                                                                <img src="{{ context.0.club__club_profile_path }}" class="play-writer-image" />
                                                             </div>
                                                         </a>
                                                         <div class="play-writer-container">
                                                             <div class="play-writer-boxes">
                                                                 <div class="play-writer-box">
                                                                     <!-- 모임 이름 -->
-                                                                    <a href="" class="play-writer-name">TEEN_PLAYERS</a>
+                                                                    <a href="" class="play-writer-name">{{ context.0.club__club_name }}</a>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -65,7 +65,7 @@
                                                     <!-- 제목(내용) -->
                                                     <h2 class="play-info-title-wrap">
                                                         <div class="play-info-title-container">
-                                                            <span class="play-info-title">틴친들과 함께한 일본여행 VLOG😘 우리 함께 떠나요~! 4박5일!</span>
+                                                            <span class="play-info-title">{{ context.0.club__club_intro }}</span>
                                                         </div>
                                                     </h2>
                                                 </div>
@@ -516,6 +516,14 @@
                                     <img src="{% static 'public/web/images/logo/logo2.png' %}" class="play-logo" />
                                 </a>
                             </div>
+{#                            {% for teenplay in context %}#}
+{#                                <li display="none">#}
+{#                                    <p>Video Path: {{ context.0.video_path }}</p>#}
+{#                                    <p>Club Name: {{ teenplay.club__club_name }}</p>#}
+{#                                    <p>Club Intro: {{ teenplay.club__club_intro }}</p>#}
+{#                                    <p>Club Profile: {{ teenplay.club__club_profile_path }}</p>#}
+{#                                </li>#}
+{#                            {% endfor %}#}
                         </section>
                     </div>
                 </div>
@@ -525,6 +533,7 @@
 </body>
 {% endblock %}
 {% block js %}
+    <script>{{ context }}</script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="{% static 'teenplay/js/web/teenplay-play-web.js' %}"></script>
 {% endblock %}
