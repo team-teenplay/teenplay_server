@@ -9,6 +9,9 @@ urlpatterns = [
     path('intro/', ClubIntroView.as_view(), name='intro'),
     path('create/', ClubCreateView.as_view(), name='create'),
     path('detail/', ClubDetailView.as_view(), name='detail'),
-    path('details/<int:club_id>', ClubAPI.as_view(), name='club-api'),
-    path('pr-posts/', ClubPrPostsView.as_view(), name='pr-posts'),
+    path('details/api/<int:club_id>', ClubAPI.as_view(), name='club-api'),
+    path('pr-post-list/', ClubPrPostsView.as_view(), name='pr-post-list'),
+    path('pr-post-detail/', ClubPrPostsView.as_view(), name='pr-post-detail'),
+    path('pr-post-write/', ClubPrPostsView.as_view(), name='pr-post-write'),
+    path('pr-post-update/', ClubPrPostsView.as_view(), name='pr-post-update'),
 ]

@@ -5,7 +5,7 @@ from club.models import Club
 from member.models import Member
 
 
-class ActivityCreateView(View):
+class ActivityCreateWebView(View):
     def get(self, request):
         member = request.session.get('member')
         club_id = request.GET['club_id']
