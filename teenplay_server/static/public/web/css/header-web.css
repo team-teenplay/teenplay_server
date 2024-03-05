@@ -291,7 +291,7 @@ em {
     padding-right: 0.75rem;
     border-width: 1px;
     border-radius: 9999px;
-    cursor: text;
+    cursor: text !important;
     max-width: 20rem;
     width: 100%;
 }
