@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import Count, Q
 from django.shortcuts import render, redirect
 from django.views import View
@@ -15,11 +16,13 @@ class TeenplayMainListWebView(View):
     def get(self, request):
         if 'member' in request.session and 'id' in request.session['member']:
             id = request.session['member']['id']
+            member = request.session['member']
         else:
             if 'member' in request.session:
                 id = request.session['member'].get('id', None)
             else:
                 id = None
+                member = None
 
         teenplay_count = TeenPlay.objects.all().count()
         teenplay_list = []
@@ -27,14 +30,14 @@ class TeenplayMainListWebView(View):
             like_count = {}
 
             radiant_teenplay = randint(1, teenplay_count)
-            teenplay = TeenPlay.objects.filter(id=radiant_teenplay, status=1).annotate(likes=Count('teenplaylike__status',filter=Q(teenplaylike__status=1))).values('video_path', 'club__club_name', 'club__club_intro','club__club_profile_path','club_id','likes')
+            teenplay = TeenPlay.objects.filter(id=radiant_teenplay, status=1).annotate(likes=Count('teenplaylike__status',filter=Q(teenplaylike__status=1))).values('id','video_path', 'club__id','club__club_name', 'club__club_intro','club__club_profile_path','club_id','likes')
             member_like = TeenPlayLike.objects.filter(member_id=id, teenplay_id=radiant_teenplay, status=1).exists()
             like_count['like_check']= member_like
             teenplay_like={**like_count, **teenplay[0]}
             teenplay_list.append(teenplay_like)
 
         context = teenplay_list
-        return render(request, 'teenplay/web/teenplay-play-web.html', {'context': context})
+        return render(request, 'teenplay/web/teenplay-play-web.html', {'context': context, 'member':member})
 
 
 
@@ -57,7 +60,7 @@ class TeenplayMainListAPIView(APIView):
 
             radiant_teenplay = randint(1, teenplay_count)
             teenplay = TeenPlay.objects.filter(id=radiant_teenplay, status=1).annotate(
-                likes=Count('teenplaylike__status', filter=Q(teenplaylike__status=1))).values('video_path','club__club_name','club__club_intro','club__club_profile_path','club_id', 'likes')
+                likes=Count('teenplaylike__status', filter=Q(teenplaylike__status=1))).values('id', 'video_path','club__club_name','club__club_intro','club__club_profile_path','club_id', 'likes')
             member_like = TeenPlayLike.objects.filter(member_id=id, teenplay_id=radiant_teenplay, status=1).exists()
             like_count['like_check'] = member_like
             teenplay_like = {**like_count, **teenplay[0]}
@@ -66,7 +69,35 @@ class TeenplayMainListAPIView(APIView):
         addContext = teenplay_list
         return Response(addContext)
 
+class TeenPlayLikeApiView(APIView):
+    @transaction.atomic
+    def get(self, request, emptyValue, memberSessionId, displayStyle):
 
+        data = {
+            'member_id': memberSessionId,
+            'teenplay_id': emptyValue
+        }
+
+        likeData, checked = TeenPlayLike.objects.get_or_create(**data)
+
+        if checked:
+            totalLikeCount = TeenPlayLike.objects.filter(status=1, teenplay_id=emptyValue).count()
+        else:
+            if displayStyle== 'none':
+                TeenPlayLike.objects.filter(status=0, teenplay_id=emptyValue, member_id=memberSessionId).update(status=1)
+                totalLikeCount = TeenPlayLike.objects.filter(status=1, teenplay_id=emptyValue).count()
+            else:
+                TeenPlayLike.objects.filter(status=1, teenplay_id=emptyValue, member_id=memberSessionId).update(status=0)
+                totalLikeCount = TeenPlayLike.objects.filter(status=1, teenplay_id=emptyValue).count()
+
+        context = {
+            'teenplay_id': emptyValue, # teenplay_id
+            'member_id': memberSessionId,
+            'display_style': displayStyle,
+            'totalLikeCount': totalLikeCount
+        }
+
+        return Response(context)
 
 ############################################################################################################################################
 
