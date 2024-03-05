@@ -177,16 +177,15 @@ const club = clubList[0];
 
 // 모임 구성원에 로그인한 회원이 있는지 조회하는 fetch
 const clubMemberService = (() => {
-    const getClubMemberInfo = async () => {
-        const response = await fetch(`/club/club-members/api/${club.id}`);
+    const getClubMemberInfo = async (callback) => {
+        const response = await fetch(`/club/club-members/api/${club.id}/${memberId}`);
         const clubMembers = await response.json();
 
-        await createClubTopBtn(clubMembers)
+        await callback(clubMembers)
     }
 
     return {getClubMemberInfo:getClubMemberInfo}
 })();
-clubMemberService.getClubMemberInfo();
 
 // 조회 결과에 따라 모임 상단 버튼을 바꿔주는 함수
 const createClubTopBtn =  (clubMembers) => {
@@ -232,6 +231,8 @@ const createClubTopBtn =  (clubMembers) => {
     }
 }
 
+clubMemberService.getClubMemberInfo(createClubTopBtn);
+
 // 관리하기 버튼 클릭 시 모임 관리 페이지로 이동
 const manageBtnEvent = () => {
     document.getElementById("manage").addEventListener("click", () => {
@@ -253,8 +254,7 @@ const applyBtnEvent = () => {
             cancelButtonText: "취소",
         }).then((result) => {
             if (result.value) {
-                const form = document.querySelector("form[name=name]")
-                form.submit()
+                updateClubMemberStatus()
                 // 가입신청 관련 서버 작업 코드 입력
                 Swal.fire("신청 완료", `[${clubName}] 모임에 가입 신청이 완료되었어요!`, "success");
             } else if (result.dismiss === "cancel") {
@@ -279,6 +279,7 @@ const cancelBtnEvent = () => {
             cancelButtonText: "닫기",
         }).then((result) => {
             if (result.value) {
+                updateClubMemberStatus()
                 // 신청취소 관련 서버 작업 코드 입력
                 Swal.fire("취소 완료", "가입 신청을 취소하였습니다.", "success");
             } else if (result.dismiss == "cancel") {
@@ -304,6 +305,7 @@ const quitBtnEvent = () => {
             cancelButtonText: "취소",
         }).then((result) => {
             if (result.value) {
+                updateClubMemberStatus()
                 // 모임탈퇴 관련 서버 작업 코드 입력
                 Swal.fire("모임 탈퇴", `[${clubName}] 모임에서 탈퇴하였습니다.`, "success");
             } else if (result.dismiss == "cancel") {
@@ -313,6 +315,22 @@ const quitBtnEvent = () => {
     });
 }
 
+//
+const updateClubMemberStatus = async () => {
+    // let data = {
+    //     'member_id': memberId
+    // }
+
+    const response = await fetch(`/club/club-members/api/${club.id}/${memberId}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrftoken}
+        // body: JSON.stringify(data)
+    })
+
+    const resultText = await response.json()
+    console.log(resultText)
+    clubMemberService.getClubMemberInfo(createClubTopBtn);
+}
 
 // 하트 아이콘 클릭 시 모달창 하트 이미지 변경, 모달창 출력
 const activeLikeBtns = document.querySelectorAll(".club-detail-like-button");

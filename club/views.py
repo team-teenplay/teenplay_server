@@ -1,6 +1,7 @@
 from django.db import transaction
 from django.db.models import Count, F, Q
 from django.shortcuts import render, redirect
+from django.utils import timezone
 from django.views import View
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -89,11 +90,37 @@ class ClubAPI(APIView):
 
 
 class ClubMemberAPI(APIView):
-    def get(self, request, club_id):
-        member = request.session['member']
-        club_members = ClubMember.objects.filter(member=member['id'], club=club_id).values()
+    def get(self, request, club_id, member_id):
+        club_members = ClubMember.objects.filter(member=member_id, club=club_id).values()
 
         return Response(club_members)
+
+    @transaction.atomic
+    def patch(self, request, club_id, member_id):
+        member = Member.objects.get(id=member_id)
+        club = Club.objects.get(id=club_id)
+        club_member, created = ClubMember.objects.get_or_create(member=member, club=club)
+
+        if created:
+            return Response('create-apply')
+
+        if club_member.status == -1:
+            club_member.status = 0
+            club_member.updated_date = timezone.now()
+            club_member.save(update_fields=['status', 'updated_date'])
+            return Response('cancel')
+
+        if club_member.status == 0:
+            club_member.status = -1
+            club_member.updated_date = timezone.now()
+            club_member.save(update_fields=['status', 'updated_date'])
+            return Response('apply')
+
+        if club_member.status == 1:
+            club_member.status = 0
+            club_member.updated_date = timezone.now()
+            club_member.save(update_fields=['status', 'updated_date'])
+            return Response('quit')
 
 
 class ClubPrPostsView(View):
