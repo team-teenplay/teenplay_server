@@ -36,8 +36,8 @@
                 <div class="load-mask-none" style="display: none">데이터 로드중...</div>
                 <div class="event-body-section">
                     <div class="content-section">
-                        <form class="setting-wrap" name="activity-create" method="post" action="{% url 'activity:create' %}">
-                            <input type="hidden" id="member-id" value="{{ request.session.member.id }}">
+                        <form class="setting-wrap" name="activity-create" method="post" action="{% url 'activity:create' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
                             <div class="setting-container">
                                 <div class="hint-right-text">
                                     <a class="hint-text" href="{% url 'club:intro' %}" target="_blank">모임 개설 어렵지 않아요</a>
@@ -183,19 +183,9 @@
                                                                 <div class="subject-select-box">
                                                                     <select class="subject-category" id="subject-category" name="category">
                                                                         <option value="disabled" selected="selected">분야선택</option>
-                                                                        <option value="문화·예술">문화·예술</option>
-                                                                        <option value="운동·액티비티">운동·액티비티</option>
-                                                                        <option value="푸드·드링크">푸드·드링크</option>
-                                                                        <option value="취미">취미</option>
-                                                                        <option value="여행·동행">여행·동행</option>
-                                                                        <option value="성장·자기개발">성장·자기개발</option>
-                                                                        <option value="동네·또래">동네·또래</option>
-                                                                        <option value="연애·소개팅">연애·소개팅</option>
-                                                                        <option value="재태크">재태크</option>
-                                                                        <option value="외국어">외국어</option>
-                                                                        <option value="스터디">스터디</option>
-                                                                        <option value="지역축제">지역축제</option>
-                                                                        <option value="기타">기타</option>
+                                                                        {% for category in categories %}
+                                                                            <option value="{{ category.id }}">{{ category.category_name }}</option>
+                                                                        {% endfor %}
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -404,6 +394,11 @@
                                     </div>
                                 </div>
                             </div>
+                            <input type="hidden" id="member-id" name="member-id" value="{{ member.id }}">
+                            <input type="hidden" name="club-id" value="{{ club.id }}">
+                            {% if festival_id is not None %}
+                                <input type="hidden" name="festival-id" value="{{ festival_id }}">
+                            {% endif %}
                         </form>
                     </div>
                 </div>
@@ -412,7 +407,6 @@
     </main>
 {% endblock %}
 {% block js %}
-    <script>`{{ club }}`</script>
     <script src="{% static 'activity/web/js/activity-new-web.js' %}"></script>
 {% endblock %}
 
