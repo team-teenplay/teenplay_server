@@ -56,6 +56,23 @@ profileInput.addEventListener("change", (e) => {
     }
 });
 
+function previewImage(input) {
+    var previewThumbnail = document.getElementById('preview-thumbnail');
+    var profileInput = document.getElementById('profile-input');
+
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            previewThumbnail.src = e.target.result;
+            profileInput.style.backgroundImage = "url('" + e.target.result + "')";
+        };
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+
 // 확장자 오류 모달 닫는 이벤트
 const extensionErrorModalCloseBtn = document.querySelector(".extension-error-modal-close-btn");
 
@@ -110,3 +127,28 @@ modalBtns.forEach((modalBtn) => {
         saveModalWrap.style.display = "none";
     });
 });
+
+
+// 전화번호 정규식
+const hidden = document.getElementById("phone-error");
+const phoneInput = document.querySelector(".phone-input");
+
+const autoHyphenAndValidate = (target) => {
+    const cleanedValue = target.value.replace(/[^0-9]/g, '');
+    target.value = cleanedValue
+        .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3").replace(/(\-{1,2})$/g, "");
+
+    if (cleanedValue.length === 11) {
+        hidden.style.display = 'none';
+    } else {
+        hidden.style.display = 'block';
+    }
+}
+
+// 초기 로딩 시에도 검사 수행
+autoHyphenAndValidate(phoneInput);
+
+phoneInput.addEventListener('input', () => {
+    autoHyphenAndValidate(phoneInput);
+});
+
