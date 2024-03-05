@@ -36,6 +36,9 @@ class Activity(Period):
     class Meta:
         db_table = 'tbl_activity'
 
+    def get_absolute_url(self):
+        return f'/activity/detail/?id={self.id}'
+
 
 class ActivityImage(Period):
     activity = models.ForeignKey(Activity, null=False, blank=False, on_delete=models.PROTECT)

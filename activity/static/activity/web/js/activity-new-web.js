@@ -358,7 +358,7 @@ cancelExpand.addEventListener("click", (e) => {
 // 부트 페이 연동
 const pay = () => {
     BootPay.request({
-        price: 1000,
+        price: 20000,
         application_id: "65e44626e57a7e001be3736d",
         name: `${activityTitle.value} 개설`,
         order_id: "1",
