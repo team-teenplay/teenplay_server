@@ -124,3 +124,5 @@ recommendKeywordsMore.addEventListener("click", (e) => {
     recommendKeywordsList.className = "";
     recommendKeywordsMore.style.display = "none";
 });
+
+// 카테고리 불러오기

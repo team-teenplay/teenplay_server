@@ -394,7 +394,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <input type="hidden" id="member-id" name="member-id" value="{{ member.id }}">
+                            <input type="hidden" id="member-id" name="member-id" value="{{ request.session.member.id }}">
                             <input type="hidden" name="club-id" value="{{ club.id }}">
                             {% if festival_id is not None %}
                                 <input type="hidden" name="festival-id" value="{{ festival_id }}">

@@ -22,14 +22,12 @@ def make_datetime(date, time):
 
 class ActivityCreateWebView(View):
     def get(self, request):
-        member = request.session.get('member')
         club_id = request.GET['club_id']
         festival_id = request.GET.get('festival_id')
 
         club = Club.enabled_objects.filter(id=club_id).first()
         categories = Category.objects.filter(status=True)
         context = {
-            'member': member,
             'club': club,
             'categories': categories,
             'festival_id': festival_id
