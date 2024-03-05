@@ -88,19 +88,19 @@ document.querySelector(".act-suggestion").addEventListener("click", () => {
     const targetDiv = document.querySelector(".activity-list-more-title");
 
     window.scrollTo({
-        top: targetDiv.offsetTop,
+        top: targetDiv.offsetTop - 30,
         behavior: "smooth",
     });
 });
 
-document.querySelector(".act-cancel").addEventListener("click", () => {
-    const targetDiv = document.querySelector(".policy-title");
-
-    window.scrollTo({
-        top: targetDiv.offsetTop,
-        behavior: "smooth",
-    });
-});
+// document.querySelector(".act-cancel").addEventListener("click", () => {
+//     const targetDiv = document.querySelector(".policy-title");
+//
+//     window.scrollTo({
+//         top: targetDiv.offsetTop,
+//         behavior: "smooth",
+//     });
+// });
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // // 특정 위치로 이동되었을 때 act 아래쪽에 줄이 생기는 액션
@@ -116,8 +116,8 @@ let suggetsionLine = document.querySelector(".act-suggestion");
 let targetEndContainerDiv = document.querySelector(".flex-items-end-container");
 let targetMapDiv = document.querySelector(".map-text-title");
 let targetFeedDiv = document.querySelector(".feed-main-title-box");
-let targetCommentDiv = document.querySelector(".feed-item");
-let targetActivityMore = document.querySelector(".k-comment-input-upload-container");
+let targetCommentDiv = document.querySelector(".comment-title");
+let targetActivityMore = document.querySelector(".activity-list-more-title");
 
 window.addEventListener("scroll", function () {
     let targetEndContainerPosition = targetEndContainerDiv.offsetTop;
@@ -148,6 +148,14 @@ window.addEventListener("scroll", function () {
         introLine.style.borderBottomWidth = "0";
         introLine.style.color = "rgb(135 141 145 / var(--tw-text-opacity))";
         introLine.style.transition = "color 0.2s, border-bottom-color 0.2s";
+        infoLine.style.color = "";
+        infoLine.style.borderColor = "";
+        notiLine.style.color = "";
+        notiLine.style.borderColor = "";
+        // inquiryLine.style.color = "";
+        // inquiryLine.style.borderColor = "";
+        suggetsionLine.style.color = "";
+        suggetsionLine.style.borderColor = "";
     }
     // 행사 정보
     if (document.documentElement.scrollTop >= targetMapPosition && document.documentElement.scrollTop < targetFeedPosition) {
@@ -231,40 +239,40 @@ filpHiddenClickBtn.addEventListener("click", () => {
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // 구독하기 클릭 시 구독하기 모달 띄우기 및 아이콘 띄우기
-let subcribeButton = document.querySelector(".subcribe-button");
-let subcribeCheckButton = document.querySelector(".subcribe-button-checking");
-subcribeButton.addEventListener("click", (e) => {
-    if (subcribeButton.innerText == "구독하기") {
-        subcribeModalWrap.style.display = "flex";
-        subcribeButton.style.display = "none";
-        subcribeCheckButton.style.display = "flex";
-    }
-});
+// let subcribeButton = document.querySelector(".subcribe-button");
+// let subcribeCheckButton = document.querySelector(".subcribe-button-checking");
+// subcribeButton.addEventListener("click", (e) => {
+//     if (subcribeButton.innerText == "구독하기") {
+//         subcribeModalWrap.style.display = "flex";
+//         subcribeButton.style.display = "none";
+//         subcribeCheckButton.style.display = "flex";
+//     }
+// });
 
 // 구독하기 취소 시 (계속 살펴보기) 발생되는 동작
-subcribeCheckButton.addEventListener("click", (e) => {
-    if (subcribeCheckButton.innerText == "구독중") {
-        subcribeButton.style.display = "flex";
-        subcribeCheckButton.style.display = "none";
-        subcribeModalWrapCancel.style.display = "flex";
-    }
-});
+// subcribeCheckButton.addEventListener("click", (e) => {
+//     if (subcribeCheckButton.innerText == "구독중") {
+//         subcribeButton.style.display = "flex";
+//         subcribeCheckButton.style.display = "none";
+//         subcribeModalWrapCancel.style.display = "flex";
+//     }
+// });
 
 // 구독하기 버튼을 클릭한 후 창 닫는 동작
-let subcribeModelLeftButton = document.querySelector(".subcribe-left-button");
-let subcribeModalWrap = document.querySelector(".subcribe-modal-wrap");
-let subcribeModalWrapCancel = document.querySelector(".subcribe-modal-wrap-cancel");
-
-subcribeModelLeftButton.addEventListener("click", (e) => {
-    subcribeModalWrap.style.display = "none";
-    // subcribeModalWrapCancel.style.display = "none";
-});
-
-// 구독중 버튼을 클릭한 후 창 닫는 동작
-let subcribeCancelKeepButton = document.querySelector(".subcribe-cancel-keep-button");
-subcribeCancelKeepButton.addEventListener("click", (e) => {
-    subcribeModalWrapCancel.style.display = "none";
-});
+// let subcribeModelLeftButton = document.querySelector(".subcribe-left-button");
+// let subcribeModalWrap = document.querySelector(".subcribe-modal-wrap");
+// let subcribeModalWrapCancel = document.querySelector(".subcribe-modal-wrap-cancel");
+//
+// subcribeModelLeftButton.addEventListener("click", (e) => {
+//     subcribeModalWrap.style.display = "none";
+//     // subcribeModalWrapCancel.style.display = "none";
+// });
+//
+// // 구독중 버튼을 클릭한 후 창 닫는 동작
+// let subcribeCancelKeepButton = document.querySelector(".subcribe-cancel-keep-button");
+// subcribeCancelKeepButton.addEventListener("click", (e) => {
+//     subcribeModalWrapCancel.style.display = "none";
+// });
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // 관심행사 추가 시 발생되는 동작
@@ -305,124 +313,142 @@ nonLikeDisplay.forEach((displayButton, i) => {
 const commentProfileImg = document.querySelector(".k-comment-profile-container");
 const profile = document.querySelector(".profile");
 
-commentProfileImg.addEventListener("click", () => {
-    profile.classList.remove("hidden");
-});
+if (commentProfileImg){
+    commentProfileImg.addEventListener("click", () => {
+        profile.classList.remove("hidden");
+    });
+}
 
 // 틴친 프로필 모달 닫기 이벤트
 const teenchinBox = document.querySelector(".teenchin-box");
 
-document.addEventListener("click", (e) => {
-    if (!commentProfileImg.contains(e.target) && !teenchinBox.contains(e.target)) {
-        profile.classList.add("hidden");
-    }
-});
+if (teenchinBox && commentProfileImg){
+    document.addEventListener("click", (e) => {
+        if (!commentProfileImg.contains(e.target) && !teenchinBox.contains(e.target)) {
+            profile.classList.add("hidden");
+        }
+    });
+}
 
 // 쪽지 보내기 클릭 시 쪽지 보내기 모달 출력 이벤트
 const sendLetterBoxBtn = document.querySelector(".send-letter-btn");
 const sendLetter = document.querySelector(".send-modal-wrap");
 
-sendLetterBoxBtn.addEventListener("click", () => {
-    profile.classList.add("hidden");
-    sendLetter.classList.remove("hidden");
-});
+if (sendLetterBoxBtn){
+    sendLetterBoxBtn.addEventListener("click", () => {
+        profile.classList.add("hidden");
+        sendLetter.classList.remove("hidden");
+    });
+}
 
 // 쪽지 보내기 닫기(버튼) 모달 이벤트
 const sendLetterCloseBtn = document.querySelector(".send-close-btn");
 
-sendLetterCloseBtn.addEventListener("click", () => {
-    sendLetter.classList.add("hidden");
-});
+if (sendLetterCloseBtn){
+    sendLetterCloseBtn.addEventListener("click", () => {
+        sendLetter.classList.add("hidden");
+    });
+}
 
 // 쪽지 보내기 닫기(여백) 모달 이벤트
 const sendLetterModal = document.querySelector(".send-modal-box");
 
-document.addEventListener("click", (e) => {
-    if (!sendLetterBoxBtn.contains(e.target) && !sendLetterModal.contains(e.target)) {
-        sendLetter.classList.add("hidden");
-    }
-});
+if (sendLetterModal){
+    document.addEventListener("click", (e) => {
+        if (!sendLetterBoxBtn.contains(e.target) && !sendLetterModal.contains(e.target)) {
+            sendLetter.classList.add("hidden");
+        }
+    });
+}
 
 // 쪽지 보내기 모달 이벤트
 const sendLetterBtn = document.querySelector(".send-check-btn");
 
-sendLetterBtn.addEventListener("click", () => {
-    Swal.fire("쪽지가 전송 되었습니다.", "", "success");
-});
+if (sendLetterBtn){
+    sendLetterBtn.addEventListener("click", () => {
+        Swal.fire("쪽지가 전송 되었습니다.", "", "success");
+    });
+}
 
 // 틴친 추가 모달 이벤트
 const teenFriendAdd = document.querySelector(".teenchin-add-btn");
 const teenFriendRequest = document.querySelector(".teenchin-request-btn");
 
-teenFriendAdd.addEventListener("click", () => {
-    Swal.fire({
-        title: "틴친 신청을 보낼까요?",
-        text: "",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#CE201B",
-        cancelButtonColor: "#E1E1E1",
-        confirmButtonText: "친구추가",
-        cancelButtonText: "닫기",
-    }).then((result) => {
-        if (result.value) {
-            // 틴플레이 삭제 관련 서버 작업 코드 입력
-            // 완료 시 아래 코드 실행 (실제로는 또 .then(()=>{}) 으로 써야함)
-            teenFriendAdd.classList.add("hidden");
-            teenFriendRequest.classList.remove("hidden");
-        } else if ((result.dismiss = "cancel")) {
-            return;
-        }
+if (teenFriendAdd){
+    teenFriendAdd.addEventListener("click", () => {
+        Swal.fire({
+            title: "틴친 신청을 보낼까요?",
+            text: "",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#CE201B",
+            cancelButtonColor: "#E1E1E1",
+            confirmButtonText: "친구추가",
+            cancelButtonText: "닫기",
+        }).then((result) => {
+            if (result.value) {
+                // 틴플레이 삭제 관련 서버 작업 코드 입력
+                // 완료 시 아래 코드 실행 (실제로는 또 .then(()=>{}) 으로 써야함)
+                teenFriendAdd.classList.add("hidden");
+                teenFriendRequest.classList.remove("hidden");
+            } else if ((result.dismiss = "cancel")) {
+                return;
+            }
+        });
     });
-});
+}
 
 // 틴친 신청 취소 모달 이벤트
-teenFriendRequest.addEventListener("click", () => {
-    Swal.fire({
-        title: "신청을 취소할까요?",
-        text: "",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#CE201B",
-        cancelButtonColor: "#E1E1E1",
-        confirmButtonText: "신청취소",
-        cancelButtonText: "닫기",
-    }).then((result) => {
-        if (result.value) {
-            // 틴플레이 삭제 관련 서버 작업 코드 입력
-            // 완료 시 아래 코드 실행 (실제로는 또 .then(()=>{}) 으로 써야함)
-            teenFriendRequest.classList.add("hidden");
-            teenFriendAdd.classList.remove("hidden");
-        } else if ((result.dismiss = "cancel")) {
-            return;
-        }
+if (teenFriendRequest){
+    teenFriendRequest.addEventListener("click", () => {
+        Swal.fire({
+            title: "신청을 취소할까요?",
+            text: "",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#CE201B",
+            cancelButtonColor: "#E1E1E1",
+            confirmButtonText: "신청취소",
+            cancelButtonText: "닫기",
+        }).then((result) => {
+            if (result.value) {
+                // 틴플레이 삭제 관련 서버 작업 코드 입력
+                // 완료 시 아래 코드 실행 (실제로는 또 .then(()=>{}) 으로 써야함)
+                teenFriendRequest.classList.add("hidden");
+                teenFriendAdd.classList.remove("hidden");
+            } else if ((result.dismiss = "cancel")) {
+                return;
+            }
+        });
     });
-});
+}
 
 // 틴친 취소 모달 이벤트
 const teenFriendCancle = document.querySelector(".teenchin-btn");
 
-teenFriendCancle.addEventListener("click", () => {
-    Swal.fire({
-        title: "틴친을 그만둘까요?",
-        text: "",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#CE201B",
-        cancelButtonColor: "#E1E1E1",
-        confirmButtonText: "틴친끊기",
-        cancelButtonText: "닫기",
-    }).then((result) => {
-        if (result.value) {
-            // 틴플레이 삭제 관련 서버 작업 코드 입력
-            // 완료 시 아래 코드 실행 (실제로는 또 .then(()=>{}) 으로 써야함)
-            teenFriendCancle.classList.add("hidden");
-            teenFriendAdd.classList.remove("hidden");
-        } else if ((result.dismiss = "cancel")) {
-            return;
-        }
+if (teenFriendCancle){
+    teenFriendCancle.addEventListener("click", () => {
+        Swal.fire({
+            title: "틴친을 그만둘까요?",
+            text: "",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#CE201B",
+            cancelButtonColor: "#E1E1E1",
+            confirmButtonText: "틴친끊기",
+            cancelButtonText: "닫기",
+        }).then((result) => {
+            if (result.value) {
+                // 틴플레이 삭제 관련 서버 작업 코드 입력
+                // 완료 시 아래 코드 실행 (실제로는 또 .then(()=>{}) 으로 써야함)
+                teenFriendCancle.classList.add("hidden");
+                teenFriendAdd.classList.remove("hidden");
+            } else if ((result.dismiss = "cancel")) {
+                return;
+            }
+        });
     });
-});
+}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // 댓글 수정
@@ -436,26 +462,31 @@ let commentCorrectionText = document.querySelector(".k-comment-update-box-wrap")
 let commentListAllWrap = document.querySelector(".k-comment-list-all-wrap");
 let commentInputBoxAllWrap = document.querySelector(".k-comment-input-box-all-wrap");
 
-commentButton.addEventListener("click", (e) => {
-    commentCorrectionClick.addEventListener("click", () => {
-        commentCorrection.style.display = "block";
-        commentCorrectionText.style.display = "block";
-        commentSubButton.style.display = "none";
-        commentListAllWrap.classList.add("hidden");
-        commentInputBoxAllWrap.classList.add("hidden");
+if (commentButton){
+    commentButton.addEventListener("click", (e) => {
+        commentCorrectionClick.addEventListener("click", () => {
+            commentCorrection.style.display = "block";
+            commentCorrectionText.style.display = "block";
+            commentSubButton.style.display = "none";
+            commentListAllWrap.classList.add("hidden");
+            commentInputBoxAllWrap.classList.add("hidden");
+        });
+        commentSubButton.style.display = "block";
     });
-    commentSubButton.style.display = "block";
-});
+}
 
 let commentUpdateUploadContainer = document.querySelector(".k-comment-update-upload-container");
-commentUpdateUploadContainer.addEventListener("click", () => {
-    commentCorrection.style.display = "none";
-    commentCorrectionText.style.display = "none";
-    commentSubButton.style.display = "flex";
-    commentListAllWrap.classList.remove("hidden");
-    commentInputBoxAllWrap.classList.remove("hidden");
-    commentSubButton.style.display = "none";
-});
+
+if (commentUpdateUploadContainer){
+    commentUpdateUploadContainer.addEventListener("click", () => {
+        commentCorrection.style.display = "none";
+        commentCorrectionText.style.display = "none";
+        commentSubButton.style.display = "flex";
+        commentListAllWrap.classList.remove("hidden");
+        commentInputBoxAllWrap.classList.remove("hidden");
+        commentSubButton.style.display = "none";
+    });
+}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // 공유하기 버튼
@@ -470,3 +501,26 @@ function clipCopy() {
     Swal.fire("URL 복사 완료", "주소가 클립보드에 복사되었습니다. <br> 원하는 곳에 붙여넣기 해주세요.", "success");
 }
 shareBtn.addEventListener("click", clipCopy);
+
+// 공지사항 각각 제목 클릭 시 세부 내용 표시
+const noticeContentWraps = document.querySelectorAll(".club-notice-content-wrap");
+const noticeTitles = document.querySelectorAll(".club-notice-box");
+const noticeShowBtns = document.querySelectorAll(".club-notice-show-icon");
+const noticeHideBtns = document.querySelectorAll(".club-notice-hide-icon");
+
+noticeTitles.forEach((title, i) => {
+    title.addEventListener("click", () => {
+        if (noticeShowBtns[i].style.display == "block") {
+            noticeShowBtns[i].style.display = "none";
+            noticeHideBtns[i].style.display = "block";
+        } else {
+            noticeShowBtns[i].style.display = "block";
+            noticeHideBtns[i].style.display = "none";
+        }
+        if (noticeContentWraps[i].style.display == "none") {
+            noticeContentWraps[i].style.display = "block";
+        } else {
+            noticeContentWraps[i].style.display = "none";
+        }
+    });
+});
