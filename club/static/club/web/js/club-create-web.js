@@ -1,5 +1,4 @@
 // 1단계 - 모임 이름 입력 검사 (버튼 활성화)
-
 const nameInput = document.querySelector("input.name-form-input");
 const nameButton = document.querySelector("button.name-form-button");
 nameInput.addEventListener("keyup", (e) => {
@@ -12,6 +11,15 @@ nameInput.addEventListener("keyup", (e) => {
     }
 });
 
+// 작성한 모임명을 각 태그 안에 넣어 주는 함수
+const writeClubName = () => {
+    const nameInput = document.querySelector("input.name-form-input");
+    document.querySelector(".desc-form-text-title").innerText = `[${nameInput.value}]에 대한 소개글을 작성해주세요.`;
+    document.querySelector(".img-form-text-title").innerText = `[${nameInput.value}] 모임을 고유한 이미지로 꾸며주세요`;
+    document.querySelector(".club-detail-name").innerText = `${nameInput.value}`
+
+}
+
 // 다음 버튼 클릭 시 내용 변경(2단계로 이동)
 
 const firstContent = document.querySelector(".name-form-wrap");
@@ -19,6 +27,7 @@ const secondContent = document.querySelector(".desc-form-wrap");
 nameButton.addEventListener("click", () => {
     firstContent.style.display = "none";
     secondContent.style.display = "block";
+    writeClubName()
 });
 
 // 2단계
@@ -44,12 +53,19 @@ descInput.addEventListener("keyup", () => {
     }
 });
 
+// 작성한 모임 한 줄 소개를 태그 안에 넣어 주는 함수
+const writeClubIntro = () => {
+    const descInput = document.querySelector("input.desc-form-input");
+    document.querySelector(".club-detail-introduction").innerText = `${descInput.value}`
+}
+
 // 다음 버튼 클릭 시 내용 변경(3단계로 이동)
 
 const thirdContent = document.querySelector(".img-form-wrap");
 descButton.addEventListener("click", () => {
     secondContent.style.display = "none";
     thirdContent.style.display = "block";
+    writeClubIntro()
 });
 
 // 3단계

@@ -1,7 +1,8 @@
 from django.db import models
 
+from club.managers import ClubManager, ClubMemberManager
 from member.models import Member
-from teenplay_server.models import Category
+from teenplay_server.category import Category
 from teenplay_server.period import Period
 
 
@@ -14,6 +15,10 @@ class Club(Period):
     club_banner_path = models.ImageField(upload_to='club/%Y/%m/%d')
     # 0: 삭제
     status = models.BooleanField(default=1, null=False)
+
+    # 이거 추가했습니다.
+    objects = models.Manager()
+    enabled_objects = ClubManager()
 
     class Meta:
         db_table = 'tbl_club'
@@ -35,6 +40,9 @@ class ClubMember(Period):
     alarm_status = models.BooleanField(default=1, null=False, blank=False)
     # -1: 가입대기, 0: 탈퇴, 1: 가입중
     status = models.SmallIntegerField(choices=CLUB_MEMBER_STATUS, default=-1, null=False, blank=False)
+
+    enabled_objects = ClubMemberManager()
+    objects = models.Manager()
 
     class Meta:
         db_table = 'tbl_club_member'

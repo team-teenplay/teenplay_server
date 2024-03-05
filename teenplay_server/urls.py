@@ -19,17 +19,50 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-from main.views import MainView
-from teenplay_server.views import AdminLoginView
+from main.views import MainView, FooterNoticeLatestAPI
+from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroductionView, CompanyNoticeListAPI, \
+    AdminMessageView, AdminTeenplayView, AdminPromoteView, AdminActivityView, AdminWishlistView, AdminMeetingView, \
+    AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView, AdminUserAPI
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('club/', include('club.urls')),
-    path('member/', include('member.urls')),
+    # path('admin/', admin.site.urls),
+    path('club/', include('club.urls-web')),
+    path('app/club/', include('club.urls-app')),
+    path('member/', include('member.urls-web')),
+    path('app/member/', include('member.urls-app')),
     path('accounts/', include('allauth.urls')),
     path('oauth/', include('oauth.urls')),
-    path('teenplay/', include('teenplay.urls')),
+    path('teenplay/', include('teenplay.urls-web')),
+    path('app/teenplay/', include('teenplay.urls-app')),
+    path('notice/', include('notice.urls-web')),
+    path('app/notice/', include('notice.urls-app')),
+    path('festival/', include('festival.urls-web')),
+    path('app/festival/', include('festival.urls-app')),
     path('admin/login/', AdminLoginView.as_view(), name='admin-login'),
+    path('admin/user/', AdminUserView.as_view(), name='admin-user'),
+    # s추가
+    path('admin/users/<int:page>/', AdminUserAPI.as_view(), name='admin-user-api'),
+    # 여까지
+    path('admin/message/', AdminMessageView.as_view(), name='admin-message'),
+    path('admin/teenplay/', AdminTeenplayView.as_view(), name='admin-teenplay'),
+    path('admin/promote/', AdminPromoteView.as_view(), name='admin-promote'),
+    path('admin/activity/', AdminActivityView.as_view(), name='admin-activity'),
+    path('admin/wishlist/', AdminWishlistView.as_view(), name='admin-wishlist'),
+    path('admin/meeting/', AdminMeetingView.as_view(), name='admin-meeting'),
+    path('admin/festival/', AdminFestivalView.as_view(), name='admin-festival'),
+    path('admin/festival/write/', AdminFestivalWrite.as_view(), name='admin-festival-write'),
+    path('admin/notice/', AdminNoticeView.as_view(), name='admin-notice'),
+    path('admin/notice/write/', AdminNoticeWriteView.as_view(), name='admin-notice-write'),
+    path('admin/comment/', AdminCommentView.as_view(), name='admin-comment'),
+    path('terms/', include('terms.urls-web')),
+    path('app/terms/', include('terms.urls-app')),
+    path('activity/', include('activity.urls-web')),
+    path('app/activity/', include('activity.urls-app')),
+    path('company/', CompanyIntroductionView.as_view(), name='company'),
+    path('app/company/', CompanyIntroductionView.as_view(), name='company'),
+    path('company/notice/api/<int:page>/', CompanyNoticeListAPI.as_view(), name='company-api'),
+    path('footer/notice/api/', FooterNoticeLatestAPI.as_view(), name='footer-notice-api'),
+    path('pay/', include('pay.urls')),
     path('', MainView.as_view())
 ]
 

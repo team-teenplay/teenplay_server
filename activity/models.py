@@ -6,7 +6,8 @@ from club.models import Club
 from festival.models import Festival
 from member.models import Member
 from pay.models import Pay
-from teenplay_server.models import Category, Like
+from teenplay_server.category import Category
+from teenplay_server.models import Like
 from teenplay_server.period import Period
 
 
@@ -24,7 +25,7 @@ class Activity(Period):
     banner_path = models.ImageField(upload_to='activity/%Y/%m/%d')
     activity_start = models.DateTimeField(null=False, blank=False)
     activity_end = models.DateTimeField(null=False, blank=False)
-    festival = models.ForeignKey(Festival, null=False, blank=False, on_delete=models.PROTECT)
+    festival = models.ForeignKey(Festival, null=True, on_delete=models.PROTECT)
     pay = models.ForeignKey(Pay, null=False, blank=False, on_delete=models.PROTECT)
     # 0: 삭제, 1: 활동중
     status = models.BooleanField(default=1, null=False, blank=False)

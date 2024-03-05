@@ -1,6 +1,8 @@
 from django.db import models
 
 from member.managers import MemberManager
+from teenplay_server.category import Category
+
 from teenplay_server.period import Period
 
 
@@ -23,7 +25,8 @@ class Member(Period):
     member_address = models.TextField()
     # 0: 선택안함, 1: 남성, 2: 여성
     member_gender = models.SmallIntegerField(choices=GENDER_STATUS, default=0)
-    member_birth = models.IntegerField
+    # 출생연도
+    member_birth = models.IntegerField()
     # 0: 미동의, 1: 동의
     member_marketing_agree = models.BooleanField(default=0)
     # 0: 미동의, 1: 동의
@@ -41,6 +44,7 @@ class Member(Period):
 
 
 class MemberProfile(Period):
+    member = models.ForeignKey(Member, null=False, blank=False, on_delete=models.PROTECT)
     # 프사
     profile_path = models.ImageField(null=False, blank=False, upload_to='member/%Y/%m/%d')
     # 0: 프사 없음, 1: 프사 있음
@@ -59,3 +63,15 @@ class AdminAccount(Period):
 
     class Meta:
         db_table = 'tbl_admin_account'
+
+
+class MemberFavoriteCategory(Period):
+    member = models.ForeignKey(Member, blank=False, null=False, on_delete=models.PROTECT)
+    category = models.ForeignKey(Category, blank=False, null=False, on_delete=models.PROTECT)
+    # 0: 삭제
+    status = models.BooleanField(null=False, blank=False, default=1)
+
+    class Meta:
+        db_table = 'tbl_member_favorite_category'
+
+

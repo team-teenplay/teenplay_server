@@ -1,16 +1,16 @@
-const sendEmailATag = document.querySelector(".send-email");
-const sendEmailModal = document.querySelector(".send-email-modal-container");
+// const sendEmailATag = document.querySelector(".send-email");
+// const sendEmailModal = document.querySelector(".send-email-modal-container");
 const checkBtn = document.querySelector(".check-btn");
 
-// 인증 메일 발송하기 클릭 시 모달창 block처리 이벤트
-sendEmailATag.addEventListener("click", () => {
-    sendEmailModal.style.display = "block";
-});
+// // 인증 메일 발송하기 클릭 시 모달창 block처리 이벤트
+// sendEmailATag.addEventListener("click", () => {
+//     sendEmailModal.style.display = "block";
+// });
 
 // 모달창 내 확인 버튼 클릭 시 모달창 none처리 이벤트
-checkBtn.addEventListener("click", () => {
-    sendEmailModal.style.display = "none";
-});
+// checkBtn.addEventListener("click", () => {
+//     sendEmailModal.style.display = "none";
+// });
 
 const mypageServices = document.querySelector(".member-services");
 const mypageMenu = document.querySelector(".mypage-menu");
@@ -124,3 +124,5 @@ recommendKeywordsMore.addEventListener("click", (e) => {
     recommendKeywordsList.className = "";
     recommendKeywordsMore.style.display = "none";
 });
+
+// 카테고리 불러오기

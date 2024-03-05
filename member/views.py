@@ -6,12 +6,12 @@ from member.models import Member
 from member.serializers import MemberSerializer
 
 
-class MemberLoginView(View):
+class MemberLoginWebView(View):
     def get(self, request):
         return render(request, 'member/web/login-web.html')
 
 
-class MemberJoinView(View):
+class MemberJoinWebView(View):
     def get(self, request):
         member_type = request.GET['type']
         member_email = request.GET['email']
@@ -36,7 +36,8 @@ class MemberJoinView(View):
             'member_nickname': data['member-name'],
             'member_marketing_agree': marketing_agree,
             'member_privacy_agree': privacy_agree,
-            'member_type': data['member-type']
+            'member_type': data['member-type'],
+            'member_phone': data['member-phone']
         }
 
         member = Member.objects.create(**data)
@@ -45,7 +46,3 @@ class MemberJoinView(View):
         return redirect('/')
 
 
-class MemberLogoutView(View):
-    def get(self, request):
-        request.session.clear()
-        return redirect('member:login')
