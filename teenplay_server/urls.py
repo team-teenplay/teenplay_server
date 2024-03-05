@@ -63,6 +63,7 @@ urlpatterns = [
     path('company/notice/api/<int:page>/', CompanyNoticeListAPI.as_view(), name='company-api'),
     path('footer/notice/api/', FooterNoticeLatestAPI.as_view(), name='footer-notice-api'),
     path('pay/', include('pay.urls')),
+    path('wishlist/', include('wishlist.urls')),
     path('', MainView.as_view())
 ]
 
