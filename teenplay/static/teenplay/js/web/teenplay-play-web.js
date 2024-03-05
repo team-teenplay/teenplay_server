@@ -20,7 +20,6 @@ let slideNumber = 1
 // 구글 개인정보 소리 설정 해제 후 동영상 최초 재생 확인
 videos[0].play();
 
-
 // 재생 중이 아닌 영상은 일시정지로 시작
 videoWraps.forEach((videoWrap, i) => {
     if (!videoWrap.classList.contains("playing")) {
@@ -173,6 +172,10 @@ slideWrap.addEventListener("wheel", (e) => {
 // 좋아요 아이콘 클릭 시 반영
 likeBtns.forEach((button, i) => {
     button.addEventListener("click", () => {
+        if(memberSessionId == 0){
+            window.location.href = '/'
+            return;
+        }
         if (emptyHeart[i].style.display == "none") {
             emptyHeart[i].style.display = "block";
             fullHeart[i].style.display = "none";
@@ -183,8 +186,31 @@ likeBtns.forEach((button, i) => {
     });
 });
 
-// 좋아요 수 증가는 비동기로 좋아요 db에 반영 후 가져와 넣기 때문에
-// 현재 화면에서는 구현하지 않습니다.
+// 좋아요 수 증가는 비동기로 좋아요 db에 반영 후 가져와 넣기 때문에 현재 화면에서는 구현하지 않습니다.
+let likeButtons= document.querySelectorAll(".play-like-btn")
+likeButtons.forEach((empty, j) => {
+    empty.addEventListener("click", (e) => {
+        let svgTag = empty.querySelector("svg")
+        let displayStyle = window.getComputedStyle(svgTag).getPropertyValue("display")
+
+        let likeTeenplay = async (callback) => {
+            const teenplayLikeResponse = await fetch(`like/api/${empty.value}/${memberSessionId}/${displayStyle}/`)
+            const videoLike = await teenplayLikeResponse.json();
+            if (callback){
+                callback(videoLike)
+            }
+        }
+
+        let likeCountUploads = document.querySelectorAll(".play-like-count")
+        let likeFetchClick = (videoLike) => {
+            let totalLikeCount = videoLike.totalLikeCount
+            likeCountUploads[j].innerText = totalLikeCount
+        }
+        likeTeenplay(likeFetchClick)
+    });
+});
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 화면 데이터를 가져오는 것을 fetch 를 이용해서 값을 가져온다.
@@ -234,7 +260,7 @@ const showTeenplay = (teenplay) => {
                         </div>
                         <div class="play-like-info-wrap">
                             <div class="play-like-wrap">
-                                <button class="play-like-btn">
+                                <button class="play-like-btn" value="${teenplay[0].id}">
                                     <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                                     </svg>
@@ -331,7 +357,7 @@ const showTeenplay = (teenplay) => {
                         </div>
                         <div class="play-like-info-wrap">
                             <div class="play-like-wrap">
-                                <button class="play-like-btn">
+                                <button class="play-like-btn" value="${teenplay[1].id}">
                                     <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                                     </svg>
@@ -428,7 +454,7 @@ const showTeenplay = (teenplay) => {
                         </div>
                         <div class="play-like-info-wrap">
                             <div class="play-like-wrap">
-                                <button class="play-like-btn">
+                                <button class="play-like-btn" value="${teenplay[2].id}">
                                     <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                                     </svg>
@@ -513,8 +539,6 @@ const showTeenplay = (teenplay) => {
     let fullHeart = document.querySelectorAll(".play-like-icon.full");
 
 
-
-
     const indexList  = document.querySelectorAll(".play-like-icon.empty");
     const indexArray = [];
 
@@ -523,9 +547,9 @@ const showTeenplay = (teenplay) => {
     })
     const lastThreeIndex = Array.from(indexArray).slice(-3);
 
-    console.log(teenplay[0].like_check)
     for (let count = 0; count < lastThreeIndex.length; count++) {
         if (count < teenplay.length) {
+            console.log(count)
             if (teenplay[count].like_check) {
                 emptyHeart[lastThreeIndex[count]].style.display = "none";
                 fullHeart[lastThreeIndex[count]].style.display = "block";
@@ -536,7 +560,34 @@ const showTeenplay = (teenplay) => {
         }
     }
 
+    let likeButtons= document.querySelectorAll(".play-like-btn")
 
+    likeButtons.forEach((empty, i) => {
+    empty.addEventListener("click", (e) => {
+        let svgTag = empty.querySelector("svg")
+        let displayStyle = window.getComputedStyle(svgTag).getPropertyValue("display")
+
+        let likeTeenplay = async (callback) => {
+            const teenplayLikeResponse = await fetch(`like/api/${empty.value}/${memberSessionId}/${displayStyle}/`)
+            const videoLike = await teenplayLikeResponse.json();
+            if (callback){
+                callback(videoLike)
+            }
+        }
+
+        // 호출되고 난 이후에 데이터 값을 받아오는 증상이 있음
+        let likeCountUploads = document.querySelectorAll(".play-like-count")
+        let count = 0
+        let likeFetchClick = (videoLike) => {
+            let totalLikeCount = videoLike.totalLikeCount
+            count = totalLikeCount
+            likeCountUploads[i].innerText = totalLikeCount
+        }
+        likeTeenplay(likeFetchClick)
+
+
+    });
+});
 
     videoWraps.forEach((videoWrap, i) => {
         if (!videoWrap.classList.contains("playing")) {
