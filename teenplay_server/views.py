@@ -58,10 +58,10 @@ class AdminUserAPI(APIView):
         offset = (page - 1) * row_count
         limit = page * row_count
 
-        # users = Member.objects.filter(Q(status=1) | Q(status=2)).values()[offset:limit]
+        # users = Member.objects.filter(Q(status=1) | Q(status=2)).values('member_nickname')[offset:limit]
 
         users = Member.objects.filter(Q(status=1) | Q(status=2))\
-                    .annotate(club_count=Count('club_set__id'), club_action_count=Count('club_member_set__member', filter=Q(status=1)), activity_count=Count('activity_set__id'))\
+                    .annotate(club_count=Count('club'), club_action_count=Count('clubmember', filter=Q(status=1)), activity_count=Count('club__activity'))\
                     .values('member_nickname', 'created_date', 'club_count', 'club_action_count', 'activity_count', 'status')[offset:limit]
 
         has_next = Member.objects.filter(Q(status=1) | Q(status=2))[limit:limit + 1].exists()
