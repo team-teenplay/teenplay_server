@@ -1,9 +1,11 @@
+console.log('들어옴!')
+
 // 처음 불러올 page 번호
 let page = 1;
 
 // user_info 데이터 가져오기
 const getUserList =  (callback) => {
-    fetch(`/admin/user/${page}`)
+    fetch(`/admin/users/${page}`)
         .then((response) => response.json())
         .then((user_info) => {
             if (callback) {
@@ -13,11 +15,11 @@ const getUserList =  (callback) => {
 };
 
 // 유저 목록
-const userList = document.querySelector(".user-data")
 
 // 데이터 화면에 뿌리기
 const showUserList = (user_info) => {
     if (!user_info.hasNext) {
+        const userList = document.querySelector(".user-data")
         userList.innerHTML = `
             <div class="main-user-status-list">
                 <svg width="53" height="56" fill="none" xmlns="http://www.w3.org/2000/svg" class="main-user-status-list-svg">
@@ -41,22 +43,22 @@ const showUserList = (user_info) => {
     }
 
     let users = user_info.users;
-
-    users.forEach((users) => {
+    const userList = document.querySelector(".user-data")
+    users.forEach((user) => {
         userList.innerHTML += `
             <li class="main-user-list" data-number="3">
                 <div class="main-user-list-check">
                     <input type="checkbox" class="main-comment-list-checkbox" />
                 </div>
-                <div class="main-user-list-name">${users.member_nickname}</div>
-                <div class="main-user-list-status">${users.created_date}</div>
-                <div class="main-user-list-date">${users.club_count}</div>
-                <div class="main-user-list-pay">${users.club_action_count}</div>
-                <div class="main-user-list-paycount">${users.activity_count}</div>
-                <div data-id="3" class="main-user-list-message">${users.status}</div>
+                <div class="main-user-list-name">${user.member_nickname}</div>
+                <div class="main-user-list-status">${user.created_date}</div>
+                <div class="main-user-list-date">${user.club_count}</div>
+                <div class="main-user-list-pay">${user.club_action_count}</div>
+                <div class="main-user-list-paycount">${user.activity_count}</div>
+                <div data-id="3" class="main-user-list-message">${user.status}</div>
             </li>
         `
-    })
-}
+    });
+};
 
 getUserList(showUserList);
