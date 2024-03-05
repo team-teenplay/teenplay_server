@@ -90,7 +90,7 @@ a {
 
 a {
     text-decoration: none !important;
-    color: #171717 !important;
+    color: #171717;
     -webkit-tap-highlight-color: transparent;
     background-color: transparent;
 }
