@@ -1,13 +1,14 @@
 from django.contrib import admin
 from django.urls import path, include
 
-from teenplay.views import TeenplayMainListAPIView, TeenplayMainListWebView
+from teenplay.views import TeenplayMainListAPIView, TeenplayMainListWebView, TeenPlayLikeApiView
 
 app_name = 'teenplay'
 
 urlpatterns = [
     path('all/', TeenplayMainListWebView.as_view(), name='teenplay-main-list'),
     path('all/new/api/<int:slideNumber>/', TeenplayMainListAPIView.as_view(), name='teenplay-main-list-new'),
+    path('all/like/api/<int:emptyValue>/<int:memberSessionId>/<str:displayStyle>/', TeenPlayLikeApiView.as_view(), name='teenplay-like-new')
 ]
 
 
