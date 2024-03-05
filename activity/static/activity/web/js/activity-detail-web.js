@@ -75,14 +75,14 @@ document.querySelector(".act-noti").addEventListener("click", () => {
     });
 });
 
-document.querySelector(".act-inquiry").addEventListener("click", () => {
-    const targetDiv = document.querySelector(".feed-item");
-
-    window.scrollTo({
-        top: targetDiv.offsetTop,
-        behavior: "smooth",
-    });
-});
+// document.querySelector(".act-inquiry").addEventListener("click", () => {
+//     const targetDiv = document.querySelector(".feed-item");
+//
+//     window.scrollTo({
+//         top: targetDiv.offsetTop,
+//         behavior: "smooth",
+//     });
+// });
 
 document.querySelector(".act-suggestion").addEventListener("click", () => {
     const targetDiv = document.querySelector(".activity-list-more-title");
@@ -109,7 +109,7 @@ let introLine = document.querySelector(".act-intro");
 let locationLine = document.querySelector(".act-location");
 let infoLine = document.querySelector(".act-info");
 let notiLine = document.querySelector(".act-noti");
-let inquiryLine = document.querySelector(".act-inquiry");
+// let inquiryLine = document.querySelector(".act-inquiry");
 let suggetsionLine = document.querySelector(".act-suggestion");
 
 // 특정 div의 위치를 설정
@@ -136,8 +136,8 @@ window.addEventListener("scroll", function () {
         infoLine.style.borderColor = "";
         notiLine.style.color = "";
         notiLine.style.borderColor = "";
-        inquiryLine.style.color = "";
-        inquiryLine.style.borderColor = "";
+        // inquiryLine.style.color = "";
+        // inquiryLine.style.borderColor = "";
         suggetsionLine.style.color = "";
         suggetsionLine.style.borderColor = "";
     }
@@ -155,8 +155,8 @@ window.addEventListener("scroll", function () {
         locationLine.style.borderColor = "";
         notiLine.style.color = "";
         notiLine.style.borderColor = "";
-        inquiryLine.style.color = "";
-        inquiryLine.style.borderColor = "";
+        // inquiryLine.style.color = "";
+        // inquiryLine.style.borderColor = "";
         suggetsionLine.style.color = "";
         suggetsionLine.style.borderColor = "";
         infoLine.style.color = "#ce201b";
@@ -169,8 +169,8 @@ window.addEventListener("scroll", function () {
         locationLine.style.borderColor = "";
         infoLine.style.color = "";
         infoLine.style.borderColor = "";
-        inquiryLine.style.color = "";
-        inquiryLine.style.borderColor = "";
+        // inquiryLine.style.color = "";
+        // inquiryLine.style.borderColor = "";
         suggetsionLine.style.color = "";
         suggetsionLine.style.borderColor = "";
         notiLine.style.color = "#ce201b";
@@ -187,8 +187,8 @@ window.addEventListener("scroll", function () {
         notiLine.style.borderColor = "";
         suggetsionLine.style.color = "";
         suggetsionLine.style.borderColor = "";
-        inquiryLine.style.color = "#ce201b";
-        inquiryLine.style.borderColor = "#ce201b";
+        // inquiryLine.style.color = "#ce201b";
+        // inquiryLine.style.borderColor = "#ce201b";
         notiLine.style.transition = "color 0.3s, border-bottom-color 0.3s";
     }
     // 추천
@@ -199,8 +199,8 @@ window.addEventListener("scroll", function () {
         infoLine.style.borderColor = "";
         notiLine.style.color = "";
         notiLine.style.borderColor = "";
-        inquiryLine.style.color = "";
-        inquiryLine.style.borderColor = "";
+        // inquiryLine.style.color = "";
+        // inquiryLine.style.borderColor = "";
         suggetsionLine.style.color = "#ce201b";
         suggetsionLine.style.borderColor = "#ce201b";
         suggetsionLine.style.transition = "color 0.1s, border-bottom-color 0.1s";

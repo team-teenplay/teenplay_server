@@ -40,7 +40,9 @@ urlpatterns = [
     path('app/festival/', include('festival.urls-app')),
     path('admin/login/', AdminLoginView.as_view(), name='admin-login'),
     path('admin/user/', AdminUserView.as_view(), name='admin-user'),
-    path('admin/user/<int:page>/', AdminUserAPI.as_view(), name='admin-user-api'),
+    # s추가
+    path('admin/users/<int:page>/', AdminUserAPI.as_view(), name='admin-user-api'),
+    # 여까지
     path('admin/message/', AdminMessageView.as_view(), name='admin-message'),
     path('admin/teenplay/', AdminTeenplayView.as_view(), name='admin-teenplay'),
     path('admin/promote/', AdminPromoteView.as_view(), name='admin-promote'),
@@ -61,6 +63,7 @@ urlpatterns = [
     path('company/notice/api/<int:page>/', CompanyNoticeListAPI.as_view(), name='company-api'),
     path('footer/notice/api/', FooterNoticeLatestAPI.as_view(), name='footer-notice-api'),
     path('pay/', include('pay.urls')),
+    path('wishlist/', include('wishlist.urls')),
     path('', MainView.as_view())
 ]
 

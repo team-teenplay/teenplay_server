@@ -1,3 +1,5 @@
+import math
+
 from django.db.models import Q, Count
 from django.shortcuts import render, redirect
 from django.views import View
@@ -50,24 +52,56 @@ class AdminUserView(View):
         return render(request, 'admin/web/user-web.html')
 
 
+# # 관리자 유저 관리 페이지 - 유저 정보 불러오기
+# class AdminUserAPI(APIView):
+#     def get(self, request, page):
+#         row_count = 5
+#
+#         offset = (page - 1) * row_count
+#         limit = page * row_count
+#
+#         users = Member.objects.filter(Q(status=1) | Q(status=2))\
+#                     .annotate(club_count=Count('club'), club_action_count=Count('clubmember', filter=Q(status=1)), activity_count=Count('club__activity'))\
+#                     .values('member_nickname', 'created_date', 'club_count', 'club_action_count', 'activity_count', 'status')[offset:limit]
+#
+#         has_next = Member.objects.filter(Q(status=1) | Q(status=2))[limit:limit + 1].exists()
+#
+#         user_info = {
+#             'users': users,
+#             'hasNext': has_next,
+#         }
+#
+#         return Response(user_info)
+
+
 # 관리자 유저 관리 페이지 - 유저 정보 불러오기
 class AdminUserAPI(APIView):
     def get(self, request, page):
-        row_count = 10
+        row_count = 5
 
         offset = (page - 1) * row_count
         limit = page * row_count
 
-        # users = Member.objects.filter(Q(status=1) | Q(status=2)).values()[offset:limit]
+        total = Member.objects.filter(Q(status=1) | Q(status=2)).count()
+
+        page_count = 5
+
+        end_page = math.ceil(page / page_count) * page_count
+        start_page = end_page - page_count + 1
+        real_end = math.ceil(total / row_count)
+        end_page = real_end if end_page > real_end else end_page
+
+        if end_page == 0:
+            end_page = 1
 
         users = Member.objects.filter(Q(status=1) | Q(status=2))\
-                    .annotate(club_count=Count('club_set__id'), club_action_count=Count('club_member_set__member', filter=Q(status=1)), activity_count=Count('activity_set__id'))\
+                    .annotate(club_count=Count('club'), club_action_count=Count('clubmember', filter=Q(status=1)), activity_count=Count('club__activity'))\
                     .values('member_nickname', 'created_date', 'club_count', 'club_action_count', 'activity_count', 'status')[offset:limit]
 
         has_next = Member.objects.filter(Q(status=1) | Q(status=2))[limit:limit + 1].exists()
 
         user_info = {
-            'user': users,
+            'users': users,
             'hasNext': has_next,
         }
 
