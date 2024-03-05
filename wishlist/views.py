@@ -1,10 +1,12 @@
+from django.db.models import F
 from django.shortcuts import render, redirect
 from django.views import View
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from member.models import Member
 from teenplay_server.models import Category
-from wishlist.models import Wishlist
+from wishlist.models import Wishlist, WishlistReply
 
 
 class WishListView(View):
@@ -67,9 +69,26 @@ class WishListCategorySearch(View):
 
 class WishListAPI(APIView):
     # 페이지에 wishlist 데이터 보내기
-    def get(self, request):
-        # 한 페이지에 게시글 5개 더보기 눌렀을 때 5개씩 추가로 보여주기
-        pass
+    def get(self, request, page):
+        # 페이지당 3개의 게시물 보여주기
+        row_count = 3
+        offset = (page - 1) * row_count
+        limit = page * row_count
+        columns = [
+            'wishlist_content',
+            'member_name',
+            'category_name'
+        ]
+        # REST
+        wishlists = Wishlist.objects.annotate(member_name=F("member__member_nickname"), category_name=F("category__category_name")).values(*columns)[offset:limit]
+        # 더이상 게시물이 없을 때 더보기 버튼 삭제하기 연산
+        has_next = Wishlist.objects.filter()[limit:limit + 1].exists()
+        wishlist_info = {
+            'wishlist': wishlists,
+            'hasNext': has_next,
+        }
+        return Response(wishlist_info)
+
 
 
 

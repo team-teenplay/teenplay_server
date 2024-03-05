@@ -7,5 +7,5 @@ app_name = 'wishlist'
 urlpatterns = [
     path('list/', WishListView.as_view(), name='list'),
     path('list/', WishListWriteView.as_view(), name='write'),
-    path('list/', WishListAPI.as_view(), name='list-api')
+    path('list/<int:page>/', WishListAPI.as_view(), name='list-api')
 ]

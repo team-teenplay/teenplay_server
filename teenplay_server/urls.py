@@ -29,6 +29,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('oauth/', include('oauth.urls')),
     path('teenplay/', include('teenplay.urls')),
+    path('wishlist/', include('wishlist.urls')),
     path('admin/login/', AdminLoginView.as_view(), name='admin-login'),
     path('', MainView.as_view())
 ]
