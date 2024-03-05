@@ -54,7 +54,7 @@ const showList = (wishlist_info) => {
                                 <!-- 위시리스트 게시글 정보 부분 -->
                                 <div class="wishlist-post-info-container">
                                     <span class="post-category">${wishlist.category_name}</span>
-                                    <span class="post-upload-date">${ wishlist.change_date_format }</span>
+                                    <span class="post-upload-date">{{wishlist.change_date_format}}</span>
                                 </div>
                             </div>
                         </div>
