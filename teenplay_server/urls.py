@@ -40,7 +40,7 @@ urlpatterns = [
     path('app/festival/', include('festival.urls-app')),
     path('admin/login/', AdminLoginView.as_view(), name='admin-login'),
     path('admin/user/', AdminUserView.as_view(), name='admin-user'),
-    path('admin/user/update', AdminUserUpdateView.as_view(), name='admin-user-delete'),
+    path('admin/user/update/', AdminUserUpdateView.as_view(), name='admin-user-update'),
     # path('admin/users/<int:page>/', AdminUserAPI.as_view(), name='admin-user-api'),
     path('admin/message/', AdminMessageView.as_view(), name='admin-message'),
     path('admin/teenplay/', AdminTeenplayView.as_view(), name='admin-teenplay'),

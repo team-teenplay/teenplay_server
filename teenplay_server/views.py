@@ -113,7 +113,7 @@ class AdminUserView(View):
 
         context['users'] = list(Member.objects.filter(Q(status=1) | Q(status=2))\
                     .annotate(club_count=Count('club'), club_action_count=Count('clubmember__id', filter=Q(clubmember__status=1)), activity_count=Count('club__activity'))\
-                    .values('member_nickname', 'created_date', 'club_count', 'club_action_count', 'activity_count', 'status').order_by(ordering))[offset:limit]
+                    .values('id', 'member_nickname', 'created_date', 'club_count', 'club_action_count', 'activity_count', 'status').order_by(ordering))[offset:limit]
         print(context['users'])
 
         return render(request, 'admin/web/user-web.html', context)

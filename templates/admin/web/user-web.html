@@ -116,7 +116,7 @@
                                     </div>
                                 </div>
                                 <div class="main-user-list-ston">
-                                    <button class="member-user-list-button toggle-button">상태변경</button>
+                                    <button class="member-user-list-button toggle-button disabled">상태변경</button>
                                 </div>
                             </div>
                         </div>
@@ -160,7 +160,7 @@
                             {% for user in users %}
                                 <li class="main-user-list" data-number="1">
                                     <div class="main-user-list-check">
-                                        <input type="checkbox" class="main-comment-list-checkbox" />
+                                        <input type="checkbox" class="main-comment-list-checkbox" data-id="{{ user.id }}"/>
                                     </div>
                                     <div class="main-user-list-name">{{ user.member_nickname }}</div>
                                     <div class="main-user-list-status">{{ user.created_date }}</div>
@@ -326,7 +326,10 @@
                     <button class="admin-user-modal-left-button" id="modalCloseButton">취소</button>
                 </div>
                 <div class="admin-user-modal-right">
-                    <button class="admin-user-modal-right-button" id="modalApplyButton">적용하기</button>
+                    {% if user.id == request.session.member.id %}
+                        <a href="/admin/user/update/?id={{ user.id }}" class="admin-user-modal-right-button" id="modalApplyButton">적용하기</a>
+                    {% endif %}
+{#                    <button class="admin-user-modal-right-button" id="modalApplyButton">적용하기</button>#}
                 </div>
             </div>
         </div>
@@ -337,7 +340,7 @@
 {#    <script src="{% static 'admin/web/js/user/admin-user-bottem-web.js' %}"></script>#}
 {#    <script src="{% static 'admin/web/js/user/admin-user-delete-web.js' %}"></script>#}
 {#    <script src="{% static 'admin/web/js/user/admin-user-modal-web.js' %}"></script>#}
-{#    <script src="{% static 'admin/web/js/user/admin-user-search-web.js' %}"></script>#}
-{#    <script src="{% static 'admin/web/js/user/admin_user_info.js' %}"></script>#}
-    <script src="{% static 'admin/web/js/user/admin_user_checkbox-web.js' %}"></script>
+    <script src="{% static 'admin/web/js/user/admin-user-search-web.js' %}"></script>
+{#    <script src="{% static 'admin/web/js/user/admin-user-info-web.js' %}"></script>#}
+    <script src="{% static 'admin/web/js/user/admin-user-checkbox-web.js' %}"></script>
 {% endblock %}
