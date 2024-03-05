@@ -4,9 +4,9 @@ from django.utils import timezone
 from django.views import View
 from rest_framework.views import APIView
 
-from activity.models import Activity, ActivityImage
+from activity.models import Activity, ActivityImage, ActivityMember, ActivityReply
 from alarm.models import Alarm
-from club.models import Club, ClubMember
+from club.models import Club, ClubMember, ClubNotice
 from festival.models import Festival
 from member.models import Member
 from pay.models import Pay
@@ -92,7 +92,7 @@ class ActivityCreateWebView(View):
         content = activity.activity_content
         pattern = r'src=\\"data:image\/[^;]+;base64,([^"]+)"'
         for image_path in saved_image_paths:
-            replacement = f'src=\"{image_path}\"'
+            replacement = f'src=\"/upload/{image_path}\"'
             content = re.sub(pattern, replacement, content, count=1)
         activity.activity_content = content
         activity.updated_date = timezone.now()
@@ -121,8 +121,21 @@ class ActivityDetailWebView(View):
     def get(self, request):
         activity_id = request.GET['id']
         activity = Activity.objects.filter(id=activity_id).first()
+        category = activity.category
+        club = activity.club
+        activity_member_count = ActivityMember.enabled_objects.filter(activity_id=activity_id).count()
+        activity_recruit_check = activity.recruit_end >= timezone.now() >= activity.recruit_start
+        club_notices = list(ClubNotice.objects.filter(club=club))
+        activity_replies = list(ActivityReply.enabled_objects.filter(activity_id=activity_id))
+
         context = {
-            'activity': activity
+            'activity': activity,
+            'category': category,
+            'club': club,
+            'activity_member_count': activity_member_count,
+            'activity_recruit_check': activity_recruit_check,
+            'club_notices': club_notices,
+            'activity_replies': activity_replies
         }
 
         return render(request, 'activity/web/activity-detail-web.html', context)
