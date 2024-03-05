@@ -20,6 +20,7 @@ class PayCreateAPI(APIView):
             pay = {
                 'pay': pay
             }
+            print(pay)
             return Response(pay)
 
         return None

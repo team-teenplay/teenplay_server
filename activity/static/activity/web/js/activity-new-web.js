@@ -77,10 +77,10 @@ $(document).ready(function () {
         lang: "ko-KR", // 기본 메뉴언어 US->KR로 변경
     });
 
-    //저장버튼 클릭( 행사 게시 클릭 시 조건부로 만들어서 저장할 것)
-    $(document).on("click", "#saveBtn", function () {
-        saveContent();
-    });
+    // //저장버튼 클릭( 행사 게시 클릭 시 조건부로 만들어서 저장할 것)
+    // $(document).on("click", "#saveBtn", function () {
+    //     saveContent();
+    // });
 });
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  위에까지는 jquery 가져오기
@@ -383,28 +383,38 @@ const pay = () => {
     }).confirm(function (data) {
         BootPay.transactionConfirm(data);
     }).done(function (data) {
-        const memberId = document.getElementById("member-id").value;
-            if (memberId){
-                fetch(`/pay/create/api/?memberId=${memberId}`)
-                    .then((response) => response.json())
-                    .then((pay) => {
-                        if (pay === null) return;
-                        console.log('결제 성공')
-                        console.log(pay);
-                        // createActivity(pay);
-                    })
-            }
+        payAndCreate(createActivity);
     })
 };
 
-const createActivity = (pay) => {
-    if (pay !== null) {
-        const activityForm = document.querySelector("form[name=activity-create]")
-        let payInput = document.createElement("input")
-        payInput.setAttribute("type", "hidden");
-        payInput.setAttribute("name", "pay-id");
-        payInput.setAttribute("value", pay.id)
-        activityForm.appendChild(payInput);
-        activityForm.submit();
+const payAndCreate = async (callback) => {
+    const memberId = document.getElementById("member-id").value;
+    if (memberId){
+        const response = await fetch(`/pay/create/api/?memberId=${memberId}`)
+        const pay = await response.json();
+        if (pay === null) return;
+        console.log('결제 성공')
+        console.log(pay);
+        if (callback) {
+            callback(pay);
+        }
     }
+}
+
+const createActivity = async (pay) => {
+    const activityForm = document.querySelector("form[name=activity-create]")
+    let payInput = document.createElement("input")
+    payInput.setAttribute("type", "hidden");
+    payInput.setAttribute("name", "pay-id");
+    payInput.setAttribute("value", pay.pay.id)
+    activityForm.appendChild(payInput);
+
+    let summernoteContent = $('.presentation-size').summernote('code');
+    let activityContent = document.createElement("input")
+    activityContent.setAttribute("type", "hidden");
+    activityContent.setAttribute("name", "activity-content")
+    activityContent.setAttribute("value", JSON.stringify(summernoteContent))
+    activityForm.appendChild(activityContent)
+
+    await activityForm.submit();
 }

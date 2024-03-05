@@ -36,74 +36,75 @@
                 </div>
                 <div class="member-service-box">
                     <div class="member-service-items">
-                        <!-- 비로그인 시 보이는 요소 -->
-                        <!-- <div class="login-box">
-                            로그인 화면 주소 필요
-                            <a href="">
-                                <span>로그인</span>
-                            </a>
-                        </div>
-                        <div class="join-box">
-                            회원가입 화면 주소 필요
-                            <a href="">
-                                <span>회원가입</span>
-                            </a>
-                        </div> -->
-                        <!-- 로그인 시 보이는 요소 -->
-                        <div class="member-services">
-                            <button class="member-service-menu-btn" type="button">
-                                <div class="member-service-menu-content">
-                                    <span class="name-box">
-                                        <span class="nicknaem">경덕</span>
-                                        <span class="default-nim"> 님 </span>
-                                        <div class="signal-sign-box">
-                                            <div class="signal-sign-item">
-                                                <div class="signal-sign">3</div>
-                                            </div>
-                                        </div>
-                                    </span>
-                                    <svg class="down-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"></path>
-                                    </svg>
-                                </div>
-                            </button>
-                            <!-- 버튼에 클릭 이벤트 발생 시 나타나는 모달창 -->
-                            <div class="mypage-menu">
-                                <div class="member-info">
-                                    <div class="pull-nickname">
-                                        <strong>서경덕</strong>
-                                        <span>님</span>
-                                    </div>
-                                    <div class="member-email">qwer1234@gmail.com</div>
-                                    <!-- 내 정보 수정페이지 입력 필요 -->
-                                    <a class="member-info-modify" href="">
-                                        <span>내 정보 수정 ></span>
-                                    </a>
-                                </div>
-                                <div class="border-line"></div>
-                                <a class="teen-friends" href="">
-                                    <span>틴친 목록</span>
+                        {% if not request.session.member %}
+                            <!-- 비로그인 시 보이는 요소 -->
+                            <div class="login-box">
+                                <a href="/member/login">
+                                    <span>로그인</span>
                                 </a>
-                                <a class="my-activities" href="">
-                                    <span>나의 활동</span>
-                                </a>
-                                <a class="my-clups" href="">
-                                    <span>나의 모임</span>
-                                </a>
-                                <a class="my-signals" href="">
-                                    <span>알림 목록</span>
-                                    <div class="mypage-menu-signal-count">3</div>
-                                </a>
-                                <div class="border-line"></div>
-                                <button class="logout-btn" type="button" onclick="location.href='/accounts/logout'">
-                                    <span>로그아웃</span>
-                                </button>
                             </div>
-                        </div>
+                            <div class="join-box">
+                                <a href="/member/login">
+                                    <span>회원가입</span>
+                                </a>
+                            </div>
+                        {% else %}
+                            <!-- 로그인 시 보이는 요소 -->
+                            <div class="member-services">
+                                <button class="member-service-menu-btn" type="button">
+                                    <div class="member-service-menu-content">
+                                        <span class="name-box">
+                                            <span class="nicknaem">{{ request.session.member.member_nickname }}</span>
+                                            <span class="default-nim"> 님 </span>
+                                            <div class="signal-sign-box">
+                                                <div class="signal-sign-item">
+                                                    <div class="signal-sign">3</div>
+                                                </div>
+                                            </div>
+                                        </span>
+                                        <svg class="down-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"></path>
+                                        </svg>
+                                    </div>
+                                </button>
+                                <!-- 버튼에 클릭 이벤트 발생 시 나타나는 모달창 -->
+                                <div class="mypage-menu">
+                                    <div class="member-info">
+                                        <div class="pull-nickname">
+                                            <strong>{{ request.session.member.member_nickname }}</strong>
+                                            <span>님</span>
+                                        </div>
+                                        <div class="member-email">{{ request.session.member.member_email }}</div>
+                                        <!-- 내 정보 수정페이지 입력 필요 -->
+                                        <a class="member-info-modify" href="/member/mypage-info">
+                                            <span>내 정보 수정 ></span>
+                                        </a>
+                                    </div>
+                                    <div class="border-line"></div>
+                                    <a class="teen-friends" href="">
+                                        <span>틴친 목록</span>
+                                    </a>
+                                    <a class="my-activities" href="">
+                                        <span>나의 활동</span>
+                                    </a>
+                                    <a class="my-clups" href="">
+                                        <span>나의 모임</span>
+                                    </a>
+                                    <a class="my-signals" href="">
+                                        <span>알림 목록</span>
+                                        <div class="mypage-menu-signal-count">3</div>
+                                    </a>
+                                    <div class="border-line"></div>
+                                    <button class="logout-btn" type="button" onclick="location.href='/accounts/logout'">
+                                        <span>로그아웃</span>
+                                    </button>
+                                </div>
+                            </div>
+                        {% endif %}
                         <!-- 로그인, 비로그인 상관없이 보이는 요소 -->
                         <div class="my-profile-box">
                             <!-- 클릭 시 이동할 페이지 작성 필요 -->
-                            <a class="my-profile" href="">틴플레이 홈</a>
+                            <a class="my-profile" href="/">틴플레이 홈</a>
                         </div>
                     </div>
                 </div>
