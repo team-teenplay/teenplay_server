@@ -1,6 +1,7 @@
 import math
 
-from django.db.models import Q, Count
+from django.db import transaction
+from django.db.models import Q, Count, F
 from django.shortcuts import render, redirect
 from django.views import View
 from rest_framework.response import Response
@@ -10,6 +11,8 @@ from club.models import Club
 from member.models import AdminAccount, Member
 from member.serializers import AdminAccountSerializer
 from notice.models import Notice
+
+from django.utils import timezone
 
 
 # 관리자 로그인 페이지 이동
@@ -47,9 +50,9 @@ class AdminLoginView(View):
 
 # 추가
 # 관리자 유저 관리 페이지로 이동
-class AdminUserView(View):
-    def get(self, request):
-        return render(request, 'admin/web/user-web.html')
+# class AdminUserView(View):
+#     def get(self, request):
+#         return render(request, 'admin/web/user-web.html')
 
 
 # # 관리자 유저 관리 페이지 - 유저 정보 불러오기
@@ -74,15 +77,17 @@ class AdminUserView(View):
 #         return Response(user_info)
 
 
-# 관리자 유저 관리 페이지 - 유저 정보 불러오기
-class AdminUserAPI(APIView):
-    def get(self, request, page):
+class AdminUserView(View):
+    def get(self, request):
+        order = request.GET.get('order', 'recent')
+        page = int(request.GET.get('page', 1))
+
         row_count = 5
 
         offset = (page - 1) * row_count
         limit = page * row_count
 
-        total = Member.objects.filter(Q(status=1) | Q(status=2)).count()
+        total = Member.objects.filter(Q(status=1) | Q(status=2)).all().count()
 
         page_count = 5
 
@@ -94,18 +99,35 @@ class AdminUserAPI(APIView):
         if end_page == 0:
             end_page = 1
 
-        users = Member.objects.filter(Q(status=1) | Q(status=2))\
-                    .annotate(club_count=Count('club'), club_action_count=Count('clubmember', filter=Q(status=1)), activity_count=Count('club__activity'))\
-                    .values('member_nickname', 'created_date', 'club_count', 'club_action_count', 'activity_count', 'status')[offset:limit]
-
-        has_next = Member.objects.filter(Q(status=1) | Q(status=2))[limit:limit + 1].exists()
-
-        user_info = {
-            'users': users,
-            'hasNext': has_next,
+        context = {
+            'order': order,
+            'start_page': start_page,
+            'end_page': end_page,
+            'page': page,
+            'real_end': real_end,
+            'page_count': page_count,
         }
+        ordering = '-id'
+        if order == 'popular':
+            ordering = '-post_read_count'
 
-        return Response(user_info)
+        context['users'] = list(Member.objects.filter(Q(status=1) | Q(status=2))\
+                    .annotate(club_count=Count('club'), club_action_count=Count('clubmember__id', filter=Q(clubmember__status=1)), activity_count=Count('club__activity'))\
+                    .values('member_nickname', 'created_date', 'club_count', 'club_action_count', 'activity_count', 'status').order_by(ordering))[offset:limit]
+        print(context['users'])
+
+        return render(request, 'admin/web/user-web.html', context)
+
+
+class AdminUserUpdateView(View):
+    @transaction.atomic
+    def get(self, request):
+        user = Member.objects.get(id=request.GET['id'])
+        user.status = -1
+        user.updated_date = timezone.now()
+        user.save(update_fields=['status', 'updated_date'])
+
+        return redirect('admin/web/user-web.html')
 
 
 # 관리자 쪽지 관리 페이지 이동
