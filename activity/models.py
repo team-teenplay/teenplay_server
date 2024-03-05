@@ -25,7 +25,7 @@ class Activity(Period):
     banner_path = models.ImageField(upload_to='activity/%Y/%m/%d')
     activity_start = models.DateTimeField(null=False, blank=False)
     activity_end = models.DateTimeField(null=False, blank=False)
-    festival = models.ForeignKey(Festival, on_delete=models.PROTECT)
+    festival = models.ForeignKey(Festival, null=True, on_delete=models.PROTECT)
     pay = models.ForeignKey(Pay, null=False, blank=False, on_delete=models.PROTECT)
     # 0: 삭제, 1: 활동중
     status = models.BooleanField(default=1, null=False, blank=False)
