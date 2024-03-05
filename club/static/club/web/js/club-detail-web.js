@@ -1,58 +1,84 @@
 // 처음에 페이지 로드 시 9번째 활동부터는(존재한다면) 숨겨놓기
-const finishedActivities = document.querySelectorAll(".finished-events-boxes");
-if (finishedActivities.length >= 9) {
-    for (let i = 8; i < finishedActivities.length; i++) {
-        finishedActivities[i].style.display = "none";
-    }
-}
+// const finishedActivities = document.querySelectorAll(".finished-events-boxes");
+// if (finishedActivities.length >= 9) {
+//     for (let i = 8; i < finishedActivities.length; i++) {
+//         finishedActivities[i].style.display = "none";
+//     }
+// }
 
 // 처음에 게시물이 8개 이하라면 더보기 버튼 숨기기
-const moreBtn = document.querySelector(".show-more-btn");
-if (finishedActivities.length < 9) {
-    moreBtn.style.display = "none";
-}
+// const moreBtn = document.querySelector(".show-more-btn");
+// if (finishedActivities.length < 9) {
+//     moreBtn.style.display = "none";
+// }
 
 // 더보기 버튼 클릭 시 8개 더 표시 후 마지막이라면 더보기 버튼도 없애기
 // 이때 더보기 버튼 안의 숫자도 바꿔주어야 한다.
 // 먼저 현재 몇 개 표시되어 있는지를 구해주는 함수를 분리하여 작성해준다.(재사용을 위해)
-function getShownCounts() {
-    let currentShownCount = 0;
-    for (let i = 0; i < finishedActivities.length; i++) {
-        if (finishedActivities[i].style.display === "none") {
-            currentShownCount = i;
-            break;
-        }
-    }
-    return currentShownCount;
-}
+// function getShownCounts() {
+//     let currentShownCount = 0;
+//     for (let i = 0; i < finishedActivities.length; i++) {
+//         if (finishedActivities[i].style.display === "none") {
+//             currentShownCount = i;
+//             break;
+//         }
+//     }
+//     return currentShownCount;
+// }
 
-const moreCount = document.querySelector(".show-more-counts");
+// const moreCount = document.querySelector(".show-more-counts");
 // 우선 페이지 로드 시 더보기 버튼에 입력할 값
 // 현재 몇개 표시되어있는지 계산해주어야 한다.
-let count = getShownCounts();
-moreCount.innerText = `(${count}/${finishedActivities.length})`;
+// let count = getShownCounts();
+// moreCount.innerText = `(${count}/${finishedActivities.length})`;
 
-moreBtn.addEventListener("click", () => {
-    // 먼저 현재 몇개 표시되어있는지를 구한다.
-    let currentShownCount = getShownCounts();
-    // 남은 개수가 8개 이하라면 이번 클릭에서 더보기 버튼이 없어져야 한다.
-    if (finishedActivities.length - currentShownCount <= 8) {
-        moreBtn.style.display = "none";
-        for (let i = currentShownCount - 1; i < finishedActivities.length; i++) {
-            finishedActivities[i].style.display = "block";
-        }
-    }
-    // 남은 개수가 9개 이상이라면 8개 더 표시 후에도 더보기 버튼이 남아있어야 한다.
-    else {
-        for (let i = currentShownCount - 1; i < currentShownCount + 8; i++) {
-            finishedActivities[i].style.display = "block";
-        }
-        moreCount.innerText = `(${currentShownCount + 8}/${finishedActivities.length})`;
-    }
-});
+// moreBtn.addEventListener("click", () => {
+//     // 먼저 현재 몇개 표시되어있는지를 구한다.
+//     let currentShownCount = getShownCounts();
+//     // 남은 개수가 8개 이하라면 이번 클릭에서 더보기 버튼이 없어져야 한다.
+//     if (finishedActivities.length - currentShownCount <= 8) {
+//         moreBtn.style.display = "none";
+//         for (let i = currentShownCount - 1; i < finishedActivities.length; i++) {
+//             finishedActivities[i].style.display = "block";
+//         }
+//     }
+//     // 남은 개수가 9개 이상이라면 8개 더 표시 후에도 더보기 버튼이 남아있어야 한다.
+//     else {
+//         for (let i = currentShownCount - 1; i < currentShownCount + 8; i++) {
+//             finishedActivities[i].style.display = "block";
+//         }
+//         moreCount.innerText = `(${currentShownCount + 8}/${finishedActivities.length})`;
+//     }
+// });
+
+// 공지사항 각각 제목 클릭 시 세부 내용 표시
+const clubNoticeEvent = () => {
+    const noticeContentWraps = document.querySelectorAll(".club-notice-content-wrap");
+    const noticeTitles = document.querySelectorAll(".club-notice-box");
+    const noticeShowBtns = document.querySelectorAll(".club-notice-show-icon");
+    const noticeHideBtns = document.querySelectorAll(".club-notice-hide-icon");
+
+    noticeTitles.forEach((title, i) => {
+        title.addEventListener("click", () => {
+            if (noticeShowBtns[i].style.display == "block") {
+                noticeShowBtns[i].style.display = "none";
+                noticeHideBtns[i].style.display = "block";
+            } else {
+                noticeShowBtns[i].style.display = "block";
+                noticeHideBtns[i].style.display = "none";
+            }
+            if (noticeContentWraps[i].style.display == "none") {
+                noticeContentWraps[i].style.display = "block";
+            } else {
+                noticeContentWraps[i].style.display = "none";
+            }
+        });
+    });
+}
 
 // 탭 클릭 시 활성화되는 탭 변경,
 // 그리고 아래 표시되는 내용 싹 다 변경
+const clubServiceWrap = document.querySelector("#club-service-wrap");
 const activityFilterWrap = document.querySelector(".club-detail-filter-event");
 const activityFilterBtn = document.querySelector(".club-detail-filter-event .club-detail-filter-button");
 const infoFilterWrap = document.querySelector(".club-detail-filter-info");
@@ -66,6 +92,213 @@ const noticeFilterWrap = document.querySelector(".club-detail-filter-notice");
 const noticeFilterBtn = document.querySelector(".club-detail-filter-notice .club-detail-filter-button");
 const noticeContent = document.querySelector(".club-notice");
 
+// 전달받은 date를 0월0일(0)형식으로 바꿔서 리턴하는 함수
+const changeDate = (dateStr) => {
+    const days = ['일', '월', '화', '수', '목', '금', '토'];
+    const date = new Date(dateStr); // string타입을 date타입으로 바꿈.
+    const month = date.getMonth() + 1; // getMonth()는 0부터 시작하므로 1을 더함.
+    const day = date.getDate();
+    const dayOfWeek = days[date.getDay()]; // 요일을 숫자로 가져와 해당 요일 문자열로 변환
+
+    // padStart는 ,앞의 숫자의 자릿수 만큼 0을 채워줌
+    return `${month.toString().padStart(2, '0')}월 ${day.toString().padStart(2, '0')}일(${dayOfWeek})`;
+}
+
+// fetch로 각 탭에 해당하는 정보 가져오는 함수
+const tapInfoService = (() => {
+    const getClubActivities = async (callback) => {
+        const url = `/club/club-activities/api/?club_id=${club.id}`
+        const response = await fetch(url)
+        const activities = await response.json()
+
+        await callback(activities)
+    }
+
+    const getClubNotices = async (callback) => {
+        const response = await fetch(`/club/club-notices/api/?club_id=${club.id}`)
+        const notices = await response.json()
+
+        await callback(notices)
+    }
+
+    return { caList:getClubActivities, cnList:getClubNotices }
+})()
+
+// 정보를 기준으로 목록을 뿌려주는 함수
+const createListService = (() => {
+    const showActivityList = (activities) => {
+        clubServiceWrap.innerHTML = `
+            <div class="club-detail-desc-container">
+                <div class="club-detail-desc-boxes">
+                    <div class="club-detail-active-events">
+                        <div class="club-detail-active-desc">진행중인 활동</div>
+                        <div class="club-detail-active-wrap"></div>
+                    </div>
+                    <div class="club-detail-finished-events">
+                        <div class="finished-events-bold">종료 활동</div>
+                        <div class="finished-events-wrap"></div>
+                    </div>
+                </div>
+            </div>
+        `
+        const clubDetailActiveWrap = document.querySelector(".club-detail-active-wrap")
+        const finishedEventsWrap = document.querySelector(".finished-events-wrap")
+        if (activities.ongoing_activities.length === 0) {
+            clubDetailActiveWrap.innerHTML = `
+                <div class="club-detail-active-empty-wrap">
+                    <div class="club-detail-active-empty-container">
+                        <div class="club-detail-active-empty">진행중인 활동이 없습니다.</div>
+                    </div>
+                </div>
+            `
+        } else{
+            clubDetailActiveWrap.innerHTML = `<div class="club-detail-active-container"></div>`
+            const clubDetailActiveContainer = document.querySelector(".club-detail-active-container")
+            for (let ongoing_activity of activities.ongoing_activities) {
+                // if (ongoing_activity.thumbnail_path === null)
+                clubDetailActiveContainer.innerHTML += `
+                    <div class="club-detail-active">
+                        <div class="club-detail-img-wrap">
+                            <a href="" class="club-detail-img-link">
+                                <img src="/upload/${ongoing_activity.thumbnail_path}" alt="활동 이미지" class="club-detail-img" />
+                            </a>
+                            <div class="club-detail-like-wrap">
+                                <button class="club-detail-like-button">
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon full" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="club-detail-desc-box">
+                            <div class="club-detail-date-wrap">
+                                <div>
+                                    <span class="club-detail-date"> ${changeDate(ongoing_activity.activity_start.slice(0,19))} </span>
+                                </div>
+                            </div>
+                            <div class="event-title-wrap">
+                                <a href="" class="event-title"> ${ongoing_activity.activity_title} </a>
+                            </div>
+                            <div class="event-detail-wrap">
+                                <div class="event-usercount-wrap">
+                                    <span class="event-usercount"> 참여 ${ongoing_activity.participant_count} </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            }
+        }
+
+        if (activities.finished_activities.length === 0) {
+            finishedEventsWrap.innerHTML = `
+                <div class="club-finished-events-empty-wrap">
+                    <div class="club-finished-events-empty-container">
+                        <div class="club-finished-events-empty">종료된 활동이 없습니다.</div>
+                    </div>
+                </div>
+            `
+        } else{
+            finishedEventsWrap.innerHTML += `<div class="finished-events-container"></div>`
+            const finishedEventsContainer = document.querySelector(".finished-events-container")
+            for (let finished_activity of activities.finished_activities) {
+                finishedEventsContainer.innerHTML += `
+                    <div class="finished-events-boxes">
+                        <div class="finished-events-img-wrap">
+                            <a href="" class="finished-events-img-link">
+                                <img src="/upload/${finished_activity.thumbnail_path}" alt="활동 이미지" class="finished-events-img" />
+                                <div class="finished-events-img-back"></div>
+                            </a>
+                            <div class="finished-events-like-wrap">
+                                <button class="finished-events-like-btn">
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon full" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="finished-events-desc-wrap">
+                            <div class="finished-events-finish-wrap">
+                                <div>
+                                    <div class="finished-events-finish">종료</div>
+                                </div>
+                            </div>
+                            <div class="finished-events-name-wrap">
+                                <a href="" class="finished-events-name"> ${finished_activity.activity_title} </a>
+                            </div>
+                            <div class="finished-events-price-wrap">
+                                <div class="finished-events-count-wrap">
+                                    <span class="finished-events-count"> 참여 ${finished_activity.participant_count} </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            }
+        }
+    }
+
+    const showClubNoticeList = (notices) => {
+        clubServiceWrap.innerHTML = `
+            <div class="club-notice">
+                <div class="club-notice-wrap"></div>
+            </div>
+        `
+        const clubNoticeWrap = document.querySelector(".club-notice-wrap")
+        if (notices.length === 0) {
+            clubNoticeWrap.innerHTML = `
+                <div class="club-notice-empty-wrap">
+                    <div class="club-notice-empty-container">
+                        <div class="club-notice-empty">등록된 공지사항이 없습니다.</div>
+                    </div>
+                </div>
+            `
+        } else{
+            clubNoticeWrap.innerHTML = `<div class="club-notice-container"></div>`
+            const clubNoticeContainer = document.querySelector(".club-notice-container")
+            for (let notice of notices) {
+                clubNoticeContainer.innerHTML += `
+                    <div class="club-notice-boxes-border">
+                        <div class="club-notice-boxes">
+                            <div class="club-notice-box">
+                                <div>
+                                    <div class="club-notice-title-wrap">
+                                        <div class="club-notice-title-container">
+                                            <!-- 이 안에 제목이 들어갑니다. -->
+                                            <div class="club-notice-title">${notice.notice_title}</div>
+                                        </div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" style="display: block" class="club-notice-show-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" style="display: none" class="club-notice-hide-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"></path></svg>
+                                    </div>
+                                    <div class="club-notice-created-date">${notice.created_date.slice(0, 10)}</div>
+                                </div>
+                            </div>
+                            <div class="club-notice-content-wrap" style="display: none">
+                                <!-- 이 안에 내용이 들어갑니다. -->
+                                <div class="club-notice-content">${notice.notice_content}</div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            }
+            clubNoticeEvent()
+        }
+    }
+
+    return { clubActivityList:showActivityList, clubNoticeList:showClubNoticeList }
+})();
+
+// 활동 클릭 시 fetch 후 뿌리는 이벤트
 activityFilterBtn.addEventListener("click", () => {
     infoFilterWrap.style.border = "none";
     tpFilterWrap.style.border = "none";
@@ -83,10 +316,8 @@ activityFilterBtn.addEventListener("click", () => {
         noticeFilterBtn.classList.add("off");
     }
     activityFilterWrap.style.borderBottom = "2px solid #CE201B";
-    activityContent.style.display = "block";
-    infoContent.style.display = "none";
-    tpContent.style.display = "none";
-    noticeContent.style.display = "none";
+
+    tapInfoService.caList(createListService.clubActivityList)
 });
 
 infoFilterBtn.addEventListener("click", () => {
@@ -112,6 +343,28 @@ infoFilterBtn.addEventListener("click", () => {
     noticeContent.style.display = "none";
 });
 
+// 모임 공지 클릭 시 fetch 후 목록 뿌리는 이벤트
+noticeFilterBtn.addEventListener("click", () => {
+    activityFilterWrap.style.border = "none";
+    infoFilterWrap.style.border = "none";
+    tpFilterWrap.style.border = "none";
+    if (!activityFilterBtn.classList.contains("off")) {
+        activityFilterBtn.classList.add("off");
+    }
+    if (!infoFilterBtn.classList.contains("off")) {
+        infoFilterBtn.classList.add("off");
+    }
+    if (!tpFilterBtn.classList.contains("off")) {
+        tpFilterBtn.classList.add("off");
+    }
+    if (noticeFilterBtn.classList.contains("off")) {
+        noticeFilterBtn.classList.remove("off");
+    }
+    noticeFilterWrap.style.borderBottom = "2px solid #CE201B";
+
+    tapInfoService.cnList(createListService.clubNoticeList)
+});
+
 tpFilterBtn.addEventListener("click", () => {
     activityFilterWrap.style.border = "none";
     infoFilterWrap.style.border = "none";
@@ -135,29 +388,6 @@ tpFilterBtn.addEventListener("click", () => {
     noticeContent.style.display = "none";
 });
 
-noticeFilterBtn.addEventListener("click", () => {
-    activityFilterWrap.style.border = "none";
-    infoFilterWrap.style.border = "none";
-    tpFilterWrap.style.border = "none";
-    if (!activityFilterBtn.classList.contains("off")) {
-        activityFilterBtn.classList.add("off");
-    }
-    if (!infoFilterBtn.classList.contains("off")) {
-        infoFilterBtn.classList.add("off");
-    }
-    if (!tpFilterBtn.classList.contains("off")) {
-        tpFilterBtn.classList.add("off");
-    }
-    if (noticeFilterBtn.classList.contains("off")) {
-        noticeFilterBtn.classList.remove("off");
-    }
-    noticeFilterWrap.style.borderBottom = "2px solid #CE201B";
-    noticeContent.style.display = "block";
-    activityContent.style.display = "none";
-    infoContent.style.display = "none";
-    tpContent.style.display = "none";
-});
-
 // 공유하기 버튼 클릭 시 모달창으로 클립보드에 url 복사
 const shareBtn = document.getElementById("share");
 function clipCopy() {
@@ -178,7 +408,8 @@ const club = clubList[0];
 // 모임 구성원에 로그인한 회원이 있는지 조회하는 fetch
 const clubMemberService = (() => {
     const getClubMemberInfo = async (callback) => {
-        const response = await fetch(`/club/club-members/api/${club.id}/${memberId}`);
+        let url = `/club/club-members/api/?member_id=${memberId}&club_id=${club.id}`
+        const response = await fetch(url);
         const clubMembers = await response.json();
 
         await callback(clubMembers)
@@ -315,20 +546,21 @@ const quitBtnEvent = () => {
     });
 }
 
-//
+// 신청, 탈퇴, 취소 모달 내 확인 버튼 클릭시 clubmember의 status를 변경하는 함수
 const updateClubMemberStatus = async () => {
-    // let data = {
-    //     'member_id': memberId
-    // }
+    let data = {
+        'club_id': club.id,
+        'member_id': memberId
+    }
 
-    const response = await fetch(`/club/club-members/api/${club.id}/${memberId}`, {
+    const response = await fetch(`/club/club-members/api/`, {
         method: 'PATCH',
-        headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrftoken}
-        // body: JSON.stringify(data)
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrftoken},
+        body: JSON.stringify(data)
     })
 
     const resultText = await response.json()
-    console.log(resultText)
+
     clubMemberService.getClubMemberInfo(createClubTopBtn);
 }
 
@@ -391,28 +623,7 @@ function exitModal() {
 modalLikeExitBtn.addEventListener("click", exitModal);
 modalUnlikeExitBtn.addEventListener("click", exitModal);
 
-// 공지사항 각각 제목 클릭 시 세부 내용 표시
-const noticeContentWraps = document.querySelectorAll(".club-notice-content-wrap");
-const noticeTitles = document.querySelectorAll(".club-notice-box");
-const noticeShowBtns = document.querySelectorAll(".club-notice-show-icon");
-const noticeHideBtns = document.querySelectorAll(".club-notice-hide-icon");
 
-noticeTitles.forEach((title, i) => {
-    title.addEventListener("click", () => {
-        if (noticeShowBtns[i].style.display == "block") {
-            noticeShowBtns[i].style.display = "none";
-            noticeHideBtns[i].style.display = "block";
-        } else {
-            noticeShowBtns[i].style.display = "block";
-            noticeHideBtns[i].style.display = "none";
-        }
-        if (noticeContentWraps[i].style.display == "none") {
-            noticeContentWraps[i].style.display = "block";
-        } else {
-            noticeContentWraps[i].style.display = "none";
-        }
-    });
-});
 
 // 틴플레이 업로드 버튼 클릭 시 모달창
 const tpUploadModal = document.querySelector(".club-upload-modal-wrap");
@@ -719,3 +930,6 @@ teenplayDeleteWraps.forEach((div, i) => {
         });
     });
 });
+
+
+tapInfoService.caList(createListService.clubActivityList)

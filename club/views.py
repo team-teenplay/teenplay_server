@@ -1,5 +1,6 @@
-from django.db import transaction
-from django.db.models import Count, F, Q
+from django.db import transaction, models
+from django.db.models import Count, F, Q, OuterRef, Subquery, Count
+from django.db.models.functions import Coalesce
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views import View
@@ -58,7 +59,7 @@ class ClubDetailView(View):
             'club_activity_count'
         ]
 
-        club = Club.objects.filter(id=club_id)\
+        club_list = Club.objects.filter(id=club_id)\
             .annotate(
             owner_id=F('member__id'),
             owner_name=F('member__member_nickname'),
@@ -67,16 +68,8 @@ class ClubDetailView(View):
             club_member_count=Count('clubmember', filter=Q(clubmember__status=1)),
             club_activity_count=Count('activity')).values(*columns)
 
-        member = Member(**request.session['member'])
-        club_member = ClubMember.objects.filter(member=member)
-        club_member_status = True
-
-        if club_member.exists():
-            club_member_status = club_member.first().status
-
         context = {
-            'club_list': list(club),
-            'club_member_status': club_member_status
+            'club_list': list(club_list),
         }
 
         return render(request, 'club/web/club-detail-web.html', context)
@@ -90,15 +83,16 @@ class ClubAPI(APIView):
 
 
 class ClubMemberAPI(APIView):
-    def get(self, request, club_id, member_id):
-        club_members = ClubMember.objects.filter(member=member_id, club=club_id).values()
+    def get(self, request):
+        club_members = ClubMember.objects.filter(member=request.GET['member_id'], club=request.GET['club_id']).values()
 
         return Response(club_members)
 
     @transaction.atomic
-    def patch(self, request, club_id, member_id):
-        member = Member.objects.get(id=member_id)
-        club = Club.objects.get(id=club_id)
+    def patch(self, request):
+        data = request.GET['data']
+        member = Member.objects.get(id=data.member_id)
+        club = Club.objects.get(id=data.club_id)
         club_member, created = ClubMember.objects.get_or_create(member=member, club=club)
 
         if created:
@@ -121,6 +115,41 @@ class ClubMemberAPI(APIView):
             club_member.updated_date = timezone.now()
             club_member.save(update_fields=['status', 'updated_date'])
             return Response('quit')
+
+
+class ClubActivityAPI(APIView):
+    def get(self, request):
+        club = Club.objects.get(id=request.GET['club_id'])
+        columns = [
+            'id',
+            'activity_title',
+            'thumbnail_path',
+            'activity_start',
+            'participant_count'
+        ]
+
+        finished_activities = club.activity_set.filter(activity_end__lte=timezone.now(), status=1)\
+            .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))\
+            .values(*columns).order_by('-id')
+
+        ongoing_activities = club.activity_set.filter(activity_end__gt=timezone.now(), status=1)\
+            .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))\
+            .values(*columns)
+
+        club_activities = {
+            'finished_activities': finished_activities,
+            'ongoing_activities': ongoing_activities
+        }
+
+        return Response(club_activities)
+
+
+class ClubNoticeAPI(APIView):
+    def get(self, request):
+        club = Club.objects.get(id=request.GET['club_id'])
+        club_notices = club.clubnotice_set.filter(status=1).values().order_by('-id')
+
+        return Response(club_notices)
 
 
 class ClubPrPostsView(View):

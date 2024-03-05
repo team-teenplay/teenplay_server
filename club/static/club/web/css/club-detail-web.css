@@ -359,11 +359,6 @@ button, input, optgroup, select, textarea {
     padding: 0.5rem;
 }
 
-.club-detail-filter-button.off:hover {
-    --tw-text-opacity: 1;
-    color: rgb(77 82 86/var(--tw-text-opacity));
-}
-
 .club-detail-filter-lists {
     --tw-space-x-reverse: 0;
     margin-right: calc(1rem*var(--tw-space-x-reverse));
@@ -374,6 +369,11 @@ button, input, optgroup, select, textarea {
 .club-detail-filter-button.off {
     --tw-text-opacity: 1;
     color: rgb(135 141 145/var(--tw-text-opacity));
+}
+
+.club-detail-filter-button.off:hover {
+    --tw-text-opacity: 1;
+    color: rgb(77 82 86/var(--tw-text-opacity));
 }
 
 .club-detail-filter-info {
@@ -569,7 +569,7 @@ button, input, optgroup, select, textarea {
     --tw-space-y-reverse: 0;
     margin-top: calc(0.25rem*(1 - var(--tw-space-y-reverse)));
     margin-bottom: calc(0.25rem*var(--tw-space-y-reverse));
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     display: flex;
 }
@@ -1032,10 +1032,6 @@ button, input, optgroup, select, textarea {
     word-break: break-word;
 }
 
-.club-notice {
-    display: none;
-}
-
 .club-notice-wrap {
     min-height: 24rem;
     padding-top: 2rem;
@@ -1067,12 +1063,15 @@ button, input, optgroup, select, textarea {
     word-break: break-word;
 }
 
+.club-notice-boxes-border:not(:first-child) {
+    border-top-width: 1px;
+}
+
 .club-notice-boxes {
     padding-top: 1.5rem;
     padding-bottom: 1.5rem;
     --tw-border-opacity: 1;
     border-color: rgb(225 228 230/var(--tw-border-opacity));
-    border-top-width: 1px;
 }
 
 .club-notice-box {
