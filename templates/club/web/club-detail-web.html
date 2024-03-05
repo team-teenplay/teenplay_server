@@ -30,29 +30,28 @@
                                 <!-- 버튼마다 출력하는 모달창이 다릅니다. -->
                                 <!-- (모달은 다 짜놨으니 버튼 display만 바꾸시면 됩니다.) -->
                                 <!-- 서버 작업 시 상황에 맞게 나머지 버튼은 display:none 해주세요. -->
-                                {% if request.session.member.id == club.owner_id %}
-                                {% elif not club_member_status %}
-                                    <!-- 1. 가입중(가입됨) -->
-                                    <div class="club-top-button-boxes">
-                                        <button id="quit" class="club-top-button quit">
-                                            <span>탈퇴하기</span>
-                                        </button>
-                                    </div>
-                                {% elif club_member_status == -1 %}
-                                    <!-- 2. 승인대기 -->
-                                    <div class="club-top-button-boxes">
-                                        <button id="cancel" class="club-top-button cancel">
-                                            <span>신청취소</span>
-                                        </button>
-                                    </div>
-                                {% else %}
-                                    <!-- 1. 초기값: 가입 신청 -->
-                                    <div class="club-top-button-boxes">
-                                        <button id="apply" class="club-top-button apply">
-                                            <span>가입신청</span>
-                                        </button>
-                                    </div>
-                                {% endif %}
+                                <div class="club-top-button-boxes">
+{#                                    {% if request.session.member.id == club.owner_id %}#}
+{#                                        <button id="manage" class="club-top-button manage">#}
+{#                                            <span>관리하기</span>#}
+{#                                        </button>#}
+{#                                    {% elif not club_member_status %}#}
+{#                                        <!-- 1. 가입중(가입됨) -->#}
+{#                                        <button id="quit" class="club-top-button quit">#}
+{#                                            <span>탈퇴하기</span>#}
+{#                                        </button>#}
+{#                                    {% elif club_member_status == -1 %}#}
+{#                                        <!-- 2. 승인대기 -->#}
+{#                                        <button id="cancel" class="club-top-button cancel">#}
+{#                                            <span>신청취소</span>#}
+{#                                        </button>#}
+{#                                    {% else %}#}
+{#                                        <!-- 1. 초기값: 가입 신청 -->#}
+{#                                        <button id="apply" class="club-top-button apply">#}
+{#                                            <span>가입신청</span>#}
+{#                                        </button>#}
+{#                                    {% endif %}#}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1076,6 +1075,7 @@
                 </div>
             </div>
         </main>
+        <form action="" name="" method="post"></form>
     {% endfor %}
 {% endblock %}
 
@@ -1227,6 +1227,10 @@
     </div>
 {% endblock %}
 {% block js %}
+    <script>
+        const clubList = {{ club_list|safe }}
+        const memberId = {{ request.session.member.id|safe }}
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{% static 'club/web/js/club-detail-web.js' %}"></script>
 {% endblock %}

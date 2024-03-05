@@ -88,6 +88,14 @@ class ClubAPI(APIView):
         return Response(club)
 
 
+class ClubMemberAPI(APIView):
+    def get(self, request, club_id):
+        member = request.session['member']
+        club_members = ClubMember.objects.filter(member=member['id'], club=club_id).values()
+
+        return Response(club_members)
+
+
 class ClubPrPostsView(View):
     def get(self, request):
         return render(request, 'club/web/club-pr-posts-web.html')

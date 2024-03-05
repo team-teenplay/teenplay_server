@@ -22,16 +22,16 @@ class ClubTestCase(TestCase):
         'club_activity_count'
     ]
 
-    club = Club.objects.filter(id=club_id) \
-        .annotate(
-        owner_id=F('member__id'),
-        owner_name=F('member__member_nickname'),
-        owner_email=F('member__member_email'),
-        owner_phone=F('member__member_phone'),
-        club_member_count=Count('clubmember', filter=Q(clubmember__status=1)),
-        club_activity_count=Count('activity')).values(*columns)
+    # club = Club.objects.filter(id=club_id) \
+    #     .annotate(
+    #     owner_id=F('member__id'),
+    #     owner_name=F('member__member_nickname'),
+    #     owner_email=F('member__member_email'),
+    #     owner_phone=F('member__member_phone'),
+    #     club_member_count=Count('clubmember', filter=Q(clubmember__status=1)),
+    #     club_activity_count=Count('activity')).values(*columns)
 
-    print(club)
+    # print(club)
 
     # member = Member.objects.get(id=8)
     # club_member = ClubMember.objects.filter(member=member)
@@ -39,4 +39,8 @@ class ClubTestCase(TestCase):
     # if club_member.exists():
     #     if club_member.first().status:
     #         print(club_member.first().status)
+    club = Club.objects.get(id=7)
+    member = Member.objects.get(id=8)
+
+    ClubMember.objects.create(club=club, member=member)
 

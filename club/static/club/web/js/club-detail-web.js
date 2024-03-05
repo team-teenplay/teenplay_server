@@ -171,14 +171,75 @@ function clipCopy() {
 }
 shareBtn.addEventListener("click", clipCopy);
 
-// 가입신청 버튼 클릭 시 모달창 출력
-
 // 모임 이름 받아와서 넣어야함(아래는 예시)
 const clubName = document.querySelector(".club-detail-name").innerText;
-const applyBtn = document.getElementById("apply");
-if (applyBtn) {
-    applyBtnEvent()
+const club = clubList[0];
+
+// 모임 구성원에 로그인한 회원이 있는지 조회하는 fetch
+const clubMemberService = (() => {
+    const getClubMemberInfo = async () => {
+        const response = await fetch(`/club/club-members/api/${club.id}`);
+        const clubMembers = await response.json();
+
+        await createClubTopBtn(clubMembers)
+    }
+
+    return {getClubMemberInfo:getClubMemberInfo}
+})();
+clubMemberService.getClubMemberInfo();
+
+// 조회 결과에 따라 모임 상단 버튼을 바꿔주는 함수
+const createClubTopBtn =  (clubMembers) => {
+    const clubTopButtonBoxes = document.querySelector(".club-top-button-boxes")
+    let clubMember = clubMembers[0]
+    if (clubMembers.length === 0) {
+        if (memberId === club.owner_id) {
+            clubTopButtonBoxes.innerHTML = `
+                <button id="manage" class="club-top-button manage">
+                    <span>관리하기</span>
+                </button>
+            `;
+            manageBtnEvent();
+        } else{
+            clubTopButtonBoxes.innerHTML = `
+                <button id="apply" class="club-top-button apply">
+                    <span>가입신청</span>
+                </button>
+            `;
+            applyBtnEvent()
+        }
+    } else if (clubMember.status === -1) {
+        clubTopButtonBoxes.innerHTML = `
+            <button id="cancel" class="club-top-button cancel">
+                <span>신청취소</span>
+            </button>
+        `;
+        cancelBtnEvent()
+    } else if (clubMember.status === 1) {
+        clubTopButtonBoxes.innerHTML = `
+            <button id="quit" class="club-top-button quit">
+                <span>탈퇴하기</span>
+            </button>
+        `;
+        quitBtnEvent()
+    } else{
+        clubTopButtonBoxes.innerHTML = `
+            <button id="apply" class="club-top-button apply">
+                <span>가입신청</span>
+            </button>
+        `;
+        applyBtnEvent()
+    }
 }
+
+// 관리하기 버튼 클릭 시 모임 관리 페이지로 이동
+const manageBtnEvent = () => {
+    document.getElementById("manage").addEventListener("click", () => {
+        window.location.href = ``
+    })
+}
+
+// 가입신청 버튼 클릭 시 모달창 출력
 const applyBtnEvent = () => {
     document.getElementById("apply").addEventListener("click", () => {
         Swal.fire({
@@ -192,15 +253,16 @@ const applyBtnEvent = () => {
             cancelButtonText: "취소",
         }).then((result) => {
             if (result.value) {
+                const form = document.querySelector("form[name=name]")
+                form.submit()
                 // 가입신청 관련 서버 작업 코드 입력
                 Swal.fire("신청 완료", `[${clubName}] 모임에 가입 신청이 완료되었어요!`, "success");
-            } else if (result.dismiss == "cancel") {
+            } else if (result.dismiss === "cancel") {
                 return;
             }
         });
     });
 }
-
 
 // 승인대기 버튼 클릭 시 신청취소 모달창 출력
 const cancelBtnEvent = () => {
