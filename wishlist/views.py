@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from member.models import Member
-from teenplay_server.models import Category
+from teenplay_server.category import Category
 from wishlist.models import Wishlist, WishlistReply
 
 
