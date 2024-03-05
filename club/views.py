@@ -1,6 +1,8 @@
-from django.db import transaction
-from django.db.models import Count, F
+from django.db import transaction, models
+from django.db.models import Count, F, Q, OuterRef, Subquery, Count
+from django.db.models.functions import Coalesce
 from django.shortcuts import render, redirect
+from django.utils import timezone
 from django.views import View
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -57,25 +59,17 @@ class ClubDetailView(View):
             'club_activity_count'
         ]
 
-        club = Club.objects.filter(id=club_id)\
+        club_list = Club.objects.filter(id=club_id)\
             .annotate(
             owner_id=F('member__id'),
             owner_name=F('member__member_nickname'),
             owner_email=F('member__member_email'),
             owner_phone=F('member__member_phone'),
-            club_member_count=Count('clubmember'),
+            club_member_count=Count('clubmember', filter=Q(clubmember__status=1)),
             club_activity_count=Count('activity')).values(*columns)
 
-        member = Member(**request.session['member'])
-        club_member = ClubMember.objects.filter(member=member)
-        club_member_status = True
-
-        if club_member.exists():
-            club_member_status = club_member.first().status
-
         context = {
-            'club_list': list(club),
-            'club_member_status': club_member_status
+            'club_list': list(club_list),
         }
 
         return render(request, 'club/web/club-detail-web.html', context)
@@ -86,6 +80,76 @@ class ClubAPI(APIView):
         club = Club.objects.filter(id=club_id).values().first()
 
         return Response(club)
+
+
+class ClubMemberAPI(APIView):
+    def get(self, request):
+        club_members = ClubMember.objects.filter(member=request.GET['member_id'], club=request.GET['club_id']).values()
+
+        return Response(club_members)
+
+    @transaction.atomic
+    def patch(self, request):
+        data = request.GET['data']
+        member = Member.objects.get(id=data.member_id)
+        club = Club.objects.get(id=data.club_id)
+        club_member, created = ClubMember.objects.get_or_create(member=member, club=club)
+
+        if created:
+            return Response('create-apply')
+
+        if club_member.status == -1:
+            club_member.status = 0
+            club_member.updated_date = timezone.now()
+            club_member.save(update_fields=['status', 'updated_date'])
+            return Response('cancel')
+
+        if club_member.status == 0:
+            club_member.status = -1
+            club_member.updated_date = timezone.now()
+            club_member.save(update_fields=['status', 'updated_date'])
+            return Response('apply')
+
+        if club_member.status == 1:
+            club_member.status = 0
+            club_member.updated_date = timezone.now()
+            club_member.save(update_fields=['status', 'updated_date'])
+            return Response('quit')
+
+
+class ClubActivityAPI(APIView):
+    def get(self, request):
+        club = Club.objects.get(id=request.GET['club_id'])
+        columns = [
+            'id',
+            'activity_title',
+            'thumbnail_path',
+            'activity_start',
+            'participant_count'
+        ]
+
+        finished_activities = club.activity_set.filter(activity_end__lte=timezone.now(), status=1)\
+            .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))\
+            .values(*columns).order_by('-id')
+
+        ongoing_activities = club.activity_set.filter(activity_end__gt=timezone.now(), status=1)\
+            .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))\
+            .values(*columns)
+
+        club_activities = {
+            'finished_activities': finished_activities,
+            'ongoing_activities': ongoing_activities
+        }
+
+        return Response(club_activities)
+
+
+class ClubNoticeAPI(APIView):
+    def get(self, request):
+        club = Club.objects.get(id=request.GET['club_id'])
+        club_notices = club.clubnotice_set.filter(status=1).values().order_by('-id')
+
+        return Response(club_notices)
 
 
 class ClubPrPostsView(View):

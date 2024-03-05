@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en" style="height: 100%">
     <head>
@@ -32,7 +33,7 @@
                             <!-- 메인페이지 경로 -->
                             <a href="">
                                 <!--  -->
-                                <img class="logo-image" src="{% static 'public/web/images/logo/logo2.png' %}" alt="로고" />
+                                <img class="logo-image" src="{% static '/staticfiles/images/teenplay_logo/logo2.png' %}" alt="로고" />
                             </a>
                             <div class="search-section">
                                 <button class="search-btn" type="button" style="background-color: white !important">
@@ -95,7 +96,7 @@
                                             <div class="mypage-menu-signal-count">3</div>
                                         </a>
                                         <div class="border-line"></div>
-                                        <button class="logout-btn" type="button">
+                                         <button class="logout-btn" type="button" onclick="location.href='/accounts/logout'">
                                             <span>로그아웃</span>
                                         </button>
                                     </div>
