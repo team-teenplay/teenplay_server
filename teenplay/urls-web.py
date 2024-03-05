@@ -7,7 +7,7 @@ app_name = 'teenplay'
 
 urlpatterns = [
     path('all/', TeenplayMainListWebView.as_view(), name='teenplay-main-list'),
-    path('all/new/', TeenplayMainListAPIView.as_view(), name='teenplay-main-list-new'),
+    path('all/new/api/<int:slideNumber>/', TeenplayMainListAPIView.as_view(), name='teenplay-main-list-new'),
 ]
 
 

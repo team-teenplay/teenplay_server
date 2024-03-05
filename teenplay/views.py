@@ -13,20 +13,25 @@ from teenplay.serializers import TeenplaySerializer
 
 class TeenplayMainListWebView(View):
     def get(self, request):
-        teenplay_count = TeenPlay.objects.all().count()
+        if 'member' in request.session and 'id' in request.session['member']:
+            id = request.session['member']['id']
+        else:
+            if 'member' in request.session:
+                id = request.session['member'].get('id', None)
+            else:
+                id = None
 
+        teenplay_count = TeenPlay.objects.all().count()
         teenplay_list = []
         for number in range(5):
             like_count = {}
 
             radiant_teenplay = randint(1, teenplay_count)
             teenplay = TeenPlay.objects.filter(id=radiant_teenplay, status=1).annotate(likes=Count('teenplaylike__status',filter=Q(teenplaylike__status=1))).values('video_path', 'club__club_name', 'club__club_intro','club__club_profile_path','club_id','likes')
-            member_like = TeenPlayLike.objects.filter(member_id=radiant_teenplay, status=1).exists()
+            member_like = TeenPlayLike.objects.filter(member_id=id, teenplay_id=radiant_teenplay, status=1).exists()
             like_count['like_check']= member_like
             teenplay_like={**like_count, **teenplay[0]}
             teenplay_list.append(teenplay_like)
-
-
 
         context = teenplay_list
         return render(request, 'teenplay/web/teenplay-play-web.html', {'context': context})
@@ -35,14 +40,32 @@ class TeenplayMainListWebView(View):
 
 class TeenplayMainListAPIView(APIView):
     # 해당 url 로 호출을 받으면
-    def get(self, reqeust):
-        teenplay = TeenPlay.objects.all().count()
-        radiant_teenplay = randint(1, teenplay)
-        teenplay_number = radiant_teenplay
+    def get(self, request, slideNumber):
+        teenplay_count = TeenPlay.objects.all().count()
 
-        teenplay = TeenPlay.objects.get(id=teenplay_number)
-        teenplay = TeenplaySerializer(teenplay).data
-        return Response(teenplay)
+        if 'member' in request.session and 'id' in request.session['member']:
+            id = request.session['member']['id']
+        else:
+            if 'member' in request.session:
+                id = request.session['member'].get('id', None)
+            else:
+                id = None
+
+        teenplay_list = []
+        for number in range(3):
+            like_count = {}
+
+            radiant_teenplay = randint(1, teenplay_count)
+            teenplay = TeenPlay.objects.filter(id=radiant_teenplay, status=1).annotate(
+                likes=Count('teenplaylike__status', filter=Q(teenplaylike__status=1))).values('video_path','club__club_name','club__club_intro','club__club_profile_path','club_id', 'likes')
+            member_like = TeenPlayLike.objects.filter(member_id=id, teenplay_id=radiant_teenplay, status=1).exists()
+            like_count['like_check'] = member_like
+            teenplay_like = {**like_count, **teenplay[0]}
+            teenplay_list.append(teenplay_like)
+
+        addContext = teenplay_list
+        return Response(addContext)
+
 
 
 ############################################################################################################################################

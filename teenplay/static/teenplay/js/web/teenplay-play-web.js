@@ -15,7 +15,7 @@ let slideContainer = document.querySelector(".play-item");
 let likeBtns = document.querySelectorAll(".play-like-btn");
 let emptyHeart = document.querySelectorAll(".play-like-icon.empty");
 let fullHeart = document.querySelectorAll(".play-like-icon.full");
-
+let slideNumber = 1
 
 // 구글 개인정보 소리 설정 해제 후 동영상 최초 재생 확인
 videos[0].play();
@@ -164,6 +164,7 @@ slideWrap.addEventListener("wheel", (e) => {
         setTimeout( () => {
             isFetchingTeenplay = true;
             getTeenplay(showTeenplay)
+            slideNumber += 1
             pageNumber += 3
         },500)
     }
@@ -189,7 +190,7 @@ likeBtns.forEach((button, i) => {
 // 화면 데이터를 가져오는 것을 fetch 를 이용해서 값을 가져온다.
 
 const getTeenplay = async (callback) => {
-    const response = await fetch(`new/`)
+    const response = await fetch(`new/api/${slideNumber}/`)
     const teenplay = await response.json();
     if (callback){
         callback(teenplay)
@@ -197,6 +198,7 @@ const getTeenplay = async (callback) => {
 }
 
 const showTeenplay = (teenplay) => {
+
     const playWrap = document.querySelector(".play-item")
 
     playWrap.innerHTML += `  
@@ -207,7 +209,7 @@ const showTeenplay = (teenplay) => {
                 <div class="video-wrap">
                     <!-- 비디오 -->
                     <video class="play-video" preload loop="" autoplay="">
-                        <source src="/upload/teenplay_video/2024/03/02/teenplay_example_1.MOV" type="video/ogg" />
+                        <source src="/upload/${teenplay[0].video_path}" type="video/ogg" />
                     </video>
                 </div>
             </div>
@@ -219,15 +221,14 @@ const showTeenplay = (teenplay) => {
                         <a href="" class="play-writer-image-wrap">
                             <div class="play-writer-image-container">
                                 <!-- 모임 프사 -->
-<!--                                <img src="{% static 'teenplay/image/teenplay_example_1_profile.jpg' %}" class="play-writer-image" />-->
-<!--                                <img src="/teenplay/static/teenplay/image/teenplay_example_1_profile.jpg" class="play-writer-image" />-->
+                                <img src="/upload/${teenplay[0].club__club_profile_path}" class="play-writer-image" />
                             </div>
                         </a>
                         <div class="play-writer-container">
                             <div class="play-writer-boxes">
                                 <div class="play-writer-box">
                                     <!-- 모임 이름 -->
-                                    <a href="" class="play-writer-name">teen</a>
+                                    <a href="" class="play-writer-name">${teenplay[0].club__club_name}</a>
                                 </div>
                             </div>
                         </div>
@@ -242,13 +243,13 @@ const showTeenplay = (teenplay) => {
                                     </svg>
                                 </button>
                             </div>
-                            <div class="play-like-count">1.3천</div>
+                            <div class="play-like-count">${teenplay[0].likes}</div>
                         </div>
                     </div>
                     <!-- 제목(내용) -->
                     <h2 class="play-info-title-wrap">
                         <div class="play-info-title-container">
-                            <span class="play-info-title">틴친들과 함께한 일본여행 VLOG😘</span>
+                            <span class="play-info-title">${teenplay[0].club__club_intro}</span>
                         </div>
                     </h2>
                 </div>
@@ -305,7 +306,7 @@ const showTeenplay = (teenplay) => {
                 <div class="video-wrap">
                     <!-- 비디오 -->
                     <video class="play-video" preload loop="" autoplay="">
-                        <source src="/upload/teenplay_video/2024/03/02/teenplay_example_1.MOV" type="video/ogg" />
+                        <source src="/upload/${teenplay[1].video_path}" type="video/ogg" />
                     </video>
                 </div>
             </div>
@@ -317,15 +318,14 @@ const showTeenplay = (teenplay) => {
                         <a href="" class="play-writer-image-wrap">
                             <div class="play-writer-image-container">
                                 <!-- 모임 프사 -->
-<!--                                <img src="{% static 'teenplay/image/teenplay_example_1_profile.jpg' %}" class="play-writer-image" />-->
-<!--                                <img src="/teenplay/static/teenplay/image/teenplay_example_1_profile.jpg" class="play-writer-image" />-->
+                                <img src="/upload/${teenplay[1].club__club_profile_path}" class="play-writer-image" />
                             </div>
                         </a>
                         <div class="play-writer-container">
                             <div class="play-writer-boxes">
                                 <div class="play-writer-box">
                                     <!-- 모임 이름 -->
-                                    <a href="" class="play-writer-name">teen</a>
+                                    <a href="" class="play-writer-name">${teenplay[1].club__club_name}</a>
                                 </div>
                             </div>
                         </div>
@@ -340,13 +340,13 @@ const showTeenplay = (teenplay) => {
                                     </svg>
                                 </button>
                             </div>
-                            <div class="play-like-count">1.3천</div>
+                            <div class="play-like-count">${teenplay[1].likes}</div>
                         </div>
                     </div>
                     <!-- 제목(내용) -->
                     <h2 class="play-info-title-wrap">
                         <div class="play-info-title-container">
-                            <span class="play-info-title">틴친들과 함께한 일본여행 VLOG😘</span>
+                            <span class="play-info-title">${teenplay[1].club__club_intro}</span>
                         </div>
                     </h2>
                 </div>
@@ -403,7 +403,7 @@ const showTeenplay = (teenplay) => {
                 <div class="video-wrap">
                     <!-- 비디오 -->
                     <video class="play-video" preload loop="" autoplay="">
-                        <source src="/upload/teenplay_video/2024/03/02/teenplay_example_1.MOV" type="video/ogg" />
+                        <source src="/upload/${teenplay[2].video_path}" type="video/ogg" />
                     </video>
                 </div>
             </div>
@@ -415,15 +415,14 @@ const showTeenplay = (teenplay) => {
                         <a href="" class="play-writer-image-wrap">
                             <div class="play-writer-image-container">
                                 <!-- 모임 프사 -->
-<!--                                <img src="{% static 'teenplay/image/teenplay_example_1_profile.jpg' %}" class="play-writer-image" />-->
-<!--                                <img src="/teenplay/static/teenplay/image/teenplay_example_1_profile.jpg" class="play-writer-image" />-->
+                                <img src="/upload/${teenplay[2].club__club_profile_path}" class="play-writer-image" />
                             </div>
                         </a>
                         <div class="play-writer-container">
                             <div class="play-writer-boxes">
                                 <div class="play-writer-box">
                                     <!-- 모임 이름 -->
-                                    <a href="" class="play-writer-name">teen</a>
+                                    <a href="" class="play-writer-name">${teenplay[2].club__club_name}</a>
                                 </div>
                             </div>
                         </div>
@@ -438,13 +437,13 @@ const showTeenplay = (teenplay) => {
                                     </svg>
                                 </button>
                             </div>
-                            <div class="play-like-count">1.3천</div>
+                            <div class="play-like-count">${teenplay[2].likes}</div>
                         </div>
                     </div>
                     <!-- 제목(내용) -->
                     <h2 class="play-info-title-wrap">
                         <div class="play-info-title-container">
-                            <span class="play-info-title">틴친들과 함께한 일본여행 VLOG😘</span>
+                            <span class="play-info-title">${teenplay[2].club__club_intro}</span>
                         </div>
                     </h2>
                 </div>
@@ -512,6 +511,32 @@ const showTeenplay = (teenplay) => {
     let likeBtns = document.querySelectorAll(".play-like-btn");
     let emptyHeart = document.querySelectorAll(".play-like-icon.empty");
     let fullHeart = document.querySelectorAll(".play-like-icon.full");
+
+
+
+
+    const indexList  = document.querySelectorAll(".play-like-icon.empty");
+    const indexArray = [];
+
+    indexList.forEach((index, i ) => {
+        indexArray.push(i)
+    })
+    const lastThreeIndex = Array.from(indexArray).slice(-3);
+
+    console.log(teenplay[0].like_check)
+    for (let count = 0; count < lastThreeIndex.length; count++) {
+        if (count < teenplay.length) {
+            if (teenplay[count].like_check) {
+                emptyHeart[lastThreeIndex[count]].style.display = "none";
+                fullHeart[lastThreeIndex[count]].style.display = "block";
+            } else {
+                emptyHeart[lastThreeIndex[count]].style.display = "block";
+                fullHeart[lastThreeIndex[count]].style.display = "none";
+            }
+        }
+    }
+
+
 
     videoWraps.forEach((videoWrap, i) => {
         if (!videoWrap.classList.contains("playing")) {
