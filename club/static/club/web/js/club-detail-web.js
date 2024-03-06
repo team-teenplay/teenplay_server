@@ -1,3 +1,17 @@
+const clubServiceWrap = document.querySelector("#club-service-wrap");
+const activityFilterWrap = document.querySelector(".club-detail-filter-event");
+const activityFilterBtn = document.querySelector(".club-detail-filter-event .club-detail-filter-button");
+const infoFilterWrap = document.querySelector(".club-detail-filter-info");
+const infoFilterBtn = document.querySelector(".club-detail-filter-info .club-detail-filter-button");
+const tpFilterWrap = document.querySelector(".club-detail-filter-teenplay");
+const tpFilterBtn = document.querySelector(".club-detail-filter-teenplay button");
+const activityContent = document.querySelector("div.club-detail-desc-container");
+const infoContent = document.querySelector(".club-info");
+const tpContent = document.querySelector(".club-teenplay");
+const noticeFilterWrap = document.querySelector(".club-detail-filter-notice");
+const noticeFilterBtn = document.querySelector(".club-detail-filter-notice .club-detail-filter-button");
+const noticeContent = document.querySelector(".club-notice");
+
 // 처음에 페이지 로드 시 9번째 활동부터는(존재한다면) 숨겨놓기
 // const finishedActivities = document.querySelectorAll(".finished-events-boxes");
 // if (finishedActivities.length >= 9) {
@@ -78,21 +92,9 @@ const clubNoticeEvent = () => {
 
 // 탭 클릭 시 활성화되는 탭 변경,
 // 그리고 아래 표시되는 내용 싹 다 변경
-const clubServiceWrap = document.querySelector("#club-service-wrap");
-const activityFilterWrap = document.querySelector(".club-detail-filter-event");
-const activityFilterBtn = document.querySelector(".club-detail-filter-event .club-detail-filter-button");
-const infoFilterWrap = document.querySelector(".club-detail-filter-info");
-const infoFilterBtn = document.querySelector(".club-detail-filter-info .club-detail-filter-button");
-const tpFilterWrap = document.querySelector(".club-detail-filter-teenplay");
-const tpFilterBtn = document.querySelector(".club-detail-filter-teenplay button");
-const activityContent = document.querySelector("div.club-detail-desc-container");
-const infoContent = document.querySelector(".club-info");
-const tpContent = document.querySelector(".club-teenplay");
-const noticeFilterWrap = document.querySelector(".club-detail-filter-notice");
-const noticeFilterBtn = document.querySelector(".club-detail-filter-notice .club-detail-filter-button");
-const noticeContent = document.querySelector(".club-notice");
 
-// 전달받은 date를 0월0일(0)형식으로 바꿔서 리턴하는 함수
+
+// 전달받은 date.slice(0,19)를 0월0일(0)형식으로 바꿔서 리턴하는 함수
 const changeDate = (dateStr) => {
     const days = ['일', '월', '화', '수', '목', '금', '토'];
     const date = new Date(dateStr); // string타입을 date타입으로 바꿈.
@@ -104,148 +106,142 @@ const changeDate = (dateStr) => {
     return `${month.toString().padStart(2, '0')}월 ${day.toString().padStart(2, '0')}일(${dayOfWeek})`;
 }
 
-// fetch로 각 탭에 해당하는 정보 가져오는 함수
-const tapInfoService = (() => {
-    const getClubActivities = async (callback) => {
-        const url = `/club/club-activities/api/?club_id=${club.id}`
-        const response = await fetch(url)
-        const activities = await response.json()
-
-        await callback(activities)
-    }
-
-    const getClubNotices = async (callback) => {
-        const response = await fetch(`/club/club-notices/api/?club_id=${club.id}`)
-        const notices = await response.json()
-
-        await callback(notices)
-    }
-
-    return { caList:getClubActivities, cnList:getClubNotices }
-})()
-
 // 정보를 기준으로 목록을 뿌려주는 함수
 const createListService = (() => {
+    let text = ``;
     const showActivityList = (activities) => {
-        clubServiceWrap.innerHTML = `
+        text += `
             <div class="club-detail-desc-container">
                 <div class="club-detail-desc-boxes">
                     <div class="club-detail-active-events">
                         <div class="club-detail-active-desc">진행중인 활동</div>
-                        <div class="club-detail-active-wrap"></div>
+                        <div class="club-detail-active-wrap">
+        `
+        if (activities.ongoing_activities.length === 0) {
+            text += `
+                            <div class="club-detail-active-empty-wrap">
+                                <div class="club-detail-active-empty-container">
+                                    <div class="club-detail-active-empty">진행중인 활동이 없습니다.</div>
+                                </div>
+                            </div>
+            `
+        } else{
+            text += `
+                            <div class="club-detail-active-container">
+            `
+            for (let ongoing_activity of activities.ongoing_activities) {
+                text += `
+                                <div class="club-detail-active">
+                                    <div class="club-detail-img-wrap">
+                                        <a href="" class="club-detail-img-link">
+                                            <img src="/upload/${ongoing_activity.thumbnail_path}" alt="활동 이미지" class="club-detail-img" />
+                                        </a>
+                                        <div class="club-detail-like-wrap">
+                                            <button class="club-detail-like-button">
+                                                <span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                                    </svg>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon full" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                                    </svg>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="club-detail-desc-box">
+                                        <div class="club-detail-date-wrap">
+                                            <div>
+                                                <span class="club-detail-date"> ${changeDate(ongoing_activity.activity_start.slice(0,19))} </span>
+                                            </div>
+                                        </div>
+                                        <div class="event-title-wrap">
+                                            <a href="" class="event-title"> ${ongoing_activity.activity_title} </a>
+                                        </div>
+                                        <div class="event-detail-wrap">
+                                            <div class="event-usercount-wrap">
+                                                <span class="event-usercount"> 참여 ${ongoing_activity.participant_count} </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                `
+            }
+            text += `    
+                            </div>
+            `
+
+        }
+        text += `   
+                        </div>
                     </div>
                     <div class="club-detail-finished-events">
                         <div class="finished-events-bold">종료 활동</div>
-                        <div class="finished-events-wrap"></div>
+                        <div class="finished-events-wrap">
+        `
+        if (activities.finished_activities.length === 0) {
+            text += `
+                            <div class="club-finished-events-empty-wrap">
+                                <div class="club-finished-events-empty-container">
+                                    <div class="club-finished-events-empty">종료된 활동이 없습니다.</div>
+                                </div>
+                            </div>
+            `
+        } else{
+            text += `
+                            <div class="finished-events-container">
+            `
+            for (let finished_activity of activities.finished_activities) {
+                text += `
+                                <div class="finished-events-boxes">
+                                    <div class="finished-events-img-wrap">
+                                        <a href="" class="finished-events-img-link">
+                                            <img src="/upload/${finished_activity.thumbnail_path}" alt="활동 이미지" class="finished-events-img" />
+                                            <div class="finished-events-img-back"></div>
+                                        </a>
+                                        <div class="finished-events-like-wrap">
+                                            <button class="finished-events-like-btn">
+                                                <span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                                    </svg>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon full" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                                    </svg>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="finished-events-desc-wrap">
+                                        <div class="finished-events-finish-wrap">
+                                            <div>
+                                                <div class="finished-events-finish">종료</div>
+                                            </div>
+                                        </div>
+                                        <div class="finished-events-name-wrap">
+                                            <a href="" class="finished-events-name"> ${finished_activity.activity_title} </a>
+                                        </div>
+                                        <div class="finished-events-price-wrap">
+                                            <div class="finished-events-count-wrap">
+                                                <span class="finished-events-count"> 참여 ${finished_activity.participant_count} </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                `
+            }
+            text += `
+                            </div>
+            `
+        }
+        text += `                    
+                        </div>
+                        <!-- 여기가 더보기 버튼자리 -->
                     </div>
                 </div>
             </div>
         `
-        const clubDetailActiveWrap = document.querySelector(".club-detail-active-wrap")
-        const finishedEventsWrap = document.querySelector(".finished-events-wrap")
-        if (activities.ongoing_activities.length === 0) {
-            clubDetailActiveWrap.innerHTML = `
-                <div class="club-detail-active-empty-wrap">
-                    <div class="club-detail-active-empty-container">
-                        <div class="club-detail-active-empty">진행중인 활동이 없습니다.</div>
-                    </div>
-                </div>
-            `
-        } else{
-            clubDetailActiveWrap.innerHTML = `<div class="club-detail-active-container"></div>`
-            const clubDetailActiveContainer = document.querySelector(".club-detail-active-container")
-            for (let ongoing_activity of activities.ongoing_activities) {
-                // if (ongoing_activity.thumbnail_path === null)
-                clubDetailActiveContainer.innerHTML += `
-                    <div class="club-detail-active">
-                        <div class="club-detail-img-wrap">
-                            <a href="" class="club-detail-img-link">
-                                <img src="/upload/${ongoing_activity.thumbnail_path}" alt="활동 이미지" class="club-detail-img" />
-                            </a>
-                            <div class="club-detail-like-wrap">
-                                <button class="club-detail-like-button">
-                                    <span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon full" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-                                        </svg>
-                                    </span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="club-detail-desc-box">
-                            <div class="club-detail-date-wrap">
-                                <div>
-                                    <span class="club-detail-date"> ${changeDate(ongoing_activity.activity_start.slice(0,19))} </span>
-                                </div>
-                            </div>
-                            <div class="event-title-wrap">
-                                <a href="" class="event-title"> ${ongoing_activity.activity_title} </a>
-                            </div>
-                            <div class="event-detail-wrap">
-                                <div class="event-usercount-wrap">
-                                    <span class="event-usercount"> 참여 ${ongoing_activity.participant_count} </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `
-            }
-        }
-
-        if (activities.finished_activities.length === 0) {
-            finishedEventsWrap.innerHTML = `
-                <div class="club-finished-events-empty-wrap">
-                    <div class="club-finished-events-empty-container">
-                        <div class="club-finished-events-empty">종료된 활동이 없습니다.</div>
-                    </div>
-                </div>
-            `
-        } else{
-            finishedEventsWrap.innerHTML += `<div class="finished-events-container"></div>`
-            const finishedEventsContainer = document.querySelector(".finished-events-container")
-            for (let finished_activity of activities.finished_activities) {
-                finishedEventsContainer.innerHTML += `
-                    <div class="finished-events-boxes">
-                        <div class="finished-events-img-wrap">
-                            <a href="" class="finished-events-img-link">
-                                <img src="/upload/${finished_activity.thumbnail_path}" alt="활동 이미지" class="finished-events-img" />
-                                <div class="finished-events-img-back"></div>
-                            </a>
-                            <div class="finished-events-like-wrap">
-                                <button class="finished-events-like-btn">
-                                    <span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                        </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon full" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-                                        </svg>
-                                    </span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="finished-events-desc-wrap">
-                            <div class="finished-events-finish-wrap">
-                                <div>
-                                    <div class="finished-events-finish">종료</div>
-                                </div>
-                            </div>
-                            <div class="finished-events-name-wrap">
-                                <a href="" class="finished-events-name"> ${finished_activity.activity_title} </a>
-                            </div>
-                            <div class="finished-events-price-wrap">
-                                <div class="finished-events-count-wrap">
-                                    <span class="finished-events-count"> 참여 ${finished_activity.participant_count} </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `
-            }
-        }
+        return text;
     }
 
     const showClubNoticeList = (notices) => {
@@ -317,7 +313,9 @@ activityFilterBtn.addEventListener("click", () => {
     }
     activityFilterWrap.style.borderBottom = "2px solid #CE201B";
 
-    tapInfoService.caList(createListService.clubActivityList)
+    clubDetailService.caList(club, createListService.clubActivityList).then((text) => {
+        clubServiceWrap.innerHTML = text;
+    })
 });
 
 infoFilterBtn.addEventListener("click", () => {
@@ -362,7 +360,7 @@ noticeFilterBtn.addEventListener("click", () => {
     }
     noticeFilterWrap.style.borderBottom = "2px solid #CE201B";
 
-    tapInfoService.cnList(createListService.clubNoticeList)
+    clubDetailService.cnList(club, createListService.clubNoticeList)
 });
 
 tpFilterBtn.addEventListener("click", () => {
@@ -403,20 +401,6 @@ shareBtn.addEventListener("click", clipCopy);
 
 // 모임 이름 받아와서 넣어야함(아래는 예시)
 const clubName = document.querySelector(".club-detail-name").innerText;
-const club = clubList[0];
-
-// 모임 구성원에 로그인한 회원이 있는지 조회하는 fetch
-const clubMemberService = (() => {
-    const getClubMemberInfo = async (callback) => {
-        let url = `/club/club-members/api/?member_id=${memberId}&club_id=${club.id}`
-        const response = await fetch(url);
-        const clubMembers = await response.json();
-
-        await callback(clubMembers)
-    }
-
-    return {getClubMemberInfo:getClubMemberInfo}
-})();
 
 // 조회 결과에 따라 모임 상단 버튼을 바꿔주는 함수
 const createClubTopBtn =  (clubMembers) => {
@@ -462,7 +446,7 @@ const createClubTopBtn =  (clubMembers) => {
     }
 }
 
-clubMemberService.getClubMemberInfo(createClubTopBtn);
+clubDetailService.cmInfo(memberId, club, createClubTopBtn);
 
 // 관리하기 버튼 클릭 시 모임 관리 페이지로 이동
 const manageBtnEvent = () => {
@@ -485,7 +469,7 @@ const applyBtnEvent = () => {
             cancelButtonText: "취소",
         }).then((result) => {
             if (result.value) {
-                updateClubMemberStatus()
+                clubDetailService.update(club, memberId)
                 // 가입신청 관련 서버 작업 코드 입력
                 Swal.fire("신청 완료", `[${clubName}] 모임에 가입 신청이 완료되었어요!`, "success");
             } else if (result.dismiss === "cancel") {
@@ -510,7 +494,7 @@ const cancelBtnEvent = () => {
             cancelButtonText: "닫기",
         }).then((result) => {
             if (result.value) {
-                updateClubMemberStatus()
+                clubDetailService.update(club, memberId)
                 // 신청취소 관련 서버 작업 코드 입력
                 Swal.fire("취소 완료", "가입 신청을 취소하였습니다.", "success");
             } else if (result.dismiss == "cancel") {
@@ -536,7 +520,7 @@ const quitBtnEvent = () => {
             cancelButtonText: "취소",
         }).then((result) => {
             if (result.value) {
-                updateClubMemberStatus()
+                clubDetailService.update(club, memberId)
                 // 모임탈퇴 관련 서버 작업 코드 입력
                 Swal.fire("모임 탈퇴", `[${clubName}] 모임에서 탈퇴하였습니다.`, "success");
             } else if (result.dismiss == "cancel") {
@@ -544,24 +528,6 @@ const quitBtnEvent = () => {
             }
         });
     });
-}
-
-// 신청, 탈퇴, 취소 모달 내 확인 버튼 클릭시 clubmember의 status를 변경하는 함수
-const updateClubMemberStatus = async () => {
-    let data = {
-        'club_id': club.id,
-        'member_id': memberId
-    }
-
-    const response = await fetch(`/club/club-members/api/`, {
-        method: 'PATCH',
-        headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrftoken},
-        body: JSON.stringify(data)
-    })
-
-    const resultText = await response.json()
-
-    clubMemberService.getClubMemberInfo(createClubTopBtn);
 }
 
 // 하트 아이콘 클릭 시 모달창 하트 이미지 변경, 모달창 출력
@@ -931,5 +897,6 @@ teenplayDeleteWraps.forEach((div, i) => {
     });
 });
 
-
-tapInfoService.caList(createListService.clubActivityList)
+clubDetailService.caList(club, createListService.clubActivityList).then((text) => {
+    clubServiceWrap.innerHTML = text;
+})
