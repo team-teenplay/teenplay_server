@@ -22,7 +22,7 @@ from django.urls import path, include
 from main.views import MainView, FooterNoticeLatestAPI
 from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroductionView, CompanyNoticeListAPI, \
     AdminMessageView, AdminTeenplayView, AdminPromoteView, AdminActivityView, AdminWishlistView, AdminMeetingView, \
-    AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView, AdminUserAPI
+    AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView, AdminUserUpdateView
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -40,9 +40,8 @@ urlpatterns = [
     path('app/festival/', include('festival.urls-app')),
     path('admin/login/', AdminLoginView.as_view(), name='admin-login'),
     path('admin/user/', AdminUserView.as_view(), name='admin-user'),
-    # s추가
-    path('admin/users/<int:page>/', AdminUserAPI.as_view(), name='admin-user-api'),
-    # 여까지
+    path('admin/user/update/', AdminUserUpdateView.as_view(), name='admin-user-update'),
+    # path('admin/users/<int:page>/', AdminUserAPI.as_view(), name='admin-user-api'),
     path('admin/message/', AdminMessageView.as_view(), name='admin-message'),
     path('admin/teenplay/', AdminTeenplayView.as_view(), name='admin-teenplay'),
     path('admin/promote/', AdminPromoteView.as_view(), name='admin-promote'),
