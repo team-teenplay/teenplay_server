@@ -9,7 +9,7 @@ from teenplay_server.period import Period
 class Club(Period):
     club_name = models.TextField(null=False, blank=False)
     club_intro = models.TextField(null=False, blank=False)
-    club_info = models.TextField()
+    club_info = models.TextField(null=True)
     member = models.ForeignKey(Member, null=False, blank=False, on_delete=models.PROTECT)
     club_profile_path = models.ImageField(upload_to='club/%Y/%m/%d')
     club_banner_path = models.ImageField(upload_to='club/%Y/%m/%d')
