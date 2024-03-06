@@ -1350,6 +1350,13 @@ p {
     width: 100%;
     resize: none;
     outline: none;
+    border: none !important;
+}
+
+.k-comment-input-guide:focus {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 .k-comment-input-upload-wrap {
@@ -1441,6 +1448,13 @@ p {
     width: 100%;
     resize: none;
     outline: none;
+    border: none !important;
+}
+
+.k-comment-update-guide:focus {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 .k-comment-update-upload-wrap {
@@ -2751,6 +2765,22 @@ button:focus {
     margin-bottom: 4px;
 }
 
+.send-sender-email {
+    outline: none;
+    border: none;
+    padding: 0;
+}
+
+.send-receiver-email:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+textarea[name='send-content']:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
 .sender-title,
 .receiver-title,
 .write-time-title {
@@ -2870,6 +2900,12 @@ textarea {
     outline-color: rgb(92 63 191 / var(--tw-border-opacity));
 }
 
+.letter-content-area textarea {
+    outline: none;
+    border: none;
+
+}
+
 .map-box {
     border-width: 1px;
     width: 100%;
@@ -2885,4 +2921,69 @@ textarea {
     padding-bottom: 0.75rem;
     align-items: center;
     display: flex;
+}
+
+.club-notice-boxes {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    --tw-border-opacity: 1;
+    border-color: rgb(225 228 230/var(--tw-border-opacity));
+    border-top-width: 1px;
+}
+
+.club-notice-box {
+    cursor: pointer;
+}
+
+.club-notice-title-wrap {
+    font-weight: 700;
+    justify-content: space-between;
+    align-items: center;
+    display: flex;
+}
+
+.club-notice-title-container {
+    display: flex;
+    margin-bottom: 0.5rem;
+}
+
+.club-notice-title {
+    margin-right: 1rem;
+}
+
+.club-notice-show-icon {
+    --tw-text-opacity: 1;
+    color: rgb(0 0 0/var(--tw-text-opacity));
+    font-weight: 700;
+    width: 1rem;
+    height: 1rem;
+}
+
+.club-notice-hide-icon {
+    --tw-text-opacity: 1;
+    color: rgb(0 0 0/var(--tw-text-opacity));
+    font-weight: 700;
+    width: 1rem;
+    height: 1rem;
+}
+
+.club-notice-created-date {
+    --tw-text-opacity: 1;
+    color: rgb(135 141 145/var(--tw-text-opacity));
+    font-size: .8125rem;
+}
+
+.club-notice-content-wrap {
+    --tw-text-opacity: 1!important;
+    color: rgb(135 141 145/var(--tw-text-opacity))!important;
+    font-size: .9375rem!important;
+    margin-top: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.club-notice-content {
+    font-size: 14px;
+    color: rgb(135, 141, 145);
+    background-color: white;
+    margin: 0;
 }
