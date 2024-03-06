@@ -169,7 +169,10 @@ slideWrap.addEventListener("wheel", (e) => {
     }
 });
 
+
+let videoCount = document.querySelectorAll('.video-wrap').length
 // 좋아요 아이콘 클릭 시 반영
+
 likeBtns.forEach((button, i) => {
     button.addEventListener("click", () => {
         if(memberSessionId == 0){
@@ -186,12 +189,12 @@ likeBtns.forEach((button, i) => {
     });
 });
 
-// 좋아요 수 증가는 비동기로 좋아요 db에 반영 후 가져와 넣기 때문에 현재 화면에서는 구현하지 않습니다.
 let likeButtons= document.querySelectorAll(".play-like-btn")
-likeButtons.forEach((empty, j) => {
+likeButtons.forEach((empty, i) => {
     empty.addEventListener("click", (e) => {
         let svgTag = empty.querySelector("svg")
         let displayStyle = window.getComputedStyle(svgTag).getPropertyValue("display")
+        let buttonValue = e.target.closest("button")
 
         let likeTeenplay = async (callback) => {
             const teenplayLikeResponse = await fetch(`like/api/${empty.value}/${memberSessionId}/${displayStyle}/`)
@@ -204,12 +207,16 @@ likeButtons.forEach((empty, j) => {
         let likeCountUploads = document.querySelectorAll(".play-like-count")
         let likeFetchClick = (videoLike) => {
             let totalLikeCount = videoLike.totalLikeCount
-            likeCountUploads[j].innerText = totalLikeCount
+                likeCountUploads[i].innerText = totalLikeCount
         }
         likeTeenplay(likeFetchClick)
     });
 });
 
+
+
+
+// 좋아요 수 증가는 비동기로 좋아요 db에 반영 후 가져와 넣기 때문에 현재 화면에서는 구현하지 않습니다.
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -549,7 +556,6 @@ const showTeenplay = (teenplay) => {
 
     for (let count = 0; count < lastThreeIndex.length; count++) {
         if (count < teenplay.length) {
-            console.log(count)
             if (teenplay[count].like_check) {
                 emptyHeart[lastThreeIndex[count]].style.display = "none";
                 fullHeart[lastThreeIndex[count]].style.display = "block";
@@ -559,35 +565,6 @@ const showTeenplay = (teenplay) => {
             }
         }
     }
-
-    let likeButtons= document.querySelectorAll(".play-like-btn")
-
-    likeButtons.forEach((empty, i) => {
-    empty.addEventListener("click", (e) => {
-        let svgTag = empty.querySelector("svg")
-        let displayStyle = window.getComputedStyle(svgTag).getPropertyValue("display")
-
-        let likeTeenplay = async (callback) => {
-            const teenplayLikeResponse = await fetch(`like/api/${empty.value}/${memberSessionId}/${displayStyle}/`)
-            const videoLike = await teenplayLikeResponse.json();
-            if (callback){
-                callback(videoLike)
-            }
-        }
-
-        // 호출되고 난 이후에 데이터 값을 받아오는 증상이 있음
-        let likeCountUploads = document.querySelectorAll(".play-like-count")
-        let count = 0
-        let likeFetchClick = (videoLike) => {
-            let totalLikeCount = videoLike.totalLikeCount
-            count = totalLikeCount
-            likeCountUploads[i].innerText = totalLikeCount
-        }
-        likeTeenplay(likeFetchClick)
-
-
-    });
-});
 
     videoWraps.forEach((videoWrap, i) => {
         if (!videoWrap.classList.contains("playing")) {
@@ -743,6 +720,10 @@ const showTeenplay = (teenplay) => {
 
     likeBtns.forEach((button, i) => {
         button.addEventListener("click", () => {
+            if(memberSessionId == 0){
+                window.location.href = '/'
+                return;
+            }
             if (emptyHeart[i].style.display == "none") {
                 emptyHeart[i].style.display = "block";
                 fullHeart[i].style.display = "none";
@@ -753,6 +734,28 @@ const showTeenplay = (teenplay) => {
         });
     });
 
+    let likeButtons= document.querySelectorAll(".play-like-btn")
+    likeButtons.forEach((empty, i) => {
+        empty.addEventListener("click", (e) => {
+            let svgTag = empty.querySelector("svg")
+            let displayStyle = window.getComputedStyle(svgTag).getPropertyValue("display")
+
+            let likeTeenplay = async (callback) => {
+                const teenplayLikeResponse = await fetch(`like/api/${empty.value}/${memberSessionId}/${displayStyle}/`)
+                const videoLike = await teenplayLikeResponse.json();
+                if (callback){
+                    callback(videoLike)
+                }
+            }
+
+            let likeCountUploads = document.querySelectorAll(".play-like-count")
+            let likeFetchClick = (videoLike) => {
+                let totalLikeCount = videoLike.totalLikeCount
+                likeCountUploads[i].innerText = totalLikeCount
+            }
+            likeTeenplay(likeFetchClick)
+        });
+    });
 }
 
 

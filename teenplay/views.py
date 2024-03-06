@@ -66,8 +66,8 @@ class TeenplayMainListAPIView(APIView):
             teenplay_like = {**like_count, **teenplay[0]}
             teenplay_list.append(teenplay_like)
 
-        addContext = teenplay_list
-        return Response(addContext)
+        context = teenplay_list
+        return Response(context)
 
 class TeenPlayLikeApiView(APIView):
     @transaction.atomic
