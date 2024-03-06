@@ -502,6 +502,12 @@ function clipCopy() {
 }
 shareBtn.addEventListener("click", clipCopy);
 
+// 모임 공지사항 불러오기
+const getClubNoticeList = async (callback) => {
+    const clubId = document.querySelector("input[name='club-id']").value
+    const response = await fetch('/')
+}
+
 // 공지사항 각각 제목 클릭 시 세부 내용 표시
 const noticeContentWraps = document.querySelectorAll(".club-notice-content-wrap");
 const noticeTitles = document.querySelectorAll(".club-notice-box");

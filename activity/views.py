@@ -125,7 +125,6 @@ class ActivityDetailWebView(View):
         club = activity.club
         activity_member_count = ActivityMember.enabled_objects.filter(activity_id=activity_id).count()
         activity_recruit_check = activity.recruit_end >= timezone.now() >= activity.recruit_start
-        club_notices = list(ClubNotice.objects.filter(club=club))
         activity_replies = list(ActivityReply.enabled_objects.filter(activity_id=activity_id))
 
         context = {
@@ -134,7 +133,6 @@ class ActivityDetailWebView(View):
             'club': club,
             'activity_member_count': activity_member_count,
             'activity_recruit_check': activity_recruit_check,
-            'club_notices': club_notices,
             'activity_replies': activity_replies
         }
 
