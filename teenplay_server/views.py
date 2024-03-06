@@ -123,6 +123,8 @@ class AdminUserUpdateView(View):
     @transaction.atomic
     def get(self, request):
         user = Member.objects.get(id=request.GET['id'])
+        print(request.GET)
+        print(id=request.GET['id'])
         user.status = -1
         user.updated_date = timezone.now()
         user.save(update_fields=['status', 'updated_date'])

@@ -160,7 +160,7 @@
                             {% for user in users %}
                                 <li class="main-user-list" data-number="1">
                                     <div class="main-user-list-check">
-                                        <input type="checkbox" class="main-comment-list-checkbox" data-id="{{ user.id }}"/>
+                                        <input type="checkbox" class="main-comment-list-checkbox" />
                                     </div>
                                     <div class="main-user-list-name">{{ user.member_nickname }}</div>
                                     <div class="main-user-list-status">{{ user.created_date }}</div>
@@ -326,9 +326,7 @@
                     <button class="admin-user-modal-left-button" id="modalCloseButton">취소</button>
                 </div>
                 <div class="admin-user-modal-right">
-                    {% if user.id == request.session.member.id %}
-                        <a href="/admin/user/update/?id={{ user.id }}" class="admin-user-modal-right-button" id="modalApplyButton">적용하기</a>
-                    {% endif %}
+                    <a href="/admin/user/update/?id={{ user.id }}" class="admin-user-modal-right-button" id="modalApplyButton">적용하기</a>
 {#                    <button class="admin-user-modal-right-button" id="modalApplyButton">적용하기</button>#}
                 </div>
             </div>
