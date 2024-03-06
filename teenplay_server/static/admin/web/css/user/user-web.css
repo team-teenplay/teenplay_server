@@ -18,6 +18,16 @@ input {
     }
   }
 
+.member-user-list-button.disabled {
+    border-color: #F2F4F5;
+    background-color: #F2F4F5;
+}
+
+.member-user-list-button.disabled:hover {
+    border-color: #F2F4F5;
+    background-color: #F2F4F5;
+}
+
 
 *{
     --tw-border-spacing-x: 0;

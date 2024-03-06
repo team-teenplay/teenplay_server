@@ -6,7 +6,7 @@ from teenplay_server.period import Period
 
 class Pay(Period):
     member = models.ForeignKey(Member, null=False, blank=False, on_delete=models.PROTECT)
-    price = models.IntegerField(default=20000)
+    price = models.IntegerField(default=20000, null=False, blank=False)
     # 0: 결제취소, 1: 결제완료
     status = models.BooleanField(default=1, null=False, blank=False)
 

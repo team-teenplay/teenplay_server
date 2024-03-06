@@ -21,18 +21,18 @@ class Member(Period):
 
     member_email = models.TextField(blank=False, null=False)
     member_nickname = models.TextField(blank=False, null=False)
-    member_phone = models.TextField()
-    member_address = models.TextField()
+    member_phone = models.TextField(null=True)
+    member_address = models.TextField(null=True)
     # 0: 선택안함, 1: 남성, 2: 여성
-    member_gender = models.SmallIntegerField(choices=GENDER_STATUS, default=0)
+    member_gender = models.SmallIntegerField(choices=GENDER_STATUS, default=0, null=True)
     # 출생연도
-    member_birth = models.IntegerField()
+    member_birth = models.IntegerField(null=True)
     # 0: 미동의, 1: 동의
-    member_marketing_agree = models.BooleanField(default=0)
+    member_marketing_agree = models.BooleanField(default=0, null=True)
     # 0: 미동의, 1: 동의
-    member_privacy_agree = models.BooleanField(default=0)
+    member_privacy_agree = models.BooleanField(default=0, null=True)
     # -1: 정지, 0: 탈퇴, 1: 활동중
-    status = models.SmallIntegerField(choices=MEMBER_STATUS, default=1)
+    status = models.SmallIntegerField(choices=MEMBER_STATUS, default=1, null=False, blank=False)
     # google, kakao, naver
     member_type = models.CharField(max_length=10, null=False, blank=False)
 
@@ -73,5 +73,3 @@ class MemberFavoriteCategory(Period):
 
     class Meta:
         db_table = 'tbl_member_favorite_category'
-
-
