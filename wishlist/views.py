@@ -79,15 +79,25 @@ class WishListAPI(APIView):
             'member_name',
             'category_name'
         ]
-        # REST
-        wishlists = Wishlist.objects.annotate(member_name=F("member__member_nickname"), category_name=F("category__category_name")).values(*columns)[offset:limit]
+
+        # reply_content = {}
+        # replycontents = WishlistReply.objects.filter(wishlist_id=offset).values('reply_content')
+        # for reply in replycontents:
+        #     reply_content.append(set(reply['reply_content']))
+
+        wishlists = Wishlist.enabled_objects.annotate(member_name=F("member__member_nickname"),
+                                                      category_name=F("category__category_name")).values(*columns,'wishlistreply__member__member_nickname','wishlistreply__reply_content')[offset:limit]
+        WishlistReply.objects.filter(wishlist_id=offset)
+
         # 더이상 게시물이 없을 때 더보기 버튼 삭제하기 연산
         has_next = Wishlist.objects.filter()[limit:limit + 1].exists()
+
         wishlist_info = {
             'wishlist': wishlists,
             'hasNext': has_next,
         }
         return Response(wishlist_info)
+
 
 
 
