@@ -244,3 +244,10 @@ class ActivityReplyAPI(APIView):
         activity_reply.save(update_fields=['status', 'updated_date'])
 
         return Response("success")
+
+
+class ActivityListWebView(View):
+    def get(self, request):
+        return render(request, 'activity/web/activity-web.html')
+
+
