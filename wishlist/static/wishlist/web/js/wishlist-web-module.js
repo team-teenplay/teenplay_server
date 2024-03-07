@@ -19,5 +19,12 @@ const wishlistService = (() => {
         return wishlists;
     }
 
-    return {write: write, getList: getList}
+    const category = async (page, category) => {
+        const response = await fetch(`/wishlist/${category}/${page}/`, {
+            headers: {'Content-Type': 'application/json;charset=utf-8'}
+        });
+    }
+
+
+    return {write: write, getList: getList, category:category}
 })();
