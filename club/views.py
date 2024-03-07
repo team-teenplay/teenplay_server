@@ -49,14 +49,12 @@ class ClubDetailView(View):
             'club_name',
             'club_intro',
             'club_info',
+            'club_profile_path',
+            'club_banner_path',
             'owner_id',
             'owner_name',
             'owner_email',
             'owner_phone',
-            'club_profile_path',
-            'club_banner_path',
-            'club_member_count',
-            'club_activity_count'
         ]
 
         club_list = Club.objects.filter(id=club_id)\
@@ -64,12 +62,16 @@ class ClubDetailView(View):
             owner_id=F('member__id'),
             owner_name=F('member__member_nickname'),
             owner_email=F('member__member_email'),
-            owner_phone=F('member__member_phone'),
-            club_member_count=Count('clubmember', filter=Q(clubmember__status=1)),
-            club_activity_count=Count('activity')).values(*columns)
+            owner_phone=F('member__member_phone')).values(*columns)\
+            .annotate(club_member_count=Count('clubmember', filter=Q(clubmember__status=1)))
+
+        club_activity_count = Club.objects.filter(id=club_id).values('id').annotate(club_activity_count=Count('activity')).first()
+        club_list = list(club_list)
+
+        club_list[0]['club_activity_count'] = club_activity_count.get('club_activity_count')
 
         context = {
-            'club_list': list(club_list),
+            'club_list': club_list
         }
 
         return render(request, 'club/web/club-detail-web.html', context)
@@ -90,9 +92,9 @@ class ClubMemberAPI(APIView):
 
     @transaction.atomic
     def patch(self, request):
-        data = request.GET['data']
-        member = Member.objects.get(id=data.member_id)
-        club = Club.objects.get(id=data.club_id)
+        data = request.data
+        member = Member.objects.get(id=data['member_id'])
+        club = Club.objects.get(id=data['club_id'])
         club_member, created = ClubMember.objects.get_or_create(member=member, club=club)
 
         if created:
@@ -125,16 +127,14 @@ class ClubActivityAPI(APIView):
             'activity_title',
             'thumbnail_path',
             'activity_start',
-            'participant_count'
         ]
 
-        finished_activities = club.activity_set.filter(activity_end__lte=timezone.now(), status=1)\
+        finished_activities = club.activity_set.filter(activity_end__lte=timezone.now(), status=1).values(*columns)\
             .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))\
-            .values(*columns).order_by('-id')
+            .order_by('-id')
 
-        ongoing_activities = club.activity_set.filter(activity_end__gt=timezone.now(), status=1)\
+        ongoing_activities = club.activity_set.filter(activity_end__gt=timezone.now(), status=1).values(*columns)\
             .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))\
-            .values(*columns)
 
         club_activities = {
             'finished_activities': finished_activities,
