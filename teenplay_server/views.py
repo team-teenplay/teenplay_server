@@ -82,12 +82,12 @@ class AdminUserView(View):
         order = request.GET.get('order', 'recent')
         page = int(request.GET.get('page', 1))
 
-        row_count = 5
+        row_count = 10
 
         offset = (page - 1) * row_count
         limit = page * row_count
 
-        total = Member.objects.filter(Q(status=1) | Q(status=2)).all().count()
+        total = Member.objects.filter(Q(status=1) | Q(status=-1)).all().count()
 
         page_count = 5
 
@@ -111,25 +111,26 @@ class AdminUserView(View):
         if order == 'popular':
             ordering = '-post_read_count'
 
-        context['users'] = list(Member.objects.filter(Q(status=1) | Q(status=2))\
-                    .annotate(club_count=Count('club'), club_action_count=Count('clubmember__id', filter=Q(clubmember__status=1)), activity_count=Count('club__activity'))\
+        context['users'] = list(Member.objects.filter(Q(status=1) | Q(status=-1))\
+                    .annotate(club_count=Count('club'), club_action_count=Count('clubmember__id', filter=Q(clubmember__status=1), distinct=True), activity_count=Count('club__activity'))\
                     .values('id', 'member_nickname', 'created_date', 'club_count', 'club_action_count', 'activity_count', 'status').order_by(ordering))[offset:limit]
         print(context['users'])
 
         return render(request, 'admin/web/user-web.html', context)
 
 
-class AdminUserUpdateView(View):
+class AdminUserUpdateAPI(APIView):
     @transaction.atomic
-    def get(self, request):
-        user = Member.objects.get(id=request.GET['id'])
-        print(request.GET)
-        print(id=request.GET['id'])
-        user.status = -1
-        user.updated_date = timezone.now()
+    def patch(self, request, user_id):
+        user_satus = request.data['status']
+        updated_date = timezone.now()
+
+        user = Member.objects.get(id=user_id)
+        user.status = user_satus
+        user.update_date = updated_date
         user.save(update_fields=['status', 'updated_date'])
 
-        return redirect('admin/web/user-web.html')
+        return Response('success')
 
 
 # 관리자 쪽지 관리 페이지 이동
@@ -183,7 +184,42 @@ class AdminFestivalWrite(View):
 # 관리자 공지사항 관리 페이지 이동
 class AdminNoticeView(View):
     def get(self, request):
-        return render(request, 'admin/web/notice-list-web.html')
+        order = request.GET.get('order', 'recent')
+        page = int(request.GET.get('page', 1))
+
+        row_count = 10
+
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        total = Notice.objects.filter(status=1).all().count()
+
+        page_count = 5
+
+        end_page = math.ceil(page / page_count) * page_count
+        start_page = end_page - page_count + 1
+        real_end = math.ceil(total / row_count)
+        end_page = real_end if end_page > real_end else end_page
+
+        if end_page == 0:
+            end_page = 1
+
+        context = {
+            'order': order,
+            'start_page': start_page,
+            'end_page': end_page,
+            'page': page,
+            'real_end': real_end,
+            'page_count': page_count,
+        }
+        ordering = '-id'
+        if order == 'popular':
+            ordering = '-post_read_count'
+
+        context['notice'] = list(Notice.objects.filter(status=1)\
+                    .values('id', 'notice_title', 'created_date', 'notice_content', 'notice_type').order_by(ordering))[offset:limit]
+
+        return render(request, 'admin/web/notice-list-web.html', context)
 
 
 # 관리자 공지사항 작성 페이지 이동
