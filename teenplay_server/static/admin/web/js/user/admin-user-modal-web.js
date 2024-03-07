@@ -1,151 +1,119 @@
-// 모달창
-const modalOpenButtons = document.querySelectorAll(".member-user-list-button");
-const modalCloseButtons = document.querySelectorAll(
-    ".admin-user-modal-left-button"
-);
-const modal = document.getElementById("admin-user-modal");
-const modalBack = document.getElementById("admin-user-modal-backdrop");
-
-modalOpenButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-        modal.classList.remove("hidden");
-        modalBack.classList.remove("hidden");
-    });
-});
-
-modalCloseButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-        modal.classList.add("hidden");
-        modalBack.classList.add("hidden");
-    });
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-    const modalOpenButtons = document.querySelectorAll(
-        ".member-user-list-button"
-    );
-    const modalCloseButton = document.querySelector(
-        ".admin-user-modal-left-button"
-    );
-    const modal = document.getElementById("admin-user-modal");
-    const modalBack = document.getElementById("admin-user-modal-backdrop");
-    const applyButton = document.getElementById("modalApplyButton");
-    const cancelButton = document.getElementById("modalCloseButton");
-
-    modalOpenButtons.forEach((button) => {
-        button.addEventListener("click", function () {
-            // 클릭된 버튼에 대해 사용자 ID를 가져와서 모달에 설정
-            const userId = this.getAttribute("data-target");
-            modal.setAttribute("data-user-id", userId);
-            modal.classList.remove("hidden");
-            modalBack.classList.remove("hidden");
-        });
-    });
-
-    modalCloseButton.addEventListener("click", function () {
-        modal.classList.add("hidden");
-        modalBack.classList.add("hidden");
-    });
-
-    cancelButton.addEventListener("click", function () {
-        modal.classList.add("hidden");
-        modalBack.classList.add("hidden");
-    });
-
-    applyButton.addEventListener("click", function () {
-        const userId = modal.getAttribute("data-user-id");
-        const userStatus = document.querySelector(`[data-id="${userId}"]`);
-
-        const checkedItems = document.querySelectorAll(
-            ".main-comment-list-checkbox:checked"
-        );
-
-        checkedItems.forEach((checkbox) => {
-            const targetId = checkbox.closest("li").getAttribute("data-number");
-            const targetUserStatus = document.querySelector(
-                `[data-id="${targetId}"]`
-            );
-
-            // 여기에서 상태를 변경하는 로직을 추가
-            if (targetUserStatus.textContent.trim() === "활동중") {
-                targetUserStatus.textContent = "정지";
-            } else if (targetUserStatus.textContent.trim() === "정지") {
-                targetUserStatus.textContent = "활동중";
-            }
-        });
-
-        modal.classList.add("hidden");
-        modalBack.classList.add("hidden");
-    });
-});
-
-function resizeTextarea() {
-    const textarea = document.getElementById("modal-text");
-    textarea.style.height = "auto";
-    textarea.style.height = textarea.scrollHeight + "px";
-}
-
-// 활동중 / 정지 모달
-
-const modalDetailOpenButtons = document.querySelectorAll(
-    ".member-user-list-detail-button"
-);
-const modalDetailCloseButtons = document.querySelectorAll(
-    ".admin-user-modal-left-detail-button"
-);
-const modalAdddetailCloseButtons = document.querySelectorAll(
-    ".admin-user-modal-right-detail-button"
-);
-const detailmodal = document.getElementById("admin-post-modal");
-const detailmodalBack = document.getElementById("admin-user-modal-backdrop");
-
-modalDetailOpenButtons.forEach((button) => {
-    button.addEventListener("click", (event) => {
-        const targetId = event.currentTarget.getAttribute("data-target");
-        currentTargetLi = document.querySelector(`li[data-id="${targetId}"]`);
-
-        // 모달 열기
-        detailmodal.classList.remove("hidden");
-        detailmodalBack.classList.remove("hidden");
-    });
-});
-
-modalDetailCloseButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-        detailmodal.classList.add("hidden");
-        detailmodalBack.classList.add("hidden");
-    });
-});
-const confirmDeleteButtonss = document.querySelectorAll(
-    ".admin-user-modal-right-detail-button"
-);
-
-if (confirmDeleteButtonss.length > 0) {
-    confirmDeleteButtonss.forEach((button) => {
-        button.addEventListener("click", () => {
-            // 현재 대상 li 선택함
-            // if (currentTargetLi) {
-            // }
-
-            // 모달 닫기
-            detailmodal.classList.add("hidden");
-            detailmodalBack.classList.add("hidden");
-        });
-    });
-}
+// // 상태 변경 버튼
+// const modalOpenButtons = document.querySelector(".member-user-list-button");
+// // 취소 버튼
+// const modalCloseButtons = document.querySelector(".admin-user-modal-left-button");
+// const cancelButton = document.getElementById("modalCloseButton");
+// // 적용하기 버튼
+// const applyButton = document.getElementById("modalApplyButton");
+//
+// // 상태 변경 모달창
+// const modal = document.getElementById("admin-user-modal");
+// const modalBack = document.getElementById("admin-user-modal-backdrop");
+//
+// // 상태 변경 모달
+// document.addEventListener("DOMContentLoaded", () => {
+//
+//     // 상태 변경 버튼 클릭 시 모달 오픈
+//     modalOpenButtons.addEventListener("click", () => {
+//         // 클릭된 버튼에 대해 사용자 ID를 가져와서 모달에 설정
+//         const userId = this.getAttribute("data-target");
+//         modal.setAttribute("data-user-id", userId);
+//         // 모달 오픈
+//         modal.classList.remove("hidden");
+//         modalBack.classList.remove("hidden");
+//     });
+//
+//     // 상태 변경 취소 버튼 클릭 시 모달 종료
+//     modalCloseButtons.addEventListener("click", () => {
+//         modal.classList.add("hidden");
+//         modalBack.classList.add("hidden");
+//     });
+//
+//     // 상태 변경 적용 버튼 클릭 시 변경 내용 적용 및 모달 종료
+//     applyButton.addEventListener("click", () => {
+//         const userId = modal.getAttribute("data-user-id");
+//         const userStatus = document.querySelector(`[data-id="${user.id}"]`);
+//
+//         const checkedItems = document.querySelectorAll(
+//             ".main-comment-list-checkbox:checked"
+//         );
+//
+//         checkedItems.forEach((checkbox) => {
+//             const targetId = checkbox.closest("li").getAttribute("data-number");
+//             const targetUserStatus = document.querySelector(
+//                 `[data-id="${targetId}"]`
+//             );
+//
+//             // 여기에서 상태를 변경하는 로직을 추가
+//             if (targetUserStatus.textContent.trim() === "활동중") {
+//                 targetUserStatus.textContent = "정지";
+//             } else if (targetUserStatus.textContent.trim() === "정지") {
+//                 targetUserStatus.textContent = "활동중";
+//             }
+//         });
+//
+//         modal.classList.add("hidden");
+//         modalBack.classList.add("hidden");
+//     });
+// });
+//
+// function resizeTextarea() {
+//     const textarea = document.getElementById("modal-text");
+//     textarea.style.height = "auto";
+//     textarea.style.height = textarea.scrollHeight + "px";
+// }
+//
+// // 활동중 / 정지 모달
+//
+// const modalDetailOpenButtons = document.querySelectorAll(".member-user-list-detail-button");
+// const modalDetailCloseButtons = document.querySelectorAll(".admin-user-modal-left-detail-button");
+// const modalAdddetailCloseButtons = document.querySelectorAll(".admin-user-modal-right-detail-button");
+// const detailmodal = document.getElementById("admin-post-modal");
+// const detailmodalBack = document.getElementById("admin-user-modal-backdrop");
+//
+// modalDetailOpenButtons.forEach((button) => {
+//     button.addEventListener("click", (event) => {
+//         const targetId = event.currentTarget.getAttribute("data-target");
+//         currentTargetLi = document.querySelector(`li[data-id="${targetId}"]`);
+//
+//         // 모달 열기
+//         detailmodal.classList.remove("hidden");
+//         detailmodalBack.classList.remove("hidden");
+//     });
+// });
+//
+// modalDetailCloseButtons.forEach((button) => {
+//     button.addEventListener("click", () => {
+//         detailmodal.classList.add("hidden");
+//         detailmodalBack.classList.add("hidden");
+//     });
+// });
+// const confirmDeleteButtonss = document.querySelectorAll(
+//     ".admin-user-modal-right-detail-button"
+// );
+//
+// if (confirmDeleteButtonss.length > 0) {
+//     confirmDeleteButtonss.forEach((button) => {
+//         button.addEventListener("click", () => {
+//             // 현재 대상 li 선택함
+//             // if (currentTargetLi) {
+//             // }
+//
+//             // 모달 닫기
+//             detailmodal.classList.add("hidden");
+//             detailmodalBack.classList.add("hidden");
+//         });
+//     });
+// }
 
 // 공개 / 비공개 버튼
 
 const searchModal = document.getElementById("admin-message-modal-search");
 const searchOpen = document.querySelector(".main-wish-sellect-button");
 const searchSend = document.querySelector(".admin-message-modal-search-send");
-const searchReceive = document.querySelector(
-    ".admin-message-modal-search-receive"
-);
+const searchReceive = document.querySelector(".admin-message-modal-search-receive");
 const searchText = document.querySelector(".main-wish-sellect-button-span");
-const searchadd = document.querySelector(
-    ".admin-message-modal-search-donotreceive"
-);
+const searchadd = document.querySelector(".admin-message-modal-search-donotreceive");
 const svg = document.querySelector(".main-comment-info-button-svg");
 
 // 검색 버튼 클릭 시 모달 열기
@@ -247,25 +215,25 @@ document.addEventListener("DOMContentLoaded", function () {
     // 페이지가 로드될 때도 숫자를 업데이트합니다.
     updateTotalCount();
 });
-
-// 체크박스 채워주기
-document.addEventListener("DOMContentLoaded", function () {
-    const statusName = document.querySelector(".main-user-status-name");
-    const checkboxes = document.querySelectorAll(".main-comment-list-checkbox");
-
-    statusName.addEventListener("click", function () {
-        let allChecked = true;
-        checkboxes.forEach((checkbox) => {
-            if (!checkbox.checked) {
-                allChecked = false;
-                checkbox.checked = true;
-            }
-        });
-
-        if (allChecked) {
-            checkboxes.forEach((checkbox) => {
-                checkbox.checked = false;
-            });
-        }
-    });
-});
+//
+// // 체크박스 채워주기
+// document.addEventListener("DOMContentLoaded", function () {
+//     const statusName = document.querySelector(".main-user-status-name");
+//     const checkboxes = document.querySelectorAll(".main-comment-list-checkbox");
+//
+//     statusName.addEventListener("click", function () {
+//         let allChecked = true;
+//         checkboxes.forEach((checkbox) => {
+//             if (!checkbox.checked) {
+//                 allChecked = false;
+//                 checkbox.checked = true;
+//             }
+//         });
+//
+//         if (allChecked) {
+//             checkboxes.forEach((checkbox) => {
+//                 checkbox.checked = false;
+//             });
+//         }
+//     });
+// });

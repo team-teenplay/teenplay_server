@@ -22,12 +22,14 @@ from django.urls import path, include
 from main.views import MainView, FooterNoticeLatestAPI
 from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroductionView, CompanyNoticeListAPI, \
     AdminMessageView, AdminTeenplayView, AdminPromoteView, AdminActivityView, AdminWishlistView, AdminMeetingView, \
-    AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView, AdminUserAPI
+    AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView, AdminUserUpdateAPI
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
     path('club/', include('club.urls-web')),
+    path('clubs/', include('club.urls-web')),
     path('app/club/', include('club.urls-app')),
+    path('app/clubs/', include('club.urls-app')),
     path('member/', include('member.urls-web')),
     path('app/member/', include('member.urls-app')),
     path('accounts/', include('allauth.urls')),
@@ -40,9 +42,7 @@ urlpatterns = [
     path('app/festival/', include('festival.urls-app')),
     path('admin/login/', AdminLoginView.as_view(), name='admin-login'),
     path('admin/user/', AdminUserView.as_view(), name='admin-user'),
-    # s추가
-    path('admin/users/<int:page>/', AdminUserAPI.as_view(), name='admin-user-api'),
-    # 여까지
+    path('admin/user/update/<int:user_id>', AdminUserUpdateAPI.as_view(), name='admin-user-update'),
     path('admin/message/', AdminMessageView.as_view(), name='admin-message'),
     path('admin/teenplay/', AdminTeenplayView.as_view(), name='admin-teenplay'),
     path('admin/promote/', AdminPromoteView.as_view(), name='admin-promote'),
