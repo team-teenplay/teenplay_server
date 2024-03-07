@@ -65,7 +65,9 @@ class ClubDetailView(View):
             owner_phone=F('member__member_phone')).values(*columns)\
             .annotate(club_member_count=Count('clubmember', filter=Q(clubmember__status=1)))
 
-        club_activity_count = Club.objects.filter(id=club_id).values('id').annotate(club_activity_count=Count('activity')).first()
+        club_activity_count = Club.objects.filter(id=club_id).values('id')\
+            .annotate(club_activity_count=Count('activity')).first()
+
         club_list = list(club_list)
 
         club_list[0]['club_activity_count'] = club_activity_count.get('club_activity_count')
@@ -85,16 +87,16 @@ class ClubAPI(APIView):
 
 
 class ClubMemberAPI(APIView):
-    def get(self, request):
-        club_members = ClubMember.objects.filter(member=request.GET['member_id'], club=request.GET['club_id']).values()
+    def get(self, request, member_id, club_id):
+        club_members = ClubMember.objects.filter(member=member_id, club=club_id).values()
 
         return Response(club_members)
 
     @transaction.atomic
-    def patch(self, request):
-        data = request.data
-        member = Member.objects.get(id=data['member_id'])
-        club = Club.objects.get(id=data['club_id'])
+    def patch(self, request, member_id, club_id):
+        # data = request.data
+        member = Member.objects.get(id=member_id)
+        club = Club.objects.get(id=club_id)
         club_member, created = ClubMember.objects.get_or_create(member=member, club=club)
 
         if created:
@@ -119,9 +121,9 @@ class ClubMemberAPI(APIView):
             return Response('quit')
 
 
-class ClubActivityAPI(APIView):
-    def get(self, request):
-        club = Club.objects.get(id=request.GET['club_id'])
+class ClubOngoingActivityAPI(APIView):
+    def get(self, request, club_id):
+        club = Club.objects.get(id=club_id)
         columns = [
             'id',
             'activity_title',
@@ -129,44 +131,42 @@ class ClubActivityAPI(APIView):
             'activity_start',
         ]
 
-        # finished_activities = club.activity_set.filter(activity_end__lte=timezone.now(), status=1).values(*columns)\
-        #     .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))\
-        #     .order_by('-id')
+        # ongoing_activities = club.activity_set.filter(activity_end__gt=timezone.now(), status=1).values(*columns)\
+        #     .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))
 
-        ongoing_activities = club.activity_set.filter(activity_end__gt=timezone.now(), status=1).values(*columns)\
-            .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))\
+        ongoing_activities = Activity.objects.filter(club=club, activity_end__gt=timezone.now(), status=1).values(*columns) \
+            .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))
 
-        club_activities = {
-            'finished_activities': finished_activities,
-            'ongoing_activities': ongoing_activities
-        }
-
-        return Response(club_activities)
+        return Response(ongoing_activities)
 
 
 class ClubFinishedActivityAPI(APIView):
-    def get(self, request):
-        club = Club.objects.get(id=request.GET['club_id'])
-        columns = [
-            'id',
-            'activity_title',
-            'thumbnail_path',
-            'activity_start',
-        ]
+    def get(self, request, club_id, page):
+        row_count = 8
+        offset = (page - 1) * row_count
+        limit = page * row_count
 
-        finished_activities = club.activity_set.filter(activity_end__lte=timezone.now(), status=1).values(*columns) \
+        club = Club.objects.get(id=club_id)
+
+        finished_activities = Activity.objects.filter(club=club,activity_end__lte=timezone.now(), status=1) \
             .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1))) \
+            .values('id', 'activity_title', 'thumbnail_path', 'activity_start', 'participant_count') \
             .order_by('-id')
 
-        return Response(finished_activities)
+        return Response(finished_activities[offset:limit])
 
 
 class ClubNoticeAPI(APIView):
-    def get(self, request):
-        club = Club.objects.get(id=request.GET['club_id'])
+    def get(self, request, club_id, page):
+        row_count = 4
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        club = Club.objects.get(id=club_id)
+
         club_notices = club.clubnotice_set.filter(status=1).values().order_by('-id')
 
-        return Response(club_notices)
+        return Response(club_notices[offset:limit])
 
 
 class ClubPrPostsView(View):

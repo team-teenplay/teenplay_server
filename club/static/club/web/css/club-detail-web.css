@@ -739,7 +739,7 @@ button, input, optgroup, select, textarea {
     --tw-space-y-reverse: 0;
     margin-top: calc(0.25rem*(1 - var(--tw-space-y-reverse)));
     margin-bottom: calc(0.25rem*var(--tw-space-y-reverse));
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     display: flex;
 }
@@ -760,13 +760,14 @@ button, input, optgroup, select, textarea {
     font-size: .8125rem;
 }
 
-.show-more-btn-wrap {
+.show-more-finished-btn-wrap, .show-more-notice-btn-wrap {
+    display: none;
     --tw-space-y-reverse: 0;
     margin-top: calc(1rem*(1 - var(--tw-space-y-reverse)));
     margin-bottom: calc(1rem*var(--tw-space-y-reverse));
 }
 
-.show-more-btn {
+.show-more-finished-btn, .show-more-notice-btn {
     padding: 1rem;
     justify-content: center;
     align-items: center;
@@ -991,6 +992,10 @@ button, input, optgroup, select, textarea {
     margin-bottom: calc(0.5rem*var(--tw-space-y-reverse));
 }
 
+.club-info {
+    display: none;
+}
+
 .club-info-wrap {
     min-height: 24rem;
     padding-top: 2rem;
@@ -1028,6 +1033,10 @@ button, input, optgroup, select, textarea {
     word-break: break-word;
 }
 
+.club-notice {
+    display: none;
+}
+
 .club-notice-wrap {
     min-height: 24rem;
     padding-top: 2rem;
@@ -1061,6 +1070,10 @@ button, input, optgroup, select, textarea {
 
 .club-notice-boxes-border:not(:first-child) {
     border-top-width: 1px;
+}
+
+.club-notice-boxes-border:last-child {
+    border-bottom-width: 1px;
 }
 
 .club-notice-boxes {
