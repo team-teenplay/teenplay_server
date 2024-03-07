@@ -26,6 +26,16 @@ input {
 
 }
 
+.toggle-button.disabled {
+    border-color: #F2F4F5;
+    background-color: #F2F4F5;
+}
+
+.toggle-button.disabled:hover {
+    border-color: #F2F4F5;
+    background-color: #F2F4F5;
+}
+
 *{
     --tw-border-spacing-x: 0;
     --tw-border-spacing-y: 0;

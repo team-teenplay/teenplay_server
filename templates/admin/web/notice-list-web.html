@@ -91,7 +91,7 @@
                             <!-- 첫번째(왼쪽 전체0) -->
                             <div class="main-user-total-list">
                                 <span class="main-user-total-text">전체</span>
-                                <span class="main-user-total-number" id="total-count">0</span>
+                                <span class="main-user-total-number" id="total-count">{{ total }}</span>
                             </div>
                             <!-- 2번째 -->
                             <!-- 일단은 없애요^^ -->
@@ -126,7 +126,7 @@
                                     </div>
                                 </div>
                                 <div class="main-user-list-ston">
-                                    <button class="member-user-list-button toggle-button">삭제하기</button>
+                                    <button class="member-user-list-button toggle-button disabled">삭제하기</button>
                                 </div>
                             </div>
                         </div>
@@ -163,25 +163,25 @@
                             <p class="main-user-status-list-text">유저가 없습니다.</p>
                         </div>
                     {% else %}
-                        <div>
-                            {% for notice in notices %}
-                                <li class="main-user-list" data-id="{{ notice.id }}">
-                                    <div class="main-comment-list-check">
-                                        <input type="checkbox" class="main-comment-list-checkbox" />
-                                    </div>
-                                    <div class="main-user-list-name">{{ notice.notice_title }}</div>
-                                    <div class="main-user-list-status">{{ notice.created_date }}</div>
-                                    <div class="main-user-list-category" >
-                                        {% if notice.notice_type == 0 %}
-                                            공지사항
-                                        {% elif notice.notice_type == 1 %}
-                                            자주묻는질문
-                                        {% endif %}
-                                    </div>
-                                    <div class="main-user-list-detail">
-                                        <button class="member-user-list-detail-button toggle-button" data-target="1">상세보기</button>
-                                    </div>
-                                </li>
+                        <div class="notice-data">
+{#                            {% for notice in notices %}#}
+{#                                <li class="main-user-list" data-id="{{ notice.id }}">#}
+{#                                    <div class="main-comment-list-check">#}
+{#                                        <input type="checkbox" class="main-comment-list-checkbox" />#}
+{#                                    </div>#}
+{#                                    <div class="main-user-list-name">{{ notice.notice_title }}</div>#}
+{#                                    <div class="main-user-list-status">{{ notice.created_date }}</div>#}
+{#                                    <div class="main-user-list-category" >#}
+{#                                        {% if notice.notice_type == 0 %}#}
+{#                                            공지사항#}
+{#                                        {% elif notice.notice_type == 1 %}#}
+{#                                            자주묻는질문#}
+{#                                        {% endif %}#}
+{#                                    </div>#}
+{#                                    <div class="main-user-list-detail">#}
+{#                                        <button class="member-user-list-detail-button toggle-button" data-target="{{ notice.id }}">상세보기</button>#}
+{#                                    </div>#}
+{#                                </li>#}
 {#                                <li class="main-user-list" data-id="1">#}
 {#                                    <div class="main-comment-list-check">#}
 {#                                        <input type="checkbox" class="main-comment-list-checkbox" />#}
@@ -204,7 +204,7 @@
 {#                                        <button class="member-user-list-detail-button toggle-button" data-target="2">상세보기</button>#}
 {#                                    </div>#}
 {#                                </li>#}
-                            {% endfor %}
+{#                            {% endfor %}#}
                         </div>
                     {% endif %}
                     <!-- 아래쪽 -->
@@ -377,11 +377,16 @@
     </main>
 {% endblock %}
 {% block js %}
+    <script>
+        const csrf_token = '{{ csrf_token }}';
+        {#const memberId = '{{ request.session.member.id }}'#}
+    </script>
     <script src="{% static 'admin/web/js/notice/admin-notice-module-web.js' %}"></script>
+    <script src="{% static 'admin/web/js/notice/admin-notice-web.js' %}"></script>
 {#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-bottem-web.js' %}"></script>#}
 {#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-button-web.js' %}"></script>#}
 {#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-delete-web.js' %}"></script>#}
-{#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-modal-web.js' %}"></script>#}
+    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-modal-web.js' %}"></script>
 {#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-redbox-web.js' %}"></script>#}
 {#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-search-web.js' %}"></script>#}
 {% endblock %}
