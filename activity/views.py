@@ -131,12 +131,13 @@ class ActivityDetailWebView(View):
         activity_member_count = ActivityMember.enabled_objects.filter(activity_id=activity_id).count()
         activity_recruit_check = activity.recruit_end >= timezone.now() >= activity.recruit_start
         activity_replies = list(ActivityReply.enabled_objects.filter(activity_id=activity_id))
+
         # 댓글 작성자 프사
         for reply in activity_replies:
             member_profile = MemberProfile.enabled_objects.filter(member_id=reply.member_id).first()
             reply.member_profile = member_profile
 
-        club_notices = list(ClubNotice.objects.filter(status=True, club_id=club.id).order_by('-id'))
+        club_notices = list(ClubNotice.objects.filter(status=True, club_id=club.id).order_by('-id')[:4])
         # 추천 활동
         recommended_activities = list(Activity.enabled_objects.exclude(id=activity_id)[0:4])
 
@@ -184,24 +185,62 @@ class ActivityLikeAPI(APIView):
         return Response("deleted")
 
 
-class ActivityReplyListAPI(APIView):
+class ActivityLikeCountAPI(APIView):
     def get(self, request):
-        page = request.GET.get('page', 1)
+        activity_id = request.GET['id']
+        # 관심활동으로 등록한 회원 수
+        activity_like_count = ActivityLike.enabled_objects.filter(activity_id=activity_id).count()
+
+        return Response(activity_like_count)
+
+
+class ActivityReplyAPI(APIView):
+    def get(self, request):
+        page = int(request.GET.get('page', 1))
         activity_id = request.GET.get('activity-id')
 
         row_count = 3
         offset = (page - 1) * row_count
         limit = page * row_count
 
-        replies = ActivityReply.enabled_objects.filter(activity_id=activity_id) \
+        replies = ActivityReply.enabled_objects.filter(activity_id=activity_id).order_by('-id') \
             .annotate(member_nickname=F('member__member_nickname'), \
-                      member_path=F('member__member_profile__profile_path'))\
-            .values('reply_content', 'id', 'member_nickname', 'created_date', 'member_id')
+                      member_path=F('member__memberprofile__profile_path'),
+                      member_email=F('member__member_email'))\
+            .values('reply_content', 'id', 'member_nickname', 'created_date', 'member_id', 'member_email')
 
         return Response(replies[offset:limit])
 
+    def post(self, request):
+        data = request.data
+        data = {
+            'reply_content': data['reply_content'],
+            'activity_id': data['activity_id'],
+            'member_id': data['member_id']
+        }
 
+        ActivityReply.objects.create(**data)
+        return Response("success")
 
+    def patch(self, request):
+        activity_id = request.data['activity_id']
+        member_id = request.data['member_id']
+        reply_content = request.data['reply_content']
+        id = request.data['id']
 
+        activity_reply = ActivityReply.enabled_objects.get(id=id, activity_id=activity_id, member_id=member_id)
+        activity_reply.reply_content = reply_content
+        activity_reply.updated_date = timezone.now()
+        activity_reply.save(update_fields=['reply_content', 'updated_date'])
 
+        return Response("success")
 
+    def delete(self, request):
+        id = request.data['id']
+
+        activity_reply = ActivityReply.enabled_objects.get(id=id)
+        activity_reply.status = 0
+        activity_reply.updated_date = timezone.now()
+        activity_reply.save(update_fields=['status', 'updated_date'])
+
+        return Response("success")

@@ -1,3 +1,6 @@
+NodeList.prototype.filter = Array.prototype.filter;
+NodeList.prototype.map = Array.prototype.map;
+
 // // 관심 활동 클릭 시 이미지 변경 및 모달창 띄우기
 let heartCheck = document.querySelector(".like-act-button");
 // 관심 행사 클릭 시 모달창 띄우고 삭제하기 위해 확인
@@ -44,15 +47,26 @@ if (isLike === 'True') {
     changeHeartColor();
 }
 
+// 클릭 시 관심활동 등록하기 및 관심활동 등록 회원 수 업데이트
+const activityId = document.querySelector("input[name=activity-id]").value;
+const activityLikeCount = document.querySelector(".activity-like-count");
+const showLikeCount = (likeCount) => {
+    activityLikeCount.innerHTML = `관심 ${likeCount}명 | `;
+}
+// 업데이트하고 시작
+activityLikeCountService.getCount(activityId, showLikeCount);
+
+// 클릭 시에도 작동하도록 등록
 heartCheck.addEventListener("click", async (e) => {
     let check = changeHeartColor();
-    let activityId = document.querySelector("input[name=activity-id]").value;
     if (check) {
         await addActivityLike(activityId, true);
+        await activityLikeCountService.getCount(activityId, showLikeCount);
         addLikeModal();
     }
     else {
         await addActivityLike(activityId, false);
+        await activityLikeCountService.getCount(activityId, showLikeCount);
         cancelLikeModal();
     }
 });
@@ -104,14 +118,14 @@ document.querySelector(".act-noti").addEventListener("click", () => {
     });
 });
 
-// document.querySelector(".act-inquiry").addEventListener("click", () => {
-//     const targetDiv = document.querySelector(".feed-item");
-//
-//     window.scrollTo({
-//         top: targetDiv.offsetTop,
-//         behavior: "smooth",
-//     });
-// });
+document.querySelector(".act-inquiry").addEventListener("click", () => {
+    const targetDiv = document.querySelector(".comment-title");
+
+    window.scrollTo({
+        top: targetDiv.offsetTop,
+        behavior: "smooth",
+    });
+});
 
 document.querySelector(".act-suggestion").addEventListener("click", () => {
     const targetDiv = document.querySelector(".activity-list-more-title");
@@ -138,7 +152,7 @@ let introLine = document.querySelector(".act-intro");
 let locationLine = document.querySelector(".act-location");
 let infoLine = document.querySelector(".act-info");
 let notiLine = document.querySelector(".act-noti");
-// let inquiryLine = document.querySelector(".act-inquiry");
+let inquiryLine = document.querySelector(".act-inquiry");
 let suggetsionLine = document.querySelector(".act-suggestion");
 
 // 특정 div의 위치를 설정
@@ -165,12 +179,12 @@ window.addEventListener("scroll", function () {
         infoLine.style.borderColor = "";
         notiLine.style.color = "";
         notiLine.style.borderColor = "";
-        // inquiryLine.style.color = "";
-        // inquiryLine.style.borderColor = "";
+        inquiryLine.style.color = "";
+        inquiryLine.style.borderColor = "";
         suggetsionLine.style.color = "";
         suggetsionLine.style.borderColor = "";
     }
-    // 행사장소
+    // 활동 장소
     if (document.documentElement.scrollTop >= targetEndContainerPosition && document.documentElement.scrollTop < targetMapPosition) {
         locationLine.style.color = "#ce201b";
         locationLine.style.borderColor = "#ce201b";
@@ -181,40 +195,40 @@ window.addEventListener("scroll", function () {
         infoLine.style.borderColor = "";
         notiLine.style.color = "";
         notiLine.style.borderColor = "";
-        // inquiryLine.style.color = "";
-        // inquiryLine.style.borderColor = "";
+        inquiryLine.style.color = "";
+        inquiryLine.style.borderColor = "";
         suggetsionLine.style.color = "";
         suggetsionLine.style.borderColor = "";
     }
-    // 행사 정보
+    // 활동 정보
     if (document.documentElement.scrollTop >= targetMapPosition && document.documentElement.scrollTop < targetFeedPosition) {
         locationLine.style.color = "";
         locationLine.style.borderColor = "";
         notiLine.style.color = "";
         notiLine.style.borderColor = "";
-        // inquiryLine.style.color = "";
-        // inquiryLine.style.borderColor = "";
+        inquiryLine.style.color = "";
+        inquiryLine.style.borderColor = "";
         suggetsionLine.style.color = "";
         suggetsionLine.style.borderColor = "";
         infoLine.style.color = "#ce201b";
         infoLine.style.borderColor = "#ce201b";
         introLine.style.transition = "color 0.3s, border-bottom-color 0.3s";
     }
-    // 행사 공지
+    // 모임 공지
     if (document.documentElement.scrollTop >= targetFeedPosition && document.documentElement.scrollTop < targetCommentPosition) {
         locationLine.style.color = "";
         locationLine.style.borderColor = "";
         infoLine.style.color = "";
         infoLine.style.borderColor = "";
-        // inquiryLine.style.color = "";
-        // inquiryLine.style.borderColor = "";
+        inquiryLine.style.color = "";
+        inquiryLine.style.borderColor = "";
         suggetsionLine.style.color = "";
         suggetsionLine.style.borderColor = "";
         notiLine.style.color = "#ce201b";
         notiLine.style.borderColor = "#ce201b";
         notiLine.style.transition = "color 0.3s, border-bottom-color 0.3s";
     }
-    // 행사 문의 (댓글)
+    // 댓글
     if (document.documentElement.scrollTop >= targetCommentPosition && document.documentElement.scrollTop < targetActivityMorePosition) {
         locationLine.style.color = "";
         locationLine.style.borderColor = "";
@@ -224,8 +238,8 @@ window.addEventListener("scroll", function () {
         notiLine.style.borderColor = "";
         suggetsionLine.style.color = "";
         suggetsionLine.style.borderColor = "";
-        // inquiryLine.style.color = "#ce201b";
-        // inquiryLine.style.borderColor = "#ce201b";
+        inquiryLine.style.color = "#ce201b";
+        inquiryLine.style.borderColor = "#ce201b";
         notiLine.style.transition = "color 0.3s, border-bottom-color 0.3s";
     }
     // 추천
@@ -236,14 +250,15 @@ window.addEventListener("scroll", function () {
         infoLine.style.borderColor = "";
         notiLine.style.color = "";
         notiLine.style.borderColor = "";
-        // inquiryLine.style.color = "";
-        // inquiryLine.style.borderColor = "";
+        inquiryLine.style.color = "";
+        inquiryLine.style.borderColor = "";
         suggetsionLine.style.color = "#ce201b";
         suggetsionLine.style.borderColor = "#ce201b";
         suggetsionLine.style.transition = "color 0.1s, border-bottom-color 0.1s";
     }
 });
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 
 // // 접기 버튼 클릭 시 동작
 // 숨겨진 이미지 확인 및 버튼 모양 변경
@@ -252,6 +267,17 @@ filpHiddenClickBtn = document.querySelector(".filp-button-hidden");
 filpMoreClickBtn = document.querySelector(".filp-more-hidden");
 overflowHidden = document.querySelector(".max-overflow-hidden");
 isHiddenShadow = document.querySelector(".is-hidden-shadow");
+
+// 활동 내용의 높이에 따라 활동소개더보기 버튼 표시 유무 및 아랫쪽 흐려짐 여부 설정
+const activityContentBox = document.querySelector(".title-text");
+const flipButtonContainer = document.querySelector(".flex-items-end-container")
+if (activityContentBox.offsetHeight >= window.innerHeight * 0.8) {
+    flipButtonContainer.style.display = "none";
+    isHiddenShadow.style.backgroundImage = "none";
+} else {
+    flipButtonContainer.style.display = "flex";
+    isHiddenShadow.style.backgroundImage = "linear-gradient(to top, var(--tw-gradient-stops))";
+}
 filpClickBtn.addEventListener("click", (e) => {
     overflowHidden.style.maxHeight = "none";
     isHiddenShadow.style.backgroundImage = "none";
@@ -311,8 +337,59 @@ nonLikeDisplay.forEach(async (displayButton, i) => {
 });
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// 쪽지 보내기 클릭 시 쪽지 보내기 모달 출력 이벤트
+const sendLetterBoxBtn = document.querySelector(".send-letter-btn");
+const sendLetter = document.querySelector(".send-modal-wrap");
+const senderInfo = document.querySelector(".send-sender-email")
+const receiverInfo = document.querySelector(".send-receiver-email")
 
-// 틴친 클릭 시 나오는 모달
+// 쪽지 모달창에 발신자 정보 받아와서 넣기
+const sendLetterAddInfo = (replyId) => {
+    const memberName = document.querySelector("input[name=member-name]").value;
+    const memberEmail = document.querySelector("input[name=member-email]").value;
+    senderInfo.innerText = `${memberName} (${memberEmail})`;
+    const receiverName = document.querySelector(`.member-name${replyId}`).innerText;
+    const receiverEmail = document.querySelector(`.member-email${replyId}`).value;
+    receiverInfo.innerText = `${receiverName} (${receiverEmail})`;
+}
+
+// 틴친 클릭 시 프로필 모달 나오도록 하기
+const profileModal = document.querySelector("div.profile");
+const profileModalProfileImage = document.querySelector(".profile-default-img");
+const profileModalMemberName = document.querySelector("div.profile-name");
+const showMemberProfileModal = (replyId) => {
+    if (profileModal.classList.contains("hidden")) {
+        profileModal.classList.remove("hidden")
+        const memberProfileImage = document.querySelector(`.profile-image${replyId}`);
+        profileModalProfileImage.src = memberProfileImage.src;
+        const memberProfileName = document.querySelector(`.member-name${replyId}`);
+        profileModalMemberName.innerText = memberProfileName.innerText;
+        sendLetterAddInfo(replyId);
+    }
+}
+
+const hideMemberProfileModal = () => {
+    if (!profileModal.classList.contains("hidden")){
+        profileModal.classList.add("hidden");
+    }
+}
+
+const addClickEventReplyProfile = () => {
+    const profilePhotos = document.querySelectorAll(".k-comment-profile-container");
+    profilePhotos.forEach((wrap) => {
+        wrap.addEventListener("click", (e) => {
+            let replyId = wrap.classList[1];
+            showMemberProfileModal(replyId);
+        })
+    })
+    const modalDivision = document.querySelector(".modal-divison")
+    const modalContainer = document.querySelector(".teenchin-box.post-update-wrap")
+    modalDivision.addEventListener("click", (e) => {
+        if (e.target !== modalContainer){
+            hideMemberProfileModal()
+        }
+    })
+}
 
 // 프로필 클릭 시 틴친 프로필 모달 출력 이벤트
 const commentProfileImg = document.querySelector(".k-comment-profile-container");
@@ -335,16 +412,12 @@ if (teenchinBox && commentProfileImg){
     });
 }
 
-// 쪽지 보내기 클릭 시 쪽지 보내기 모달 출력 이벤트
-const sendLetterBoxBtn = document.querySelector(".send-letter-btn");
-const sendLetter = document.querySelector(".send-modal-wrap");
 
-if (sendLetterBoxBtn){
-    sendLetterBoxBtn.addEventListener("click", () => {
-        profile.classList.add("hidden");
-        sendLetter.classList.remove("hidden");
-    });
-}
+
+sendLetterBoxBtn.addEventListener("click", () => {
+    profile.classList.add("hidden");
+    sendLetter.classList.remove("hidden");
+})
 
 // 쪽지 보내기 닫기(버튼) 모달 이벤트
 const sendLetterCloseBtn = document.querySelector(".send-close-btn");
@@ -370,7 +443,10 @@ if (sendLetterModal){
 const sendLetterBtn = document.querySelector(".send-check-btn");
 
 if (sendLetterBtn){
-    sendLetterBtn.addEventListener("click", () => {
+    sendLetterBtn.addEventListener("click", async () => {
+        await activityLetterService.write({
+
+        })
         Swal.fire("쪽지가 전송 되었습니다.", "", "success");
     });
 }
@@ -456,36 +532,116 @@ if (teenFriendCancle){
 }
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+let page = 1;
+// 댓글 더보기 버튼 표시 여부
+const replyMoreButton = document.querySelector(".show-more-btn-wrap");
+const showOrHideMoreButton = (isAdd, replies) => {
+    if (replies.length === 0){
+        replyMoreButton.style.display = "none";
+    } else {
+        replyMoreButton.style.display = "block";
+    }
+}
+
+// 댓글 옆 버튼 클릭 시 수정/삭제 메뉴 열기
+const bgForModalClose = document.querySelector(".bg-for-modal")
+const showMenuButtons = () => {
+    const replyMenuShowButtons = document.querySelectorAll(".comment-modify-button")
+    const replyMenuButtons = document.querySelectorAll(".k-comment-menu-open-wrap")
+    replyMenuShowButtons.forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            let replyId = btn.classList[1];
+            replyMenuButtons.forEach((replyBtn) => {
+                if (replyBtn.classList[1] === replyId) {
+                    replyBtn.style.display = "block";
+                } else {
+                    replyBtn.style.display = "none";
+                }
+                bgForModalClose.style.display = "block";
+                bgForModalClose.addEventListener("click", (e) => {
+                    if (e.target !== replyBtn && !replyBtn.contains(e.target)) {
+                        replyBtn.style.display = "none";
+                    }
+                    bgForModalClose.style.display = "none";
+                })
+            })
+        })
+    })
+}
+
+// 수정 메뉴 클릭 시 수정창 출력 이벤트 등록
+const addClickEventUpdate = () => {
+    let updateOpenBtns = document.querySelectorAll(".k-comment-menu-open-choice.update")
+    let updateModals = document.querySelectorAll(".k-comment-update-box-all-wrap")
+    let originalReplies = document.querySelectorAll(".k-comment-list-wrap")
+
+    updateOpenBtns.forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            updateModals.filter((modal) => modal.classList[1] === e.target.classList[2])
+                .map((modal) => {
+                    modal.style.display = "block";
+                    let originalReplyContents = document.querySelector(`.text${e.target.classList[2]}`)
+                    let updateTextareas = document.getElementById(`textarea${e.target.classList[2]}`)
+                    updateTextareas.value = originalReplyContents.innerText;
+                });
+            originalReplies.filter((reply) => reply.classList[1] === e.target.classList[2])
+                .map((reply) => {
+                    reply.style.display = "none";
+                })
+            bgForModalClose.style.display = "none";
+        })
+    })
+}
+
+// 수정창에서 취소 버튼 클릭 시 수정창 닫기 이벤트 등록
+const addClickEventHideUpdate = () => {
+    const updateCancelButtons = document.querySelectorAll(".k-comment-update-close-button")
+    const updateModals = document.querySelectorAll(".k-comment-update-box-all-wrap");
+    const originalReplies = document.querySelectorAll(".k-comment-list-wrap")
+    updateCancelButtons.forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            updateModals.filter((modal) => modal.classList[1] === e.target.classList[1])
+                .map((modal, i) => {
+                    modal.style.display = "none";
+                })
+            originalReplies.filter((reply) => reply.classList[1] === e.target.classList[1])
+                .map((reply) => {
+                    reply.style.display = "flex";
+                })
+            bgForModalClose.style.display = "none";
+        })
+    })
+}
+
+activityReplyService.getList(true, page+1, activityId, showOrHideMoreButton);
+
 // 댓글 목록 불러오기, 댓글 작성, 댓글 수정/삭제
 const commentWrap = document.querySelector(".k-comment-list-box-wrap")
-
-const showReplies = (replies) => {
-    const memberId = document.querySelector("input[name=member-id]").value;
-
+const commentListAllWrap = document.querySelector(".k-comment-list-all-wrap")
+const memberId = document.querySelector("input[name=member-id]").value;
+const showReplies = async (isAdd, replies) => {
     if (replies.length === 0) {
-        commentWrap.innerHTML = `
-            <div class="k-comment-line"></div>
+        commentWrap.innerHTML += `
             <div class="feed-item">
                 <span>등록된 댓글이 없습니다.</span>
             </div>
         `;
     } else {
-        commentWrap.innerHTML = `
-            <div class="k-comment-line"></div>
-            <div class="k-comment-list-all-wrap">
-        `
+        let text = ``
+
         replies.forEach((reply) => {
-            commentWrap.innerHTML += `
+            text += `
                 <!-- 댓글 수정 부분 -->
-                <div class="k-comment-update-box-all-wrap">
+                <div class="k-comment-update-box-all-wrap ${reply.id}">
                     <div class="k-comment-update-box-wrap">
                         <div class="k-comment-update-wrap">
-                            <div class="k-comment-update-username-container">${reply.member.member_nickname}</div>
+                            <div class="k-comment-update-username-container">${reply.member_nickname}</div>
                             <div class="k-comment-update-container">
-                                <textarea class="k-comment-update-guide" id="comment-input-update-guide" name="reply-content" type="text" placeholder="수정할 댓글을 남겨주세요. 욕설, 비방글은 무통보 삭제됩니다." autocomplete="off" required=""></textarea>
+                                <textarea class="k-comment-update-guide" id="textarea${reply.id}" name="reply-content" type="text" placeholder="수정할 댓글을 남겨주세요. 욕설, 비방글은 무통보 삭제됩니다." autocomplete="off" required=""></textarea>
                                 <div class="k-comment-update-upload-wrap">
                                     <div class="k-comment-update-upload-container">
-                                        <button class="k-comment-update-upload-button" id="comment-update-upload" type="button">수정</button>
+                                        <button class="k-comment-update-upload-button ${reply.id}" type="button">수정</button>
+                                        <button class="k-comment-update-close-button ${reply.id}" type="button">취소</button>
                                     </div>
                                 </div>
                             </div>
@@ -493,53 +649,62 @@ const showReplies = (replies) => {
                     </div>
                 </div>
                 <!-- 개별 댓글 부분 -->
-                <div class="k-comment-list-wrap">
+                <div class="k-comment-list-wrap ${reply.id}">
+                <input type="hidden" class="member-email${reply.id}" name="writer-email" value="${reply.member_email}">
                     <!-- 댓글 내 프로필 사진 부분 -->
-                    <div class="k-comment-profile-container">
-                           <img src="/upload/${reply.member_profile_path}" alt="프로필사진" class="k-comment-profile-icon">
-                           <img src="/static/public/web/images/logo/logo1.png" alt="프로필사진" class="k-comment-profile-icon">
+                    <div class="k-comment-profile-container ${reply.id}">
+                        <img src="${reply.member_path ? '/upload/' + reply.member_path : '/static/public/web/images/logo/logo1.png'}" alt="프로필사진" class="k-comment-profile-icon profile-image${reply.id}">
                     </div>
                     <!-- 개별 댓글 전체 내용 부분 -->
                     <div class="k-comment-content-container">
                         <!-- 댓글 정보 부분 -->
                         <div class="k-comment-info">
                             <!-- 댓글 작성자 이름 부분 -->
-                            <span>${reply.member.member_nickname}</span>
+                            <span class="member-name${reply.id}">${reply.member_nickname}</span>
                             <!-- 댓글 작성 날짜 부분 -->
                             <span class="k-comment-info-date">${timeForToday(reply.created_date)}</span>
                         </div>
                         <!-- 개별 댓글 내용 부분 -->
-                        <div class="k-comment-text">${reply.reply_content}</div>
+                        <div class="k-comment-text text${reply.id}">${reply.reply_content}</div>
                     </div>
-                </div>
-            `;
-            if (reply.member.id === memberId){
-                commentWrap.innerHTML += `
-                    <!-- 개별 댓글 메뉴 부분 -->
-                    <div>
-                        <button class="k-comment-menu" type="button" aria-haspopup="menu" data-headlessui-state>
+                    <div class="comment-modify-button ${reply.id}" style="display: ${reply.member_id !== Number(memberId) ? 'none' : 'block'};">
+                        <button class="k-comment-menu" type="button">
                             <svg class="k-comment-menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                                 <path fill-rule="evenodd" d="M10.5 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm0 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm0 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" clip-rule="evenodd"></path>
                             </svg>
                         </button>
-                        <div class="k-comment-menu-open-wrap" aria-labelledby="main-wishlist-content-menu" role="menu" tabindex="0" data-headlessui-state="open">
+                        <div class="k-comment-menu-open-wrap ${reply.id}">
                             <div class="k-comment-menu-open-container" role="none">
                                 <div class="k-comment-menu-open-divison" role="none">
-                                    <button class="k-comment-menu-open-choice" type="button" id="comment-menu-open-update" role="menuitem" tabindex="-1">수정</button>
-                                    <button class="k-comment-menu-open-choice" type="button" id="comment-menu-open-delete" role="menuitem" tabindex="-1">삭제</button>
+                                    <button class="k-comment-menu-open-choice update ${reply.id}" type="button" id="comment-menu-open-update">수정</button>
+                                    <button class="k-comment-menu-open-choice delete ${reply.id}" type="button" id="comment-menu-open-delete">삭제</button>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
                 `
-            }
-        });
-
-        commentWrap.innerHTML += `
-            </div>
-        `;
+        })
+        if (isAdd){
+            commentListAllWrap.innerHTML += text;
+        } else {
+            commentListAllWrap.innerHTML = text;
+        }
+        await activityReplyService.getList(true, page+1, activityId, showOrHideMoreButton);
+        showMenuButtons();
+        addClickEventUpdate();
+        addClickEventHideUpdate();
+        addClickEventUpdateUpload();
+        addClickEventDelete();
+        addClickEventReplyProfile();
     }
 }
+
+replyMoreButton.addEventListener("click", async () => {
+    page++;
+    await activityReplyService.getList(true, page, activityId, showReplies);
+    await activityReplyService.getList(true, page+1, activityId, showOrHideMoreButton);
+})
 
 function timeForToday(datetime) {
     const today = new Date();
@@ -580,42 +745,58 @@ function timeForToday(datetime) {
 
 
 
-// // 댓글 수정
-// let commentButton = document.querySelector(".k-comment-menu");
-// let commentSubButton = document.querySelector(".k-comment-menu-open-divison");
-// let commentCorrectionClick = document.querySelector(".k-comment-menu-open-choice");
-//
-// let commentCorrection = document.querySelector(".k-comment-update-box-all-wrap");
-// let commentCorrectionText = document.querySelector(".k-comment-update-box-wrap");
-//
-// let commentListAllWrap = document.querySelector(".k-comment-list-all-wrap");
-// let commentInputBoxAllWrap = document.querySelector(".k-comment-input-box-all-wrap");
-//
-// if (commentButton){
-//     commentButton.addEventListener("click", (e) => {
-//         commentCorrectionClick.addEventListener("click", () => {
-//             commentCorrection.style.display = "block";
-//             commentCorrectionText.style.display = "block";
-//             commentSubButton.style.display = "none";
-//             commentListAllWrap.classList.add("hidden");
-//             commentInputBoxAllWrap.classList.add("hidden");
-//         });
-//         commentSubButton.style.display = "block";
-//     });
-// }
-//
-// let commentUpdateUploadContainer = document.querySelector(".k-comment-update-upload-container");
-//
-// if (commentUpdateUploadContainer){
-//     commentUpdateUploadContainer.addEventListener("click", () => {
-//         commentCorrection.style.display = "none";
-//         commentCorrectionText.style.display = "none";
-//         commentSubButton.style.display = "flex";
-//         commentListAllWrap.classList.remove("hidden");
-//         commentInputBoxAllWrap.classList.remove("hidden");
-//         commentSubButton.style.display = "none";
-//     });
-// }
+// 댓글 작성하기
+const replyUploadButton = document.getElementById("comment-upload-button")
+replyUploadButton.addEventListener("click", async () => {
+    const replyTextarea = document.querySelector("textarea.k-comment-input-guide")
+    const replyText = replyTextarea.value;
+    if (!replyText) return;
+    await activityReplyService.write({
+        'member_id': memberId,
+        'reply_content': replyText,
+        'activity_id': activityId
+    });
+    page = 1;
+    replyTextarea.value = '';
+    await activityReplyService.getList(false, page, activityId, showReplies);
+})
+
+// 댓글 수정하기
+const addClickEventUpdateUpload = () => {
+    const replyUpdateUploadButtons = document.querySelectorAll(".k-comment-update-upload-button");
+    replyUpdateUploadButtons.forEach((btn) => {
+        btn.addEventListener("click", async (e) => {
+            const updateTextarea = document.getElementById(`textarea${e.target.classList[1]}`);
+            const updateContent = updateTextarea.value;
+            if (!updateContent) return;
+            await activityReplyService.update({
+                'member_id': memberId,
+                'reply_content': updateContent,
+                'activity_id': activityId,
+                'id': e.target.classList[1]
+            });
+            page = 1;
+            updateTextarea.value = '';
+            await activityReplyService.getList(false, page, activityId, showReplies);
+        })})}
+
+// 댓글 삭제하기
+const addClickEventDelete = () => {
+    const replyDeleteButtons = document.querySelectorAll(".k-comment-menu-open-choice.delete")
+    replyDeleteButtons.forEach((btn) => {
+        btn.addEventListener("click", async (e) => {
+            const id = e.target.classList[2];
+            await activityReplyService.remove({
+                'id': id
+            });
+            page = 1;
+            await activityReplyService.getList(false, page, activityId, showReplies);
+        })
+    })
+}
+
+activityReplyService.getList(true, page, activityId, showReplies);
+
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // 공유하기 버튼
