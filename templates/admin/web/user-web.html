@@ -160,14 +160,14 @@
                             {% for user in users %}
                                 <li class="main-user-list" data-number="1">
                                     <div class="main-user-list-check">
-                                        <input type="checkbox" class="main-comment-list-checkbox" />
+                                        <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-user-id="{{ user.id }}">
                                     </div>
                                     <div class="main-user-list-name">{{ user.member_nickname }}</div>
                                     <div class="main-user-list-status">{{ user.created_date }}</div>
                                     <div class="main-user-list-date">{{ user.club_count }}</div>
                                     <div class="main-user-list-pay">{{ user.club_action_count }}</div>
                                     <div class="main-user-list-paycount">{{ user.activity_count }}</div>
-                                    <div class="main-user-list-message">
+                                    <div class="main-user-list-message" data-user-status="{{ user.status }}">
                                         {% if user.status == -1 %}
                                             정지
                                         {% elif user.status == 0 %}
@@ -315,7 +315,7 @@
         </div>
         <!-- 모달창 -->
         <div id="admin-user-modal" class="hidden">
-            <h4 class="admin-user-modal-title">정지사유를 작성해주세요!</h4>
+            <h4 class="admin-user-modal-title">변경 사유를 작성해 주세요!</h4>
             <div>
                 <div>
                     <textarea class="admin-user-modal-text" id="modal-text" oninput="resizeTextarea()"></textarea>
@@ -326,8 +326,10 @@
                     <button class="admin-user-modal-left-button" id="modalCloseButton">취소</button>
                 </div>
                 <div class="admin-user-modal-right">
-                    <a href="/admin/user/update/?id={{ user.id }}" class="admin-user-modal-right-button" id="modalApplyButton">적용하기</a>
-{#                    <button class="admin-user-modal-right-button" id="modalApplyButton">적용하기</button>#}
+{#                    {% for user in users %}#}
+{#                        <a href="/admin/user/update/?id={{ user.id }}" class="admin-user-modal-right-button" id="modalApplyButton">적용하기</a>#}
+{#                    {% endfor %}#}
+                    <button class="admin-user-modal-right-button" id="modalApplyButton">적용하기</button>
                 </div>
             </div>
         </div>
@@ -335,9 +337,15 @@
     </main>
 {% endblock %}
 {% block js %}
+    <script>
+        const csrf_token = '{{ csrf_token }}';
+        {#const memberId = '{{ request.session.member.id }}'#}
+    </script>
+    <script src="{% static 'admin/web/js/user/admin-user-module.js' %}"></script>
+    <script src="{% static 'admin/web/js/user/admin-user.js' %}"></script>
 {#    <script src="{% static 'admin/web/js/user/admin-user-bottem-web.js' %}"></script>#}
 {#    <script src="{% static 'admin/web/js/user/admin-user-delete-web.js' %}"></script>#}
-{#    <script src="{% static 'admin/web/js/user/admin-user-modal-web.js' %}"></script>#}
+    <script src="{% static 'admin/web/js/user/admin-user-modal-web.js' %}"></script>
     <script src="{% static 'admin/web/js/user/admin-user-search-web.js' %}"></script>
 {#    <script src="{% static 'admin/web/js/user/admin-user-info-web.js' %}"></script>#}
     <script src="{% static 'admin/web/js/user/admin-user-checkbox-web.js' %}"></script>
