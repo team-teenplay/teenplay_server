@@ -67,6 +67,7 @@ class ClubDetailView(View):
 
         club_activity_count = Club.objects.filter(id=club_id).values('id').annotate(club_activity_count=Count('activity')).first()
         club_list = list(club_list)
+
         club_list[0]['club_activity_count'] = club_activity_count.get('club_activity_count')
 
         context = {

@@ -11,6 +11,8 @@ const tpContent = document.querySelector(".club-teenplay");
 const noticeFilterWrap = document.querySelector(".club-detail-filter-notice");
 const noticeFilterBtn = document.querySelector(".club-detail-filter-notice .club-detail-filter-button");
 const noticeContent = document.querySelector(".club-notice");
+const clubDetailActiveWrap = document.querySelector(".club-detail-active-wrap")
+
 
 // 처음에 페이지 로드 시 9번째 활동부터는(존재한다면) 숨겨놓기
 // const finishedActivities = document.querySelectorAll(".finished-events-boxes");
@@ -108,15 +110,17 @@ const changeDate = (dateStr) => {
 
 // 정보를 기준으로 목록을 뿌려주는 함수
 const createListService = (() => {
-    let text = ``;
-    const showActivityList = (activities) => {
-        text += `
-            <div class="club-detail-desc-container">
-                <div class="club-detail-desc-boxes">
-                    <div class="club-detail-active-events">
-                        <div class="club-detail-active-desc">진행중인 활동</div>
-                        <div class="club-detail-active-wrap">
-        `
+
+    const showOngoingActivityList = (activities) => {
+        let text = ``;
+        // text += `
+        //     <div class="club-detail-desc-container">
+        //         <div class="club-detail-desc-boxes">
+        //             <div class="club-detail-active-events">
+        //                 <div class="club-detail-active-desc">진행중인 활동</div>
+        //                 <div class="club-detail-active-wrap">
+        // `
+
         if (activities.ongoing_activities.length === 0) {
             text += `
                             <div class="club-detail-active-empty-wrap">
@@ -244,6 +248,34 @@ const createListService = (() => {
         return text;
     }
 
+    const showClubInfo = () => {
+        let text = ``
+        text += `
+            <div class="club-info">
+                <div class="club-info-wrap">
+        `
+        if (!club.club_info) {
+            text += `
+                    <div class="club-info-empty-wrap">
+                        <div class="club-info-empty-container">
+                            <div class="club-info-empty">등록된 모임 정보가 없습니다.</div>
+                        </div>
+                    </div>
+            `
+        } else{
+            text += `
+                    <div class="club-info-container">
+                        <div class="club-info-texts">${ club.club_info }</div>
+                    </div>
+            `
+        }
+        text += `
+                </div>
+            </div>
+        `
+        clubServiceWrap.innerHTML = text
+    }
+
     const showClubNoticeList = (notices) => {
         clubServiceWrap.innerHTML = `
             <div class="club-notice">
@@ -291,7 +323,7 @@ const createListService = (() => {
         }
     }
 
-    return { clubActivityList:showActivityList, clubNoticeList:showClubNoticeList }
+    return { showOngoingList: showOngoingActivityList, clubInfo: showClubInfo, clubNoticeList: showClubNoticeList }
 })();
 
 // 활동 클릭 시 fetch 후 뿌리는 이벤트
@@ -313,11 +345,12 @@ activityFilterBtn.addEventListener("click", () => {
     }
     activityFilterWrap.style.borderBottom = "2px solid #CE201B";
 
-    clubDetailService.caList(club, createListService.clubActivityList).then((text) => {
+    clubDetailService.caList(club, createListService.showOngoingList).then((text) => {
         clubServiceWrap.innerHTML = text;
     })
 });
 
+// 모임 정보 클릭 시 뿌리는 이벤트
 infoFilterBtn.addEventListener("click", () => {
     activityFilterWrap.style.border = "none";
     tpFilterWrap.style.border = "none";
@@ -335,10 +368,7 @@ infoFilterBtn.addEventListener("click", () => {
         noticeFilterBtn.classList.add("off");
     }
     infoFilterWrap.style.borderBottom = "2px solid #CE201B";
-    infoContent.style.display = "block";
-    activityContent.style.display = "none";
-    tpContent.style.display = "none";
-    noticeContent.style.display = "none";
+    createListService.clubInfo()
 });
 
 // 모임 공지 클릭 시 fetch 후 목록 뿌리는 이벤트
@@ -897,6 +927,6 @@ teenplayDeleteWraps.forEach((div, i) => {
     });
 });
 
-clubDetailService.caList(club, createListService.clubActivityList).then((text) => {
+clubDetailService.caList(club, createListService.showOngoingList).then((text) => {
     clubServiceWrap.innerHTML = text;
 })
