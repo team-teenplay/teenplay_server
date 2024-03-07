@@ -1,14 +1,18 @@
+import math
+
 from django.db import transaction
+from django.db.models import F
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views import View
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from activity.models import Activity, ActivityImage, ActivityMember, ActivityReply
+from activity.models import Activity, ActivityImage, ActivityMember, ActivityReply, ActivityLike
 from alarm.models import Alarm
 from club.models import Club, ClubMember, ClubNotice
 from festival.models import Festival
-from member.models import Member
+from member.models import Member, MemberProfile
 from pay.models import Pay
 from teenplay_server.category import Category
 import re
@@ -123,9 +127,27 @@ class ActivityDetailWebView(View):
         activity = Activity.objects.filter(id=activity_id).first()
         category = activity.category
         club = activity.club
+        member_id = request.session['member']['id']
         activity_member_count = ActivityMember.enabled_objects.filter(activity_id=activity_id).count()
         activity_recruit_check = activity.recruit_end >= timezone.now() >= activity.recruit_start
         activity_replies = list(ActivityReply.enabled_objects.filter(activity_id=activity_id))
+        # 댓글 작성자 프사
+        for reply in activity_replies:
+            member_profile = MemberProfile.enabled_objects.filter(member_id=reply.member_id).first()
+            reply.member_profile = member_profile
+
+        club_notices = list(ClubNotice.objects.filter(status=True, club_id=club.id).order_by('-id'))
+        # 추천 활동
+        recommended_activities = list(Activity.enabled_objects.exclude(id=activity_id)[0:4])
+
+        # 각 추천활동별 참가자 수 및 관심 여부
+        for recommended_activity in recommended_activities:
+            member_count = ActivityMember.enabled_objects.filter(activity_id=recommended_activity.id).count()
+            recommended_activity.member_count = member_count
+            is_liked = ActivityLike.enabled_objects.filter(activity_id=recommended_activity, member_id=member_id).exists()
+            recommended_activity.is_liked = is_liked
+        # 관심 활동 여부
+        is_like = ActivityLike.enabled_objects.filter(activity_id=activity_id, member_id=member_id).exists()
 
         context = {
             'activity': activity,
@@ -133,7 +155,53 @@ class ActivityDetailWebView(View):
             'club': club,
             'activity_member_count': activity_member_count,
             'activity_recruit_check': activity_recruit_check,
-            'activity_replies': activity_replies
+            'activity_replies': activity_replies,
+            'club_notices': club_notices,
+            'recommended_activities': recommended_activities,
+            'is_like': is_like,
         }
 
         return render(request, 'activity/web/activity-detail-web.html', context)
+
+
+class ActivityLikeAPI(APIView):
+    def get(self, request):
+        activity_id = request.GET['id']
+        is_create = request.GET['is-create']
+        member_id = request.session['member']['id']
+        if is_create == "true":
+            activity_like, created = ActivityLike.objects.get_or_create(activity_id=activity_id, member_id=member_id)
+            if not created:
+                activity_like.status = 1
+                activity_like.updated_date = timezone.now()
+                activity_like.save(update_fields=['status', 'updated_date'])
+            return Response("added")
+
+        activity_like = ActivityLike.objects.filter(activity_id=activity_id, member_id=member_id).first()
+        activity_like.status = 0
+        activity_like.updated_date = timezone.now()
+        activity_like.save(update_fields=['status', 'updated_date'])
+        return Response("deleted")
+
+
+class ActivityReplyListAPI(APIView):
+    def get(self, request):
+        page = request.GET.get('page', 1)
+        activity_id = request.GET.get('activity-id')
+
+        row_count = 3
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        replies = ActivityReply.enabled_objects.filter(activity_id=activity_id) \
+            .annotate(member_nickname=F('member__member_nickname'), \
+                      member_path=F('member__member_profile__profile_path'))\
+            .values('reply_content', 'id', 'member_nickname', 'created_date', 'member_id')
+
+        return Response(replies[offset:limit])
+
+
+
+
+
+

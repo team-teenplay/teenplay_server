@@ -6,28 +6,57 @@ let likeModal = document.querySelector(".k-club-modal-wrap");
 let likeTextIcon = document.querySelector(".k-club-modal-like-title-text");
 let likeTextIconDelete = document.querySelector(".k-club-modal-like-title-text-delete");
 
-heartCheck.addEventListener("click", (e) => {
-    // 하트모양의 이미지의 색상을 변경 해주기 위해 확인
-    let heartColor = document.querySelector(".like-act-button-image");
+
+// 관심 활동 추가/삭제 모듈
+const addActivityLike = async (activityId, isCreate) => {
+    await fetch(`/activity/like?id=${activityId}&is-create=${isCreate}`);
+}
+
+
+// 하트 이미지 색상 변경 함수
+const heartColor = document.querySelector(".like-act-button-image");
+
+// 관심 활동 모달창 출력/숨김
+const addLikeModal = () => {
+    likeModal.style.display = "block";
+    likeTextIcon.style.display = "flex";
+    likeTextIconDelete.style.display = "none";
+}
+const cancelLikeModal = () => {
+    likeModal.style.display = "block";
+    likeTextIcon.style.display = "none";
+    likeTextIconDelete.style.display = "flex";
+}
+const changeHeartColor = () => {
     let color = window.getComputedStyle(heartColor);
-    // 관심 행사 색상에 따른 문구를 변경하기 위한 확인
-    let likeText = document.querySelector(".k-club-modal-like-title-text");
-    // 하트가 파란색이라면
-    if (e.target && color.getPropertyValue("fill") === "none") {
+    // 하트가 비어있다면
+    if (heartColor && color.getPropertyValue("fill") === "none") {
         heartColor.style.fill = "#CE201B";
-        likeModal.style.display = "block";
-        // likeText.innerHTML = "관심 활동에 추가되었습니다.";
-        likeTextIcon.style.display = "flex";
-        likeTextIconDelete.style.display = "none";
-    } else {
-        heartColor.style.fill = "none";
-        // 관심 행사 취소 시 문구 변경
-        likeModal.style.display = "block";
-        likeTextIcon.style.display = "none";
-        likeTextIconDelete.style.display = "flex";
-        // likeText.innerHTML = "관심 활동에서 삭제되었습니다.";
+        return true;
+    }
+    heartColor.style.fill = "none";
+    return false;
+}
+
+// 이미 관심활동이라면 하트 채워놓기
+const isLike = document.querySelector("input[name=is-like]").value;
+if (isLike === 'True') {
+    changeHeartColor();
+}
+
+heartCheck.addEventListener("click", async (e) => {
+    let check = changeHeartColor();
+    let activityId = document.querySelector("input[name=activity-id]").value;
+    if (check) {
+        await addActivityLike(activityId, true);
+        addLikeModal();
+    }
+    else {
+        await addActivityLike(activityId, false);
+        cancelLikeModal();
     }
 });
+
 
 // 관심 활동 선택 후 닫기 버튼을 클릭했을 때 모달창 닫기
 let closeLikeModal = document.querySelector(".k-club-modal-like-button");
@@ -236,44 +265,7 @@ filpHiddenClickBtn.addEventListener("click", () => {
     filpClickBtn.style.display = "flex";
     filpHiddenClickBtn.style.display = "none";
 });
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// 구독하기 클릭 시 구독하기 모달 띄우기 및 아이콘 띄우기
-// let subcribeButton = document.querySelector(".subcribe-button");
-// let subcribeCheckButton = document.querySelector(".subcribe-button-checking");
-// subcribeButton.addEventListener("click", (e) => {
-//     if (subcribeButton.innerText == "구독하기") {
-//         subcribeModalWrap.style.display = "flex";
-//         subcribeButton.style.display = "none";
-//         subcribeCheckButton.style.display = "flex";
-//     }
-// });
-
-// 구독하기 취소 시 (계속 살펴보기) 발생되는 동작
-// subcribeCheckButton.addEventListener("click", (e) => {
-//     if (subcribeCheckButton.innerText == "구독중") {
-//         subcribeButton.style.display = "flex";
-//         subcribeCheckButton.style.display = "none";
-//         subcribeModalWrapCancel.style.display = "flex";
-//     }
-// });
-
-// 구독하기 버튼을 클릭한 후 창 닫는 동작
-// let subcribeModelLeftButton = document.querySelector(".subcribe-left-button");
-// let subcribeModalWrap = document.querySelector(".subcribe-modal-wrap");
-// let subcribeModalWrapCancel = document.querySelector(".subcribe-modal-wrap-cancel");
-//
-// subcribeModelLeftButton.addEventListener("click", (e) => {
-//     subcribeModalWrap.style.display = "none";
-//     // subcribeModalWrapCancel.style.display = "none";
-// });
-//
-// // 구독중 버튼을 클릭한 후 창 닫는 동작
-// let subcribeCancelKeepButton = document.querySelector(".subcribe-cancel-keep-button");
-// subcribeCancelKeepButton.addEventListener("click", (e) => {
-//     subcribeModalWrapCancel.style.display = "none";
-// });
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // 관심행사 추가 시 발생되는 동작
 let nonLikeDisplay = document.querySelectorAll(".k-like-btn-shadow");
@@ -283,17 +275,30 @@ let subLikeModal = document.querySelector(".k-club-modal-wrap");
 let subLikeTextIcon = document.querySelector(".k-club-modal-like-title-text");
 let subLikeTextIconDelete = document.querySelector(".k-club-modal-like-title-text-delete");
 
-nonLikeDisplay.forEach((displayButton, i) => {
-    displayButton.addEventListener("click", (e) => {
-        nonLikeBtn.forEach((nonLikeButton, j) => {
+const isLikeds = document.querySelectorAll("input[name=is-liked]")
+nonLikeDisplay.forEach(async (displayButton, i) => {
+    let isLiked = isLikeds[i].value;
+    if (isLiked === 'True') {
+        nonLikeBtn[i].style.display = "none";
+        likeBtn[i].style.display = "flex";
+    } else {
+        nonLikeBtn[i].style.display = "flex";
+        likeBtn[i].style.display = "none";
+    }
+    await displayButton.addEventListener("click", (e) => {
+        nonLikeBtn.forEach(async (nonLikeButton, j) => {
             if (i === j) {
+                let recommendedActivityId = document.querySelectorAll("input[name=recommended-activity-id]")[i].value
                 if (nonLikeBtn[j].style.display === "none") {
+                    await addActivityLike(recommendedActivityId, false);
                     nonLikeBtn[j].style.display = "flex";
                     likeBtn[j].style.display = "none";
                     subLikeModal.style.display = "flex";
                     subLikeTextIcon.style.display = "none";
                     subLikeTextIconDelete.style.display = "flex";
+
                 } else {
+                    await addActivityLike(recommendedActivityId, true);
                     nonLikeBtn[j].style.display = "none";
                     likeBtn[j].style.display = "flex";
                     subLikeModal.style.display = "flex";
@@ -451,42 +456,166 @@ if (teenFriendCancle){
 }
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// 댓글 수정
-let commentButton = document.querySelector(".k-comment-menu");
-let commentSubButton = document.querySelector(".k-comment-menu-open-divison");
-let commentCorrectionClick = document.querySelector(".k-comment-menu-open-choice");
+// 댓글 목록 불러오기, 댓글 작성, 댓글 수정/삭제
+const commentWrap = document.querySelector(".k-comment-list-box-wrap")
 
-let commentCorrection = document.querySelector(".k-comment-update-box-all-wrap");
-let commentCorrectionText = document.querySelector(".k-comment-update-box-wrap");
+const showReplies = (replies) => {
+    const memberId = document.querySelector("input[name=member-id]").value;
 
-let commentListAllWrap = document.querySelector(".k-comment-list-all-wrap");
-let commentInputBoxAllWrap = document.querySelector(".k-comment-input-box-all-wrap");
-
-if (commentButton){
-    commentButton.addEventListener("click", (e) => {
-        commentCorrectionClick.addEventListener("click", () => {
-            commentCorrection.style.display = "block";
-            commentCorrectionText.style.display = "block";
-            commentSubButton.style.display = "none";
-            commentListAllWrap.classList.add("hidden");
-            commentInputBoxAllWrap.classList.add("hidden");
+    if (replies.length === 0) {
+        commentWrap.innerHTML = `
+            <div class="k-comment-line"></div>
+            <div class="feed-item">
+                <span>등록된 댓글이 없습니다.</span>
+            </div>
+        `;
+    } else {
+        commentWrap.innerHTML = `
+            <div class="k-comment-line"></div>
+            <div class="k-comment-list-all-wrap">
+        `
+        replies.forEach((reply) => {
+            commentWrap.innerHTML += `
+                <!-- 댓글 수정 부분 -->
+                <div class="k-comment-update-box-all-wrap">
+                    <div class="k-comment-update-box-wrap">
+                        <div class="k-comment-update-wrap">
+                            <div class="k-comment-update-username-container">${reply.member.member_nickname}</div>
+                            <div class="k-comment-update-container">
+                                <textarea class="k-comment-update-guide" id="comment-input-update-guide" name="reply-content" type="text" placeholder="수정할 댓글을 남겨주세요. 욕설, 비방글은 무통보 삭제됩니다." autocomplete="off" required=""></textarea>
+                                <div class="k-comment-update-upload-wrap">
+                                    <div class="k-comment-update-upload-container">
+                                        <button class="k-comment-update-upload-button" id="comment-update-upload" type="button">수정</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 개별 댓글 부분 -->
+                <div class="k-comment-list-wrap">
+                    <!-- 댓글 내 프로필 사진 부분 -->
+                    <div class="k-comment-profile-container">
+                           <img src="/upload/${reply.member_profile_path}" alt="프로필사진" class="k-comment-profile-icon">
+                           <img src="/static/public/web/images/logo/logo1.png" alt="프로필사진" class="k-comment-profile-icon">
+                    </div>
+                    <!-- 개별 댓글 전체 내용 부분 -->
+                    <div class="k-comment-content-container">
+                        <!-- 댓글 정보 부분 -->
+                        <div class="k-comment-info">
+                            <!-- 댓글 작성자 이름 부분 -->
+                            <span>${reply.member.member_nickname}</span>
+                            <!-- 댓글 작성 날짜 부분 -->
+                            <span class="k-comment-info-date">${timeForToday(reply.created_date)}</span>
+                        </div>
+                        <!-- 개별 댓글 내용 부분 -->
+                        <div class="k-comment-text">${reply.reply_content}</div>
+                    </div>
+                </div>
+            `;
+            if (reply.member.id === memberId){
+                commentWrap.innerHTML += `
+                    <!-- 개별 댓글 메뉴 부분 -->
+                    <div>
+                        <button class="k-comment-menu" type="button" aria-haspopup="menu" data-headlessui-state>
+                            <svg class="k-comment-menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10.5 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm0 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm0 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                        <div class="k-comment-menu-open-wrap" aria-labelledby="main-wishlist-content-menu" role="menu" tabindex="0" data-headlessui-state="open">
+                            <div class="k-comment-menu-open-container" role="none">
+                                <div class="k-comment-menu-open-divison" role="none">
+                                    <button class="k-comment-menu-open-choice" type="button" id="comment-menu-open-update" role="menuitem" tabindex="-1">수정</button>
+                                    <button class="k-comment-menu-open-choice" type="button" id="comment-menu-open-delete" role="menuitem" tabindex="-1">삭제</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            }
         });
-        commentSubButton.style.display = "block";
-    });
+
+        commentWrap.innerHTML += `
+            </div>
+        `;
+    }
 }
 
-let commentUpdateUploadContainer = document.querySelector(".k-comment-update-upload-container");
+function timeForToday(datetime) {
+    const today = new Date();
+    const date = new Date(datetime);
 
-if (commentUpdateUploadContainer){
-    commentUpdateUploadContainer.addEventListener("click", () => {
-        commentCorrection.style.display = "none";
-        commentCorrectionText.style.display = "none";
-        commentSubButton.style.display = "flex";
-        commentListAllWrap.classList.remove("hidden");
-        commentInputBoxAllWrap.classList.remove("hidden");
-        commentSubButton.style.display = "none";
-    });
+    let gap = Math.floor((today.getTime() - date.getTime()) / 1000 / 60);
+
+    if (gap < 1) {
+        return "방금 전";
+    }
+
+    if (gap < 60) {
+        return `${gap}분 전`;
+    }
+
+    gap = Math.floor(gap / 60);
+
+    if (gap < 24) {
+        return `${gap}시간 전`;
+    }
+
+    gap = Math.floor(gap / 24);
+
+    if (gap < 31) {
+        return `${gap}일 전`;
+    }
+
+    gap = Math.floor(gap / 31);
+
+    if (gap < 12) {
+        return `${gap}개월 전`;
+    }
+
+    gap = Math.floor(gap / 12);
+
+    return `${gap}년 전`;
 }
+
+
+
+// // 댓글 수정
+// let commentButton = document.querySelector(".k-comment-menu");
+// let commentSubButton = document.querySelector(".k-comment-menu-open-divison");
+// let commentCorrectionClick = document.querySelector(".k-comment-menu-open-choice");
+//
+// let commentCorrection = document.querySelector(".k-comment-update-box-all-wrap");
+// let commentCorrectionText = document.querySelector(".k-comment-update-box-wrap");
+//
+// let commentListAllWrap = document.querySelector(".k-comment-list-all-wrap");
+// let commentInputBoxAllWrap = document.querySelector(".k-comment-input-box-all-wrap");
+//
+// if (commentButton){
+//     commentButton.addEventListener("click", (e) => {
+//         commentCorrectionClick.addEventListener("click", () => {
+//             commentCorrection.style.display = "block";
+//             commentCorrectionText.style.display = "block";
+//             commentSubButton.style.display = "none";
+//             commentListAllWrap.classList.add("hidden");
+//             commentInputBoxAllWrap.classList.add("hidden");
+//         });
+//         commentSubButton.style.display = "block";
+//     });
+// }
+//
+// let commentUpdateUploadContainer = document.querySelector(".k-comment-update-upload-container");
+//
+// if (commentUpdateUploadContainer){
+//     commentUpdateUploadContainer.addEventListener("click", () => {
+//         commentCorrection.style.display = "none";
+//         commentCorrectionText.style.display = "none";
+//         commentSubButton.style.display = "flex";
+//         commentListAllWrap.classList.remove("hidden");
+//         commentInputBoxAllWrap.classList.remove("hidden");
+//         commentSubButton.style.display = "none";
+//     });
+// }
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // 공유하기 버튼
@@ -502,11 +631,11 @@ function clipCopy() {
 }
 shareBtn.addEventListener("click", clipCopy);
 
-// 모임 공지사항 불러오기
-const getClubNoticeList = async (callback) => {
-    const clubId = document.querySelector("input[name='club-id']").value
-    const response = await fetch('/')
-}
+// 모임 공지사항 불러오기(모임공지 쪽 작업 끝나면 추가 예정)
+// const getClubNoticeList = async (callback) => {
+//     const clubId = document.querySelector("input[name='club-id']").value
+//     const response = await fetch('/')
+// }
 
 // 공지사항 각각 제목 클릭 시 세부 내용 표시
 const noticeContentWraps = document.querySelectorAll(".club-notice-content-wrap");

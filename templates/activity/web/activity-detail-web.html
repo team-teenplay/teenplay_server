@@ -21,9 +21,10 @@
                                 </div>
                                 <div class="divide-title-bold">{{ activity.activity_title }}</div>
                                 <input type="hidden" name="club-id" value="{{ club.id }}">
+                                <input type="hidden" name="activity-id" value="{{ activity.id }}">
                                 <div class="club-profile-box">
                                     <a class="club-link" href="{{ club.get_absolute_url }}">
-                                        {% if club.club_profile_path != '0' %}
+                                        {% if club.club_profile_path != '' %}
                                             <img class="c-profile-img" src="/upload/{{ club.club_profile_path }}" alt="" />
                                         {% else %}
                                             <img class="c-profile-img" src="{% static 'public/web/images/logo/logo1.png' %}" alt="" />
@@ -44,6 +45,7 @@
                                     </a>
                                 </div>
                                 <div class="hidden-divide-text"></div>
+                                <input type="hidden" name="is-like" value="{{ is_like }}">
                                 <div class="divide-click-box">
                                     <form class="divide-click-items" action="">
                                         <div class="divide-click-hidden-item">
@@ -237,7 +239,7 @@
                             <div class="club-s-profile">
                                 <div class="club-s-profile-box">
                                     <a class="club-s-profile-image" href="{{ club.get_absolute_url }}">
-                                        {% if club.club_profile_path != '0' %}
+                                        {% if club.club_profile_path != '' %}
                                             <img class="club-s-profile-image-location" src="/upload/{{ club.club_profile_path }}" />
                                         {% else %}
                                             <img class="club-s-profile-image-location" src="{% static 'public/web/images/logo/logo1.png' %}" />
@@ -272,122 +274,61 @@
                             </div>
                             <div class="feed-middle-grid"></div>
                             <div class="feed-box">
+                                {% if club_notices|length == 0 %}
                                 <div class="feed-item">
                                     <span>등록된 공지/안내가 없습니다.</span>
                                 </div>
-                                {% for club_notice in club_notices %}
-                                    <div>
-                                        <div class="club-notice-boxes">
-                                            <div class="club-notice-box">
-                                                <div>
-                                                    <div class="club-notice-title-wrap">
-                                                        <div class="club-notice-title-container">
-                                                            <!-- 이 안에 제목이 들어갑니다. -->
-                                                            <div class="club-notice-title">{{ club_notice.notice_title }}</div>
+                                {% else %}
+                                    {% for club_notice in club_notices %}
+                                        <div>
+                                            <div class="club-notice-boxes">
+                                                <div class="club-notice-box">
+                                                    <div>
+                                                        <div class="club-notice-title-wrap">
+                                                            <div class="club-notice-title-container">
+                                                                <!-- 이 안에 제목이 들어갑니다. -->
+                                                                <div class="club-notice-title">{{ club_notice.notice_title }}</div>
+                                                            </div>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" style="display: block" class="club-notice-show-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" style="display: none" class="club-notice-hide-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"></path></svg>
                                                         </div>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" style="display: block" class="club-notice-show-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" style="display: none" class="club-notice-hide-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"></path></svg>
+                                                        <div class="club-notice-created-date">{{ club_notice.created_date|date:"Y.m.d" }}</div>
                                                     </div>
-                                                    <div class="club-notice-created-date">{{ club_notice.created_date|date:"Y.m.d" }}</div>
+                                                </div>
+                                                <div class="club-notice-content-wrap" style="display: none">
+                                                    <!-- 이 안에 내용이 들어갑니다. -->
+                                                    <div class="club-notice-content">{{ club_notice.notice_content }}</div>
                                                 </div>
                                             </div>
-                                            <div class="club-notice-content-wrap" style="display: none">
-                                                <!-- 이 안에 내용이 들어갑니다. -->
-                                                <div class="club-notice-content">{{ club_notice.notice_content }}</div>
-                                            </div>
                                         </div>
-                                    </div>
-                                {% endfor %}
+                                    {% endfor %}
+                                {% endif %}
                             </div>
                         </section>
                         <section class="comment-section">
                             <div class="comment-title">댓글</div>
                             <!-- 댓글 추가 부분 -->
                             <div class="k-comment-list-box-wrap">
-                                <!-- 댓글 구분선 -->
-                                <div class="k-comment-line"></div>
-                                {% if activity_replies|length == 0 %}
-                                    <div class="feed-item">
-                                        <span>등록된 댓글이 없습니다.</span>
-                                    </div>
-                                {% else %}
-                                    <!-- 댓글 수정 부분 -->
-                                    <div class="k-comment-update-box-all-wrap">
-                                        <div class="k-comment-update-box-wrap">
-                                            <div class="k-comment-update-wrap">
-                                                <div class="k-comment-update-username-container">{{ request.session.member.member_nickname }}</div>
-                                                <form class="k-comment-update-container" method="post" data-hs-cf-bound="true">
-                                                    {% csrf_token %}
-                                                    <textarea class="k-comment-update-guide" id="comment-input-update-guide" name="reply-content" type="text" placeholder="수정할 댓글을 남겨주세요. 욕설, 비방글은 무통보 삭제됩니다." autocomplete="off" required=""></textarea>
-                                                    <div class="k-comment-update-upload-wrap">
-                                                        <div class="k-comment-update-upload-container">
-                                                            <button class="k-comment-update-upload-button" id="comment-update-upload" type="button">수정</button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- 댓글 목록 부분 -->
-                                    <div class="k-comment-list-all-wrap">
-                                        <!-- 개별 댓글 부분 -->
-                                        <div class="k-comment-list-wrap">
-                                            <!-- 댓글 내 프로필 사진 부분 -->
-                                            <div class="k-comment-profile-container">
-                                                <svg class="k-comment-profile-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd"></path>
-                                                </svg>
-                                            </div>
-                                            <!-- 개별 댓글 전체 내용 부분 -->
-                                            <div class="k-comment-content-container">
-                                                <!-- 댓글 정보 부분 -->
-                                                <div class="k-comment-info">
-                                                    <!-- 댓글 작성자 이름 부분 -->
-                                                    <span>햄벅</span>
-                                                    <!-- 댓글 작성 날짜 부분 -->
-                                                    <span class="k-comment-info-date">1일 전</span>
-                                                </div>
-                                                <!-- 개별 댓글 내용 부분 -->
-                                                <div class="k-comment-text">가입 신청 보냈습니다~~~!</div>
-                                            </div>
-                                        </div>
-                                        <!-- 개별 댓글 메뉴 부분 -->
-                                        <div>
-                                            <button class="k-comment-menu" type="button" aria-haspopup="menu" data-headlessui-state>
-                                                <svg class="k-comment-menu-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M10.5 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm0 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm0 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" clip-rule="evenodd"></path>
-                                                </svg>
-                                            </button>
-                                            <div class="k-comment-menu-open-wrap" aria-labelledby="main-wishlist-content-menu" role="menu" tabindex="0" data-headlessui-state="open">
-                                                <div class="k-comment-menu-open-container" role="none">
-                                                    <div class="k-comment-menu-open-divison" role="none">
-                                                        <button class="k-comment-menu-open-choice" type="button" id="comment-menu-open-update" role="menuitem" tabindex="-1">수정</button>
-                                                        <button class="k-comment-menu-open-choice" type="button" id="comment-menu-open-delete" role="menuitem" tabindex="-1">삭제</button>
-                                                    </div>
+                                <div class="k-comment-list-all-wrap">
+                                    
+                                </div>
+                            </div>
+                            <!-- 댓글 작성 부분 -->
+                            <div class="k-comment-input-box-all-wrap">
+                                <div class="k-comment-input-box-wrap">
+                                    <div class="k-comment-input-wrap">
+                                        <div class="k-comment-input-username-container">{{ request.session.member.member_nickname }}</div>
+                                        <div class="k-comment-input-container">
+                                            <textarea class="k-comment-input-guide" name="content" type="text" placeholder="댓글을 남겨주세요. 욕설, 비방글은 무통보 삭제됩니다." autocomplete="off" required=""></textarea>
+                                            <div class="k-comment-input-upload-wrap">
+                                                <div class="k-comment-input-upload-container">
+                                                    <button class="k-comment-input-upload-button" id="comment-upload-button" type="button">등록</button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- 전체 댓글 부분 -->
-                                <div class="k-comment-input-box-all-wrap">
-                                    <div class="k-comment-input-box-wrap">
-                                        <div class="k-comment-input-wrap">
-                                            <div class="k-comment-input-username-container">햄벅</div>
-                                            <form class="k-comment-input-container" method="post" data-hs-cf-bound="true">
-                                                <input class="k-comment-input" name="__RequestVerificationToken" type="hidden" value="lQ1k2HcglUXXMwOa0SIMa_JXSkG8dcFibXk3jrgj1xqrlfkZnxzZ69pIbMszXgP7-1CrLPr7j5y-xEsj8UfSWd2EpmvQnlNfBilqDAT5vUaOv7fZgaT00ILqYk8j9LZOYraW8JeO8poPFXuOtKyENA2" />
-                                                <input class="k-comment-input-hidden" name="CommunityBoardArticleId" hidden="" />
-                                                <textarea class="k-comment-input-guide" name="content" type="text" placeholder="댓글을 남겨주세요. 욕설, 비방글은 무통보 삭제됩니다." autocomplete="off" required=""></textarea>
-                                                <div class="k-comment-input-upload-wrap">
-                                                    <div class="k-comment-input-upload-container">
-                                                        <button class="k-comment-input-upload-button" id="comment-upload-button" type="submit">등록</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endif %}
+                            </div>
                             <!-- 댓글 구분선 -->
                             <div class="comment-line"></div>
                         </section>
@@ -405,7 +346,7 @@
                                 </div>
                             </div>
                             <div>
-                                <a class="more-activity-link" href="/search?order=score&date=모든날&page=1">
+                                <a class="more-activity-link" href="">
                                     <span>더 많은 활동 보기</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" class="more-arrow-icon" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
@@ -414,182 +355,48 @@
                             </div>
                         </div>
                         <div class="activity-find-more-list">
-                            <div class="k-activity-window-bg">
-                                <div class="k-activity-window">
-                                    <div class="k-act-window-image">
-                                        <a class="k-act-image-block" href="/wseminar/event/77701">
-                                            <img class="k-act-image" src="https://eventusstorage.blob.core.windows.net/evs/Image/wseminar/77701/ProjectInfo/Cover/158267438f6343929286762c78822354.png" alt="사업자를 위한 K세미나 [비용처리]/절세/자산관리]" />
-                                        </a>
-                                        <div class="k-like-button-box">
-                                            <button class="k-like-btn-shadow" type="button">
-                                                <span class="k-like-btn-display-none">
-                                                    <svg class="k-like-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-                                                    </svg>
-                                                </span>
-                                                <span class="k-like-btn-display">
-                                                    <svg class="k-like-btn-two" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                                    </svg>
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="k-act-window-content">
-                                        <div class="k-act-content-date-location">
-                                            <div class="k-act-content-date">
-                                                <span class="k-act-content-date-text-inline">02월05일(월)</span>
-                                                <span class="k-act-content-date-text-hidden">02월05일(월)</span>
-                                            </div>
-                                            <div class="k-act-content-location">
-                                                <span>
-                                                    <span>동대문구</span>
-                                                </span>
+                            {% for recommended_activity in recommended_activities %}
+                                <div class="k-activity-window-bg">
+                                    <div class="k-activity-window">
+                                        <div class="k-act-window-image">
+                                            <a class="k-act-image-block" href="/activity/detail/?id={{ recommended_activity.id }}">
+                                                <img class="k-act-image" src="/upload/{{ recommended_activity.thumbnail_path }}" alt="" />
+                                            </a>
+                                            <input type="hidden" name="recommended-activity-id" value="{{ recommended_activity.id }}">
+                                            <input type="hidden" name="is-liked" value="{{ recommended_activity.is_liked }}">
+                                            <div class="k-like-button-box">
+                                                <button class="k-like-btn-shadow" type="button">
+                                                    <span class="k-like-btn-display-none">
+                                                        <svg class="k-like-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                                        </svg>
+                                                    </span>
+                                                    <span class="k-like-btn-display">
+                                                        <svg class="k-like-btn-two" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                                        </svg>
+                                                    </span>
+                                                </button>
                                             </div>
                                         </div>
-                                        <div class="k-act-content-title">
-                                            <a class="k-move-content" href="/wseminar/event/77701">사업자를 위한 K세미나[비용처리/절세/자산관리]</a>
-                                        </div>
-                                        <div class="k-act-content-money">
-                                            <div class="k-check-view">
-                                                <span class="k-check-view-text">조회 281</span>
+                                        <div class="k-act-window-content">
+                                            <div class="k-act-content-date-location">
+                                                <div class="k-act-content-date">
+                                                    <span class="k-act-content-date-text-inline">{{ recommended_activity.activity_start|date:"m월d일(l) H시" }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="k-act-content-title">
+                                                <a class="k-move-content" href="/activity/detail/id={{ recommended_activity.id }}">{{ recommended_activity.activity_title }}</a>
+                                            </div>
+                                            <div class="k-act-content-money">
+                                                <div class="k-check-view">
+                                                    <span class="k-check-view-text">{{ recommended_activity.member_count }}명 참가중</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="k-activity-window-bg">
-                                <div class="k-activity-window">
-                                    <div class="k-act-window-image">
-                                        <a class="k-act-image-block" href="/wseminar/event/77701">
-                                            <img class="k-act-image" src="https://eventusstorage.blob.core.windows.net/evs/Image/wseminar/77701/ProjectInfo/Cover/158267438f6343929286762c78822354.png" alt="사업자를 위한 K세미나 [비용처리]/절세/자산관리]" />
-                                        </a>
-                                        <div class="k-like-button-box">
-                                            <button class="k-like-btn-shadow" type="button">
-                                                <span class="k-like-btn-display-none">
-                                                    <svg class="k-like-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-                                                    </svg>
-                                                </span>
-                                                <span class="k-like-btn-display">
-                                                    <svg class="k-like-btn-two" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                                    </svg>
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="k-act-window-content">
-                                        <div class="k-act-content-date-location">
-                                            <div class="k-act-content-date">
-                                                <span class="k-act-content-date-text-inline">02월05일(월)</span>
-                                                <span class="k-act-content-date-text-hidden">02월05일(월)</span>
-                                            </div>
-                                            <div class="k-act-content-location">
-                                                <span>
-                                                    <span>동대문구</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="k-act-content-title">
-                                            <a class="k-move-content" href="/wseminar/event/77701">사업자를 위한 K세미나[비용처리/절세/자산관리]</a>
-                                        </div>
-                                        <div class="k-act-content-money">
-                                            <div class="k-check-view">
-                                                <span class="k-check-view-text">조회 281</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="k-activity-window-bg">
-                                <div class="k-activity-window">
-                                    <div class="k-act-window-image">
-                                        <a class="k-act-image-block" href="/wseminar/event/77701">
-                                            <img class="k-act-image" src="https://eventusstorage.blob.core.windows.net/evs/Image/wseminar/77701/ProjectInfo/Cover/158267438f6343929286762c78822354.png" alt="사업자를 위한 K세미나 [비용처리]/절세/자산관리]" />
-                                        </a>
-                                        <div class="k-like-button-box">
-                                            <button class="k-like-btn-shadow" type="button">
-                                                <span class="k-like-btn-display-none">
-                                                    <svg class="k-like-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-                                                    </svg>
-                                                </span>
-                                                <span class="k-like-btn-display">
-                                                    <svg class="k-like-btn-two" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                                    </svg>
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="k-act-window-content">
-                                        <div class="k-act-content-date-location">
-                                            <div class="k-act-content-date">
-                                                <span class="k-act-content-date-text-inline">02월05일(월)</span>
-                                                <span class="k-act-content-date-text-hidden">02월05일(월)</span>
-                                            </div>
-                                            <div class="k-act-content-location">
-                                                <span>
-                                                    <span>동대문구</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="k-act-content-title">
-                                            <a class="k-move-content" href="/wseminar/event/77701">사업자를 위한 K세미나[비용처리/절세/자산관리]</a>
-                                        </div>
-                                        <div class="k-act-content-money">
-                                            <div class="k-check-view">
-                                                <span class="k-check-view-text">조회 281</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="k-activity-window-bg">
-                                <div class="k-activity-window">
-                                    <div class="k-act-window-image">
-                                        <a class="k-act-image-block" href="/wseminar/event/77701">
-                                            <img class="k-act-image" src="https://eventusstorage.blob.core.windows.net/evs/Image/wseminar/77701/ProjectInfo/Cover/158267438f6343929286762c78822354.png" alt="사업자를 위한 K세미나 [비용처리]/절세/자산관리]" />
-                                        </a>
-                                        <div class="k-like-button-box">
-                                            <button class="k-like-btn-shadow" type="button">
-                                                <span class="k-like-btn-display-none">
-                                                    <svg class="k-like-btn" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-                                                    </svg>
-                                                </span>
-                                                <span class="k-like-btn-display">
-                                                    <svg class="k-like-btn-two" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                                    </svg>
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="k-act-window-content">
-                                        <div class="k-act-content-date-location">
-                                            <div class="k-act-content-date">
-                                                <span class="k-act-content-date-text-inline">02월05일(월)</span>
-                                                <span class="k-act-content-date-text-hidden">02월05일(월)</span>
-                                            </div>
-                                            <div class="k-act-content-location">
-                                                <span>
-                                                    <span>동대문구</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="k-act-content-title">
-                                            <a class="k-move-content" href="/wseminar/event/77701">사업자를 위한 K세미나[비용처리/절세/자산관리]</a>
-                                        </div>
-                                        <div class="k-act-content-money">
-                                            <div class="k-check-view">
-                                                <span class="k-check-view-text">조회 281</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </section>
@@ -750,9 +557,11 @@
             </div>
         </div>
     </div>
+    <input type="hidden" name="member-id" value="{{ request.session.member.id }}">
 {% endblock %}
 {% block js %}
+    <script src="{% static 'activity/web/js/activity-reply-module.js' %}"></script>
     <script src="{% static 'activity/web/js/activity-detail-web.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 {% endblock %}
-</html>
+
