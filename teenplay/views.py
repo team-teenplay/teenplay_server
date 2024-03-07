@@ -1,6 +1,7 @@
 from django.db import transaction
 from django.db.models import Count, Q
 from django.shortcuts import render, redirect
+from django.utils import timezone
 from django.views import View
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -14,6 +15,11 @@ from teenplay.serializers import TeenplaySerializer
 
 class TeenplayMainListWebView(View):
     def get(self, request):
+        member, id = self.session_member_info(request)
+        context = self.main_random_list(id)
+        return render(request, 'teenplay/web/teenplay-play-web.html', {'context': context, 'member': member})
+
+    def session_member_info(self, request):
         if 'member' in request.session and 'id' in request.session['member']:
             id = request.session['member']['id']
             member = request.session['member']
@@ -23,23 +29,29 @@ class TeenplayMainListWebView(View):
             else:
                 id = None
                 member = None
+        return member, id
 
+    def main_random_list(self, id):
         teenplay_count = TeenPlay.objects.all().count()
         teenplay_list = []
         for number in range(5):
             like_count = {}
 
             radiant_teenplay = randint(1, teenplay_count)
-            teenplay = TeenPlay.objects.filter(id=radiant_teenplay, status=1).annotate(likes=Count('teenplaylike__status',filter=Q(teenplaylike__status=1))).values('id','video_path', 'club__id','club__club_name', 'club__club_intro','club__club_profile_path','club_id','likes')
+            teenplay = TeenPlay.objects.filter(id=radiant_teenplay, status=1).annotate(
+                likes=Count('teenplaylike__status', filter=Q(teenplaylike__status=1))).values('id', 'video_path',
+                                                                                              'club__id',
+                                                                                              'club__club_name',
+                                                                                              'club__club_intro',
+                                                                                              'club__club_profile_path',
+                                                                                              'club_id', 'likes')
             member_like = TeenPlayLike.objects.filter(member_id=id, teenplay_id=radiant_teenplay, status=1).exists()
-            like_count['like_check']= member_like
-            teenplay_like={**like_count, **teenplay[0]}
+            like_count['like_check'] = member_like
+            teenplay_like = {**like_count, **teenplay[0]}
             teenplay_list.append(teenplay_like)
 
         context = teenplay_list
-        return render(request, 'teenplay/web/teenplay-play-web.html', {'context': context, 'member':member})
-
-
+        return context
 
 class TeenplayMainListAPIView(APIView):
     # 해당 url 로 호출을 받으면
@@ -84,10 +96,10 @@ class TeenPlayLikeApiView(APIView):
             totalLikeCount = TeenPlayLike.objects.filter(status=1, teenplay_id=emptyValue).count()
         else:
             if displayStyle== 'none':
-                TeenPlayLike.objects.filter(status=0, teenplay_id=emptyValue, member_id=memberSessionId).update(status=1)
+                TeenPlayLike.objects.filter(status=0, teenplay_id=emptyValue, member_id=memberSessionId).update(status=1, updated_date=timezone.now())
                 totalLikeCount = TeenPlayLike.objects.filter(status=1, teenplay_id=emptyValue).count()
             else:
-                TeenPlayLike.objects.filter(status=1, teenplay_id=emptyValue, member_id=memberSessionId).update(status=0)
+                TeenPlayLike.objects.filter(status=1, teenplay_id=emptyValue, member_id=memberSessionId).update(status=0, updated_date=timezone.now())
                 totalLikeCount = TeenPlayLike.objects.filter(status=1, teenplay_id=emptyValue).count()
 
         context = {
@@ -99,7 +111,34 @@ class TeenPlayLikeApiView(APIView):
 
         return Response(context)
 
-############################################################################################################################################
+class TeenplayClubView(View):
+    def get(self, request):
+        data = request.GET
+        context = {
+            'teenplay_id': data['teenplay_id'],
+        }
+        return render(request, 'teenplay/web/teenplay-play-select-web.html')
+
+
+# 최초 선택 시 teenplay 선택한 id를 보여줘야 하고 위 아래로 내리는 경우 fetch 통신이 이루어져야 함
+# 위로 올리면 page --
+# 아래로 내리면 page ++
+# page -1 > lenght == 0 이면 스크롤 되면 안되고
+# page +1 > lenght == 0 이면 스크롤 되면 안됨
+
+
+
+class TeenplayClubAPIView(APIView):
+    def get(self, request, clubId, page):
+        page = 1
+        row_count = 1
+        offset = (page-1) * row_count
+
+        select_teenplay = TeenPlay.objects.filter(club_id=1).values()[offset:offset+1]
+        context = list(select_teenplay)
+        return Response(context)
+
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 # 모임에서 틴플레이 선택했을 때 가져오는 것을 사용하는 것으로 예상
 # 틴플레이 좋아요 관련 클래스 생성
@@ -109,7 +148,7 @@ class TeenPlayLikeApiView(APIView):
 # 모두 비동기 함수를 사용해야한다.
 # member teenplay , status
 
-#모바일######################################################################################################################################
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 class TeenplayMainListAppView(View):
     def get(self, request):
         return render(request, 'teenplay/web/teenplay-play-web.html')
