@@ -208,7 +208,7 @@ class AdminNoticeView(View):
         order = request.GET.get('order', 'recent')
         page = int(request.GET.get('page', 1))
 
-        row_count = 10
+        row_count = 1
 
         offset = (page - 1) * row_count
         limit = page * row_count
@@ -237,7 +237,7 @@ class AdminNoticeView(View):
         if order == 'popular':
             ordering = '-post_read_count'
 
-        context['notice'] = list(Notice.objects.filter(status=1)\
+        context['notices'] = list(Notice.objects.filter(status=1)\
                     .values('id', 'notice_title', 'created_date', 'notice_content', 'notice_type').order_by(ordering))[offset:limit]
 
         return render(request, 'admin/web/notice-list-web.html', context)

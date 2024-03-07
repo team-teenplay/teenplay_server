@@ -140,64 +140,179 @@
                             <div class="main-user-status-status"></div>
                         </div>
                     </div>
-                    <li class="main-user-list" data-id="1">
-                        <div class="main-comment-list-check">
-                            <input type="checkbox" class="main-comment-list-checkbox" />
+                    <!-- 공지사항이 없으면 출력 -->
+                    {% if notice_id|length != 0 %}
+                        <!-- 유저가 없다면 아래 -->
+                        <div class="main-user-status-list">
+                            <!-- 이거말고 차라리 로고로? -->
+                            <svg width="53" height="56" fill="none" xmlns="http://www.w3.org/2000/svg" class="main-user-status-list-svg">
+                                <path
+                                    d="M27.516 1.62c-6.654-4.436-21.823.626-21.821 10.475 0 5.567 1.956 10.31 3.889 14.205-1.403-.463-2.853-1.072-3.8-2.095-.466-.502-1.151-1.115-1.802-1.35-.993-.358-2.035.135-2.572.923-1.212 1.776-1.071 2.717-.403 4.643 4.364 5.647 8.167 5.53 11.275 5.435.286-.009.566-.017.84-.021.897 3.13 2.706 6.042 4.099 8.965 1.617 5.694 9.313 4.544 12.913 1.697 2.3-1.819 5.187-2.36 8.117-1.475 2.303.419 3.88-.68 5.236-1.624 1.031-.72 1.934-1.348 2.93-1.149 1.19.238 2.511.191 2.718-1.307.521-3.781-8.391-5.535-11.284-7.062 4.98-2.883 7.416-7.67 6.968-10.861-.31-2.2-2.168-2.967-4.076-1.773-2.206 1.38-2.758 3.32-5.42 4.348 1.822-6.821 3.386-14.515-7.807-21.975Z"
+                                    fill="#9D8DFF"
+                                ></path>
+                                <path d="M15.33 17.017c.03.784-.382 1.385-.92 1.344-.54-.042-1.001-.71-1.032-1.494-.03-.784.382-1.385.921-1.343.54.041 1 .71 1.031 1.493ZM19.599 16.868c.03.784-.382 1.385-.921 1.344-.54-.042-1-.71-1.031-1.494-.03-.784.382-1.385.92-1.343.54.041 1.001.71 1.032 1.493Z" fill="#060606"></path>
+                                <path
+                                    fill-rule="evenodd"
+                                    clip-rule="evenodd"
+                                    d="M11.457 29.625a.7.7 0 0 1 .755.64c.036.44.242.87.57 1.304.322.428.721.81 1.107 1.178l.027.026a.7.7 0 1 1-.967 1.012l-.05-.048c-.37-.353-.842-.804-1.235-1.325-.414-.55-.782-1.23-.847-2.033a.7.7 0 0 1 .64-.754ZM35.844 23.41a.7.7 0 0 0-.968.205 25.97 25.97 0 0 1-.389.571c-.235.34-.487.704-.68 1.032-.33.559-.626 1.212-.626 1.941a.7.7 0 1 0 1.4 0c0-.354.145-.745.43-1.228.18-.303.368-.573.573-.868.146-.21.3-.431.465-.684a.7.7 0 0 0-.205-.969Z"
+                                    fill="#000"
+                                ></path>
+                                <path d="M17.917 19.838c-.158-.342-2.435-.62-2.138.915 1.156 3.742 2.834.598 2.138-.915Z" fill="#030303"></path>
+                                <path d="M51.901 52.983c0 1.223-7.433 2.214-16.602 2.214-9.17 0-16.603-.991-16.603-2.214 0-1.222 7.433-2.213 16.603-2.213 9.17 0 16.602.99 16.602 2.213Z" fill="#E3E3E3"></path>
+                            </svg>
+                            <p class="main-user-status-list-text">유저가 없습니다.</p>
                         </div>
-                        <div class="main-user-list-name">결제오류 해결방법</div>
-                        <div class="main-user-list-status">23.02.01</div>
-                        <div class="main-user-list-category">공지사항</div>
-                        <div class="main-user-list-detail">
-                            <button class="member-user-list-detail-button toggle-button" data-target="1">상세보기</button>
+                    {% else %}
+                        <div>
+                            {% for notice in notices %}
+                                <li class="main-user-list" data-id="{{ notice.id }}">
+                                    <div class="main-comment-list-check">
+                                        <input type="checkbox" class="main-comment-list-checkbox" />
+                                    </div>
+                                    <div class="main-user-list-name">{{ notice.notice_title }}</div>
+                                    <div class="main-user-list-status">{{ notice.created_date }}</div>
+                                    <div class="main-user-list-category" >
+                                        {% if notice.notice_type == 0 %}
+                                            공지사항
+                                        {% elif notice.notice_type == 1 %}
+                                            자주묻는질문
+                                        {% endif %}
+                                    </div>
+                                    <div class="main-user-list-detail">
+                                        <button class="member-user-list-detail-button toggle-button" data-target="1">상세보기</button>
+                                    </div>
+                                </li>
+{#                                <li class="main-user-list" data-id="1">#}
+{#                                    <div class="main-comment-list-check">#}
+{#                                        <input type="checkbox" class="main-comment-list-checkbox" />#}
+{#                                    </div>#}
+{#                                    <div class="main-user-list-name">결제오류 해결방법</div>#}
+{#                                    <div class="main-user-list-status">23.02.01</div>#}
+{#                                    <div class="main-user-list-category">공지사항</div>#}
+{#                                    <div class="main-user-list-detail">#}
+{#                                        <button class="member-user-list-detail-button toggle-button" data-target="1">상세보기</button>#}
+{#                                    </div>#}
+{#                                </li>#}
+{#                                <li class="main-user-list" data-id="2">#}
+{#                                    <div class="main-comment-list-check">#}
+{#                                        <input type="checkbox" class="main-comment-list-checkbox" />#}
+{#                                    </div>#}
+{#                                    <div class="main-user-list-name">로그인 오류 해결방법</div>#}
+{#                                    <div class="main-user-list-status">23.02.01</div>#}
+{#                                    <div class="main-user-list-category">자주묻는질문</div>#}
+{#                                    <div class="main-user-list-detail">#}
+{#                                        <button class="member-user-list-detail-button toggle-button" data-target="2">상세보기</button>#}
+{#                                    </div>#}
+{#                                </li>#}
+                            {% endfor %}
                         </div>
-                    </li>
-                    <li class="main-user-list" data-id="2">
-                        <div class="main-comment-list-check">
-                            <input type="checkbox" class="main-comment-list-checkbox" />
-                        </div>
-                        <div class="main-user-list-name">로그인 오류 해결방법</div>
-                        <div class="main-user-list-status">23.02.01</div>
-                        <div class="main-user-list-category">자주묻는질문</div>
-                        <div class="main-user-list-detail">
-                            <button class="member-user-list-detail-button toggle-button" data-target="2">상세보기</button>
-                        </div>
-                    </li>
+                    {% endif %}
                     <!-- 아래쪽 -->
                     <div class="main-user-bottom-box">
                         <ul class="main-user-bottom-ul">
                             <!-- 여기에 왼 숫자 오 들어감 -->
                             <!-- 먼저 왼 -->
-                            <li>
-                                <button aria-label="page turning button" disabled type="button" class="main-user-bottom-reft">
-                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="main-user-bottom-svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M15.58 3.27c.504.405.563 1.115.13 1.587L9.168 12l6.543 7.143a1.076 1.076 0 0 1-.13 1.586 1.26 1.26 0 0 1-1.695-.122L6 12l7.885-8.607a1.26 1.26 0 0 1 1.695-.122Z"></path>
-                                    </svg>
-                                </button>
-                            </li>
+                            {% if start_page > 1 %}
+                                {% if order == 'popular' %}
+                                    <li>
+                                        <a href="/admin/notice/?page={{ start_page|add:-1 }}&order=popular" class="main-user-bottom-reft">
+                                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="main-user-bottom-svg">
+                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M15.58 3.27c.504.405.563 1.115.13 1.587L9.168 12l6.543 7.143a1.076 1.076 0 0 1-.13 1.586 1.26 1.26 0 0 1-1.695-.122L6 12l7.885-8.607a1.26 1.26 0 0 1 1.695-.122Z"></path>
+                                            </svg>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li>
+                                        <a href="/admin/notice/?page={{ start_page|add:-1 }}" class="main-user-bottom-reft">
+                                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="main-user-bottom-svg">
+                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M15.58 3.27c.504.405.563 1.115.13 1.587L9.168 12l6.543 7.143a1.076 1.076 0 0 1-.13 1.586 1.26 1.26 0 0 1-1.695-.122L6 12l7.885-8.607a1.26 1.26 0 0 1 1.695-.122Z"></path>
+                                            </svg>
+                                        </a>
+                                    </li>
+                                {% endif %}
+
+                            {% endif %}
+
                             <!-- 숫자 -->
-                            <li class="main-margin">
-                                <button type="button" class="main-user-bottom add-color" id="button1">
-                                    <span class="main-user-number">1</span>
-                                </button>
-                            </li>
-                            <li class="main-margin">
-                                <button aria-label="page number button" type="button" class="main-user-bottom" id="button2">
-                                    <span class="main-user-number">2</span>
-                                </button>
-                            </li>
-                            <li class="main-margin">
-                                <button aria-label="page number button" type="button" class="main-user-bottom" id="button3">
-                                    <span class="main-user-number">3</span>
-                                </button>
-                            </li>
+                            {% for i in "x"|rjust:page_count %}
+                                {% if forloop.counter0|add:start_page <= real_end%}
+                                    {% if page == forloop.counter0|add:start_page %}
+                                        <li class="main-margin">
+                                            <a href="javascript:void(0)" class="main-user-bottom">
+                                                <span class="main-user-number" style="color: #CE201B;">{{ forloop.counter0|add:start_page}}</span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        {% if order == 'popular' %}
+                                            <li class="main-margin">
+                                                <a href="/admin/notice/?page={{ forloop.counter0|add:start_page }}&order=popular" class="main-user-bottom" aria-label="page number button">
+                                                    <span class="main-user-number">{{ forloop.counter0|add:start_page}}</span>
+                                                </a>
+                                            </li>
+                                        {% else %}
+                                            <li class="main-margin">
+                                                <a href="/admin/notice/?page={{ forloop.counter0|add:start_page }}" class="main-user-bottom" aria-label="page number button">
+                                                    <span class="main-user-number">{{ forloop.counter0|add:start_page}}</span>
+                                                </a>
+                                            </li>
+                                        {% endif %}
+
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+
                             <!-- 오른쪽 -->
-                            <li class="main-margin">
-                                <button aria-label="page turning button" disabled type="button" class="main-user-bottom-right">
-                                    <svg class="main-user-bottom-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M8.42 20.73a1.076 1.076 0 0 1-.13-1.587L14.832 12 8.289 4.857a1.076 1.076 0 0 1 .13-1.586 1.26 1.26 0 0 1 1.696.122L18 12l-7.885 8.607a1.26 1.26 0 0 1-1.695.122Z"></path>
-                                    </svg>
-                                </button>
-                            </li>
+                            {% if end_page < real_end %}
+                                {% if order == 'popular' %}
+                                    <li class="main-margin">
+                                        <a href="/admin/notice/?page={{ end_page|add:1 }}&order=popular" class="main-user-bottom-right">
+                                            <svg class="main-user-bottom-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M8.42 20.73a1.076 1.076 0 0 1-.13-1.587L14.832 12 8.289 4.857a1.076 1.076 0 0 1 .13-1.586 1.26 1.26 0 0 1 1.696.122L18 12l-7.885 8.607a1.26 1.26 0 0 1-1.695.122Z"></path>
+                                            </svg>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="main-margin">
+                                        <a href="/admin/notice/?page={{ end_page|add:1 }}" class="main-user-bottom-right">
+                                            <svg class="main-user-bottom-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M8.42 20.73a1.076 1.076 0 0 1-.13-1.587L14.832 12 8.289 4.857a1.076 1.076 0 0 1 .13-1.586 1.26 1.26 0 0 1 1.696.122L18 12l-7.885 8.607a1.26 1.26 0 0 1-1.695.122Z"></path>
+                                            </svg>
+                                        </a>
+                                    </li>
+                                {% endif %}
+
+                            {% endif %}
+{#                            <li>#}
+{#                                <button aria-label="page turning button" disabled type="button" class="main-user-bottom-reft">#}
+{#                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="main-user-bottom-svg">#}
+{#                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M15.58 3.27c.504.405.563 1.115.13 1.587L9.168 12l6.543 7.143a1.076 1.076 0 0 1-.13 1.586 1.26 1.26 0 0 1-1.695-.122L6 12l7.885-8.607a1.26 1.26 0 0 1 1.695-.122Z"></path>#}
+{#                                    </svg>#}
+{#                                </button>#}
+{#                            </li>#}
+{#                            <!-- 숫자 -->#}
+{#                            <li class="main-margin">#}
+{#                                <button type="button" class="main-user-bottom add-color" id="button1">#}
+{#                                    <span class="main-user-number">1</span>#}
+{#                                </button>#}
+{#                            </li>#}
+{#                            <li class="main-margin">#}
+{#                                <button aria-label="page number button" type="button" class="main-user-bottom" id="button2">#}
+{#                                    <span class="main-user-number">2</span>#}
+{#                                </button>#}
+{#                            </li>#}
+{#                            <li class="main-margin">#}
+{#                                <button aria-label="page number button" type="button" class="main-user-bottom" id="button3">#}
+{#                                    <span class="main-user-number">3</span>#}
+{#                                </button>#}
+{#                            </li>#}
+{#                            <!-- 오른쪽 -->#}
+{#                            <li class="main-margin">#}
+{#                                <button aria-label="page turning button" disabled type="button" class="main-user-bottom-right">#}
+{#                                    <svg class="main-user-bottom-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">#}
+{#                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M8.42 20.73a1.076 1.076 0 0 1-.13-1.587L14.832 12 8.289 4.857a1.076 1.076 0 0 1 .13-1.586 1.26 1.26 0 0 1 1.696.122L18 12l-7.885 8.607a1.26 1.26 0 0 1-1.695.122Z"></path>#}
+{#                                    </svg>#}
+{#                                </button>#}
+{#                            </li>#}
                         </ul>
                     </div>
                 </div>
@@ -262,10 +377,11 @@
     </main>
 {% endblock %}
 {% block js %}
-    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-bottem-web.js' %}"></script>
-    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-button-web.js' %}"></script>
-    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-delete-web.js' %}"></script>
-    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-modal-web.js' %}"></script>
-    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-redbox-web.js' %}"></script>
-    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-search-web.js' %}"></script>
+    <script src="{% static 'admin/web/js/notice/admin-notice-module-web.js' %}"></script>
+{#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-bottem-web.js' %}"></script>#}
+{#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-button-web.js' %}"></script>#}
+{#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-delete-web.js' %}"></script>#}
+{#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-modal-web.js' %}"></script>#}
+{#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-redbox-web.js' %}"></script>#}
+{#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-search-web.js' %}"></script>#}
 {% endblock %}

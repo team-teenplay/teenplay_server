@@ -158,7 +158,7 @@
                     {% else %}
                         <div class="user-data">
                             {% for user in users %}
-                                <li class="main-user-list" data-number="1">
+                                <li class="main-user-list" data-number="{{ user.id }}">
                                     <div class="main-user-list-check">
                                         <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-user-id="{{ user.id }}">
                                     </div>
@@ -341,8 +341,8 @@
         const csrf_token = '{{ csrf_token }}';
         {#const memberId = '{{ request.session.member.id }}'#}
     </script>
-    <script src="{% static 'admin/web/js/user/admin-user-module.js' %}"></script>
-    <script src="{% static 'admin/web/js/user/admin-user.js' %}"></script>
+    <script src="{% static 'admin/web/js/user/admin-user-module-web.js' %}"></script>
+    <script src="{% static 'admin/web/js/user/admin-user-web.js' %}"></script>
 {#    <script src="{% static 'admin/web/js/user/admin-user-bottem-web.js' %}"></script>#}
 {#    <script src="{% static 'admin/web/js/user/admin-user-delete-web.js' %}"></script>#}
     <script src="{% static 'admin/web/js/user/admin-user-modal-web.js' %}"></script>
