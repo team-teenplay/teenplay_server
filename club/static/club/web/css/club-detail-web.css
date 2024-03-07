@@ -991,10 +991,6 @@ button, input, optgroup, select, textarea {
     margin-bottom: calc(0.5rem*var(--tw-space-y-reverse));
 }
 
-.club-info {
-    display: none;
-}
-
 .club-info-wrap {
     min-height: 24rem;
     padding-top: 2rem;

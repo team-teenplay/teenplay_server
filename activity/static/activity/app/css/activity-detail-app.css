@@ -1465,8 +1465,6 @@ p {
 
 /*  댓글 내 프로필 사진 부분 */
 .k-comment-profile-container {
-    color: #ce201b;
-    background-color: #fff0ee;
     border-width: 1px;
     border-radius: 9999px;
     justify-content: center;
