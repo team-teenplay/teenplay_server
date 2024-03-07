@@ -129,9 +129,9 @@ class ClubActivityAPI(APIView):
             'activity_start',
         ]
 
-        finished_activities = club.activity_set.filter(activity_end__lte=timezone.now(), status=1).values(*columns)\
-            .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))\
-            .order_by('-id')
+        # finished_activities = club.activity_set.filter(activity_end__lte=timezone.now(), status=1).values(*columns)\
+        #     .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))\
+        #     .order_by('-id')
 
         ongoing_activities = club.activity_set.filter(activity_end__gt=timezone.now(), status=1).values(*columns)\
             .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))\
@@ -142,6 +142,23 @@ class ClubActivityAPI(APIView):
         }
 
         return Response(club_activities)
+
+
+class ClubFinishedActivityAPI(APIView):
+    def get(self, request):
+        club = Club.objects.get(id=request.GET['club_id'])
+        columns = [
+            'id',
+            'activity_title',
+            'thumbnail_path',
+            'activity_start',
+        ]
+
+        finished_activities = club.activity_set.filter(activity_end__lte=timezone.now(), status=1).values(*columns) \
+            .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1))) \
+            .order_by('-id')
+
+        return Response(finished_activities)
 
 
 class ClubNoticeAPI(APIView):
