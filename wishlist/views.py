@@ -34,44 +34,19 @@ class WishListAPI(APIView):
         row_count = 3
         offset = (page - 1) * row_count
         limit = page * row_count
+        category = request.GET.get('category')
 
         columns = [
             'wishlist_content',
+            'member_id',
             'member_name',
             'category_name',
             'created_date'
         ]
 
-        wishlists = Wishlist.enabled_objects.annotate(member_name=F("member__member_nickname"),category_name=F("category__category_name")).values(*columns)
+        if category:
+            wishlists = Wishlist.enabled_objects.filter(category_id = category).annotate(member_name=F("member__member_nickname"),category_name=F("category__category_name")).values(*columns)
+        else:
+            wishlists = Wishlist.enabled_objects.annotate(member_name=F("member__member_nickname"),category_name=F("category__category_name")).values(*columns)
 
         return Response(wishlists[offset:limit])
-
-
-class WishListCategoryAPI(APIView):
-    def get(self, request, page, category):
-        # 페이지당 3개의 게시물 보여주기
-        category_name = category
-        row_count = 3
-        offset = (page - 1) * row_count
-        limit = page * row_count
-
-        category_condition = Q(category_name__contains=category_name)
-
-        columns = [
-            'wishlist_content',
-            'member_name',
-            'category_name',
-            'created_date'
-        ]
-
-        category_wishlists = Wishlist.enabled_objects.filter(category_condition).annotate(member_name=F("member__member_nickname"),category_name=F("category__category_name")).values(*columns)
-
-        return Response(category_wishlists[offset:limit])
-
-
-
-
-
-
-
-

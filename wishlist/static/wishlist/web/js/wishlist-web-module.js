@@ -10,8 +10,8 @@ const wishlistService = (() => {
         });
     }
 
-    const getList = async (page, callback) => {
-        const response = await fetch(`/wishlist/list/${page}`);
+    const getList = async (page, category, callback) => {
+        const response = await fetch(`/wishlist/list/${page}/?category=${category}`);
         const wishlists = await response.json();
         if (callback) {
             return callback(wishlists);
@@ -19,12 +19,5 @@ const wishlistService = (() => {
         return wishlists;
     }
 
-    const category = async (page, category) => {
-        const response = await fetch(`/wishlist/${category}/${page}/`, {
-            headers: {'Content-Type': 'application/json;charset=utf-8'}
-        });
-    }
-
-
-    return {write: write, getList: getList, category:category}
+    return {write: write, getList: getList}
 })();

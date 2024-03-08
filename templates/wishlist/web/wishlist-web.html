@@ -39,46 +39,47 @@
                                     <!-- 메인 화면 상단 카테고리 -->
                                     <div class="top-categroy-container">
                                         <div class="top-categroy-items">
-                                            <button class="top-categroy-item all" id="item-all" type="button">전체</button>
+                                            <button class="top-categroy-item all" id="item-all" name="" type="button">전체</button>
                                         </div>
                                         <div class="top-categroy-items">
-                                            <button class="top-categroy-item" id="item-culture" type="button">문화·예술</button>
+                                            <button class="top-categroy-item" id="item-culture" name="2" type="button">문화·예술</button>
+                                            
                                         </div>
                                         <div class="top-categroy-items">
-                                            <button class="top-categroy-item" id="item-exercise" type="button">운동·액티비티</button>
+                                            <button class="top-categroy-item" id="item-exercise" name="3" type="button">운동·액티비티</button>
                                         </div>
                                         <div class="top-categroy-items">
-                                            <button class="top-categroy-item" id="item-food" type="button">푸드·드링크</button>
+                                            <button class="top-categroy-item" id="item-food" name="4" type="button">푸드·드링크</button>
                                         </div>
                                         <div class="top-categroy-items">
-                                            <button class="top-categroy-item" id="item-hobby" type="button">취미</button>
+                                            <button class="top-categroy-item" id="item-hobby" name="1" type="button">취미</button>
                                         </div>
                                         <div class="top-categroy-items">
-                                            <button class="top-categroy-item" id="item-travel" type="button">여행·동행</button>
+                                            <button class="top-categroy-item" id="item-travel" name="5" type="button">여행·동행</button>
                                         </div>
                                         <div class="top-categroy-items">
-                                            <button class="top-categroy-item" id="item-develop" type="button">성장·자기계발</button>
+                                            <button class="top-categroy-item" id="item-develop" name="6" type="button">성장·자기계발</button>
                                         </div>
                                         <div class="top-categroy-items">
-                                            <button class="top-categroy-item" id="item-friend" type="button">동네·또래</button>
+                                            <button class="top-categroy-item" id="item-friend" name="7" type="button">동네·또래</button>
                                         </div>
                                         <div class="top-categroy-items">
-                                            <button class="top-categroy-item" id="item-meeting" type="button">연애·소개팅</button>
+                                            <button class="top-categroy-item" id="item-meeting" name="8" type="button">연애·소개팅</button>
                                         </div>
                                         <div class="top-categroy-items">
-                                            <button class="top-categroy-item" id="item-investment" type="button">재테크</button>
+                                            <button class="top-categroy-item" id="item-investment" name="9" type="button">재테크</button>
                                         </div>
                                         <div class="top-categroy-items">
-                                            <button class="top-categroy-item" id="item-language" type="button">외국어</button>
+                                            <button class="top-categroy-item" id="item-language" name="10" type="button">외국어</button>
                                         </div>
                                         <div class="top-categroy-items">
-                                            <button class="top-categroy-item" id="item-study" type="button">스터디</button>
+                                            <button class="top-categroy-item" id="item-study" name="11" type="button">스터디</button>
                                         </div>
                                         <div class="top-categroy-items">
-                                            <button class="top-categroy-item" id="item-festival" type="button">지역축제</button>
+                                            <button class="top-categroy-item" id="item-festival" name="12" type="button">지역축제</button>
                                         </div>
                                         <div class="top-categroy-items">
-                                            <button class="top-categroy-item" id="item-other" type="button">기타</button>
+                                            <button class="top-categroy-item" id="item-other" name="13" type="button">기타</button>
                                         </div>
                                     </div>
                                     <!-- 위시리스트 전체 포스트 부분 -->
@@ -397,8 +398,20 @@
 {% endblock %}
 {% block js %}
         <script>
+        const categoryButton = document.querySelectorAll(".top-categroy-item")
         const csrf_token = '{{ csrf_token }}';
         const memberId = '{{ request.session.member.id }}';
+        // 카테고리 버튼을 눌렀을 때 카테고리에 category_id = name 값 담기
+        let category = ''
+        categoryButton.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    category = btn.name
+                    // const response = await fetch(`/wishlist/list/${page}/?category=${category}`);
+                    // const wishlists = await response.json();
+                    // div.innerHTML = showList(wishlists)
+                })
+            }
+        )
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{% static 'wishlist/web/js/wishlist-web-module.js' %}"></script>
