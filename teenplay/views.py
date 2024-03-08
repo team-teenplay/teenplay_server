@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Count, Q, F
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views import View
@@ -81,7 +81,7 @@ class TeenplayMainListAPIView(APIView):
         context = teenplay_list
         return Response(context)
 
-class TeenPlayLikeApiView(APIView):
+class TeenPlayLikeAPIView(APIView):
     @transaction.atomic
     def get(self, request, emptyValue, memberSessionId, displayStyle):
 
@@ -91,7 +91,6 @@ class TeenPlayLikeApiView(APIView):
         }
 
         likeData, checked = TeenPlayLike.objects.get_or_create(**data)
-
         if checked:
             totalLikeCount = TeenPlayLike.objects.filter(status=1, teenplay_id=emptyValue).count()
         else:
@@ -111,14 +110,33 @@ class TeenPlayLikeApiView(APIView):
 
         return Response(context)
 
+
+
 class TeenplayClubView(View):
     def get(self, request):
-        data = request.GET
-        context = {
-            'teenplay_id': data['teenplay_id'],
-        }
-        return render(request, 'teenplay/web/teenplay-play-select-web.html')
 
+        # data = request.GET
+        # context = {
+        #     'idex_number': data['idexNumber'],
+        #     'teenplay_id': data['teenplayId'],
+        #     'member_id': request.session.member.member_id, # 이런 식으로 session에 있는 id 가져올것
+        #     'display_style': data['displayStyle'],
+        #     'totalLikeCount': data['totalLikeCount']
+        # }
+
+        # 실제로는 화면에서 request한 값을 받아와서 해야하나 테스트를 위해 아래쪽이 object로 검사한 데이터를 임시로 작성
+        like_count = {}
+        member_session = {}
+        teenplay = TeenPlay.enable_objects.filter(id=1).annotate(club_name= F('club__club_name')).\
+            annotate(club_intro=F('club__club_intro')).annotate(club_profile_path = F('club__club_profile_path')).\
+            annotate(teenplay_like=Count('teenplaylike__status', filter=Q(teenplaylike__status=1))).\
+            values('club_id','club_name','club_intro','club_profile_path','id', 'video_path','teenplay_like').first()
+        member_like = TeenPlayLike.objects.filter(member_id=3, teenplay_id=1, status=1).exists()
+        like_count['like_check'] = member_like
+        # 나중엔 실제 member의 seeion에 있는 id를 teenplay 에 넣어줘야함
+        member_session['memberSessionId'] = 3
+        context = {**like_count, **teenplay, **member_session}
+        return render(request, 'teenplay/web/teenplay-play-select-web.html', context)
 
 # 최초 선택 시 teenplay 선택한 id를 보여줘야 하고 위 아래로 내리는 경우 fetch 통신이 이루어져야 함
 # 위로 올리면 page --
@@ -126,17 +144,75 @@ class TeenplayClubView(View):
 # page -1 > lenght == 0 이면 스크롤 되면 안되고
 # page +1 > lenght == 0 이면 스크롤 되면 안됨
 
-
-
 class TeenplayClubAPIView(APIView):
     def get(self, request, clubId, page):
-        page = 1
-        row_count = 1
-        offset = (page-1) * row_count
 
-        select_teenplay = TeenPlay.objects.filter(club_id=1).values()[offset:offset+1]
-        context = list(select_teenplay)
+        row_count = 1
+        limit = (page-1) * row_count
+        index_limit= limit+1
+        club_teenplay_conut =TeenPlay.enable_objects.all().count()
+        print(page)
+        print(club_teenplay_conut)
+        print(index_limit)
+
+        if index_limit != club_teenplay_conut:
+            select_teenplay = TeenPlay.enable_objects.filter(club_id=clubId).annotate(club_name=F('club__club_name')). \
+                                  annotate(club_intro=F('club__club_intro')).annotate(
+                club_profile_path=F('club__club_profile_path')). \
+                                  annotate(
+                teenplay_like=Count('teenplaylike__status', filter=Q(teenplaylike__status=1))). \
+                                  values('club_id', 'club_name', 'club_intro', 'club_profile_path', 'id', 'video_path',
+                                         'teenplay_like')[limit:limit + 1][0]
+        else:
+            select_teenplay = {}
+        print(select_teenplay)
+
+
+        print('+'*20)
+        like_count = {}
+        member_session = {}
+        if 'id' in select_teenplay:
+            member_like = TeenPlayLike.objects.filter(member_id=3, teenplay_id=select_teenplay['id'], status=1).exists()
+        else:
+            member_like = 'false'
+        print(member_like)
+        print('+' * 20)
+        like_count['like_check'] = member_like
+        member_session['memberSessionId'] = 3
+        context = {**like_count, **select_teenplay, **member_session}
+        print(context)
         return Response(context)
+
+
+class TeenPlayClubLikeAPIView(APIView):
+    @transaction.atomic
+    def get(self, request, emptyValue, memberSessionId, displayStyle):
+
+        data = {
+            'member_id': memberSessionId,
+            'teenplay_id': emptyValue
+        }
+
+        likeData, checked = TeenPlayLike.objects.get_or_create(**data)
+        if checked:
+            totalLikeCount = TeenPlayLike.objects.filter(status=1, teenplay_id=emptyValue).count()
+        else:
+            if displayStyle== 'none':
+                TeenPlayLike.objects.filter(status=0, teenplay_id=emptyValue, member_id=memberSessionId).update(status=1, updated_date=timezone.now())
+                totalLikeCount = TeenPlayLike.objects.filter(status=1, teenplay_id=emptyValue).count()
+            else:
+                TeenPlayLike.objects.filter(status=1, teenplay_id=emptyValue, member_id=memberSessionId).update(status=0, updated_date=timezone.now())
+                totalLikeCount = TeenPlayLike.objects.filter(status=1, teenplay_id=emptyValue).count()
+
+        context = {
+            'teenplay_id': emptyValue, # teenplay_id
+            'member_id': memberSessionId,
+            'display_style': displayStyle,
+            'totalLikeCount': totalLikeCount
+        }
+
+        return Response(context)
+
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -152,5 +228,6 @@ class TeenplayClubAPIView(APIView):
 class TeenplayMainListAppView(View):
     def get(self, request):
         return render(request, 'teenplay/web/teenplay-play-web.html')
+
 
 

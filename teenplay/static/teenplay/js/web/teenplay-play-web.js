@@ -91,7 +91,6 @@ videos.forEach((video, i) => {
 function slideNext(idx) {
     slideContainer.style.transition = `all 0.5s ease-in`;
     slideContainer.style.transform = `translateY(-${window.innerHeight * idx}px)`;
-    // slideContainer.style.transform = `translateY(-${674* idx}px)`;
     videoWraps[idx - 1].classList.remove("playing");
     videoWraps[idx].classList.add("playing");
 }
@@ -113,6 +112,7 @@ let idx = 0;
 let check = true;
 let isFetchingTeenplay = false;
 let pageNumber = 5;
+
 slideWrap.addEventListener("wheel", (e) => {
     manageScroll(e);
     if (!check) return;
