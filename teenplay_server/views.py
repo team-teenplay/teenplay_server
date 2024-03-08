@@ -4,6 +4,7 @@ from django.db import transaction
 from django.db.models import Q, Count, F
 from django.shortcuts import render, redirect
 from django.views import View
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -206,13 +207,27 @@ class AdminFestivalWrite(View):
 # 관리자 공지사항 관리 페이지 이동
 class AdminNoticeView(View):
     def get(self, request):
-        order = request.GET.get('order', 'recent')
-        page = int(request.GET.get('page', 1))
+        return render(request, 'admin/web/notice-list-web.html')
 
-        row_count = 5
+
+# class AdminNoticeAPI(APIView):
+#     def get(self, request, page):
+#         notices = Notice.objects.filter(status=1).values('id', 'notice_title', 'created_date', 'notice_content', 'notice_type')
+#         row_count = 5
+#         offset = (page - 1) * row_count
+#         limit = page * row_count
+#         return Response(notices[offset:limit])
+
+class AdminNoticePaginationAPI(APIView):
+    def get(self, request, page):
+        order = request.GET.get('order', 'recent')
+
+        row_count = 1
 
         offset = (page - 1) * row_count
         limit = page * row_count
+
+        page_number = request.GET.get('pageNumber', 1)
 
         total = Notice.objects.filter(status=1).all().count()
 
@@ -231,7 +246,6 @@ class AdminNoticeView(View):
             'order': order,
             'start_page': start_page,
             'end_page': end_page,
-            'page': page,
             'real_end': real_end,
             'page_count': page_count,
         }
@@ -239,16 +253,21 @@ class AdminNoticeView(View):
         if order == 'popular':
             ordering = '-post_read_count'
 
-        context['notices'] = list(Notice.objects.filter(status=1)\
-                    .values('id', 'notice_title', 'created_date', 'notice_content', 'notice_type').order_by(ordering))[offset:limit]
 
-        return render(request, 'admin/web/notice-list-web.html', context)
 
-class AdminNoticeAPI(APIView):
-    def get(self, request):
-        pass
+        if page == page_number:
+            context['pagination'] = list(Notice.objects.filter(status=1) \
+                                  .values('id', 'notice_title', 'created_date', 'notice_content',
+                                          'notice_type').order_by(ordering)[offset:limit])
+        # elif page == 1:
+        #     context['pagination'] = list(Notice.objects.filter(status=1) \
+        #                                  .values('id', 'notice_title', 'created_date', 'notice_content',
+        #                                          'notice_type').order_by(ordering)[offset:limit])
 
-class AdminNoticeAPI(APIView):
+        return Response(context)
+
+
+class AdminNoticeUpdateAPI(APIView):
     # 게시글 삭제
     def patch(self, request, notice_id):
         status = 0

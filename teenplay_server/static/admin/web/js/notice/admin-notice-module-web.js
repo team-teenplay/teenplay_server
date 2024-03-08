@@ -11,16 +11,37 @@ const adminNoticeService = (() => {
         });
     }
 
-    // 공지사항 목록 가져오기
-    const getList = async (callback) => {
-        const response = await fetch(`/admin/notice/`);
-        const notices = await response.json();
-        console.log(notices)
+    // // 공지사항 목록 가져오기
+    // const getList = async (page, callback) => {
+    //     const response = await fetch(`/admin/notice/${page}/`);
+    //     const notices = await response.json();
+    //     console.log(notices)
+    //     if (callback){
+    //         return callback(notices);
+    //     }
+    //     return notices;
+    // }
+
+    // const getPagination = async (callback) => {
+    //     const pagination = {};
+    //     callback(pagination)
+    // }
+
+    const getPagination = async (page, pageNumber, callback) => {
+        const pageInt = parseInt(page, 10);  // 10진법으로 변환
+        const pageNumberInt= parseInt(pageNumber, 10);
+
+        console.log(pageInt)
+        console.log(pageNumberInt)
+
+        const response = await fetch(`/admin/notices/${pageInt}/?page_number=${pageNumberInt}`);
+        const pagination = await response.json();
         if (callback){
-            return callback(notices);
+            return callback(pagination);
         }
-        return notices;
+        return pagination;
     }
+
 
     // 공지사항 삭제
     const remove = async (targetId) => {
@@ -37,5 +58,5 @@ const adminNoticeService = (() => {
 
     }
 
-    return {write: write, getList: getList, remove: remove}
+    return {write: write, getPagination:getPagination, remove: remove}
 })();

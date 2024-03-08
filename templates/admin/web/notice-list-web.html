@@ -212,76 +212,76 @@
                         <ul class="main-user-bottom-ul">
                             <!-- 여기에 왼 숫자 오 들어감 -->
                             <!-- 먼저 왼 -->
-                            {% if start_page > 1 %}
-                                {% if order == 'popular' %}
-                                    <li>
-                                        <a href="/admin/notice/?page={{ start_page|add:-1 }}&order=popular" class="main-user-bottom-reft">
-                                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="main-user-bottom-svg">
-                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M15.58 3.27c.504.405.563 1.115.13 1.587L9.168 12l6.543 7.143a1.076 1.076 0 0 1-.13 1.586 1.26 1.26 0 0 1-1.695-.122L6 12l7.885-8.607a1.26 1.26 0 0 1 1.695-.122Z"></path>
-                                            </svg>
-                                        </a>
-                                    </li>
-                                {% else %}
-                                    <li>
-                                        <a href="/admin/notice/?page={{ start_page|add:-1 }}" class="main-user-bottom-reft">
-                                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="main-user-bottom-svg">
-                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M15.58 3.27c.504.405.563 1.115.13 1.587L9.168 12l6.543 7.143a1.076 1.076 0 0 1-.13 1.586 1.26 1.26 0 0 1-1.695-.122L6 12l7.885-8.607a1.26 1.26 0 0 1 1.695-.122Z"></path>
-                                            </svg>
-                                        </a>
-                                    </li>
-                                {% endif %}
-
-                            {% endif %}
-
-                            <!-- 숫자 -->
-                            {% for i in "x"|rjust:page_count %}
-                                {% if forloop.counter0|add:start_page <= real_end%}
-                                    {% if page == forloop.counter0|add:start_page %}
-                                        <li class="main-margin">
-                                            <a href="javascript:void(0)" class="main-user-bottom">
-                                                <span class="main-user-number" style="color: #CE201B;">{{ forloop.counter0|add:start_page}}</span>
-                                            </a>
-                                        </li>
-                                    {% else %}
-                                        {% if order == 'popular' %}
-                                            <li class="main-margin">
-                                                <a href="/admin/notice/?page={{ forloop.counter0|add:start_page }}&order=popular" class="main-user-bottom" aria-label="page number button">
-                                                    <span class="main-user-number">{{ forloop.counter0|add:start_page}}</span>
-                                                </a>
-                                            </li>
-                                        {% else %}
-                                            <li class="main-margin">
-                                                <a href="/admin/notice/?page={{ forloop.counter0|add:start_page }}" class="main-user-bottom" aria-label="page number button">
-                                                    <span class="main-user-number">{{ forloop.counter0|add:start_page}}</span>
-                                                </a>
-                                            </li>
-                                        {% endif %}
-
-                                    {% endif %}
-                                {% endif %}
-                            {% endfor %}
-
-                            <!-- 오른쪽 -->
-                            {% if end_page < real_end %}
-                                {% if order == 'popular' %}
-                                    <li class="main-margin">
-                                        <a href="/admin/notice/?page={{ end_page|add:1 }}&order=popular" class="main-user-bottom-right">
-                                            <svg class="main-user-bottom-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M8.42 20.73a1.076 1.076 0 0 1-.13-1.587L14.832 12 8.289 4.857a1.076 1.076 0 0 1 .13-1.586 1.26 1.26 0 0 1 1.696.122L18 12l-7.885 8.607a1.26 1.26 0 0 1-1.695.122Z"></path>
-                                            </svg>
-                                        </a>
-                                    </li>
-                                {% else %}
-                                    <li class="main-margin">
-                                        <a href="/admin/notice/?page={{ end_page|add:1 }}" class="main-user-bottom-right">
-                                            <svg class="main-user-bottom-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M8.42 20.73a1.076 1.076 0 0 1-.13-1.587L14.832 12 8.289 4.857a1.076 1.076 0 0 1 .13-1.586 1.26 1.26 0 0 1 1.696.122L18 12l-7.885 8.607a1.26 1.26 0 0 1-1.695.122Z"></path>
-                                            </svg>
-                                        </a>
-                                    </li>
-                                {% endif %}
-
-                            {% endif %}
+{#                            {% if start_page > 1 %}#}
+{#                                {% if order == 'popular' %}#}
+{#                                    <li>#}
+{#                                        <a href="/admin/notice/?page={{ start_page|add:-1 }}&order=popular" class="main-user-bottom-reft">#}
+{#                                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="main-user-bottom-svg">#}
+{#                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M15.58 3.27c.504.405.563 1.115.13 1.587L9.168 12l6.543 7.143a1.076 1.076 0 0 1-.13 1.586 1.26 1.26 0 0 1-1.695-.122L6 12l7.885-8.607a1.26 1.26 0 0 1 1.695-.122Z"></path>#}
+{#                                            </svg>#}
+{#                                        </a>#}
+{#                                    </li>#}
+{#                                {% else %}#}
+{#                                    <li>#}
+{#                                        <a href="/admin/notice/?page={{ start_page|add:-1 }}" class="main-user-bottom-reft">#}
+{#                                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="main-user-bottom-svg">#}
+{#                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M15.58 3.27c.504.405.563 1.115.13 1.587L9.168 12l6.543 7.143a1.076 1.076 0 0 1-.13 1.586 1.26 1.26 0 0 1-1.695-.122L6 12l7.885-8.607a1.26 1.26 0 0 1 1.695-.122Z"></path>#}
+{#                                            </svg>#}
+{#                                        </a>#}
+{#                                    </li>#}
+{#                                {% endif %}#}
+{##}
+{#                            {% endif %}#}
+{##}
+{#                            <!-- 숫자 -->#}
+{#                            {% for i in "x"|rjust:page_count %}#}
+{#                                {% if forloop.counter0|add:start_page <= real_end %}#}
+{#                                    {% if page == forloop.counter0|add:start_page %}#}
+{#                                        <li class="main-margin">#}
+{#                                            <a href="javascript:void(0)" class="main-user-bottom">#}
+{#                                                <span class="main-user-number" style="color: #CE201B;">{{ forloop.counter0|add:start_page}}</span>#}
+{#                                            </a>#}
+{#                                        </li>#}
+{#                                    {% else %}#}
+{#                                        {% if order == 'popular' %}#}
+{#                                            <li class="main-margin">#}
+{#                                                <a href="/admin/notice/?page={{ forloop.counter0|add:start_page }}&order=popular" class="main-user-bottom" aria-label="page number button">#}
+{#                                                    <span class="main-user-number">{{ forloop.counter0|add:start_page}}</span>#}
+{#                                                </a>#}
+{#                                            </li>#}
+{#                                        {% else %}#}
+{#                                            <li class="main-margin">#}
+{#                                                <a href="/admin/notice/?page={{ forloop.counter0|add:start_page }}" class="main-user-bottom" aria-label="page number button">#}
+{#                                                    <span class="main-user-number">{{ forloop.counter0|add:start_page}}</span>#}
+{#                                                </a>#}
+{#                                            </li>#}
+{#                                        {% endif %}#}
+{##}
+{#                                    {% endif %}#}
+{#                                {% endif %}#}
+{#                            {% endfor %}#}
+{##}
+{#                            <!-- 오른쪽 -->#}
+{#                            {% if end_page < real_end %}#}
+{#                                {% if order == 'popular' %}#}
+{#                                    <li class="main-margin">#}
+{#                                        <a href="/admin/notice/?page={{ end_page|add:1 }}&order=popular" class="main-user-bottom-right">#}
+{#                                            <svg class="main-user-bottom-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">#}
+{#                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M8.42 20.73a1.076 1.076 0 0 1-.13-1.587L14.832 12 8.289 4.857a1.076 1.076 0 0 1 .13-1.586 1.26 1.26 0 0 1 1.696.122L18 12l-7.885 8.607a1.26 1.26 0 0 1-1.695.122Z"></path>#}
+{#                                            </svg>#}
+{#                                        </a>#}
+{#                                    </li>#}
+{#                                {% else %}#}
+{#                                    <li class="main-margin">#}
+{#                                        <a href="/admin/notice/?page={{ end_page|add:1 }}" class="main-user-bottom-right">#}
+{#                                            <svg class="main-user-bottom-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">#}
+{#                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M8.42 20.73a1.076 1.076 0 0 1-.13-1.587L14.832 12 8.289 4.857a1.076 1.076 0 0 1 .13-1.586 1.26 1.26 0 0 1 1.696.122L18 12l-7.885 8.607a1.26 1.26 0 0 1-1.695.122Z"></path>#}
+{#                                            </svg>#}
+{#                                        </a>#}
+{#                                    </li>#}
+{#                                {% endif %}#}
+{##}
+{#                            {% endif %}#}
 {#                            <li>#}
 {#                                <button aria-label="page turning button" disabled type="button" class="main-user-bottom-reft">#}
 {#                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="main-user-bottom-svg">#}
