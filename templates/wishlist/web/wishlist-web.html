@@ -401,17 +401,16 @@
         const categoryButton = document.querySelectorAll(".top-categroy-item")
         const csrf_token = '{{ csrf_token }}';
         const memberId = '{{ request.session.member.id }}';
+        const memberName = '{{ request.session.member.member_nickname }}';
         // 카테고리 버튼을 눌렀을 때 카테고리에 category_id = name 값 담기
         let category = ''
         categoryButton.forEach((btn) => {
                 btn.addEventListener("click", () => {
                     category = btn.name
-                    // const response = await fetch(`/wishlist/list/${page}/?category=${category}`);
-                    // const wishlists = await response.json();
-                    // div.innerHTML = showList(wishlists)
                 })
             }
         )
+        
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{% static 'wishlist/web/js/wishlist-web-module.js' %}"></script>

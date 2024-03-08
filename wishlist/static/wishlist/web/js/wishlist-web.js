@@ -22,7 +22,6 @@ categoryBtn.forEach((button) => {
         // 카테고리에 해당하는 위시리스트 추가
         wishlistService.getList(page, category, showList).then((text) => {
             div.innerHTML = text;
-            wishlistMenu()
             // console.log("카테고리 위시리스트 추가")
             // 위시리스트 게시글 메뉴 열고 닫기 이벤트
             // 위시리스트 게시글 내 메뉴 버튼 쿼리
@@ -45,37 +44,9 @@ categoryBtn.forEach((button) => {
                     }
                 });
             })
-            // 위시리스트 게시글 댓글 열고 닫기 이벤트
-            // 위시리스트 댓글 열기 쿼리
-            const commentOpen = document.querySelectorAll(".comment-open-wrap");
-            // 위시리스트 게시글 닫기 쿼리
-            const commentClose = document.querySelectorAll(".comment-close-wrap");
-            // 위시리스트 댓글 쿼리
-            const comment = document.querySelectorAll(".comment-all-wrap");
-            // 위시리스트 댓글 열기 클릭 시 이벤트 발생
-            // 댓글 열기 버튼 비활성화 > 닫기 버튼, 댓글 목록 활성화
-            commentOpen.forEach((open, i) => {
-                commentOpen[i].addEventListener("click", () => {
-                    // console.log("열렸다!")
-                    commentOpen[i].classList.add("hidden");
-                    commentClose[i].classList.remove("hidden");
-                    comment[i].classList.remove("hidden");
-                })
-            })
-            // 위시리스트 게시글 댓글 닫기 버튼 클릭 시 이벤트 발생
-            // 댓글 닫기 버튼, 댓글 목록 비활성화 > 댓글 열기 버튼 활성화
-            commentClose.forEach((close, i) => {
-                commentClose[i].addEventListener("click", () => {
-                    // console.log("닫혔다!")
-                    commentOpen[i].classList.remove("hidden");
-                    commentClose[i].classList.add("hidden");
-                    comment[i].classList.add("hidden");
-                });
-            })
         });
     });
 });
-
 
 // 위시리스트가 3개 이상 있을 때 더보기 버튼 나오기
 wishlistService.getList(page + 1, category).then((wishlists) => {
@@ -91,7 +62,7 @@ const showList = (wishlists) => {
     wishlists.forEach((wishlist) => {
         if(wishlists.length === 0) {
             text = `
-                <!-- 카테고리에 게시글이 없을 때 출력 -->
+                <!-- 카테고리에  게시글이 없을 때 출력 -->
                 <div class="post-error">
                     <span>게시글이 존재하지 않습니다.</span>
                 </div>
@@ -176,39 +147,113 @@ const showList = (wishlists) => {
                             <div class="post-title-text">${wishlist.wishlist_content}</div>
                         </div>
                             <!-- 위시리스트 게시글 태그 부분 -->
-                            <div class="post-tags-wrap">
-                                <span class="post-tag">태그 test1</span>
-                                <span class="post-tag">태그 test2</span>
-                                <span class="post-tag">태그 test3</span>
-                                <span class="post-tag">태그 test4</span>
-                                <span class="post-tag">태그 test5</span>
+                            <div class="post-tags-wrap" id="tag-form${wishlist.id}">
+<!--                                <span class="post-tag">태그 test1</span>-->
+<!--                                <span class="post-tag">태그 test2</span>-->
+<!--                                <span class="post-tag">태그 test3</span>-->
+<!--                                <span class="post-tag">태그 test4</span>-->
+<!--                                <span class="post-tag">태그 test5</span>-->
                             </div>
                     </div>
                     <!-- 위시리스트 댓글 열기 부분 -->
-                    <div class="comment-open-wrap">
+                    <div class="comment-open-wrap" id="open${wishlist.id}">
                         <button class="comment-open-button" type="button">
-                            <span> 댓글 보기 </span>
+                            <span class="reply-open-button ${wishlist.id}"> 댓글 보기 </span>
                             <svg class="comment-open-button-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                                 <path fill-rule="evenodd" d="M12.53 16.28a.75.75 0 01-1.06 0l-7.5-7.5a.75.75 0 011.06-1.06L12 14.69l6.97-6.97a.75.75 0 111.06 1.06l-7.5 7.5z" clip-rule="evenodd"></path>
                             </svg>
                         </button>
                     </div>
                     <!-- 위시리스트 댓글 닫기 부분 -->
-                    <div class="comment-close-wrap hidden">
+                    <div class="comment-close-wrap hidden" id="close${wishlist.id}">
                         <button class="comment-close-button" type="button">
-                            <span> 닫기 </span>
+                            <span class="reply-close-button ${wishlist.id}"> 닫기 </span>
                             <svg class="comment-close-button-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path>
                             </svg>
                         </button>
                     </div>
                     <!-- 위시리스트 댓글 부분 -->
-                    <div class="comment-all-wrap hidden">
+                    <div class="comment-all-wrap hidden" id="reply-form${wishlist.id}">
+                    </div>
+                </div>
+            `
+        }
+    });
+    return text;
+}
+
+wishlistService.getList(page, category, showList).then((text) => {
+    div.innerHTML = text;
+    // 위시리스트 게시글 메뉴 열고 닫기 이벤트
+    // 위시리스트 게시글 내 메뉴 버튼 쿼리
+    const wishlistPostMenuButton = document.querySelectorAll(".post-menu-container");
+    // 위시리스트 게시글 메뉴(기본 가려짐) 쿼리
+    const wishlistPostMenu = document.querySelectorAll(".post-menu-open");
+
+    // 위시리스트 게시글 내 메뉴 버튼 클릭 시 클릭 이벤트 발생
+    // 위시리스트 게시글 메뉴를 활성화 or 비활성화
+    wishlistPostMenuButton.forEach((btn, i) => {
+        wishlistPostMenuButton[i].addEventListener("click", () => {
+            wishlistPostMenu[i].classList.toggle("hidden");
+        });
+        // 위시리스트 메뉴 닫기 이벤트
+        // 여백 클릭 시 위시리스트 메뉴 자동 숨기기
+        document.addEventListener("click", () => {
+            if (!wishlistPostMenuButton[i] && !wishlistPostMenu[i]) {
+                console.log("눌러조")
+                wishlistPostMenu[i].classList.add("hidden");
+            }
+        });
+    })
+});
+
+
+// 더보기 버튼 누르면 위시리스트 나오기
+moreButton.addEventListener("click", (e) => {
+    wishlistService.getList(++page, category, showList).then((text) => {
+        // console.log(category)
+        // console.log("더보기로 추가됐어요!")
+        div.innerHTML += text;
+            // 위시리스트 게시글 메뉴 열고 닫기 이벤트
+            const wishlistPostMenuButton = document.querySelectorAll(".post-menu-container");
+            const wishlistPostMenu = document.querySelectorAll(".post-menu-open");
+
+            // 위시리스트 게시글 내 메뉴 버튼 클릭 시 클릭 이벤트 발생
+            wishlistPostMenuButton.forEach((btn, i) => {
+                wishlistPostMenuButton[i].addEventListener("click", () => {
+                    wishlistPostMenu[i].classList.toggle("hidden");
+                });
+                // 위시리스트 메뉴 닫기 이벤트
+                // 여백 클릭 시 위시리스트 메뉴 자동 숨기기
+                document.addEventListener("click", () => {
+                    if (!wishlistPostMenuButton[i] && !wishlistPostMenu[i]) {
+                        console.log("눌러조")
+                        wishlistPostMenu[i].classList.add("hidden");
+                    }
+                });
+            })
+    });
+    wishlistService.getList(page + 1,category).then((wishlists) => {
+        if (wishlists.length === 0) {
+            // console.log("사라졌지롱")
+            addButton.style.display = "none";
+        }
+    });
+});
+
+// 전체 댓글 보여주기
+const replyshowList = (replies) => {
+    let text = ``;
+    replies.forEach((reply) => {
+        console.log(replies.length)
+        if(replies.length === 0) {
+            text = `
                         <!-- 위시리스트 댓글 추가 부분 -->
                         <div class="comment-input-box-all-wrap">
                             <div class="comment-input-box-wrap">
                                 <div class="comment-input-wrap">
-                                    <div class="comment-input-username-container">틴친이</div>
+                                    <div class="comment-input-username-container">>${memberName}</div>
                                     <form class="comment-input-container" method="post" data-hs-cf-bound="true">
                                         <input class="comment-input" name="__RequestVerificationToken" type="hidden" value="lQ1k2HcglUXXMwOa0SIMa_JXSkG8dcFibXk3jrgj1xqrlfkZnxzZ69pIbMszXgP7-1CrLPr7j5y-xEsj8UfSWd2EpmvQnlNfBilqDAT5vUaOv7fZgaT00ILqYk8j9LZOYraW8JeO8poPFXuOtKyENA2" />
                                         <input class="comment-input-hidden" name="CommunityBoardArticleId" hidden="" />
@@ -223,16 +268,39 @@ const showList = (wishlists) => {
                             </div>
                         </div>
                         <!-- 위시리스트 댓글 개수 정보 부분 -->
-                        <div class="comment-count-wrap">댓글 1</div>
+                        <div class="comment-count-wrap">댓글 ${replies.length}</div>
+            `
+        } else {
+            text += `
+                        <!-- 위시리스트 댓글 추가 부분 -->
+                        <div class="comment-input-box-all-wrap">
+                            <div class="comment-input-box-wrap">
+                                <div class="comment-input-wrap">
+                                    <div class="comment-input-username-container">${memberName}</div>
+                                    <form class="comment-input-container" method="post" data-hs-cf-bound="true">
+                                        <input class="comment-input" name="__RequestVerificationToken" type="hidden" value="lQ1k2HcglUXXMwOa0SIMa_JXSkG8dcFibXk3jrgj1xqrlfkZnxzZ69pIbMszXgP7-1CrLPr7j5y-xEsj8UfSWd2EpmvQnlNfBilqDAT5vUaOv7fZgaT00ILqYk8j9LZOYraW8JeO8poPFXuOtKyENA2" />
+                                        <input class="comment-input-hidden" name="CommunityBoardArticleId" hidden="" />
+                                        <textarea class="comment-input-guide" name="content" type="text" placeholder="댓글을 남겨주세요. 욕설, 비방글은 무통보 삭제됩니다." autocomplete="off" required=""></textarea>
+                                        <div class="comment-input-upload-wrap">
+                                            <div class="comment-input-upload-container">
+                                                <button class="comment-input-upload-button" id="comment-upload-button" type="submit">등록</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 위시리스트 댓글 개수 정보 부분 -->
+                        <div class="comment-count-wrap">댓글 ${replies.length}</div>
                         <!-- 위시리스트 전체 댓글 부분 -->
                         <div class="comment-list-box-wrap">
                             <!-- 댓글 구분선 -->
-                            <div class="comment-line"></div>
+                            <div class="comment-line"></div> 
                             <!-- 위시리스트 댓글 수정 부분 -->
                             <div class="comment-update-box-all-wrap hidden">
                                 <div class="comment-update-box-wrap">
                                     <div class="comment-update-wrap">
-                                        <div class="comment-update-username-container">댓글작성자</div>
+                                        <div class="comment-update-username-container">${reply.member_name}</div>
                                         <form class="comment-update-container" method="post" data-hs-cf-bound="true">
                                             <input class="comment-update" name="__RequestVerificationToken" type="hidden" value="lQ1k2HcglUXXMwOa0SIMa_JXSkG8dcFibXk3jrgj1xqrlfkZnxzZ69pIbMszXgP7-1CrLPr7j5y-xEsj8UfSWd2EpmvQnlNfBilqDAT5vUaOv7fZgaT00ILqYk8j9LZOYraW8JeO8poPFXuOtKyENA2" />
                                             <input class="comment-update-hidden" name="CommunityBoardArticleId" hidden="" />
@@ -264,14 +332,17 @@ const showList = (wishlists) => {
                                         <!-- 위시리스트 댓글 정보 부분 -->
                                         <div class="comment-info">
                                             <!-- 위시리스트 댓글 작성자 이름 부분 -->
-                                            <span>댓글작성자</span>
+                                            <span>${reply.member_name}</span>
                                             <!-- 위시리스트 댓글 작성 날짜 부분 -->
-                                            <span class="comment-info-date">1일 전</span>
+                                            <span class="comment-info-date">${timeForToday(reply.created_date)}</span>
                                         </div>
                                         <!-- 위시리스트 개별 댓글 내용 부분 -->
-                                        <div class="comment-text">댓글내용</div>
+                                        <div class="comment-text">${reply.reply_content}</div>
                                     </div>
                                 </div>
+            `
+            if(reply.member_id === Number(memberId)) {
+                text += `      
                                 <!-- 위시리스트 개별 댓글 메뉴 부분 -->
                                 <div>
                                     <button class="comment-menu" type="button" aria-haspopup="menu" data-headlessui-state>
@@ -288,6 +359,9 @@ const showList = (wishlists) => {
                                         </div>
                                     </div>
                                 </div>
+                `
+            }
+            text += `
                             </div>
                         </div>
                         <!-- 댓글 구분선 -->
@@ -300,122 +374,64 @@ const showList = (wishlists) => {
     return text;
 }
 
-wishlistService.getList(page,category, showList).then((text) => {
-    div.innerHTML = text;
-    // 위시리스트 게시글 메뉴 열고 닫기 이벤트
-    // 위시리스트 게시글 내 메뉴 버튼 쿼리
-    const wishlistPostMenuButton = document.querySelectorAll(".post-menu-container");
-    // 위시리스트 게시글 메뉴(기본 가려짐) 쿼리
-    const wishlistPostMenu = document.querySelectorAll(".post-menu-open");
-
-    // 위시리스트 게시글 내 메뉴 버튼 클릭 시 클릭 이벤트 발생
-    // 위시리스트 게시글 메뉴를 활성화 or 비활성화
-    wishlistPostMenuButton.forEach((btn, i) => {
-        wishlistPostMenuButton[i].addEventListener("click", () => {
-            wishlistPostMenu[i].classList.toggle("hidden");
-        });
-        // 위시리스트 메뉴 닫기 이벤트
-        // 여백 클릭 시 위시리스트 메뉴 자동 숨기기
-        document.addEventListener("click", () => {
-            if (!wishlistPostMenuButton[i] && !wishlistPostMenu[i]) {
-                console.log("눌러조")
-                wishlistPostMenu[i].classList.add("hidden");
-            }
-        });
-    })
-    // 위시리스트 게시글 댓글 열고 닫기 이벤트
-    // 위시리스트 댓글 열기 쿼리
-    const commentOpen = document.querySelectorAll(".comment-open-wrap");
-    // 위시리스트 게시글 닫기 쿼리
-    const commentClose = document.querySelectorAll(".comment-close-wrap");
-    // 위시리스트 댓글 쿼리
-    const comment = document.querySelectorAll(".comment-all-wrap");
+// 댓글 보기를 눌렀을 때 위시리스트별 댓글 보여주기
+div.addEventListener("click", async (e)  => {
+    // console.log(e.target.classList[0])
     // 위시리스트 댓글 열기 클릭 시 이벤트 발생
-    // 댓글 열기 버튼 비활성화 > 닫기 버튼, 댓글 목록 활성화
-    commentOpen.forEach((open, i) => {
-        commentOpen[i].addEventListener("click", () => {
-            // console.log("열렸다!")
-            commentOpen[i].classList.add("hidden");
-            commentClose[i].classList.remove("hidden");
-            comment[i].classList.remove("hidden");
+    if(e.target.classList[0] === 'reply-open-button'){
+        const wishlistId = e.target.classList[1]
+        // console.log(wishlistId)
+        const commentOpen = document.getElementById(`open${wishlistId}`)
+        const commentClose = document.getElementById(`close${wishlistId}`)
+        const comment = document.getElementById(`reply-form${wishlistId}`)
+
+        commentOpen.classList.add("hidden");
+        commentClose.classList.remove("hidden");
+        comment.classList.remove("hidden");
+
+        // 댓글이 열렸을 때 댓글 리스트 보여주기
+        wishlistService.replygetList(wishlistId, replyshowList).then((replies) => {
+            comment.innerHTML = replies;
+            // console.log(replies)
         })
-    })
+
     // 위시리스트 게시글 댓글 닫기 버튼 클릭 시 이벤트 발생
-    // 댓글 닫기 버튼, 댓글 목록 비활성화 > 댓글 열기 버튼 활성화
-    commentClose.forEach((close, i) => {
-        commentClose[i].addEventListener("click", () => {
-            // console.log("닫혔다!")
-            commentOpen[i].classList.remove("hidden");
-            commentClose[i].classList.add("hidden");
-            comment[i].classList.add("hidden");
-        });
-    })
-});
+    } else if(e.target.classList[0] === 'reply-close-button') {
+        const wishlistId = e.target.classList[1]
+        const commentOpen = document.getElementById(`open${wishlistId}`)
+        const commentClose = document.getElementById(`close${wishlistId}`)
+        const comment = document.getElementById(`reply-form${wishlistId}`)
 
+        commentOpen.classList.remove("hidden");
+        commentClose.classList.add("hidden");
+        comment.classList.add("hidden");
+    }
+})
 
-// 더보기 버튼 누르면 위시리스트 나오기
-moreButton.addEventListener("click", (e) => {
-    wishlistService.getList(++page, category, showList).then((text) => {
-        // console.log(category)
-        // console.log("더보기로 추가됐어요!")
-        div.innerHTML += text;
-            // 위시리스트 게시글 메뉴 열고 닫기 이벤트
-            // 위시리스트 게시글 내 메뉴 버튼 쿼리
-            const wishlistPostMenuButton = document.querySelectorAll(".post-menu-container");
-            // 위시리스트 게시글 메뉴(기본 가려짐) 쿼리
-            const wishlistPostMenu = document.querySelectorAll(".post-menu-open");
-
-            // 위시리스트 게시글 내 메뉴 버튼 클릭 시 클릭 이벤트 발생
-            // 위시리스트 게시글 메뉴를 활성화 or 비활성화
-            wishlistPostMenuButton.forEach((btn, i) => {
-                wishlistPostMenuButton[i].addEventListener("click", () => {
-                    wishlistPostMenu[i].classList.toggle("hidden");
-                });
-                // 위시리스트 메뉴 닫기 이벤트
-                // 여백 클릭 시 위시리스트 메뉴 자동 숨기기
-                document.addEventListener("click", () => {
-                    if (!wishlistPostMenuButton[i] && !wishlistPostMenu[i]) {
-                        console.log("눌러조")
-                        wishlistPostMenu[i].classList.add("hidden");
-                    }
-                });
-            })
-            // 위시리스트 게시글 댓글 열고 닫기 이벤트
-            // 위시리스트 댓글 열기 쿼리
-            const commentOpen = document.querySelectorAll(".comment-open-wrap");
-            // 위시리스트 게시글 닫기 쿼리
-            const commentClose = document.querySelectorAll(".comment-close-wrap");
-            // 위시리스트 댓글 쿼리
-            const comment = document.querySelectorAll(".comment-all-wrap");
-            // 위시리스트 댓글 열기 클릭 시 이벤트 발생
-            // 댓글 열기 버튼 비활성화 > 닫기 버튼, 댓글 목록 활성화
-            commentOpen.forEach((open, i) => {
-                commentOpen[i].addEventListener("click", () => {
-                    // console.log("열렸다!")
-                    commentOpen[i].classList.add("hidden");
-                    commentClose[i].classList.remove("hidden");
-                    comment[i].classList.remove("hidden");
-                })
-            })
-            // 위시리스트 게시글 댓글 닫기 버튼 클릭 시 이벤트 발생
-            // 댓글 닫기 버튼, 댓글 목록 비활성화 > 댓글 열기 버튼 활성화
-            commentClose.forEach((close, i) => {
-                commentClose[i].addEventListener("click", () => {
-                    // console.log("닫혔다!")
-                    commentOpen[i].classList.remove("hidden");
-                    commentClose[i].classList.add("hidden");
-                    comment[i].classList.add("hidden");
-                });
-            })
-    });
-
-    wishlistService.getList(page + 1,category).then((wishlists) => {
-        if (wishlists.length === 0) {
-            // console.log("사라졌지롱")
-            addButton.style.display = "none";
+// 위시리스트별 태그 추가하기
+const tagshowList = (tags) => {
+    let text = ``;
+    tags.forEach((tag) => {
+        console.log(replies.length)
+            text += `
+                                <span class="post-tag">${tag.tag_name}</span>
+                                <span class="post-tag">${tag.tag_name}</span>
+                                <span class="post-tag">${tag.tag_name}</span>
+                                <span class="post-tag">${tag.tag_name}</span>
+                                <span class="post-tag">${tag.tag_name}</span>
+            `
         }
-    });
+    );
+    return text;
+}
+
+const addTag = document.getElementById(`reply-form${wishlistId}`)
+wishlistService.taggetList(wishlistId, tagshowList).then((text) => {
+    addTag.innerHTML = text;
 });
+
+
+
 
 
 function timeForToday(datetime) {
