@@ -7,7 +7,8 @@ from django.views import View
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from activity.models import Activity
+from activity.models import Activity, ActivityLike
+from alarm.models import Alarm
 from club.models import Club, ClubMember
 from member.models import Member
 
@@ -65,7 +66,9 @@ class ClubDetailView(View):
             owner_phone=F('member__member_phone')).values(*columns)\
             .annotate(club_member_count=Count('clubmember', filter=Q(clubmember__status=1)))
 
-        club_activity_count = Club.objects.filter(id=club_id).values('id').annotate(club_activity_count=Count('activity')).first()
+        club_activity_count = Club.objects.filter(id=club_id).values('id')\
+            .annotate(club_activity_count=Count('activity')).first()
+
         club_list = list(club_list)
 
         club_list[0]['club_activity_count'] = club_activity_count.get('club_activity_count')
@@ -85,71 +88,99 @@ class ClubAPI(APIView):
 
 
 class ClubMemberAPI(APIView):
-    def get(self, request):
-        club_members = ClubMember.objects.filter(member=request.GET['member_id'], club=request.GET['club_id']).values()
+    def get(self, request, member_id, club_id):
+        club_members = ClubMember.objects.filter(member=member_id, club=club_id).values()
 
         return Response(club_members)
 
     @transaction.atomic
-    def patch(self, request):
-        data = request.data
-        member = Member.objects.get(id=data['member_id'])
-        club = Club.objects.get(id=data['club_id'])
+    def patch(self, request, member_id, club_id):
+        # data = request.data
+        member = Member.objects.get(id=member_id)
+        club = Club.objects.get(id=club_id)
         club_member, created = ClubMember.objects.get_or_create(member=member, club=club)
 
-        if created:
-            return Response('create-apply')
+        message = 'create-apply'
+        flag = True
+        alarm_type = 9
 
-        if club_member.status == -1:
-            club_member.status = 0
-            club_member.updated_date = timezone.now()
-            club_member.save(update_fields=['status', 'updated_date'])
-            return Response('cancel')
+        if not created:
+            if club_member.status == -1:
+                club_member.status = 0
+                club_member.updated_date = timezone.now()
+                club_member.save(update_fields=['status', 'updated_date'])
 
-        if club_member.status == 0:
-            club_member.status = -1
-            club_member.updated_date = timezone.now()
-            club_member.save(update_fields=['status', 'updated_date'])
-            return Response('apply')
+                message = 'cancel'
+                flag = False
 
-        if club_member.status == 1:
-            club_member.status = 0
-            club_member.updated_date = timezone.now()
-            club_member.save(update_fields=['status', 'updated_date'])
-            return Response('quit')
+            elif club_member.status == 0:
+                club_member.status = -1
+                club_member.updated_date = timezone.now()
+                club_member.save(update_fields=['status', 'updated_date'])
+
+                message = 'apply'
+
+            elif club_member.status == 1:
+                club_member.status = 0
+                club_member.updated_date = timezone.now()
+                club_member.save(update_fields=['status', 'updated_date'])
+
+                message = 'quit'
+                alarm_type = 10
+
+        if flag:
+            Alarm.objects.create(target_id=club_id, alarm_type=alarm_type, sender=member, receiver=club.member)
+
+        return Response(message)
 
 
-class ClubActivityAPI(APIView):
-    def get(self, request):
-        club = Club.objects.get(id=request.GET['club_id'])
-        columns = [
-            'id',
-            'activity_title',
-            'thumbnail_path',
-            'activity_start',
-        ]
+class ClubOngoingActivityAPI(APIView):
+    def get(self, request, club_id):
+        member = Member(**request.session['member'])
+        club = Club.objects.get(id=club_id)
 
-        finished_activities = club.activity_set.filter(activity_end__lte=timezone.now(), status=1).values(*columns)\
-            .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))\
-            .order_by('-id')
+        ongoing_activities = list(Activity.objects.filter(club=club, activity_end__gt=timezone.now(), status=1)
+                                  .values('id', 'activity_title', 'thumbnail_path', 'activity_start',)
+                                  .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1))))
+        print(ongoing_activities)
+        for ongoing_activity in ongoing_activities:
+            ongoing_activity['is_like'] = ActivityLike.enabled_objects.filter(activity=ongoing_activity['id'], member=member).exists()
 
-        ongoing_activities = club.activity_set.filter(activity_end__gt=timezone.now(), status=1).values(*columns)\
-            .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))\
+        return Response(ongoing_activities)
 
-        club_activities = {
-            'finished_activities': finished_activities,
-            'ongoing_activities': ongoing_activities
-        }
 
-        return Response(club_activities)
+class ClubFinishedActivityAPI(APIView):
+    def get(self, request, club_id, page):
+        member = Member(**request.session['member'])
+
+        row_count = 8
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        club = Club.objects.get(id=club_id)
+
+        finished_activities = list(Activity.objects.filter(club=club,activity_end__lte=timezone.now(), status=1)
+                                   .values('id', 'activity_title', 'thumbnail_path', 'activity_start')
+                                   .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))
+                                   .order_by('-id'))
+
+        for finished_activity in finished_activities:
+            finished_activity['is_like'] = ActivityLike.enabled_objects.filter(activity=finished_activity['id'], member=member).exists()
+
+        return Response(finished_activities[offset:limit])
 
 
 class ClubNoticeAPI(APIView):
-    def get(self, request):
-        club = Club.objects.get(id=request.GET['club_id'])
+    def get(self, request, club_id, page):
+        row_count = 4
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        club = Club.objects.get(id=club_id)
+
         club_notices = club.clubnotice_set.filter(status=1).values().order_by('-id')
 
-        return Response(club_notices)
+        return Response(club_notices[offset:limit])
 
 
 class ClubPrPostsView(View):
