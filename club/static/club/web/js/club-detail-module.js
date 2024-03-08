@@ -38,7 +38,16 @@ const clubDetailService = (() => {
         return clubNotices
     }
 
-    const getTeenplayList = async () => {}
+    const getTeenplayList = async (clubId, callback) => {
+        const response = fetch(`/club/club-teenplay-list/api/${clubId}`)
+        const teenplayList = await response
+        const teenplayInfo = await teenplayList.json()
+
+        if (callback){
+            return callback(teenplayInfo)
+        }
+        return teenplayInfo
+    }
 
     const updateClubMemberStatus = async (memberId, clubId) => {
         await fetch(`/clubs/club-member/api/${memberId}/${clubId}/`, {
@@ -67,5 +76,6 @@ const clubDetailService = (() => {
         getTPList: getTeenplayList,
         updateCMStatus: updateClubMemberStatus,
         updateActivityLike: updateActivityLike,
+        getTeenplayList: getTeenplayList
     }
 })()

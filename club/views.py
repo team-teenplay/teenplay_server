@@ -11,6 +11,7 @@ from activity.models import Activity, ActivityLike
 from alarm.models import Alarm
 from club.models import Club, ClubMember
 from member.models import Member
+from teenplay.models import TeenPlay
 
 
 class ClubIntroView(View):
@@ -186,3 +187,14 @@ class ClubNoticeAPI(APIView):
 class ClubPrPostsView(View):
     def get(self, request):
         return render(request, 'club/web/club-pr-posts-web.html')
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+class ClubTeenplayAPI(APIView):
+    def get(self,request, club_id):
+        context = {
+            'member': request.session['member'],
+            'club': Club.objects.filter(id=club_id).values(),
+            'teenplay_list': TeenPlay.objects.filter(club=club_id).values()
+        }
+
+        return Response(context)

@@ -4,6 +4,8 @@ from django.urls import path, include
 from club.views import ClubIntroView, ClubPrPostsView, ClubCreateView, ClubDetailView, ClubAPI, ClubMemberAPI, \
     ClubNoticeAPI, ClubOngoingActivityAPI, ClubFinishedActivityAPI
 
+from club.views import ClubTeenplayAPI
+
 app_name = 'club'
 
 urlpatterns = [
@@ -19,4 +21,5 @@ urlpatterns = [
     path('pr-post-detail/', ClubPrPostsView.as_view(), name='pr-post-detail'),
     path('pr-post-write/', ClubPrPostsView.as_view(), name='pr-post-write'),
     path('pr-post-update/', ClubPrPostsView.as_view(), name='pr-post-update'),
+    path('club-teenplay-list/api/<int:club_id>', ClubTeenplayAPI.as_view(), name='club-teenplay-api')
 ]
