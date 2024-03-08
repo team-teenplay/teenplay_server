@@ -63,6 +63,7 @@
                                                             <div class="divide-count-flex">
                                                                 <div class="leftover-box">
                                                                     <div class="leftover-text-c">
+                                                                        <span class="activity-like-count"></span>
                                                                         <span>{{ activity_member_count }}명 참가중</span>
                                                                     </div>
                                                                 </div>
@@ -130,11 +131,11 @@
                                         <span>모임 공지</span>
                                     </button>
                                 </li>
-{#                                <li class="list-five">#}
-{#                                    <button class="act-inquiry" type="button">#}
-{#                                        <span>행사 문의</span>#}
-{#                                    </button>#}
-{#                                </li>#}
+                                <li class="list-five">
+                                    <button class="act-inquiry" type="button">
+                                        <span>댓글</span>
+                                    </button>
+                                </li>
                                 <li class="list-six">
                                     <button class="act-suggestion" type="button">
                                         <span>추천 활동</span>
@@ -271,6 +272,19 @@
                                 <div class="feed-main-title">
                                     <span>공지/안내</span>
                                 </div>
+                                <div class="club-notice-more">
+                                        <a href="/club/detail/?id={{ club.id }}" class="club-notice-more-link">
+                                            <span>공지사항 더보기</span>
+                                            <svg class="s-profile-club-line" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    fill-rule="evenodd"
+                                                    clip-rule="evenodd"
+                                                    d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z"
+                                                    fill="#4A5568"
+                                                ></path>
+                                            </svg>
+                                        </a>
+                                    </div>
                             </div>
                             <div class="feed-middle-grid"></div>
                             <div class="feed-box">
@@ -309,9 +323,16 @@
                             <div class="comment-title">댓글</div>
                             <!-- 댓글 추가 부분 -->
                             <div class="k-comment-list-box-wrap">
-                                <div class="k-comment-list-all-wrap">
-                                    
-                                </div>
+                                <div class="k-comment-line"></div>
+                                <div class="k-comment-list-all-wrap"></div>
+                            </div>
+                            <div class="show-more-btn-wrap">
+                                <button class="show-more-btn">
+                                    <div>더보기</div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="show-more-arrow" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
                             </div>
                             <!-- 댓글 작성 부분 -->
                             <div class="k-comment-input-box-all-wrap">
@@ -403,6 +424,7 @@
             </div>
         </div>
     </main>
+    <div class="bg-for-modal"></div>
     <!-- 관심 활동 모달 -->
     <div class="k-club-modal-wrap" style="display: none">
         <div class="k-club-modal-bg"></div>
@@ -457,25 +479,17 @@
                 <div class="teenchin-box post-update-wrap" data-headlessui-state="open">
                     <div class="teenchin-items">
                         <!-- 틴친 프로필 사진 부분 -->
-                        <!-- 틴친 상세프로필 이동 주소 필요 -->
-                        <a href="">
-                            <div class="profile-img-contents">
-                                <div class="profile-img-box">
-                                    <!-- 프로필 사진이 있을 경우 이미지 사진 출력 -->
-                                    <!-- <img class="profile-img" src="/staticfiles/images/teenplay_logo/logo1.png"> -->
-                                    <!-- 프로필 기본 이미지 -->
-                                    <svg class="profile-defalut-img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd"></path>
-                                    </svg>
-                                </div>
-                                <!-- 틴친 프로필 이미지 여백 부분 -->
-                                <div class="profile-img-gap"></div>
+                        <div class="profile-img-contents">
+                            <div class="profile-img-box">
+                                <img class="profile-default-img" src="" alt="프로필사진">
                             </div>
-                            <!-- 틴친 프로필 이름 부분 -->
-                            <div class="profile-info-contents">
-                                <div class="profile-name">핏자</div>
-                            </div>
-                        </a>
+                            <!-- 틴친 프로필 이미지 여백 부분 -->
+                            <div class="profile-img-gap"></div>
+                        </div>
+                        <!-- 틴친 프로필 이름 부분 -->
+                        <div class="profile-info-contents">
+                            <div class="profile-name"></div>
+                        </div>
                         <!-- 틴친 프로필 버튼 부분 -->
                         <div class="teenchin-btn-container">
                             <div class="teenchin-btn-box">
@@ -534,13 +548,13 @@
                             <div class="sender-box">
                                 <div class="sender-title">보낸 사람</div>
                                 <!-- 회원의 이름과 이메일이 필요 -->
-                                <div class="send-sender-email" type="text">아무개(example@sample.com)</div>
+                                <div class="send-sender-email"></div>
                             </div>
                             <div class="receiver-box">
                                 <div class="receiver-title">받는 사람</div>
                                 <!-- 형식: 아무개(example@sample.com) -->
                                 <div class="send-receiver-email-box">
-                                    <input class="send-receiver-email" autocomplete="off" type="text" placeholder="example@sample.com" />
+                                    <div class="send-receiver-email"></div>
                                 </div>
                             </div>
                         </div>
@@ -558,8 +572,15 @@
         </div>
     </div>
     <input type="hidden" name="member-id" value="{{ request.session.member.id }}">
+    <input type="hidden" name="member-name" value="{{ request.session.member.member_nickname }}">
+    <input type="hidden" name="member-email" value="{{ request.session.member.member_email }}">
 {% endblock %}
 {% block js %}
+    <script>
+        const csrf_token = `{{ csrf_token }}`;
+    </script>
+    <script src="{% static 'activity/web/js/activity-like-module.js' %}"></script>
+    <script src="{% static 'activity/web/js/activity-letter-module.js' %}"></script>
     <script src="{% static 'activity/web/js/activity-reply-module.js' %}"></script>
     <script src="{% static 'activity/web/js/activity-detail-web.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>

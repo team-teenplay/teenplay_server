@@ -1422,7 +1422,6 @@ p {
 .k-comment-update-box-wrap {
     padding-top: 1rem;
     padding-bottom: 1rem;
-    display: none;
 }
 
 .k-comment-update-wrap {
@@ -1487,9 +1486,37 @@ p {
     width: 100%;
     height: 3rem;
     display: flex;
+    margin-right: 10px;
 }
 
+
 .k-comment-update-upload-button:hover {
+    background-color: #f2f4f5;
+}
+
+.k-comment-update-close-button {
+    --tw-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.05);
+    --tw-shadow-colored: 0 1px 1px 0 var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    line-height: 1;
+    font-weight: 400;
+    font-size: 0.8125rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+    border-width: 1px;
+    border-radius: 0.375rem;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 3rem;
+    display: flex;
+}
+
+.k-comment-update-close-button:hover {
     background-color: #f2f4f5;
 }
 
@@ -1499,11 +1526,17 @@ p {
     padding-bottom: 1rem;
     justify-content: space-between;
     display: flex;
+    flex-direction: column;
 }
 
 /*  개별 댓글 부분 */
 .k-comment-list-wrap {
     display: flex;
+    margin-bottom: 20px;
+    width: 100%;
+    flex-direction: row;
+    justify-content: flex-start;
+    position: relative;
 }
 
 /*  댓글 내 프로필 사진 부분 */
@@ -1516,6 +1549,7 @@ p {
     aspect-ratio: 1;
     display: flex;
     overflow: hidden;
+    cursor: pointer;
 }
 
 .k-comment-profile-icon {
@@ -1553,6 +1587,12 @@ p {
     font-size: 0.9375rem;
 }
 
+.comment-modify-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
 /*  개별 댓글 메뉴 부분 */
 .k-comment-menu {
     --tw-text-opacity: 1;
@@ -1568,6 +1608,8 @@ p {
 
 .k-comment-menu-open-wrap {
     position: relative;
+    z-index: 10;
+    display: none;
 }
 
 .k-comment-menu-open-container {
@@ -1588,7 +1630,6 @@ p {
     border-radius: 0.375rem;
     flex-direction: column;
     width: 7rem;
-    display: none;
 }
 
 .k-comment-menu-open-choice {
@@ -1601,6 +1642,36 @@ p {
 
 .k-comment-menu-open-choice:hover {
     background-color: #f2f4f5;
+}
+
+/* 댓글 더보기 부분 */
+.show-more-btn-wrap {
+    --tw-space-y-reverse: 0;
+    margin-bottom: 15px;
+}
+
+.show-more-btn {
+    padding: 1rem;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    display: flex;
+}
+
+.show-more-counts {
+    --tw-space-x-reverse: 0;
+    margin-right: calc(0.25rem*var(--tw-space-x-reverse));
+    margin-left: calc(0.25rem*(1 - var(--tw-space-x-reverse)));
+    --tw-text-opacity: 1;
+    color: rgb(135 141 145/var(--tw-text-opacity));
+}
+
+.show-more-arrow {
+    --tw-space-x-reverse: 0;
+    margin-right: calc(0.25rem*var(--tw-space-x-reverse));
+    margin-left: calc(0.25rem*(1 - var(--tw-space-x-reverse)));
+    width: 1.25rem;
+    height: 1.25rem;
 }
 
 /* 추가 기능 부분 */
@@ -1876,6 +1947,17 @@ p {
 .page-right-arror-button-icon {
     width: 1rem;
     height: 1rem;
+}
+
+.bg-for-modal {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 9;
+    top: 0;
+    bottom: 0;
+    background: transparent;
 }
 
 .k-club-modal-wrap {
@@ -2557,7 +2639,7 @@ button:focus {
     background-color: #ffffff;
 }
 
-.profile-defalut-img {
+.profile-default-img {
     width: 4rem;
     height: 4rem;
     margin: 1rem;
@@ -2787,22 +2869,16 @@ textarea[name='send-content']:focus {
 }
 
 .send-receiver-email {
-    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-    --tw-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
     line-height: 1;
     font-size: 0.9375rem;
     padding-top: 0.3rem;
     padding-bottom: 0.3rem;
-    padding-left: 0.75rem;
+    /*padding-left: 0.75rem;*/
     padding-right: 0.75rem;
     --tw-bg-opacity: 1;
     background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-    border-radius: 0.375rem;
     display: block;
     appearance: none;
-    border-color: rgba(0, 0, 0, 0.1);
-    border-width: 1px;
 }
 
 textarea[name="send-content"]::-webkit-scrollbar {
@@ -2890,7 +2966,6 @@ textarea {
     overflow: hidden;
 }
 
-.send-receiver-email-box,
 .letter-content-area {
     border-radius: 0.375rem;
     border-color: rgba(0, 0, 0, 0.1);
@@ -2920,6 +2995,23 @@ textarea {
     padding-bottom: 0.75rem;
     align-items: center;
     display: flex;
+}
+
+.club-notice-more {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: row;
+}
+
+.club-notice-more-link {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    color: rgb(135 141 145);
+}
+
+.club-notice-more-link:hover {
+    color: #171717;
 }
 
 .club-notice-boxes {
