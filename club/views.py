@@ -7,7 +7,8 @@ from django.views import View
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from activity.models import Activity
+from activity.models import Activity, ActivityLike
+from alarm.models import Alarm
 from club.models import Club, ClubMember
 from member.models import Member
 
@@ -99,59 +100,72 @@ class ClubMemberAPI(APIView):
         club = Club.objects.get(id=club_id)
         club_member, created = ClubMember.objects.get_or_create(member=member, club=club)
 
-        if created:
-            return Response('create-apply')
+        message = 'create-apply'
+        flag = True
+        alarm_type = 9
 
-        if club_member.status == -1:
-            club_member.status = 0
-            club_member.updated_date = timezone.now()
-            club_member.save(update_fields=['status', 'updated_date'])
-            return Response('cancel')
+        if not created:
+            if club_member.status == -1:
+                club_member.status = 0
+                club_member.updated_date = timezone.now()
+                club_member.save(update_fields=['status', 'updated_date'])
 
-        if club_member.status == 0:
-            club_member.status = -1
-            club_member.updated_date = timezone.now()
-            club_member.save(update_fields=['status', 'updated_date'])
-            return Response('apply')
+                message = 'cancel'
+                flag = False
 
-        if club_member.status == 1:
-            club_member.status = 0
-            club_member.updated_date = timezone.now()
-            club_member.save(update_fields=['status', 'updated_date'])
-            return Response('quit')
+            elif club_member.status == 0:
+                club_member.status = -1
+                club_member.updated_date = timezone.now()
+                club_member.save(update_fields=['status', 'updated_date'])
+
+                message = 'apply'
+
+            elif club_member.status == 1:
+                club_member.status = 0
+                club_member.updated_date = timezone.now()
+                club_member.save(update_fields=['status', 'updated_date'])
+
+                message = 'quit'
+                alarm_type = 10
+
+        if flag:
+            Alarm.objects.create(target_id=club_id, alarm_type=alarm_type, sender=member, receiver=club.member)
+
+        return Response(message)
 
 
 class ClubOngoingActivityAPI(APIView):
     def get(self, request, club_id):
+        member = Member(**request.session['member'])
         club = Club.objects.get(id=club_id)
-        columns = [
-            'id',
-            'activity_title',
-            'thumbnail_path',
-            'activity_start',
-        ]
 
-        # ongoing_activities = club.activity_set.filter(activity_end__gt=timezone.now(), status=1).values(*columns)\
-        #     .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))
-
-        ongoing_activities = Activity.objects.filter(club=club, activity_end__gt=timezone.now(), status=1).values(*columns) \
-            .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))
+        ongoing_activities = list(Activity.objects.filter(club=club, activity_end__gt=timezone.now(), status=1)
+                                  .values('id', 'activity_title', 'thumbnail_path', 'activity_start',)
+                                  .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1))))
+        print(ongoing_activities)
+        for ongoing_activity in ongoing_activities:
+            ongoing_activity['is_like'] = ActivityLike.enabled_objects.filter(activity=ongoing_activity['id'], member=member).exists()
 
         return Response(ongoing_activities)
 
 
 class ClubFinishedActivityAPI(APIView):
     def get(self, request, club_id, page):
+        member = Member(**request.session['member'])
+
         row_count = 8
         offset = (page - 1) * row_count
         limit = page * row_count
 
         club = Club.objects.get(id=club_id)
 
-        finished_activities = Activity.objects.filter(club=club,activity_end__lte=timezone.now(), status=1) \
-            .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1))) \
-            .values('id', 'activity_title', 'thumbnail_path', 'activity_start', 'participant_count') \
-            .order_by('-id')
+        finished_activities = list(Activity.objects.filter(club=club,activity_end__lte=timezone.now(), status=1)
+                                   .values('id', 'activity_title', 'thumbnail_path', 'activity_start')
+                                   .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))
+                                   .order_by('-id'))
+
+        for finished_activity in finished_activities:
+            finished_activity['is_like'] = ActivityLike.enabled_objects.filter(activity=finished_activity['id'], member=member).exists()
 
         return Response(finished_activities[offset:limit])
 

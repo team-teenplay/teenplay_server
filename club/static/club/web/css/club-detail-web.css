@@ -532,7 +532,6 @@ button, input, optgroup, select, textarea {
 }
 
 .club-detail-like-icon.full {
-    display: none;
     --tw-text-opacity: 1;
     color: rgb(232 103 98/var(--tw-text-opacity));
 }

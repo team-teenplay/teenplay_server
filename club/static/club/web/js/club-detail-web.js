@@ -200,12 +200,10 @@ activityFilterBtn.addEventListener("click", () => {
 
     clubDetailService.getOAList(club.id, createListService.showOngoingList).then((text) => {
         clubDetailActiveWrap.innerHTML = text;
-        // likeEvent()
     })
 
     clubDetailService.getFAList(club.id, page, createListService.showFinishedList).then((text) => {
         finishedEventsWrap.innerHTML = text
-        // likeEvent()
         showMoreFAListBtnCheck()
     })
 });
@@ -267,7 +265,6 @@ noticeFilterBtn.addEventListener("click", () => {
 
     clubDetailService.getCNList(club.id, page, createListService.showNoticeList).then((text) => {
         clubNoticeWrap.innerHTML = text
-        noticeClickEvent()
         showMoreCNListBtnCheck()
     })
 });
@@ -306,21 +303,51 @@ const modalLikeContainer = document.querySelector(".club-modal-like-wrap:not(.un
 const modalUnlikeContainer = document.querySelector(".club-modal-like-wrap.unlike");
 
 //
+clubDetailActiveWrap.addEventListener("click", (e) => {
+    const likeWrap = e.target.closest('.club-detail-like-wrap')
+
+    if (likeWrap) {
+        const ongoingActivityId= likeWrap.querySelector('svg').classList[2];
+        const ongoingLikeEmptyIcon = document.querySelector(`#empty${ongoingActivityId}`);
+        const ongoingLikeFullIcon = document.querySelector(`#full${ongoingActivityId}`);
+
+        modalWrap.style.display = "block";
+
+        if (ongoingLikeEmptyIcon.style.display === "none") {
+            clubDetailService.updateActivityLike(ongoingActivityId, false)
+            modalUnlikeContainer.style.display = "block";
+            modalLikeContainer.style.display = "none";
+            ongoingLikeEmptyIcon.style.display = "block";
+            ongoingLikeFullIcon.style.display = "none";
+        } else{
+            clubDetailService.updateActivityLike(ongoingActivityId, true)
+            modalUnlikeContainer.style.display = "none";
+            modalLikeContainer.style.display = "block";
+            ongoingLikeEmptyIcon.style.display = "none";
+            ongoingLikeFullIcon.style.display = "block";
+        }
+    }
+})
+
+//
 finishedEventsWrap.addEventListener("click", (e) => {
     const likeWrap = e.target.closest('.finished-events-like-wrap')
 
     if (likeWrap) {
-        const finishedActivityId= likeWrap.querySelector('svg').classList[2]
-        const finishedLikeEmptyIcon = document.getElementById(`empty${finishedActivityId}`);
-        const finishedLikeFullIcon = document.getElementById(`full${finishedActivityId}`);
+        const finishedActivityId= likeWrap.querySelector('svg').classList[2];
+        const finishedLikeEmptyIcon = document.querySelector(`#empty${finishedActivityId}`);
+        const finishedLikeFullIcon = document.querySelector(`#full${finishedActivityId}`);
 
         modalWrap.style.display = "block";
+
         if (finishedLikeEmptyIcon.style.display === "none") {
+            clubDetailService.updateActivityLike(finishedActivityId, false)
             modalUnlikeContainer.style.display = "block";
             modalLikeContainer.style.display = "none";
             finishedLikeEmptyIcon.style.display = "block";
             finishedLikeFullIcon.style.display = "none";
         } else{
+            clubDetailService.updateActivityLike(finishedActivityId, true)
             modalUnlikeContainer.style.display = "none";
             modalLikeContainer.style.display = "block";
             finishedLikeEmptyIcon.style.display = "none";
@@ -342,29 +369,30 @@ modalUnlikeExitBtn.addEventListener("click", exitModal);
 
 
 // 공지사항 각각 제목 클릭 시 세부 내용 표시
-const noticeClickEvent = () => {
-    const noticeContentWraps = document.querySelectorAll(".club-notice-content-wrap");
-    const noticeTitles = document.querySelectorAll(".club-notice-box");
-    const noticeShowBtns = document.querySelectorAll(".club-notice-show-icon");
-    const noticeHideBtns = document.querySelectorAll(".club-notice-hide-icon");
+clubNoticeWrap.addEventListener("click", (e) => {
+    const clubNoticeBox = e.target.closest(".club-notice-box")
 
-    noticeTitles.forEach((title, i) => {
-        title.addEventListener("click", () => {
-            if (noticeShowBtns[i].style.display === "block") {
-                noticeShowBtns[i].style.display = "none";
-                noticeHideBtns[i].style.display = "block";
-            } else {
-                noticeShowBtns[i].style.display = "block";
-                noticeHideBtns[i].style.display = "none";
-            }
-            if (noticeContentWraps[i].style.display === "none") {
-                noticeContentWraps[i].style.display = "block";
-            } else {
-                noticeContentWraps[i].style.display = "none";
-            }
-        });
-    });
-}
+    if (clubNoticeBox) {
+        const clubNoticeId= clubNoticeBox.querySelector('svg').classList[1]
+        const noticeContentWraps = document.getElementById(`content-wrap${clubNoticeId}`)
+        const clubNoticeShowIcon = document.getElementById(`show${clubNoticeId}`);
+        const clubNoticeHiddenIcon = document.getElementById(`hidden${clubNoticeId}`);
+
+        if (clubNoticeShowIcon.style.display === 'block') {
+            clubNoticeShowIcon.style.display = 'none'
+            clubNoticeHiddenIcon.style.display = 'block'
+        } else {
+            clubNoticeShowIcon.style.display = 'block'
+            clubNoticeHiddenIcon.style.display = 'none'
+        }
+        if (noticeContentWraps.style.display === "none") {
+            noticeContentWraps.style.display = "block"
+        } else{
+            noticeContentWraps.style.display = "none"
+        }
+    }
+})
+
 
 // 전달받은 date.slice(0,19)를 0월0일(0)형식으로 바꿔서 리턴하는 함수
 const changeDate = (dateStr) => {
@@ -417,12 +445,28 @@ const createListService = (() => {
                             <div class="club-detail-like-wrap">
                                 <button class="club-detail-like-button">
                                     <span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon empty ${ongoingActivity.id}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                `
+                if (ongoingActivity.is_like) {
+                   text += `
+                                        <svg id="empty${ongoingActivity.id}" xmlns="http://www.w3.org/2000/svg" style="display: none" class="club-detail-like-icon empty ${ongoingActivity.id}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                                         </svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon full ${ongoingActivity.id}" viewBox="0 0 20 20" fill="currentColor">
+                                        <svg id="full${ongoingActivity.id} xmlns="http://www.w3.org/2000/svg" style="display: block" class="club-detail-like-icon full ${ongoingActivity.id}" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
                                         </svg>
+                    `
+                } else{
+                    text += `
+                                        <svg id="empty${ongoingActivity.id}" xmlns="http://www.w3.org/2000/svg" style="display: block" class="club-detail-like-icon empty ${ongoingActivity.id}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                        </svg>
+                                        <svg id="full${ongoingActivity.id}" xmlns="http://www.w3.org/2000/svg" style="display: none" class="club-detail-like-icon full ${ongoingActivity.id}" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                        </svg>
+                    `
+                }
+
+                text += `
                                     </span>
                                 </button>
                             </div>
@@ -489,12 +533,28 @@ const createListService = (() => {
                             <div class="finished-events-like-wrap">
                                 <button class="finished-events-like-btn">
                                     <span>
-                                        <svg id="empty${finishedActivity.id}" xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon empty ${finishedActivity.id}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                `
+                if (finishedActivity.is_like) {
+                   text += `
+                                        <svg id="empty${finishedActivity.id}" xmlns="http://www.w3.org/2000/svg" style="display: none" class="club-detail-like-icon empty ${finishedActivity.id}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                                         </svg>
-                                        <svg id="full${finishedActivity.id}" xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon full ${finishedActivity.id}" viewBox="0 0 20 20" fill="currentColor">
+                                        <svg id="full${finishedActivity.id}" xmlns="http://www.w3.org/2000/svg" style="display: block" class="club-detail-like-icon full ${finishedActivity.id}" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
                                         </svg>
+                    `
+                } else{
+                    text += `
+                                        <svg id="empty${finishedActivity.id}" xmlns="http://www.w3.org/2000/svg" style="display: block" class="club-detail-like-icon empty ${finishedActivity.id}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                        </svg>
+                                        <svg id="full${finishedActivity.id}" xmlns="http://www.w3.org/2000/svg" style="display: none" class="club-detail-like-icon full ${finishedActivity.id}" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                        </svg>
+                    `
+                }
+
+                text += `
                                     </span>
                                 </button>
                             </div>
@@ -573,13 +633,17 @@ const createListService = (() => {
                                             <!-- 이 안에 제목이 들어갑니다. -->
                                             <div class="club-notice-title">${clubNotice.notice_title}</div>
                                         </div>
-                                        <svg xmlns="http://www.w3.org/2000/svg" style="display: block" class="club-notice-show-icon ${clubNotice.id}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
-                                        <svg xmlns="http://www.w3.org/2000/svg" style="display: none" class="club-notice-hide-icon ${clubNotice.id}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"></path></svg>
+                                        <svg id="show${clubNotice.id}" xmlns="http://www.w3.org/2000/svg" style="display: block" class="club-notice-show-icon ${clubNotice.id}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                        <svg id="hidden${clubNotice.id}" xmlns="http://www.w3.org/2000/svg" style="display: none" class="club-notice-hide-icon ${clubNotice.id}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"></path>
+                                        </svg>
                                     </div>
                                     <div class="club-notice-created-date">${clubNotice.created_date.slice(0, 10)}</div>
                                 </div>
                             </div>
-                            <div class="club-notice-content-wrap ${clubNotice.id}" style="display: none">
+                            <div id="content-wrap${clubNotice.id}" class="club-notice-content-wrap ${clubNotice.id}" style="display: none">
                                 <!-- 이 안에 내용이 들어갑니다. -->
                                 <div class="club-notice-content">${clubNotice.notice_content}</div>
                             </div>
@@ -644,20 +708,17 @@ showMoreNoticeBtn.addEventListener("click", () => {
     clubDetailService.getCNList(club.id, ++page, createListService.showNoticeList).then((text) => {
         clubNoticeWrap.innerHTML += text
     })
-    noticeClickEvent()
     showMoreCNListBtnCheck()
 })
 
 // 페이지 로드 시 fetch를 통해 진행중인 행사 정보를 가져와 넣어주는 이벤트
 clubDetailService.getOAList(club.id, createListService.showOngoingList).then((text) => {
     clubDetailActiveWrap.innerHTML = text;
-    // likeEvent()
 })
 
 // 페이지 로드 시 fetch를 통해 종료된 행사 정보를 가져와 넣어주는 이벤트
 clubDetailService.getFAList(club.id, page, createListService.showFinishedList).then((text) => {
     finishedEventsWrap.innerHTML = text
-    // likeEvent()
     showMoreFAListBtnCheck()
 })
 

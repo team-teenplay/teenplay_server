@@ -53,8 +53,10 @@ const clubDetailService = (() => {
         await getClubMemberInfo(memberId, clubId, createClubTopBtn);
     }
 
-    const updateActivityLike = async () => {
-
+    const updateActivityLike = async (activityId, isCreate) => {
+        console.log(activityId)
+        console.log(isCreate)
+        await fetch(`/activity/like?id=${activityId}&is-create=${isCreate}`);
     }
 
     return {
@@ -64,6 +66,6 @@ const clubDetailService = (() => {
         getCNList: getClubNotices,
         getTPList: getTeenplayList,
         updateCMStatus: updateClubMemberStatus,
-        updateActivityLike: updateActivityLike
+        updateActivityLike: updateActivityLike,
     }
 })()
