@@ -90,124 +90,19 @@
                                     <div class="club-detail-active-events">
                                         <div class="club-detail-active-desc">진행중인 활동</div>
                                         <div class="club-detail-active-wrap">
-                                            <!-- 여기서부터 fetch로 뿌리기-->
-{#                                            {% if ongoing_activities|length == 0 %}#}
-{#                                                <!-- 비어 있을 때 -->#}
-{#                                                <div class="club-detail-active-empty-wrap">#}
-{#                                                    <div class="club-detail-active-empty-container">#}
-{#                                                        <div class="club-detail-active-empty">진행중인 활동이 없습니다.</div>#}
-{#                                                    </div>#}
-{#                                                </div>#}
-{#                                            {% else %}#}
-{#                                                <!-- 내용 있을 때 -->#}
-{#                                                <div class="club-detail-active-container">#}
-{#                                                    <!-- 아래 div가 반복 -->#}
-{#                                                    <div class="club-detail-active">#}
-{#                                                        <div class="club-detail-img-wrap">#}
-{#                                                            <a href="https://event-us.kr/kcost1/event/77343" class="club-detail-img-link">#}
-{#                                                                <img src="/staticfiles/images/club/club-detail/club-detail-activity-img1.jpg" alt="활동 이미지" class="club-detail-img" />#}
-{#                                                            </a>#}
-{#                                                            <div class="club-detail-like-wrap">#}
-{#                                                                <button class="club-detail-like-button">#}
-{#                                                                    <span>#}
-{#                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">#}
-{#                                                                            <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>#}
-{#                                                                        </svg>#}
-{#                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon full" viewBox="0 0 20 20" fill="currentColor">#}
-{#                                                                            <path data-v-e13ecf0e="" fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>#}
-{#                                                                        </svg>#}
-{#                                                                    </span>#}
-{#                                                                </button>#}
-{#                                                            </div>#}
-{#                                                        </div>#}
-{#                                                        <div class="club-detail-desc-box">#}
-{#                                                            <div class="club-detail-date-wrap">#}
-{#                                                                <div>#}
-{#                                                                    <span class="club-detail-date"> 02월06일(화) </span>#}
-{#                                                                </div>#}
-{#                                                            </div>#}
-{#                                                            <div class="event-title-wrap">#}
-{#                                                                <a href="https://event-us.kr/kcost1/event/77343" class="event-title"> 마포구 직장인 독서모임 </a>#}
-{#                                                            </div>#}
-{#                                                            <div class="event-detail-wrap">#}
-{#                                                                <div class="event-price-wrap">#}
-{#                                                                    <span> 무료 </span>#}
-{#                                                                </div>#}
-{#                                                                <div class="event-usercount-wrap">#}
-{#                                                                    <span class="event-usercount"> 참여 384 </span>#}
-{#                                                                </div>#}
-{#                                                            </div>#}
-{#                                                        </div>#}
-{#                                                    </div>#}
-{#                                                </div>#}
-{#                                            {% endif %}#}
+                                            <!-- js로 채워지는 부분 -->
                                         </div>
                                     </div>
                                     <div class="club-detail-finished-events">
                                         <div class="finished-events-bold">종료 활동</div>
                                         <div class="finished-events-wrap">
-                                            <!-- 여기서부터 fetch로 뿌리기-->
-{#                                            {% if ended_activities|length == 0 %}#}
-{#                                                <!-- 비어 있을 때 -->#}
-{#                                                <div class="club-finished-events-empty-wrap">#}
-{#                                                    <div class="club-finished-events-empty-container">#}
-{#                                                        <div class="club-finished-events-empty">종료된 활동이 없습니다.</div>#}
-{#                                                    </div>#}
-{#                                                </div>#}
-{#                                            {% else %}#}
-{#                                                <!-- 내용 있을 때 -->#}
-{#                                                <div class="finished-events-container">#}
-{#                                                    <!-- 아래 div가 17번 반복 -->#}
-{#                                                    <!-- 처음에는 8개만 표시, 더보기 클릭 시 8개 더 표시 -->#}
-{#                                                    <!-- 이하 구분 시 구분점으로 주석 사용 -->#}
-{#                                                    <!-- 1 -->#}
-{#                                                    <div class="finished-events-boxes">#}
-{#                                                        <div class="finished-events-img-wrap">#}
-{#                                                            <a href="" class="finished-events-img-link">#}
-{#                                                                <img src="{% static 'club/web/images/club-detail/club-detail-activity-img1.jpg' %}" alt="활동 이미지" class="finished-events-img" />#}
-{#                                                                <div class="finished-events-img-back"></div>#}
-{#                                                            </a>#}
-{#                                                            <div class="finished-events-like-wrap">#}
-{#                                                                <button class="finished-events-like-btn">#}
-{#                                                                    <span>#}
-{#                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">#}
-{#                                                                            <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>#}
-{#                                                                        </svg>#}
-{#                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="club-detail-like-icon full" viewBox="0 0 20 20" fill="currentColor">#}
-{#                                                                            <path data-v-e13ecf0e="" fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>#}
-{#                                                                        </svg>#}
-{#                                                                    </span>#}
-{#                                                                </button>#}
-{#                                                            </div>#}
-{#                                                        </div>#}
-{#                                                        <div class="finished-events-desc-wrap">#}
-{#                                                            <div class="finished-events-finish-wrap">#}
-{#                                                                <div>#}
-{#                                                                    <div class="finished-events-finish">종료</div>#}
-{#                                                                </div>#}
-{#                                                            </div>#}
-{#                                                            <div class="finished-events-name-wrap">#}
-{#                                                                <a href="" class="finished-events-name"> 관악구 직장인 독서모임 </a>#}
-{#                                                            </div>#}
-{#                                                            <div class="finished-events-price-wrap">#}
-{#                                                                <div class="finished-events-price">#}
-{#                                                                    <span> 20,000원 </span>#}
-{#                                                                </div>#}
-{#                                                                <div class="finished-events-count-wrap">#}
-{#                                                                    <span class="finished-events-count"> 참여 288 </span>#}
-{#                                                                </div>#}
-{#                                                            </div>#}
-{#                                                        </div>#}
-{#                                                    </div>#}
-{#                                                </div>#}
-{#                                            {% endif %}#}
+                                            <!-- js로 채워지는 부분 -->
                                         </div>
                                         <!-- 위는 17개일 때의 예시이며 더 추가될 수 있습니다. -->
                                         <!-- 아래는 이제 더보기 버튼입니다. -->
-                                        <div class="show-more-btn-wrap">
-                                            <button class="show-more-btn">
+                                        <div class="show-more-finished-btn-wrap">
+                                            <button class="show-more-finished-btn">
                                                 <div>더보기</div>
-                                                <div class="show-more-counts">(8/17)</div>
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="show-more-arrow" viewBox="0 0 20 20" fill="currentColor">
                                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                                                 </svg>
@@ -219,79 +114,206 @@
                             <!-- 모임 정보 탭 클릭 시 표시되는 부분 -->
                             <div class="club-info">
                                 <div class="club-info-wrap">
-                                    {% if club.club_info == '' %}
-                                        <!-- 비어 있을 때 -->
-                                        <div class="club-info-empty-wrap">
-                                            <div class="club-info-empty-container">
-                                                <div class="club-info-empty">등록된 모임 정보가 없습니다.</div>
-                                            </div>
-                                        </div>
-                                    {% else %}
-                                        <!-- 내용 있을 때 -->
-                                        <div class="club-info-container">
-                                            <div class="club-info-texts">{{ club.club_info }}</div>
-                                        </div>
-                                    {% endif %}
+                                    <!-- js로 채워지는 부분 -->
+                                </div>
+                            </div>
+                            <!-- 모임 공지 탭 클릭 시 표시되는 부분 -->
+                            <div class="club-notice">
+                                <div class="club-notice-wrap">
+                                    <!-- js로 채워지는 부분 -->
+                                </div>
+                                <div class="show-more-notice-btn-wrap">
+                                    <button class="show-more-notice-btn">
+                                        <div>더보기</div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="show-more-arrow" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
                             <!-- 틴플레이 탭 클릭 시 표시되는 부분 -->
                             <div class="club-teenplay">
                                 <div class="club-teenplay-wrap">
-                                    <!-- 비어 있을 때 -->
-                                    <div class="club-teenplay-empty-wrap">
-                                        <div class="club-teenplay-empty-container">
-                                            <div class="club-teenplay-empty">업로드한 틴플레이가 없습니다.</div>
-                                        </div>
-                                    </div>
-                                    <!-- 내용 있을 때 -->
-                                    <!-- 무한 스크롤입니다. -->
-                                    <div class="club-teenplay-contents-wrap">
-                                        <div class="club-teenplay-contents-container">
-                                            <div class="club-teenplay-contents-boxes">
-                                                <div class="club-teenplay-contents-box">
-                                                    <!-- 아래 div가 반복 -->
-                                                    <div class="club-teenplay-contents">
-                                                        <a href="" class="club-teenplay-thumbnail-wrap">
-                                                            <img src="/staticfiles/images/club/club-detail/club-shorts-thumbnail5.png" class="club-teenplay-thumbnail" />
-                                                        </a>
-                                                        <div class="club-teenplay-details">
-                                                            <h3 class="club-teenplay-title-wrap">
-                                                                <a href="" class="club-teenplay-title-link">
-                                                                    <span class="club-teenplay-title">먹방이란 이런 것이다.mukbang (바닷물 색 실화?)</span>
-                                                                </a>
-                                                            </h3>
-                                                            <div class="club-teenplay-views-wrap">
-                                                                <div class="club-teenplay-views-container">
-                                                                    <?xml version="1.0" ?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>
-                                                                    <svg width="15px" height="15px" fill="currentColor" id="Layer_1" style="enable-background: new 0 0 64 64" version="1.1" viewBox="0 0 64 64" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                                                        <g>
-                                                                            <g id="Icon-Heart" transform="translate(178.000000, 230.000000)">
-                                                                                <path class="st0" d="M-146-177.1l-0.8-0.7c-18.2-14.8-23.1-20-23.1-28.5c0-7,5.7-12.6,12.6-12.6     c5.8,0,9.1,3.3,11.3,5.8c2.2-2.5,5.5-5.8,11.3-5.8c7,0,12.6,5.7,12.6,12.6c0,8.5-4.9,13.7-23.1,28.5L-146-177.1L-146-177.1z      M-157.3-216.3c-5.5,0-10,4.5-10,10c0,7.3,4.6,12.1,21.3,25.8c16.7-13.7,21.3-18.5,21.3-25.8c0-5.5-4.5-10-10-10     c-5,0-7.7,3-9.8,5.4l-1.5,1.7l-1.5-1.7C-149.6-213.3-152.3-216.3-157.3-216.3L-157.3-216.3z" id="Fill-18" />
-                                                                            </g>
-                                                                        </g>
-                                                                    </svg>
-                                                                    <span class="club-teenplay-views">2,024</span>
-                                                                </div>
-                                                                <div class="club-teenplay-date-container">1일 전</div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="club-teenplay-delete-wrap">
-                                                            <img src="/staticfiles/images/club/club-create/cover_delete_icon_white.png" class="club-teenplay-delete" />
-                                                            <img src="/staticfiles/images/club/club-detail/teenplay_delete_icon_hover.png" class="club-teenplay-delete-hover" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="tp-show-more-btn-wrap">
-                                            <button class="tp-show-more-btn">
-                                                <div>더보기</div>
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="tp-show-more-arrow" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
+{#                                    <!-- js로 채워지는 부분 -->#}
+{#                                    <!-- 비어 있을 때 -->#}
+{#                                    <div class="club-teenplay-empty-wrap">#}
+{#                                        <div class="club-teenplay-empty-container">#}
+{#                                            <div class="club-teenplay-empty">업로드한 틴플레이가 없습니다.</div>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                    <!-- 내용 있을 때 -->#}
+{#                                    <!-- 무한 스크롤입니다. -->#}
+{#                                    <div class="club-teenplay-contents-wrap">#}
+{#                                        <div class="club-teenplay-contents-container">#}
+{#                                            <div class="club-teenplay-contents-boxes">#}
+{#                                                <div class="club-teenplay-contents-box">#}
+{#                                                    <!-- 아래 div가 반복 -->#}
+{#                                                    <div class="club-teenplay-contents">#}
+{#                                                        <a href="" class="club-teenplay-thumbnail-wrap">#}
+{#                                                            <img src="/staticfiles/images/club/club-detail/club-shorts-thumbnail5.png" class="club-teenplay-thumbnail" />#}
+{#                                                        </a>#}
+{#                                                        <div class="club-teenplay-details">#}
+{#                                                            <h3 class="club-teenplay-title-wrap">#}
+{#                                                                <a href="" class="club-teenplay-title-link">#}
+{#                                                                    <span class="club-teenplay-title">먹방이란 이런 것이다.mukbang (바닷물 색 실화?)</span>#}
+{#                                                                </a>#}
+{#                                                            </h3>#}
+{#                                                            <div class="club-teenplay-views-wrap">#}
+{#                                                                <div class="club-teenplay-views-container">#}
+{#                                                                    <?xml version="1.0" ?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>#}
+{#                                                                    <svg width="15px" height="15px" fill="currentColor" id="Layer_1" style="enable-background: new 0 0 64 64" version="1.1" viewBox="0 0 64 64" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">#}
+{#                                                                        <g>#}
+{#                                                                            <g id="Icon-Heart" transform="translate(178.000000, 230.000000)">#}
+{#                                                                                <path class="st0" d="M-146-177.1l-0.8-0.7c-18.2-14.8-23.1-20-23.1-28.5c0-7,5.7-12.6,12.6-12.6     c5.8,0,9.1,3.3,11.3,5.8c2.2-2.5,5.5-5.8,11.3-5.8c7,0,12.6,5.7,12.6,12.6c0,8.5-4.9,13.7-23.1,28.5L-146-177.1L-146-177.1z      M-157.3-216.3c-5.5,0-10,4.5-10,10c0,7.3,4.6,12.1,21.3,25.8c16.7-13.7,21.3-18.5,21.3-25.8c0-5.5-4.5-10-10-10     c-5,0-7.7,3-9.8,5.4l-1.5,1.7l-1.5-1.7C-149.6-213.3-152.3-216.3-157.3-216.3L-157.3-216.3z" id="Fill-18" />#}
+{#                                                                            </g>#}
+{#                                                                        </g>#}
+{#                                                                    </svg>#}
+{#                                                                    <span class="club-teenplay-views">2,024</span>#}
+{#                                                                </div>#}
+{#                                                                <div class="club-teenplay-date-container">1일 전</div>#}
+{#                                                            </div>#}
+{#                                                        </div>#}
+{#                                                        <div class="club-teenplay-delete-wrap">#}
+{#                                                            <img src="/staticfiles/images/club/club-create/cover_delete_icon_white.png" class="club-teenplay-delete" />#}
+{#                                                            <img src="/staticfiles/images/club/club-detail/teenplay_delete_icon_hover.png" class="club-teenplay-delete-hover" />#}
+{#                                                        </div>#}
+{#                                                    </div>#}
+{#                                                    <!-- 2 -->#}
+{#                                                    <div class="club-teenplay-contents">#}
+{#                                                        <a href="" class="club-teenplay-thumbnail-wrap">#}
+{#                                                            <img src="/staticfiles/images/club/club-detail/club-shorts-thumbnail4.png" class="club-teenplay-thumbnail" />#}
+{#                                                        </a>#}
+{#                                                        <div class="club-teenplay-details">#}
+{#                                                            <h3 class="club-teenplay-title-wrap">#}
+{#                                                                <a href="" class="club-teenplay-title-link">#}
+{#                                                                    <span class="club-teenplay-title">대한민국에 이렇게 아름다운 여행지가?! 틴플과 함께라면 어디든 좋아 &gt;&lt;</span>#}
+{#                                                                </a>#}
+{#                                                            </h3>#}
+{#                                                            <div class="club-teenplay-views-wrap">#}
+{#                                                                <div class="club-teenplay-views-container">#}
+{#                                                                    <?xml version="1.0" ?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>#}
+{#                                                                    <svg width="15px" height="15px" fill="currentColor" id="Layer_1" style="enable-background: new 0 0 64 64" version="1.1" viewBox="0 0 64 64" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">#}
+{#                                                                        <g>#}
+{#                                                                            <g id="Icon-Heart" transform="translate(178.000000, 230.000000)">#}
+{#                                                                                <path class="st0" d="M-146-177.1l-0.8-0.7c-18.2-14.8-23.1-20-23.1-28.5c0-7,5.7-12.6,12.6-12.6     c5.8,0,9.1,3.3,11.3,5.8c2.2-2.5,5.5-5.8,11.3-5.8c7,0,12.6,5.7,12.6,12.6c0,8.5-4.9,13.7-23.1,28.5L-146-177.1L-146-177.1z      M-157.3-216.3c-5.5,0-10,4.5-10,10c0,7.3,4.6,12.1,21.3,25.8c16.7-13.7,21.3-18.5,21.3-25.8c0-5.5-4.5-10-10-10     c-5,0-7.7,3-9.8,5.4l-1.5,1.7l-1.5-1.7C-149.6-213.3-152.3-216.3-157.3-216.3L-157.3-216.3z" id="Fill-18" />#}
+{#                                                                            </g>#}
+{#                                                                        </g>#}
+{#                                                                    </svg>#}
+{#                                                                    <span class="club-teenplay-views">2,024</span>#}
+{#                                                                </div>#}
+{#                                                                <div class="club-teenplay-date-container">1일 전</div>#}
+{#                                                            </div>#}
+{#                                                        </div>#}
+{#                                                        <div class="club-teenplay-delete-wrap">#}
+{#                                                            <img src="/staticfiles/images/club/club-create/cover_delete_icon_white.png" class="club-teenplay-delete" />#}
+{#                                                            <img src="/staticfiles/images/club/club-detail/teenplay_delete_icon_hover.png" class="club-teenplay-delete-hover" />#}
+{#                                                        </div>#}
+{#                                                    </div>#}
+{#                                                    <!-- 3 -->#}
+{#                                                    <div class="club-teenplay-contents">#}
+{#                                                        <a href="" class="club-teenplay-thumbnail-wrap">#}
+{#                                                            <img src="/staticfiles/images/club/club-detail/club-shorts-thumbnail3.png" class="club-teenplay-thumbnail" />#}
+{#                                                        </a>#}
+{#                                                        <div class="club-teenplay-details">#}
+{#                                                            <h3 class="club-teenplay-title-wrap">#}
+{#                                                                <a href="" class="club-teenplay-title-link">#}
+{#                                                                    <span class="club-teenplay-title">이번엔 무려 "노르웨이"로?! 세계 각지로 뻗어나가는 틴플👏</span>#}
+{#                                                                </a>#}
+{#                                                            </h3>#}
+{#                                                            <div class="club-teenplay-views-wrap">#}
+{#                                                                <div class="club-teenplay-views-container">#}
+{#                                                                    <?xml version="1.0" ?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>#}
+{#                                                                    <svg width="15px" height="15px" fill="currentColor" id="Layer_1" style="enable-background: new 0 0 64 64" version="1.1" viewBox="0 0 64 64" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">#}
+{#                                                                        <g>#}
+{#                                                                            <g id="Icon-Heart" transform="translate(178.000000, 230.000000)">#}
+{#                                                                                <path class="st0" d="M-146-177.1l-0.8-0.7c-18.2-14.8-23.1-20-23.1-28.5c0-7,5.7-12.6,12.6-12.6     c5.8,0,9.1,3.3,11.3,5.8c2.2-2.5,5.5-5.8,11.3-5.8c7,0,12.6,5.7,12.6,12.6c0,8.5-4.9,13.7-23.1,28.5L-146-177.1L-146-177.1z      M-157.3-216.3c-5.5,0-10,4.5-10,10c0,7.3,4.6,12.1,21.3,25.8c16.7-13.7,21.3-18.5,21.3-25.8c0-5.5-4.5-10-10-10     c-5,0-7.7,3-9.8,5.4l-1.5,1.7l-1.5-1.7C-149.6-213.3-152.3-216.3-157.3-216.3L-157.3-216.3z" id="Fill-18" />#}
+{#                                                                            </g>#}
+{#                                                                        </g>#}
+{#                                                                    </svg>#}
+{#                                                                    <span class="club-teenplay-views">2,024</span>#}
+{#                                                                </div>#}
+{#                                                                <div class="club-teenplay-date-container">1일 전</div>#}
+{#                                                            </div>#}
+{#                                                        </div>#}
+{#                                                        <div class="club-teenplay-delete-wrap">#}
+{#                                                            <img src="/staticfiles/images/club/club-create/cover_delete_icon_white.png" class="club-teenplay-delete" />#}
+{#                                                            <img src="/staticfiles/images/club/club-detail/teenplay_delete_icon_hover.png" class="club-teenplay-delete-hover" />#}
+{#                                                        </div>#}
+{#                                                    </div>#}
+{#                                                    <!-- 4 -->#}
+{#                                                    <div class="club-teenplay-contents">#}
+{#                                                        <a href="" class="club-teenplay-thumbnail-wrap">#}
+{#                                                            <img src="/staticfiles/images/club/club-detail/club-shorts-thumbnail2.png" class="club-teenplay-thumbnail" />#}
+{#                                                        </a>#}
+{#                                                        <div class="club-teenplay-details">#}
+{#                                                            <h3 class="club-teenplay-title-wrap">#}
+{#                                                                <a href="" class="club-teenplay-title-link">#}
+{#                                                                    <span class="club-teenplay-title">틴친들과 함께한 일본 VLOG😘</span>#}
+{#                                                                </a>#}
+{#                                                            </h3>#}
+{#                                                            <div class="club-teenplay-views-wrap">#}
+{#                                                                <div class="club-teenplay-views-container">#}
+{#                                                                    <?xml version="1.0" ?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>#}
+{#                                                                    <svg width="15px" height="15px" fill="currentColor" id="Layer_1" style="enable-background: new 0 0 64 64" version="1.1" viewBox="0 0 64 64" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">#}
+{#                                                                        <g>#}
+{#                                                                            <g id="Icon-Heart" transform="translate(178.000000, 230.000000)">#}
+{#                                                                                <path class="st0" d="M-146-177.1l-0.8-0.7c-18.2-14.8-23.1-20-23.1-28.5c0-7,5.7-12.6,12.6-12.6     c5.8,0,9.1,3.3,11.3,5.8c2.2-2.5,5.5-5.8,11.3-5.8c7,0,12.6,5.7,12.6,12.6c0,8.5-4.9,13.7-23.1,28.5L-146-177.1L-146-177.1z      M-157.3-216.3c-5.5,0-10,4.5-10,10c0,7.3,4.6,12.1,21.3,25.8c16.7-13.7,21.3-18.5,21.3-25.8c0-5.5-4.5-10-10-10     c-5,0-7.7,3-9.8,5.4l-1.5,1.7l-1.5-1.7C-149.6-213.3-152.3-216.3-157.3-216.3L-157.3-216.3z" id="Fill-18" />#}
+{#                                                                            </g>#}
+{#                                                                        </g>#}
+{#                                                                    </svg>#}
+{#                                                                    <span class="club-teenplay-views">2,024</span>#}
+{#                                                                </div>#}
+{#                                                                <div class="club-teenplay-date-container">1일 전</div>#}
+{#                                                            </div>#}
+{#                                                        </div>#}
+{#                                                        <div class="club-teenplay-delete-wrap">#}
+{#                                                            <img src="/staticfiles/images/club/club-create/cover_delete_icon_white.png" class="club-teenplay-delete" />#}
+{#                                                            <img src="/staticfiles/images/club/club-detail/teenplay_delete_icon_hover.png" class="club-teenplay-delete-hover" />#}
+{#                                                        </div>#}
+{#                                                    </div>#}
+{#                                                    <!-- 5 -->#}
+{#                                                    <div class="club-teenplay-contents">#}
+{#                                                        <a href="" class="club-teenplay-thumbnail-wrap">#}
+{#                                                            <img src="/staticfiles/images/club/club-detail/club-shorts-thumbnail.png" class="club-teenplay-thumbnail" />#}
+{#                                                        </a>#}
+{#                                                        <div class="club-teenplay-details">#}
+{#                                                            <h3 class="club-teenplay-title-wrap">#}
+{#                                                                <a href="" class="club-teenplay-title-link">#}
+{#                                                                    <span class="club-teenplay-title">틴플레이어스 1기 중국 여행 궁금해?</span>#}
+{#                                                                </a>#}
+{#                                                            </h3>#}
+{#                                                            <div class="club-teenplay-views-wrap">#}
+{#                                                                <div class="club-teenplay-views-container">#}
+{#                                                                    <?xml version="1.0" ?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>#}
+{#                                                                    <svg width="15px" height="15px" fill="currentColor" id="Layer_1" style="enable-background: new 0 0 64 64" version="1.1" viewBox="0 0 64 64" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">#}
+{#                                                                        <g>#}
+{#                                                                            <g id="Icon-Heart" transform="translate(178.000000, 230.000000)">#}
+{#                                                                                <path class="st0" d="M-146-177.1l-0.8-0.7c-18.2-14.8-23.1-20-23.1-28.5c0-7,5.7-12.6,12.6-12.6     c5.8,0,9.1,3.3,11.3,5.8c2.2-2.5,5.5-5.8,11.3-5.8c7,0,12.6,5.7,12.6,12.6c0,8.5-4.9,13.7-23.1,28.5L-146-177.1L-146-177.1z      M-157.3-216.3c-5.5,0-10,4.5-10,10c0,7.3,4.6,12.1,21.3,25.8c16.7-13.7,21.3-18.5,21.3-25.8c0-5.5-4.5-10-10-10     c-5,0-7.7,3-9.8,5.4l-1.5,1.7l-1.5-1.7C-149.6-213.3-152.3-216.3-157.3-216.3L-157.3-216.3z" id="Fill-18" />#}
+{#                                                                            </g>#}
+{#                                                                        </g>#}
+{#                                                                    </svg>#}
+{#                                                                    <span class="club-teenplay-views">2,024</span>#}
+{#                                                                </div>#}
+{#                                                                <div class="club-teenplay-date-container">1일 전</div>#}
+{#                                                            </div>#}
+{#                                                        </div>#}
+{#                                                        <div class="club-teenplay-delete-wrap">#}
+{#                                                            <img src="/staticfiles/images/club/club-create/cover_delete_icon_white.png" class="club-teenplay-delete" />#}
+{#                                                            <img src="/staticfiles/images/club/club-detail/teenplay_delete_icon_hover.png" class="club-teenplay-delete-hover" />#}
+{#                                                        </div>#}
+{#                                                    </div>#}
+{#                                                </div>#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                        <div class="tp-show-more-btn-wrap">#}
+{#                                            <button class="tp-show-more-btn">#}
+{#                                                <div>더보기</div>#}
+{#                                                <svg xmlns="http://www.w3.org/2000/svg" class="tp-show-more-arrow" viewBox="0 0 20 20" fill="currentColor">#}
+{#                                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>#}
+{#                                                </svg>#}
+{#                                            </button>#}
+{#                                        </div>#}
+{#                                    </div>#}
                                 </div>
                             </div>
                         </div>
@@ -471,12 +493,12 @@
 {% endblock %}
 {% block js %}
     <script>
-        const club = {{ club_list|safe }}[0]
+        const club_list = {{ club_list|safe }}
         const memberId = {{ request.session.member.id|safe }}
         const csrftoken = '{{ csrf_token }}';
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-    <script src="{% static 'club/web/js/club-detail-model.js' %}"></script>
+    <script src="{% static 'club/web/js/club-detail-module.js' %}"></script>
     <script src="{% static 'club/web/js/club-detail-web.js' %}"></script>
 {% endblock %}
     
