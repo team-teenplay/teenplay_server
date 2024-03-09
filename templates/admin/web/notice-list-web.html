@@ -379,6 +379,7 @@
 {% block js %}
     <script>
         const csrf_token = '{{ csrf_token }}';
+        
         {#const memberId = '{{ request.session.member.id }}'#}
     </script>
     <script src="{% static 'admin/web/js/notice/admin-notice-module-web.js' %}"></script>
