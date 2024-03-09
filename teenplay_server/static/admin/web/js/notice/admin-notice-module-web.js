@@ -27,15 +27,10 @@ const adminNoticeService = (() => {
     //     callback(pagination)
     // }
 
-    const getPagination = async (page, pageNumber, callback) => {
-        const pageInt = parseInt(page, 10);  // 10진법으로 변환
-        const pageNumberInt= parseInt(pageNumber, 10);
-
-        console.log(pageInt)
-        console.log(pageNumberInt)
-
-        const response = await fetch(`/admin/notices/${pageInt}/?page_number=${pageNumberInt}`);
+    const getPagination = async (page, callback) => {
+        const response = await fetch(`/admin/notices/${page}/`);
         const pagination = await response.json();
+
         if (callback){
             return callback(pagination);
         }
