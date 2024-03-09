@@ -311,11 +311,11 @@ blockLocation.addEventListener("change",async (e) => {
 
 // 체크박스를 선택했을 때 div 추가되는 구문
 let endDateTie = document.querySelector(".end-date-tie");
-endDateTie.addEventListener("click", (e) => {
-    if (e.target.tagName == "INPUT") {
+endDateTie.addEventListener("click", async (e) => {
+    if (e.target.tagName === "INPUT") {
         if (e.target.checked) {
             let hiddenBg = document.querySelector(".hidden-filter-container-check");
-            hiddenBg.innerHTML += `<div class="find-filter-bg-two" id="date-end-activity style="display: flex" value="${e.target.value}">
+            hiddenBg.innerHTML += `<div class="find-filter-bg-two" id="date-end-activity" style="display: flex" value="${e.target.value}">
                                         <div id="date-text">${e.target.value}</div>
                                         <button class="find-filter-exit">
                                             <svg class="exit-icon-button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" id="exit-icon-button">
@@ -323,79 +323,71 @@ endDateTie.addEventListener("click", (e) => {
                                             </svg>
                                         </button>
                                     </div>`;
+            showFinished = true;
+            await getList(page, date, region, categories, showFinished, ordering, showList);
         }
     }
 });
 
 // 반대로 해당 버튼을 클릭했을 때 체크가 풀리는 부분을 만들어 줌
-endDateTie.addEventListener("click", (e) => {
-    if (e.target.tagName == "INPUT") {
+endDateTie.addEventListener("click", async (e) => {
+    if (e.target.tagName === "INPUT") {
         if (!e.target.checked) {
             let values = e.target.value;
             let divToRemove = document.querySelector(".find-filter-bg-two[value='" + values + "']");
             if (divToRemove) {
                 divToRemove.remove();
             }
+            showFinished = false;
+            await getList(page, date, region, categories, showFinished, ordering, showList);
             // divToRemove.parentNode.removeChild(divToRemove);
             // 위에서 div 생성 시 id값으로 생성해 줬기 때문에 해당 id 값을 찾아서 div를 지워주면 된다
         }
     }
 });
 
-// 버튼을 클릭했을 때 행사분야 display(checkbox) 선택해서 보여주기 위한 div 추가
-// > 행사분야의 체크박스를 선택했을 떄 나오는 input.value값을 알기위한 변수
+// 버튼을 클릭했을 때 활동분야 display(checkbox) 선택해서 보여주기 위한 div 추가
+// > 활동분야의 체크박스를 선택했을 떄 나오는 input.value값을 알기위한 변수
 let actCategoryCenter = document.querySelectorAll(".activity-center");
 
-// > 행사 분야 내부에 여러 카테고리 중 클릭이 가능한 부분이 있는지 확인을 위한 반복 구문 사용
+// > 활동분야 내부에 여러 카테고리 중 클릭이 가능한 부분이 있는지 확인을 위한 반복 구문 사용
 let categoryCheck = new Array(actCategoryCenter.length);
 categoryCheck.fill(false);
-actCategoryCenter.forEach((actCategory, i) => {
-    // > 해당 행사 구문에서 반복을 돌리던 중 check이벤트가 발생 시
-    actCategory.addEventListener("click", async (e) => {
-        if (categoryCheck[i]) return;
-        // > 해당 이벤트의 target의 태그 이름이 input일 때
-        if (e.target.tagName === "INPUT") {
-            // > input의 checked 가 true로 되었을 경우
-            if (e.target.checked) {
-                // > 숨겨진 항목을 표기하는 hidden div 내부에 target 의 value 값을 추가하여
-                // > 특정 HTML을 추가 한디
-                let hiddenBg = document.querySelector(".hidden-filter-container-check");
-                hiddenBg.innerHTML += `<div class="find-filter-bg-three ${e.target.nextElementSibling.innerText} ${e.target.value}" id="date-text-f-category style="display: flex">
-                                        <div id="date-text">${e.target.nextElementSibling.innerText}</div>
-                                        <button class="find-filter-exit">
-                                            <svg class="exit-icon-button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" id="exit-icon-button">
-                                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                                            </svg>
-                                        </button>
-                                    </div>`;
-                categoryCheck[i] = true;
-                if (!categories.includes(e.target.value)){
-                    categories.push(e.target.value);
-                }
-                await getList(page, date, region, categories, showFinished, ordering, showList);
-            }
-        }
-    });
-});
-// 반대로 해당 버튼을 클릭했을 때 체크가 풀리는 부분을 만들어 줌
-actCategoryCenter.forEach((actCategory, i) => {
-    actCategory.addEventListener("click", async (e) => {
-        if (e.target.tagName === "INPUT") {
-            let values = e.target.nextElementSibling.innerText;
-            let divToRemove = document.querySelector(`.find-filter-bg-three.${values}`);
-            if (divToRemove && !e.target.checked) {
-                divToRemove.remove();
-                categoryCheck[i] = false;
-                categories = categories.filter(item => item !== e.target.value);
-                await getList(page, date, region, categories, showFinished, ordering, showList);
-            }
-            // divToRemove.parentNode.removeChild(divToRemove);
-            // 위에서 div 생성 시 id값으로 생성해 줬기 때문에 해당 id 값을 찾아서 div를 지워주면 된다
-        }
-    });
-});
 
+// 각 활동분야 선택 시 hiddenBg에 내용 띄우기 (필터 추가하기)
+const manageCategoryHiddenBg = async (checkbox, i) => {
+    const hiddenBg = document.querySelector(".hidden-filter-container-check");
+    if (!categoryCheck[i]){
+        hiddenBg.innerHTML += `<div class="find-filter-bg-three ${checkbox.nextElementSibling.innerText} ${checkbox.value}" id="checkbox${checkbox.value}" style="display: flex">
+                                    <div id="date-text">${checkbox.nextElementSibling.innerText}</div>
+                                    <button class="find-filter-exit">
+                                        <svg class="exit-icon-button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" id="exit-icon-button">
+                                            <path class="exit-icon-button" fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
+                                </div>`;
+        categoryCheck[i] = true;
+        if (!categories.includes(checkbox.value)){
+            categories.push(checkbox.value);
+        }
+        await getList(page, date, region, categories, showFinished, ordering, showList);
+        return;
+    }
+    const filterToRemove = document.getElementById(`checkbox${checkbox.value}`);
+    filterToRemove.remove();
+    categoryCheck[i] = false;
+    if (categories.includes(checkbox.value)){
+        categories = categories.filter(item => item !== checkbox.value);
+    }
+    await getList(page, date, region, categories, showFinished, ordering, showList);
+}
 
+actCategoryCenter.forEach((center, i) => {
+    const checkbox = center.firstElementChild;
+    checkbox.addEventListener("click", async () => {
+        await manageCategoryHiddenBg(checkbox, i);
+    })
+})
 
 //  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // 필터 타이틀에서 x 버튼 클릭 시 display 가 none으로 변경되고 초기 상태로 돌아가는 기능
@@ -411,6 +403,8 @@ checkExit.addEventListener("click", (e) => {
                     otherRadio.checked = true;
                     date = '모든날';
                     page = 1;
+                    const dateRange = document.querySelector(".date-display-none");
+                    dateRange.style.display = "none";
                     await getList(page, date, region, categories, showFinished, ordering, showList);
                 } else {
                     otherRadio.checked = false;
@@ -439,17 +433,16 @@ checkExit.addEventListener("click", async (e) => {
     }
 });
 
-///////////////////////////////////////////////////////
-// 분야 : 여기서 버그 발견
+// 분야
 checkExit.addEventListener("click", async (e) => {
     if (e.target.classList.contains("exit-icon-button")) {
         let parentDiv = e.target.closest(".find-filter-bg-three");
         if (parentDiv) {
-            parentDiv.style.display = "none";
             const checkbox = document.querySelector(`.activity-chk.checkbox${parentDiv.classList[2]}`);
             checkbox.checked = false;
             categoryCheck[Number(parentDiv.classList[2])-1] = false;
             categories = categories.filter(item => item !== parentDiv.classList[2]);
+            parentDiv.remove();
             await getList(page, date, region, categories, showFinished, ordering, showList);
         }
     }
@@ -458,21 +451,23 @@ checkExit.addEventListener("click", async (e) => {
 // 모집 종료 행사
 let endDateCheck = document.querySelectorAll(".filter-space .end-date-tie");
 endDateCheck.forEach((textCategoryValue) => {
-    document.addEventListener("click", (e) => {
+    document.addEventListener("click", async (e) => {
         let divTest = e.target.closest("div");
         var checkedValue = divTest.getAttribute("value");
         // check가 되어있는 것 중에 값이 값이 같은게 있으면 삭제
         let chkBtn = document.querySelectorAll(".filter-space .end-date-tie .end-date-chk");
-        if (textCategoryValue.innerText == checkedValue) {
+        if (textCategoryValue.innerText === checkedValue) {
             chkBtn.forEach((inputName) => {
                 let divToRemove = document.querySelector(".find-filter-bg-two[value='" + checkedValue + "']");
                 if (divToRemove) {
                     divToRemove.remove();
                 }
-                if (inputName.getAttribute("value") == checkedValue) {
+                if (inputName.getAttribute("value") === checkedValue) {
                     inputName.checked = false;
                 }
             });
+            showFinished = false;
+            await getList(page, date, region, categories, showFinished, ordering, showList);
         }
     });
 });
