@@ -1491,7 +1491,7 @@ color: #9ca3af;
     padding: 0;
 }
 
-.main-user-bottom-reft{
+.main-user-bottom-left{
     opacity: .3;
     border-width: 1px;
     border-radius: 9999px;
@@ -1501,10 +1501,9 @@ color: #9ca3af;
     height: 32px;
     display: flex;
     border-color: #e6e6e7;
-
     color: #1d1d1e;
     fill: #1d1d1e;
-    cursor: default;
+    cursor: pointer;
     -webkit-appearance: button;
     background-color: transparent;
     background-image: none;
@@ -1574,7 +1573,7 @@ margin-left: 16px;}
     border-color: #e6e6e7;
     color: #1d1d1e;
     fill: #1d1d1e;
-    cursor: default;
+    cursor: pointer;
     -webkit-appearance: button;
     background-color: transparent;
     background-image: none;
@@ -1647,32 +1646,6 @@ margin-left: 16px;}
     padding: 0;
 }
 
-.main-user-bottom-reft{
-    opacity: .3;
-    border-width: 1px;
-    border-radius: 9999px;
-    justify-content: center;
-    align-items: center;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    border-color: #e6e6e7;
-
-    color: #1d1d1e;
-    fill: #1d1d1e;
-    cursor: default;
-    -webkit-appearance: button;
-    background-color: transparent;
-    background-image: none;
-    text-transform: none;
-    font-family: inherit;
-    font-size: 100%;
-    font-weight: inherit;
-    line-height: inherit;
-    margin: 0;
-    padding: 0;
-}
-
 .main-user-bottom-svg{
     width: 16px;
     height: 16px;
@@ -1691,32 +1664,6 @@ margin-left: 16px;}
     line-height: 18px;
     color: #1d1d1e;
     fill: #1d1d1e;
-}
-
-
-.main-user-bottom-right{
-    opacity: .3;
-    border-width: 1px;
-    border-radius: 9999px;
-    justify-content: center;
-    align-items: center;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    border-color: #e6e6e7;
-    color: #1d1d1e;
-    fill: #1d1d1e;
-    cursor: default;
-    -webkit-appearance: button;
-    background-color: transparent;
-    background-image: none;
-    text-transform: none;
-    font-family: inherit;
-    font-size: 100%;
-    font-weight: inherit;
-    line-height: inherit;
-    margin: 0;
-    padding: 0;
 }
 
   .main-wish-sellect{
