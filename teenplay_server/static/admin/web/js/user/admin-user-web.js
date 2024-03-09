@@ -2,7 +2,7 @@
 const statusName = document.querySelector(".main-user-status-name");
 // 체크박스
 const checkBox = document.querySelectorAll(".main-comment-list-checkbox");
-// 선택된 회원의 개수
+// 선택된 회원의 명수
 const totalCount = document.getElementById("total-count");
 // 상태 변경 버튼
 const statusUpdateButton = document.querySelector(".toggle-button")
@@ -55,6 +55,7 @@ statusName.addEventListener("click", () => {
                 statusUpdateButton.classList.remove("disabled");
             }
         });
+    checkBoxCount();
 
     // 체크 박스 반복하여 하나씩 가져오기
     checkBox.forEach((checkbox) => {
@@ -90,13 +91,6 @@ statusUpdateButton.addEventListener("click", (event) => {
     }
 });
 
-// 사유 입력
-function resizeTextarea() {
-    const textarea = document.getElementById("modal-text");
-    textarea.style.height = "auto";
-    textarea.style.height = textarea.scrollHeight + "px";
-}
-
 // 상태 변경 취소 버튼 클릭 시 모달 종료
 modalCloseButtons.addEventListener("click", () => {
     modal.classList.add("hidden");
@@ -120,9 +114,11 @@ ApplyButton.addEventListener("click", async () => {
     // 만약 체크 박스가 True라면,
     if (checkBox) {
         // 체크 박스에 포함된 user.id 정보 가져오기
-        const id = checkBox.getAttribute('data-user-id');
+        const idValue = checkBox.closest("li").getAttribute('data-id');
+        const id = document.querySelector(`li[data-id="${idValue}"]`);
         // 회원 상태 태그에 포함된 user.status 정보 가져오기
         const satus = statusBox.getAttribute('data-user-status');
+        console.log(id)
         // 만약, status가 -1(정지)이라면
         if (satus === '-1') {
             // 해당 유저의 status를 1(활동중)로 변경
