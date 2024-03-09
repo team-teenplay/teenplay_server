@@ -7,5 +7,9 @@ const activityLikeCountService = (() => {
         }
     }
 
-    return {getCount: getCount}
+    const addOrDeleteLike = async (activityId, isCreate) => {
+        await fetch(`/activity/like?id=${activityId}&is-create=${isCreate}`);
+    }
+
+    return {getCount: getCount, addOrDeleteLike: addOrDeleteLike}
 })()
