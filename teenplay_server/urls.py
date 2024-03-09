@@ -23,7 +23,7 @@ from main.views import MainView, FooterNoticeLatestAPI
 from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroductionView, CompanyNoticeListAPI, \
     AdminMessageView, AdminTeenplayView, AdminPromoteView, AdminActivityView, AdminWishlistView, AdminMeetingView, \
     AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView, AdminUserUpdateAPI, \
-    AdminNoticeUpdateAPI, AdminNoticePaginationAPI
+    AdminNoticeUpdateAPI, AdminNoticePaginationAPI, AdminNoticeWriteAPI
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -57,6 +57,8 @@ urlpatterns = [
     path('admin/notices/<int:page>/', AdminNoticePaginationAPI.as_view(), name='admin-notice-page-api'),
     path('admin/notice/delete/<int:notice_id>', AdminNoticeUpdateAPI.as_view(), name='admin-notice-delete-api'),
     path('admin/notice/write/', AdminNoticeWriteView.as_view(), name='admin-notice-write'),
+    # 추가
+    path('admin/notice/writes/', AdminNoticeWriteAPI.as_view(), name='admin-notice-write-api'),
     path('admin/comment/', AdminCommentView.as_view(), name='admin-comment'),
     path('terms/', include('terms.urls-web')),
     path('app/terms/', include('terms.urls-app')),

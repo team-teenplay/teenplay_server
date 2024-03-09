@@ -131,11 +131,11 @@
                             <p class="main-festival-info-categoty-titel">공지사항 카테고리</p>
                             <div class="main-festival-add-radio">
                                 <div class="main-festival-box" onclick="checkRadioAndStyle(this, 'radio-notice')">
-                                    <input oninput="updateButtonStatus()" type="radio" id="radio-notice" name="selection" value="공지사항" />
+                                    <input oninput="updateButtonStatus()" type="radio" id="radio-notice" name="selection" value="0" />
                                     <label for="radio-notice" style="cursor: pointer">공지사항</label>
                                 </div>
                                 <div class="main-festival-box" onclick="checkRadioAndStyle(this, 'radio-qr')">
-                                    <input oninput="updateButtonStatus()" type="radio" id="radio-qr" name="selection" value="자주묻는질문" />
+                                    <input oninput="updateButtonStatus()" type="radio" id="radio-qr" name="selection" value="1" />
                                     <label for="radio-qr" style="cursor: pointer">자주묻는질문</label>
                                 </div>
                             </div>
@@ -149,6 +149,11 @@
     </main>
 {% endblock %}
 {% block js %}
+    <script>
+        const csrf_token = '{{ csrf_token }}';
+    </script>
+    <script src="{% static 'admin/web/js/notice/admin-notice-module-web.js' %}"></script>
+    <script src="{% static 'admin/web/js/notice/create.js' %}"></script>
     <script src="{% static 'admin/web/js/notice/notice-create/admin-notice-create-button-web.js' %}"></script>
     <script src="{% static 'admin/web/js/notice/notice-create/admin-notice-create-redbox-web.js' %}"></script>
 {% endblock %}

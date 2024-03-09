@@ -288,6 +288,20 @@ class AdminNoticeWriteView(View):
         return render(request, 'admin/web/notice-create-web.html')
 
 
+class AdminNoticeWriteAPI(APIView):
+    def post(self, request):
+        data = request.data
+
+        data = {
+            'notice_title': data['notice_title'],
+            'notice_content': data['notice_content'],
+            'notice_type': data['notice_type']
+        }
+
+        Notice.objects.create(**data)
+        return Response('success')
+
+
 # 관리자 댓글 관리 페이지 이동
 class AdminCommentView(View):
     def get(self, request):
