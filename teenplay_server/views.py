@@ -227,8 +227,6 @@ class AdminNoticePaginationAPI(APIView):
         offset = (page - 1) * row_count
         limit = page * row_count
 
-        page_number = request.GET.get('pageNumber', 1)
-
         total = Notice.objects.filter(status=1).all().count()
 
         page_count = 5
@@ -249,20 +247,14 @@ class AdminNoticePaginationAPI(APIView):
             'real_end': real_end,
             'page_count': page_count,
         }
+
         ordering = '-id'
         if order == 'popular':
             ordering = '-post_read_count'
 
-
-
-        if page == page_number:
-            context['pagination'] = list(Notice.objects.filter(status=1) \
-                                  .values('id', 'notice_title', 'created_date', 'notice_content',
-                                          'notice_type').order_by(ordering)[offset:limit])
-        # elif page == 1:
-        #     context['pagination'] = list(Notice.objects.filter(status=1) \
-        #                                  .values('id', 'notice_title', 'created_date', 'notice_content',
-        #                                          'notice_type').order_by(ordering)[offset:limit])
+        context['pagination'] = list(Notice.objects.filter(status=1)\
+                                     .values('id', 'notice_title', 'created_date', 'notice_content', 'notice_type')\
+                                     .order_by(ordering)[offset:limit])
 
         return Response(context)
 
