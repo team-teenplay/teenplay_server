@@ -1,7 +1,7 @@
 import math
 
 from django.db import transaction
-from django.db.models import F
+from django.db.models import F, Q
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views import View
@@ -17,7 +17,10 @@ from pay.models import Pay
 from teenplay_server.category import Category
 import re
 
-def make_datetime(date, time):
+from teenplay_server.models import Region
+
+
+def make_datetime(date, time="00:00"):
     date = date.split("/")
     date = "-".join([date[2], date[0], date[1]])
     time = time + ":00"
@@ -248,6 +251,96 @@ class ActivityReplyAPI(APIView):
 
 class ActivityListWebView(View):
     def get(self, request):
-        return render(request, 'activity/web/activity-web.html')
+        regions = Region.objects.filter(status=True)
+        categories = Category.objects.filter(status=True)
+
+        context = {
+            'regions': list(regions),
+            'categories': list(categories)
+        }
+        return render(request, 'activity/web/activity-web.html', context=context)
 
 
+class ActivityListAPI(APIView):
+    def post(self, request):
+        data = request.data
+
+        member_id = request.session.get('member').get('id')
+
+        # 검색했을 시
+        keyword = data.get('keyword', '')
+        # 나머지들
+        page = int(data.get('page', 1))
+        date = data.get('date', '모든날')
+        region = data.get('region', '')
+        categories = data.get('categories', [])
+        show_finished = data.get('showFinished', False)
+        ordering = data.get('ordering', '새 행사순')
+
+        order_options = {
+            '추천순': '-id',
+            '새 행사순': '-id',
+            '모집 마감일순': 'recruit_end'
+        }
+
+        row_count = 12
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        condition = Q()
+
+        condition &= Q(activity_title__contains=keyword) | Q(activity_content__contains=keyword)
+
+        condition &= Q(activity_address_location__contains=region)
+        if date == '오늘':
+            condition &= Q(activity_start__lte=timezone.now(), activity_end__gte=timezone.now())
+        elif date == '이번주':
+            condition &= Q(activity_start__lte=timezone.now() + timezone.timedelta(days=7),
+                           activity_end__gte=timezone.now())
+        elif date == '이번달':
+            condition &= Q(activity_start__lte=timezone.now() + timezone.timedelta(weeks=4),
+                           activity_end__gte=timezone.now())
+        elif date == '모든날':
+            condition = condition
+        else:
+            start_date, end_date = date.split(' - ')
+            start_date = make_datetime(start_date)
+            end_date = make_datetime(end_date)
+            condition &= Q(activity_start__lte=end_date, activity_end__gte=start_date)
+
+        if categories:
+            condition &= Q(category_id__in=categories)
+
+        if not show_finished:
+            condition &= Q(recruit_start__lte=timezone.now(), recruit_end__gte=timezone.now())
+
+        total_count = Activity.enabled_objects.filter(condition).count()
+
+        page_count = 5
+        end_page = math.ceil(page / page_count) * page_count
+        start_page = end_page - page_count + 1
+        real_end = math.ceil(total_count / row_count)
+        end_page = real_end if end_page > real_end else end_page
+
+        if end_page == 0:
+            end_page = 1
+
+        page_info = {
+            'totalCount': total_count,
+            'startPage': start_page,
+            'endPage': end_page,
+            'page': page,
+            'realEnd': real_end,
+            'pageCount': page_count,
+        }
+
+        activities = list(Activity.enabled_objects.filter(condition)\
+                          .values().order_by(order_options[ordering])[offset:limit])
+        for activity in activities:
+            activity['member_count'] = ActivityMember.enabled_objects.filter(activity_id=activity['id']).count()
+            activity['is_like'] = ActivityLike.enabled_objects.filter(activity_id=activity['id'], member_id=member_id).exists()
+
+        activities.append(page_info)
+        activities.append(total_count)
+
+        return Response(activities)
