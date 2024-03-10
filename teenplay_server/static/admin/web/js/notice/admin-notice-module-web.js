@@ -37,6 +37,20 @@ const adminNoticeService = (() => {
         return pagination;
     }
 
+    const getCategory = async (page, categories, callback) => {
+        const category = parseInt(categories)
+        console.log(category)
+
+        const response = await fetch(`/admin/notices/${page}/?category=${category}`);
+        const pagination = await response.json();
+        console.log(pagination)
+
+        if (callback){
+            return callback(pagination);
+        }
+        return pagination;
+    }
+
 
     // 공지사항 삭제
     const remove = async (targetId) => {
@@ -53,5 +67,5 @@ const adminNoticeService = (() => {
 
     }
 
-    return {write: write, getPagination:getPagination, remove: remove}
+    return {write: write, getPagination:getPagination, getCategory: getCategory, remove: remove}
 })();

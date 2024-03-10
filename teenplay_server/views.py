@@ -221,8 +221,9 @@ class AdminNoticeView(View):
 class AdminNoticePaginationAPI(APIView):
     def get(self, request, page):
         order = request.GET.get('order', 'recent')
+        category = request.GET.get('category')
 
-        row_count = 1
+        row_count = 10
 
         offset = (page - 1) * row_count
         limit = page * row_count
@@ -240,6 +241,7 @@ class AdminNoticePaginationAPI(APIView):
             end_page = 1
 
         context = {
+            'category': category,
             'total': total,
             'order': order,
             'start_page': start_page,
@@ -252,9 +254,14 @@ class AdminNoticePaginationAPI(APIView):
         if order == 'popular':
             ordering = '-post_read_count'
 
-        context['pagination'] = list(Notice.objects.filter(status=1)\
-                                     .values('id', 'notice_title', 'created_date', 'notice_content', 'notice_type')\
-                                     .order_by(ordering)[offset:limit])
+        if category:
+            context['pagination'] = list(Notice.objects.filter(status=1, notice_type=category)\
+                                         .values('id', 'notice_title', 'created_date', 'notice_content', 'notice_type')\
+                                         .order_by(ordering)[offset:limit])
+        else:
+            context['pagination'] = list(Notice.objects.filter(status=1) \
+                                         .values('id', 'notice_title', 'created_date', 'notice_content', 'notice_type') \
+                                         .order_by(ordering)[offset:limit])
 
         return Response(context)
 
@@ -271,6 +278,7 @@ class AdminNoticeUpdateAPI(APIView):
         notice.save(update_fields=['status', 'updated_date'])
 
         return Response('success')
+
 
 
 
