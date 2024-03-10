@@ -9,8 +9,9 @@ from rest_framework.views import APIView
 
 from activity.models import Activity, ActivityLike
 from alarm.models import Alarm
-from club.models import Club, ClubMember
+from club.models import Club, ClubMember, ClubPost
 from member.models import Member
+from teenplay_server.category import Category
 
 
 class ClubIntroView(View):
@@ -183,6 +184,42 @@ class ClubNoticeAPI(APIView):
         return Response(club_notices[offset:limit])
 
 
-class ClubPrPostsView(View):
+class ClubPrPostWriteView(View):
+    def get(self, request):
+        club = Club.objects.get(id=request.GET['club_id'])
+
+        context = {
+            'club_id': club.id,
+            'club_name': club.club_name,
+        }
+
+        return render(request, 'club/web/club-pr-posts-write-web.html', context)
+
+    @transaction.atomic
+    def post(self, request):
+        datas = request.POST
+        files = request.FILES
+
+        category = Category.objects.get(category_name=datas['category'])
+
+        datas = {
+            'club': Club.objects.get(id=request.POST['club_id']),
+            'post_title': datas['title'],
+            'post_content': datas['content'],
+            'category': category,
+            'image_path': files['image']
+        }
+
+        club_post = ClubPost.objects.create(**datas)
+
+        return redirect(club_post.get_absolute_url())
+
+
+class ClubPrPostDetailView(View):
+    def get(self, request):
+        return render(request, 'club/web/club-pr-posts-detail-web.html')
+
+
+class ClubPrPostView(View):
     def get(self, request):
         return render(request, 'club/web/club-pr-posts-web.html')
