@@ -10,5 +10,5 @@ urlpatterns = [
     path('list/<int:page>/', WishListAPI.as_view(), name='list'),
     path('reply/write/', ReplyWriteAPI.as_view(), name='apply-write'),
     path('reply/list/', ReplyListAPI.as_view(), name='apply-list'),
-    path('tag/list/', TagListAPI.as_view(), name='tag-list'),
+    path('tag/list/<int:page>/', TagListAPI.as_view(), name='tag-list'),
 ]

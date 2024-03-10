@@ -40,9 +40,8 @@ const wishlistService = (() => {
         return replies;
     }
 
-    const taggetList = async (wishlistId, callback) => {
-        const response = await fetch(`/wishlist/tag/list/?id=${wishlistId}`);
-
+    const taggetList = async (page, callback) => {
+        const response = await fetch(`/wishlist/list/${page}/`);
         const tags = await response.json();
         if (callback) {
             return callback(tags);

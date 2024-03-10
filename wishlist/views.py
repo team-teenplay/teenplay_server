@@ -1,4 +1,4 @@
-from django.db.models import F
+from django.db.models import F, OuterRef
 from django.shortcuts import render
 from django.views import View
 from rest_framework.response import Response
@@ -50,8 +50,14 @@ class WishListAPI(APIView):
         else:
             wishlists = Wishlist.enabled_objects.annotate(member_name=F("member__member_nickname"),category_name=F("category__category_name")).values(*columns)
 
-        return Response(wishlists[offset:limit])
+        tags = WishlistTag.enabled_objects.values('tag_name', 'wishlist_id')
 
+        data = {
+            'wishlists': wishlists,
+            'tags': tags
+        }
+
+        return Response(data[offset:limit])
 
 # 댓글 작성
 class ReplyWriteAPI(APIView):
@@ -85,16 +91,18 @@ class ReplyListAPI(APIView):
         return Response(replies)
 
 
-# 태그 리스트 보여주기
 class TagListAPI(APIView):
-    def get(self, request):
-        wishlist_id = request.GET.get('id')
+    def get(self, request, page):
+        # 페이지당 3개의 게시물 보여주기
+        row_count = 3
+        offset = (page - 1) * row_count
+        limit = page * row_count
 
         columns = [
-            'wishlist_id',
             'tag_name',
+            'wishlist_id'
         ]
 
-        tags = WishlistTag.enabled_objects.filter(wishlist_id=wishlist_id).values(*columns)
+        tags = WishlistTag.enabled_objects.values(*columns)
 
-        return Response(tags)
+        return Response(tags[offset:limit])

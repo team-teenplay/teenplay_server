@@ -147,12 +147,12 @@ const showList = (wishlists) => {
                             <div class="post-title-text">${wishlist.wishlist_content}</div>
                         </div>
                             <!-- 위시리스트 게시글 태그 부분 -->
-                            <div class="post-tags-wrap" id="tag-form${wishlist.id}">
-<!--                                <span class="post-tag">태그 test1</span>-->
-<!--                                <span class="post-tag">태그 test2</span>-->
-<!--                                <span class="post-tag">태그 test3</span>-->
-<!--                                <span class="post-tag">태그 test4</span>-->
-<!--                                <span class="post-tag">태그 test5</span>-->
+                            <div class="post-tags-wrap">
+                                <span class="post-tag">${wishlist.tag_name}</span>
+                                <span class="post-tag">${wishlist.tag_name}</span>
+                                <span class="post-tag">${wishlist.tag_name}</span>
+                                <span class="post-tag">${wishlist.tag_name}</span>
+                                <span class="post-tag">${wishlist.tag_name}</span>
                             </div>
                     </div>
                     <!-- 위시리스트 댓글 열기 부분 -->
@@ -246,7 +246,7 @@ moreButton.addEventListener("click", (e) => {
 const replyshowList = (replies) => {
     let text = ``;
     replies.forEach((reply) => {
-        console.log(replies.length)
+        // console.log(replies.length)
         if(replies.length === 0) {
             text = `
                         <!-- 위시리스트 댓글 추가 부분 -->
@@ -407,28 +407,28 @@ div.addEventListener("click", async (e)  => {
         comment.classList.add("hidden");
     }
 })
-
-// 위시리스트별 태그 추가하기
-const tagshowList = (tags) => {
-    let text = ``;
-    tags.forEach((tag) => {
-        console.log(replies.length)
-            text += `
-                                <span class="post-tag">${tag.tag_name}</span>
-                                <span class="post-tag">${tag.tag_name}</span>
-                                <span class="post-tag">${tag.tag_name}</span>
-                                <span class="post-tag">${tag.tag_name}</span>
-                                <span class="post-tag">${tag.tag_name}</span>
-            `
-        }
-    );
-    return text;
-}
-
-const addTag = document.getElementById(`reply-form${wishlistId}`)
-wishlistService.taggetList(wishlistId, tagshowList).then((text) => {
-    addTag.innerHTML = text;
-});
+//
+// // 위시리스트별 태그 추가하기
+// const tagshowList = (tags) => {
+//     let text = ``;
+//     tags.forEach((tag) => {
+//         console.log(replies.length)
+//             text += `
+//                                 <span class="post-tag">${tag.tag_name}</span>
+//                                 <span class="post-tag">${tag.tag_name}</span>
+//                                 <span class="post-tag">${tag.tag_name}</span>
+//                                 <span class="post-tag">${tag.tag_name}</span>
+//                                 <span class="post-tag">${tag.tag_name}</span>
+//             `
+//         }
+//     );
+//     return text;
+// }
+//
+// const addTag = document.getElementById(`reply-form${wishlistId}`)
+// wishlistService.taggetList(wishlistId, tagshowList).then((text) => {
+//     addTag.innerHTML = text;
+// });
 
 
 
