@@ -1,3 +1,6 @@
+import datetime
+import math
+
 from django.db import models
 
 from club.managers import ClubManager, ClubMemberManager
@@ -71,6 +74,38 @@ class ClubPost(Period):
 
     class Meta:
         db_table = 'tbl_club_post'
+
+    def get_absolute_url(self):
+        return f'/club/pr-post-detail/?id={self.id}'
+
+    def change_date_format(self):
+        now = datetime.datetime.now()
+        create_date = self.created_date
+        gap = math.floor((now - create_date).seconds / 60)
+
+        if gap < 1:
+            return "방금 전"
+
+        if gap < 60:
+            return f"{gap}분 전"
+
+        gap = math.floor(gap / 60)
+
+        if gap < 24:
+            return f"{gap}시간 전"
+
+        gap = math.floor(gap / 24)
+
+        if gap < 31:
+            return f"{gap}일 전"
+
+        gap = math.floor(gap / 31)
+
+        if gap < 12:
+            return "${gap}개월 전"
+
+        gap = math.floor(gap / 12)
+        return f"{gap}년 전"
 
 
 class ClubPostReply(Period):

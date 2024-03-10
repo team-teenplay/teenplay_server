@@ -4,6 +4,7 @@ from django.db import transaction
 from django.db.models import Q, Count, F
 from django.shortcuts import render, redirect
 from django.views import View
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -100,6 +101,7 @@ class AdminUserView(View):
             end_page = 1
 
         context = {
+            'total': total,
             'order': order,
             'start_page': start_page,
             'end_page': end_page,
@@ -111,10 +113,31 @@ class AdminUserView(View):
         if order == 'popular':
             ordering = '-post_read_count'
 
-        context['users'] = list(Member.objects.filter(Q(status=1) | Q(status=-1))\
-                    .annotate(club_count=Count('club'), club_action_count=Count('clubmember__id', filter=Q(clubmember__status=1), distinct=True), activity_count=Count('club__activity'))\
-                    .values('id', 'member_nickname', 'created_date', 'club_count', 'club_action_count', 'activity_count', 'status').order_by(ordering))[offset:limit]
-        print(context['users'])
+        columns = [
+            'id',
+            'member_nickname',
+            'created_date',
+            'status'
+        ]
+
+        # context['users'] = list(Member.objects.filter(Q(status=1) | Q(status=-1))\
+        #             .annotate(club_count=Count('club'), club_action_count=Count('clubmember__id', filter=Q(clubmember__status=1), distinct=True), activity_count=Count('club__activity'))\
+        #             .values('id', 'member_nickname', 'created_date', 'club_count', 'club_action_count', 'activity_count', 'status').order_by(ordering))[offset:limit]
+
+        members = Member.objects.filter(Q(status=1) | Q(status=-1)).values(*columns).order_by(ordering)
+        club_count = members.values('id').annotate(club_count=Count('club'))
+        club_action_count = members.values('id').annotate(club_action_count=Count('clubmember', filter=Q(clubmember__status=1)))
+        activity_count = members.values('id').annotate(activity_count=Count('activitymember', filter=Q(activitymember__status=1)))
+        activity_club_count = members.values('id').annotate(activity_club_count=Count('club__activity', filter=Q(club__activity__status=1)))
+
+        for i in range(len(list(members))):
+            members[i]['club_count'] = club_count[i]['club_count']
+            members[i]['club_action_count'] = club_action_count[i]['club_action_count']
+            members[i]['activity_count'] = activity_count[i]['activity_count'] + activity_club_count[i]['activity_club_count']
+
+        print(members)
+
+        context['users'] = list(members[offset:limit])
 
         return render(request, 'admin/web/user-web.html', context)
 
@@ -184,13 +207,27 @@ class AdminFestivalWrite(View):
 # 관리자 공지사항 관리 페이지 이동
 class AdminNoticeView(View):
     def get(self, request):
-        order = request.GET.get('order', 'recent')
-        page = int(request.GET.get('page', 1))
+        return render(request, 'admin/web/notice-list-web.html')
 
-        row_count = 10
+
+# class AdminNoticeAPI(APIView):
+#     def get(self, request, page):
+#         notices = Notice.objects.filter(status=1).values('id', 'notice_title', 'created_date', 'notice_content', 'notice_type')
+#         row_count = 5
+#         offset = (page - 1) * row_count
+#         limit = page * row_count
+#         return Response(notices[offset:limit])
+
+class AdminNoticePaginationAPI(APIView):
+    def get(self, request, page):
+        order = request.GET.get('order', 'recent')
+
+        row_count = 1
 
         offset = (page - 1) * row_count
         limit = page * row_count
+
+        page_number = request.GET.get('pageNumber', 1)
 
         total = Notice.objects.filter(status=1).all().count()
 
@@ -205,10 +242,10 @@ class AdminNoticeView(View):
             end_page = 1
 
         context = {
+            'total': total,
             'order': order,
             'start_page': start_page,
             'end_page': end_page,
-            'page': page,
             'real_end': real_end,
             'page_count': page_count,
         }
@@ -216,10 +253,33 @@ class AdminNoticeView(View):
         if order == 'popular':
             ordering = '-post_read_count'
 
-        context['notice'] = list(Notice.objects.filter(status=1)\
-                    .values('id', 'notice_title', 'created_date', 'notice_content', 'notice_type').order_by(ordering))[offset:limit]
 
-        return render(request, 'admin/web/notice-list-web.html', context)
+
+        if page == page_number:
+            context['pagination'] = list(Notice.objects.filter(status=1) \
+                                  .values('id', 'notice_title', 'created_date', 'notice_content',
+                                          'notice_type').order_by(ordering)[offset:limit])
+        # elif page == 1:
+        #     context['pagination'] = list(Notice.objects.filter(status=1) \
+        #                                  .values('id', 'notice_title', 'created_date', 'notice_content',
+        #                                          'notice_type').order_by(ordering)[offset:limit])
+
+        return Response(context)
+
+
+class AdminNoticeUpdateAPI(APIView):
+    # 게시글 삭제
+    def patch(self, request, notice_id):
+        status = 0
+        updated_date = timezone.now()
+
+        notice = Notice.objects.get(id=notice_id)
+        notice.status = status
+        notice.updated_date = updated_date
+        notice.save(update_fields=['status', 'updated_date'])
+
+        return Response('success')
+
 
 
 # 관리자 공지사항 작성 페이지 이동
