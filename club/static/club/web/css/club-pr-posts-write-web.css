@@ -277,6 +277,15 @@ button, input, optgroup, select, textarea {
     margin-left: calc(0.25rem*(1 - var(--tw-space-x-reverse)));
 }
 
+.club-name {
+    max-width: 400px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 17px;
+    font-weight: 700;
+}
+
 .pr-write-button {
     --tw-border-opacity: 1;
     border-color: #CE201B;
