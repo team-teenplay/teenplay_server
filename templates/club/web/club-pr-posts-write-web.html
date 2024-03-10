@@ -22,15 +22,13 @@
             </div>
             <div class="pr-write-input-wrap">
                 <div class="pr-write-buttons-wrap">
-                    <a href="" class="pr-write-back-btn">
+                    <a href="{% url 'club:pr-post-list' %}" class="pr-write-back-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="pr-write-back-icon">
                             <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd"></path>
                         </svg>
                         <span class="pr-write-back-text">돌아가기</span>
                     </a>
-                    <span style="max-width: 300px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
-                        대충 모임 이름이 들어가는 자리입니다.대충 모임 이름이 들어가는 자리입니다.대충 모임 이름이 들어가는 자리입니다.대충 모임 이름이 들어가는 자리입니다.
-                    </span>
+                    <span class="club-name">{{ club_name }}</span>
                     <div>
                         <button class="pr-write-button" disabled>작성완료</button>
                     </div>
@@ -107,6 +105,7 @@
                     </div>
                 </div>
             </div>
+            <input type="hidden" name="club_id" value="{{ club_id }}">
         </form>
     </main>
 {% endblock %}
