@@ -1,7 +1,8 @@
 from django.urls import path, include
 
 from member.views import MemberLoginWebView, MemberJoinWebView, MypageInfoWebView, MypageDeleteWebView, \
-    MypageLetterWebView, MypageWriteAPIWebView, MypageListAPIWebView, MypageDeleteAPIWebView, MypageCheckAPIWebViewMa
+    MypageLetterWebView, MypageWriteAPIWebView, MypageListAPIWebView, MypageDeleteAPIWebView, MypageCheckAPIWebViewMa, \
+    MypageAlramView, MypageAlramAPIView, MypageAlramDeleteAPIView, MypageTeenchinview, MypageTeenchinAPIview
 
 app_name = 'member'
 
@@ -14,5 +15,11 @@ urlpatterns = [
     path('mypage-apiletter/', MypageWriteAPIWebView.as_view(), name='mypage-apiletter'),
     path('mypage-letter/<int:member_id>/<int:page>/', MypageListAPIWebView.as_view(), name='mypage-apilist'),
     path('mypage-letter/<int:letter_id>/', MypageDeleteAPIWebView.as_view(), name='mypage-apidelete'),
-    path('mypage-letterapi/' , MypageCheckAPIWebViewMa.as_view(), name='mypage-apicheck')
+    path('mypage-letterapi/' , MypageCheckAPIWebViewMa.as_view(), name='mypage-apicheck'),
+    path('mypage-alram/', MypageAlramView.as_view(), name='mypage-alram'),
+    path('mypage-alram/<int:member_id>/<int:page>/',MypageAlramAPIView.as_view(), name='mypage-apialram'),
+    path('mypage-alram/<int:alram_id>/', MypageAlramDeleteAPIView.as_view(), name='mypage-apideletealram'),
+    path('mypage-teenchin/', MypageTeenchinview.as_view(), name='mypage-teenchin'),
+    path('mypage-teenchin/<int:member_id>/<int:page>/', MypageTeenchinAPIview.as_view(), name='mypage-apiteenchin')
 ]
+

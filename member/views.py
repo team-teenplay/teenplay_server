@@ -5,6 +5,8 @@ from django.views import View
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from alarm.models import Alarm
+from friend.models import Friend
 from letter.models import Letter, ReceivedLetter, SentLetter
 from member.models import Member, MemberFavoriteCategory, MemberProfile
 from member.serializers import MemberSerializer
@@ -222,6 +224,7 @@ class MypageWriteAPIWebView(APIView):
 
         # SentLetter 모델 생성
         SentLetter.objects.create(letter_id=letter.id)
+        Alarm.objects.create(target_id=letter.id, alarm_type=4, sender_id=letter.sender_id, receiver_id= letter.receiver_id)
 
         return Response("good")
 
@@ -315,4 +318,44 @@ class MypageCheckAPIWebViewMa(APIView):
 
 
 
+class MypageAlramView(View):
+    @transaction.atomic
+    def get(self, request):
+        return render(request, 'mypage/web/my-signal-web.html')
 
+
+class MypageAlramAPIView(APIView):
+    @transaction.atomic
+    def get(self, request, member_id, page):
+        row_count = 5
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        alram = Alarm.objects.filter(receiver_id=member_id, status =1).values('id','alarm_type','receiver_id','created_date')[offset:limit]
+
+
+        return Response(alram)
+
+class MypageAlramDeleteAPIView(APIView):
+    @transaction.atomic
+    def delete(self, request, alram_id):
+        Alarm.objects.filter(id= alram_id).update(status = 0)
+        print(Alarm)
+
+
+        return Response('good')
+
+class MypageTeenchinview(View):
+    def get(self, request):
+        return  render(request, 'mypage/web/my-teenchin-web.html')
+
+class MypageTeenchinAPIview(APIView):
+    def get(self, request, member_id, page):
+        row_count = 2
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+
+        teenchin = Friend.objects.filter(receiver_id=member_id).values('id', 'is_friend')[offset:limit]
+
+        return Response(teenchin)

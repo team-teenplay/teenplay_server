@@ -56,69 +56,16 @@
                             <div class="contents">
                                 <div>
                                     <div class="service-title">알림 목록</div>
+                                        <div id="inner"></div>
                                     <!-- 무한스크롤로 되어 있어서 더보기 버튼이나 페이지 버튼이 없었음 -->
-                                    <div class="signal-container">
-                                        <div class="signal-box">
-                                            <div class="signal-top-box">
-                                                <div class="type-title">
-                                                    <div class="signal-type">댓글</div>
-                                                    <div class="target-title">당신이 작성한 위시리스트에 누가 댓글을 남겼어요!</div>
-                                                </div>
-                                                <div class="check-date">
-                                                    <div class="signal-delete">삭제</div>
-                                                    <div class="signal-date">2024-02-07</div>
-                                                </div>
-                                            </div>
-                                            <div class="signal-bottom-text">와 제 위시리스트랑 비슷하시네요! 같이 해보실 생각 있으신가요?</div>
-                                        </div>
+                                    <button class="teenchin-more-btn" type="button" id="more-button">
+                                    <div class="more-text-box">
+                                        <div style="margin-right: 0.5rem">더보기</div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="down-arrow-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
                                     </div>
-                                    <div class="signal-container">
-                                        <div class="signal-box">
-                                            <div class="signal-top-box">
-                                                <div class="type-title">
-                                                    <div class="signal-type">쪽지</div>
-                                                    <div class="target-title">누군가 당신에게 쪽지를 보냈어요! 확인하고 답장해 주세요.</div>
-                                                </div>
-                                                <div class="check-date">
-                                                    <div class="signal-delete">삭제</div>
-                                                    <div class="signal-date">2024-02-07</div>
-                                                </div>
-                                            </div>
-                                            <div class="signal-bottom-text">모임 가입 신청 주셨는데 제출 내용 중에 설명이 부족한 부분이 있어서 쪽지 보냅니다.</div>
-                                        </div>
-                                    </div>
-                                    <div class="signal-container">
-                                        <div class="signal-box">
-                                            <div class="signal-top-box">
-                                                <div class="type-title">
-                                                    <div class="signal-type">모임</div>
-                                                    <div class="target-title">강남구 개발자 취준생 스터디에서 활동을 개설했어요! 확인해보세요!</div>
-                                                </div>
-                                                <div class="check-date">
-                                                    <div class="signal-delete">삭제</div>
-                                                    <div class="signal-date">2024-02-07</div>
-                                                </div>
-                                            </div>
-                                            <div class="signal-bottom-text">주말 스터디 모임 참여하실분~ 5/10</div>
-                                        </div>
-                                    </div>
-                                    <div class="signal-container">
-                                        <div class="signal-box">
-                                            <div class="signal-top-box">
-                                                <div class="type-title">
-                                                    <div class="signal-type">활동</div>
-                                                    <div class="target-title">당신이 신청한 모임에서 소식이 왔어요!</div>
-                                                </div>
-                                                <div class="check-date">
-                                                    <div class="signal-delete">삭제</div>
-                                                    <div class="signal-date">2024-02-07</div>
-                                                </div>
-                                            </div>
-                                            <div class="signal-bottom-text">활동 신청이 접수 되었습니다.</div>
-                                        </div>
-                                    </div>
-                                    <!-- 알림이 없을 경우 -->
-                                    <div class="signal-none">아직 새로운 알림이 없습니다.</div>
+                                </button>
                                 </div>
                             </div>
                         </div>
@@ -139,15 +86,20 @@
                             <div class="signal-delete-ask">정말 삭제하시겠습니까?</div>
                         </div>
                         <div class="signal-delete-btns">
-                            <button class="delete-cancle-btn" type="button">취소하기</button>
-                            <button class="delete-check-btn" type="button">삭제하기</button>
+                            <button class="delete-cancle-btn" id="delete-cancle-btn" type="button">취소하기</button>
+                            <button class="delete-check-btn" id="delete-check-btn" type="button">삭제하기</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </body>
-
+{% endblock %}
 {% block js %}
+    <script>
+    const csrf_Token = '{{ csrf_token }}';
+    const member_id = '{{ request.session.member.id }}'
+    </script>
+    <script src="{% static 'member/web/js/my-signal-module-web.js' %}"></script>
     <script src="{% static 'member/web/js/my-signal-web.js' %}"></script>
 {% endblock %}
