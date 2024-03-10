@@ -1,23 +1,12 @@
 {% load static %}
 <header id="header">
-{#    <!-- 배너 부분 로컬 회원중 인증을 하지 않았을 때 표시 -->#}
-{#    <div class="banner-wrap">#}
-{#        <span> <span class="name_size">서경덕</span>님 </span>#}
-{#        <span class="certify-message">qwer1234@gmail.com 이메일을 확인하여 인증을 완료해주세요.</span>#}
-{#        <a class="send-email">#}
-{#            인증 메일 발송하기#}
-{#            <svg xmlns="http://www.w3.org/2000/svg" class="arrow" viewBox="0 0 20 20" fill="currentColor">#}
-{#                <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>#}
-{#            </svg>#}
-{#        </a>#}
-{#    </div>#}
     <!-- 네비 부분 -->
     <nav>
         <div class="main-nav-wrap">
             <div class="main-nav-container">
                 <div class="logo-and-search">
                     <!-- 메인페이지 경로 -->
-                    <a href="">
+                    <a href="/">
                         <!--  -->
                         <img class="logo-image" src="{% static 'public/web/images/logo/logo2.png' %}" alt="로고" />
                     </a>
@@ -51,6 +40,7 @@
                         {% else %}
                             <!-- 로그인 시 보이는 요소 -->
                             <div class="member-services">
+                                <input type="hidden" name="header-member-id" value="{{ request.session.member.id }}">
                                 <button class="member-service-menu-btn" type="button">
                                     <div class="member-service-menu-content">
                                         <span class="name-box">
@@ -131,6 +121,7 @@
                     <div class="category-group">
                         <div class="category-group-items">
                             <!-- 각 a태그에 링크 넣기 -->
+                            
                             <div class="category-item">
                                 <a href="" class="item-link">
                                     <span>문화·예술</span>

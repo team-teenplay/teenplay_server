@@ -126,3 +126,30 @@ recommendKeywordsMore.addEventListener("click", (e) => {
 });
 
 // 카테고리 불러오기
+
+
+// 닉네임 길이에 따라 헤더 내 알림 개수 위치 변경하기
+const memberNickname = document.querySelector("span.nicknaem").innerText;
+const alarmCountWrap = document.querySelector(".signal-sign-item");
+alarmCountWrap.style.left = `calc(100% - ${69 + (memberNickname.length - 2) * 6}px)`;
+
+
+// 알람 개수 띄우기
+const alarmCount1 = document.querySelector("div.signal-sign");
+const alarmCount2 = document.querySelector(".mypage-menu-signal-count");
+const memberId = document.querySelector("input[name=header-member-id]").value;
+
+const getAlarmCount = async (memberId, callback) => {
+    const response = await fetch(``);
+    const alarmCount = await response.json();
+    if (callback) {
+        callback(alarmCount);
+    }
+}
+
+const showAlarmCount = (alarmCount) => {
+    alarmCount1.innerText = alarmCount;
+    alarmCount2.innerText = alarmCount;
+}
+
+getAlarmCount(memberId, showAlarmCount)
