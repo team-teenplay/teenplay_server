@@ -29,12 +29,13 @@ const contentInput = document.querySelector(".pr-write-content");
 let tempDraggedFile = false;
 
 function checkValuesAndValidateButton() {
-    if (!categorySelect.value || !titleInput.value || !contentInput.value || (!imgInput.files.length && !tempDraggedFile)) {
+    if (!categorySelect.value || !titleInput.value || !contentInput.value || !imgInput.files.length) {
         writeBtn.disabled = true;
         return;
     }
     writeBtn.disabled = false;
 }
+
 categorySelect.addEventListener("change", () => {
     checkValuesAndValidateButton();
 });
@@ -109,6 +110,7 @@ fileRemoveBtn.addEventListener("click", (e) => {
     uploadedImageInfo.style.display = "none";
     fileSizeInfo.innerText = "";
     fileNameInfo.innerText = "";
+    checkValuesAndValidateButton();
 });
 
 
