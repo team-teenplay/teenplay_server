@@ -166,7 +166,7 @@ const showList = (activityLists) => {
                     <div class="activity-window">
                         <div class="act-window-image">
                             <a class="act-image-block" href="/activity/detail?id=${activity.id}">
-                                <img class="act-image" src="/upload/${activity.thumbnail_path}" alt="사업자를 위한 K세미나 [비용처리]/절세/자산관리]" />
+                                <img class="act-image" src="/upload/${activity.thumbnail_path}" alt="" />
                             </a>
                             <div class="like-button-box">
                                 <button class="like-btn-shadow" type="button">
