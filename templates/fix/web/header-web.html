@@ -1,23 +1,12 @@
 {% load static %}
 <header id="header">
-{#    <!-- 배너 부분 로컬 회원중 인증을 하지 않았을 때 표시 -->#}
-{#    <div class="banner-wrap">#}
-{#        <span> <span class="name_size">서경덕</span>님 </span>#}
-{#        <span class="certify-message">qwer1234@gmail.com 이메일을 확인하여 인증을 완료해주세요.</span>#}
-{#        <a class="send-email">#}
-{#            인증 메일 발송하기#}
-{#            <svg xmlns="http://www.w3.org/2000/svg" class="arrow" viewBox="0 0 20 20" fill="currentColor">#}
-{#                <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>#}
-{#            </svg>#}
-{#        </a>#}
-{#    </div>#}
     <!-- 네비 부분 -->
     <nav>
         <div class="main-nav-wrap">
             <div class="main-nav-container">
                 <div class="logo-and-search">
                     <!-- 메인페이지 경로 -->
-                    <a href="">
+                    <a href="/">
                         <!--  -->
                         <img class="logo-image" src="{% static 'public/web/images/logo/logo2.png' %}" alt="로고" />
                     </a>
@@ -51,6 +40,7 @@
                         {% else %}
                             <!-- 로그인 시 보이는 요소 -->
                             <div class="member-services">
+                                <input type="hidden" name="header-member-id" value="{{ request.session.member.id }}">
                                 <button class="member-service-menu-btn" type="button">
                                     <div class="member-service-menu-content">
                                         <span class="name-box">
@@ -129,91 +119,24 @@
                         </svg>
                     </button>
                     <div class="category-group">
-                        <div class="category-group-items">
-                            <!-- 각 a태그에 링크 넣기 -->
-                            <div class="category-item">
-                                <a href="" class="item-link">
-                                    <span>문화·예술</span>
-                                </a>
-                            </div>
-                            <div class="category-item">
-                                <a href="" class="item-link">
-                                    <span>운동·액티비티</span>
-                                </a>
-                            </div>
-                            <div class="category-item">
-                                <a href="" class="item-link">
-                                    <span>푸드·드링크</span>
-                                </a>
-                            </div>
-                            <div class="category-item">
-                                <a href="" class="item-link">
-                                    <span>취미</span>
-                                </a>
-                            </div>
-                            <div class="category-item">
-                                <a href="" class="item-link">
-                                    <span>여행·동행</span>
-                                </a>
-                            </div>
-                            <div class="category-item">
-                                <a href="" class="item-link">
-                                    <span>성장·자기개발</span>
-                                </a>
-                            </div>
-                            <div class="category-item">
-                                <a href="" class="item-link">
-                                    <span>동네·또래</span>
-                                </a>
-                            </div>
-                            <div class="category-item">
-                                <a href="" class="item-link">
-                                    <span>연애·소개팅</span>
-                                </a>
-                            </div>
-                            <div class="category-item">
-                                <a href="" class="item-link">
-                                    <span>재테크</span>
-                                </a>
-                            </div>
-                            <div class="category-item">
-                                <a href="" class="item-link">
-                                    <span>외국어</span>
-                                </a>
-                            </div>
-                            <div class="category-item">
-                                <a href="" class="item-link">
-                                    <span>스터디</span>
-                                </a>
-                            </div>
-                            <div class="category-item">
-                                <a href="" class="item-link">
-                                    <span>지역축제</span>
-                                </a>
-                            </div>
-                            <div class="category-item">
-                                <a href="" class="item-link">
-                                    <span>기타</span>
-                                </a>
-                            </div>
-                        </div>
+                        <div class="category-group-items"></div>
                         <div class="all-categories">
-                            <a href="" class="all-categories-link"> 전체 카테고리 </a>
+                            <a href="/activity/list" class="all-categories-link"> 전체 카테고리 </a>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- 각 페이지 경로 필요 -->
-            <a href="" class="sub-nav-name">
+            <a href="/wishlist/list/" class="sub-nav-name">
                 <span>위시 리스트</span>
             </a>
-            <a href="" class="sub-nav-name">
+            <a href="/club/pr-post-list/" class="sub-nav-name">
                 <span>모임 홍보</span>
             </a>
-            <a href="" class="sub-nav-name">
+            <a href="/activity/list/" class="sub-nav-name">
                 <span>활동 모집</span>
             </a>
-            <a href="" class="sub-nav-name">
+            <a href="/teenplay/all/" class="sub-nav-name">
                 <span>틴플레이</span>
             </a>
             <a href="" class="sub-nav-name">
@@ -222,7 +145,7 @@
             <div class="dividing-line">|</div>
             <div class="clup-open">
                 <!-- 모임개설 페이지 입력 필요 -->
-                <a href="{% url 'club:intro' %}" class="club-create-link">
+                <a href="/club/intro/" class="club-create-link">
                     <span>모임개설</span>
                 </a>
             </div>
@@ -230,31 +153,6 @@
     </nav>
 </header>
 <div id="modals-wrap">
-    <!-- 인증 메일 모달 div -->
-    <div>
-        <div>
-            <!-- 인증 메일 발송하기 클릭 시 block -->
-            <div class="send-email-modal-container" style="display: none">
-                <div class="send-email-modal-back"></div>
-                <div class="send-email-modal-shadow">
-                    <div class="send-email-modal-box">
-                        <div>
-                            <h2 class="send-header">
-                                <div class="check-image-box">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="check-svg" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                    </svg>
-                                </div>
-                                <div>메일이 전송되었습니다.</div>
-                            </h2>
-                            <p class="guide-message">메일을 확인해주세요.</p>
-                        </div>
-                        <button class="check-btn" type="button">확인</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <!-- 검색 모달 -->
     <div>
         <div>
