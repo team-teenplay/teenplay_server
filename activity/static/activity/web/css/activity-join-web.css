@@ -717,6 +717,8 @@ a {
     --tw-space-y-reverse: 0;
     margin-top: calc(0.625rem * (1 - var(--tw-space-y-reverse)));
     margin-bottom: calc(0.625rem * var(--tw-space-y-reverse));
+    --tw-bg-opacity: 1;
+    background-color: rgb(248 250 251 / var(--tw-bg-opacity));
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
     --tw-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
@@ -726,27 +728,32 @@ a {
     padding-bottom: 0.875rem;
     padding-left: 0.75rem;
     padding-right: 0.75rem;
-    --tw-bg-opacity: 1;
-    background-color: rgb(255 255 255 / var(--tw-bg-opacity));
     border-radius: 0.375rem;
     width: 100%;
     display: block;
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 0.15s;
+    pointer-events: none;
+    -moz-user-select: none;
+    user-select: none;
+    --tw-text-opacity: 1;
+    color: rgb(169 175 179 / var(--tw-text-opacity));
 }
 
-.input-name:focus {
-    --tw-border-opacity: 1;
-    border-color: #2563eb;
-    --tw-ring-opacity: 1;
-    --tw-ring-color: rgb(92 63 191 / var(--tw-ring-opacity));
-}
+/*.input-name:focus {*/
+/*    !*--tw-border-opacity: 1;*!*/
+/*    !*border-color: #2563eb;*!*/
+/*    !*--tw-ring-opacity: 1;*!*/
+/*    !*--tw-ring-color: rgb(92 63 191 / var(--tw-ring-opacity));*!*/
+/*    outline: none !important;*/
+/*    box-shadow: none !important;*/
+/*}*/
 
-.input-name:hover {
-    --tw-bg-opacity: 1;
-    background-color: rgb(248 250 251 / var(--tw-bg-opacity));
-}
+/*.input-name:hover {*/
+/*    --tw-bg-opacity: 1;*/
+/*    background-color: rgb(248 250 251 / var(--tw-bg-opacity));*/
+/*}*/
 
 .name-max-count {
     display: none;
@@ -825,6 +832,11 @@ a {
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 0.15s;
+}
+
+.input-email:focus {
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 .email-max-count {
@@ -1209,7 +1221,7 @@ a {
     overflow-y: auto;
     width: 100%;
     max-height: 100vh;
-    z-index: 10;
+    z-index: 9;
     top: 0;
 }
 

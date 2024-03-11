@@ -1,11 +1,11 @@
-// 동의합니다 radio 버튼 선택 체크
-let surveyRadioTie = document.querySelector(".survey-radio-tie");
-surveyRadioTie.addEventListener("click", (e) => {
-    let radio = document.querySelector(".ev-radio-111");
-    if (!radio.checked) {
-        radio.checked = "true";
-    }
-});
+// // 동의합니다 radio 버튼 선택 체크
+const surveyRadioTie = document.querySelector(".survey-radio-tie");
+// surveyRadioTie.addEventListener("click", (e) => {
+//     let radio = document.querySelector(".ev-radio-111");
+//     if (!radio.checked) {
+//         radio.checked = "true";
+//     }
+// });
 
 // 동의하기 약관 checkbox 전체 버튼 및 개별 선택 체크
 let aggreementAllChecks = document.querySelector(".aggreement-all-checks");
@@ -104,17 +104,20 @@ let nameInput = document.querySelector(".input-name");
 let phoneInput = document.querySelector(".input-address-phone");
 let purposeInput = document.querySelector(".input-purpose");
 let surveyRadioCheck = document.querySelector(".ev-radio-111");
+const surveyTitle = document.querySelector(".survey-title");
 
 let checkBox = document.querySelectorAll(".aggreement-items-box");
 
 let inputDangerText = document.querySelectorAll(".aggreement-items-box input");
 
-button.addEventListener("click", (e) => {
-    if (nameInput.value === "") {
+const validCheck = () => {
+     let check = true;
+     if (nameInput.value === "") {
         let nameHidden = document.querySelector(".name-hidden-display");
         nameHidden.style.display = "flex";
         nameInput.classList.add("invalid-input");
         nameInput.scrollIntoView({ behavior: "smooth", block: "start" });
+        check = false;
     }
 
     if (!surveyRadioCheck.checked) {
@@ -122,21 +125,48 @@ button.addEventListener("click", (e) => {
         radioCheckText.style.display = "flex";
         let surveyBox = document.querySelector(".survey-content-box");
         surveyBox.classList.add("invalid-input");
-        if (nameInput.value != "") {
-            surveyRadioCheck.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (nameInput.value !== "") {
+            surveyTitle.scrollIntoView({ behavior: "smooth", block: "start" });
         }
+        check = false;
     }
     inputDangerText.forEach((inputText, i) => {
-        console.log(inputText.checked);
         if (!inputText.checked) {
             dangerText[i].classList.add("none");
+            check = false;
         }
     });
+    return check;
+}
+
+
+button.addEventListener("click", (e) => {
+    let check = validCheck();
+    if (!check) return;
+    const activityTitle = document.querySelector(".content-top-title").innerText;
+    Swal.fire({
+            title: "활동을 신청하시겠습니까?",
+            text: `[${activityTitle}] 활동에 참가를 신청합니다.`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "신청",
+            cancelButtonText: "취소",
+        }).then((result) => {
+            if (result.value) {
+                Swal.fire("신청 완료", `[${activityTitle}] 활동에 참가 신청이 완료되었어요!`, "success");
+                const joinForm = document.getElementById("join-form");
+                joinForm.submit();
+            } else if (result.dismiss === "cancel") {
+                return;
+            }
+        });
 });
 
 // 이름을 입력하면 경고창 해제
 nameInput.addEventListener("keyup", (e) => {
-    if (nameInput.value != "") {
+    if (nameInput.value !== "") {
         let nameHidden = document.querySelector(".name-hidden-display");
         nameHidden.style.display = "none";
         nameInput.classList.remove("invalid-input");
@@ -153,6 +183,3 @@ surveyRadioTie.addEventListener("click", () => {
     }
 });
 
-// input 요소에 이메일 넣기
-const inputEmail = document.querySelector(".input-email");
-inputEmail.value = "kimkyusam@hello.com";

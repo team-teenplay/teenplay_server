@@ -467,6 +467,7 @@
 {% block js %}
     <script>
         const csrf_token = `{{ csrf_token }}`;
+        const selectedCategory = `{{ selectedCategory }}`;
     </script>
     <script src="{% static 'activity/web/js/activity-like-module.js' %}"></script>
     <script src="{% static 'activity/web/js/activity-web.js' %}"></script>
