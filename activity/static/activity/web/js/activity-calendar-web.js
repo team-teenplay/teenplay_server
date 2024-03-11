@@ -10,8 +10,11 @@ function initializeDatepicker() {
             startDate: today, // 시작 날짜를 오늘 날짜로 설정
             endDate: today, // 종료 날짜도 오늘 날짜로 설정하고 싶다면 여기에도 today 변수를 전달합니다.
         },
-        function (start, end, label) {
+        async function (start, end, label) {
             // console.log("A new date selection was made: " + start.format("YYYY-MM-DD") + " to " + end.format("YYYY-MM-DD"));
+            date = `${start.format('MM/DD/YYYY')} - ${end.format('MM/DD/YYYY')}`;
+            page = 1;
+            await getList(page, date, region, categories, showFinished, ordering, showList);
         }
     );
 }
