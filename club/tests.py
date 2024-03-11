@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from activity.models import Activity
-from club.models import Club, ClubMember
+from club.models import Club, ClubMember, ClubPostReply
 from member.models import Member
 from pay.models import Pay
 from teenplay_server.category import Category
@@ -66,23 +66,25 @@ class ClubTestCase(TestCase):
     #
     # Activity.objects.create(**columns)
 
-    club = Club.objects.get(id=8)
-    columns = [
-        'id', 'activity_title', 'thumbnail_path', 'activity_start',
-    ]
+    # club = Club.objects.get(id=8)
+    # columns = [
+    #     'id', 'activity_title', 'thumbnail_path', 'activity_start',
+    # ]
 
     # ongoing_activities = club.activity_set.filter(activity_end__gt=timezone.now(), status=1).values(*columns)\
     #     .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))
 
-    ongoing_activities = Activity.objects.filter(club=club, activity_end__gt=timezone.now(), status=1)\
-        .values('id', 'activity_title', 'thumbnail_path', 'activity_start')\
-        .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))
+    # ongoing_activities = Activity.objects.filter(club=club, activity_end__gt=timezone.now(), status=1)\
+    #     .values('id', 'activity_title', 'thumbnail_path', 'activity_start')\
+    #     .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))
+    #
+    # finished_activities = Activity.objects.filter(club=club, activity_end__lte=timezone.now(), status=1) \
+    #     .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1))) \
+    #     .values('id', 'activity_title', 'thumbnail_path', 'activity_start', 'participant_count') \
+    #     .order_by('-id')
 
-    finished_activities = Activity.objects.filter(club=club, activity_end__lte=timezone.now(), status=1) \
-        .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1))) \
-        .values('id', 'activity_title', 'thumbnail_path', 'activity_start', 'participant_count') \
-        .order_by('-id')
+    # print(ongoing_activities)
+    # print('=' * 20)
+    # print(finished_activities)
 
-    print(ongoing_activities)
-    print('=' * 20)
-    print(finished_activities)
+    ClubPostReply.objects.create(reply_content='모임 홍보글 댓글 테스트 내용8', club_post_id=1, member_id=2)

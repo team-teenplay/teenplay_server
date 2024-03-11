@@ -3,7 +3,7 @@ import math
 
 from django.db import models
 
-from club.managers import ClubManager, ClubMemberManager
+from club.managers import ClubManager, ClubMemberManager, ClubPostManager, ClubPostReplyManager
 from member.models import Member
 from teenplay_server.category import Category
 from teenplay_server.period import Period
@@ -72,6 +72,9 @@ class ClubPost(Period):
     # 0: 삭제, 1: 게시중
     status = models.BooleanField(default=1, null=False, blank=False)
 
+    enabled_objects = ClubPostManager()
+    objects = models.Manager()
+
     class Meta:
         db_table = 'tbl_club_post'
 
@@ -114,6 +117,9 @@ class ClubPostReply(Period):
     reply_content = models.TextField(null=False, blank=False)
     # 0: 삭제, 1: 게시중
     status = models.BooleanField(default=1, null=False, blank=False)
+
+    enabled_objects = ClubPostReplyManager()
+    objects = models.Manager()
 
     class Meta:
         db_table = 'tbl_club_post_reply'
