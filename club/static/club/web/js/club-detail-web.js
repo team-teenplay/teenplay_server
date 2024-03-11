@@ -237,10 +237,7 @@ infoFilterBtn.addEventListener("click", () => {
     clubInfoWrap.innerHTML = createListService.showClubInfo(club.club_info);
 });
 
-// 모임 공지 클릭 시 fetch 후 목록 뿌리는 이벤트
-noticeFilterBtn.addEventListener("click", () => {
-    page = 1
-
+const showNoticeTap = () => {
     activityFilterWrap.style.border = "none";
     infoFilterWrap.style.border = "none";
     tpFilterWrap.style.border = "none";
@@ -267,10 +264,41 @@ noticeFilterBtn.addEventListener("click", () => {
         clubNoticeWrap.innerHTML = text
         showMoreCNListBtnCheck()
     })
+}
+
+// 모임 공지 클릭 시 fetch 후 목록 뿌리는 이벤트
+noticeFilterBtn.addEventListener("click", () => {
+    page = 1
+    showNoticeTap()
+    // activityFilterWrap.style.border = "none";
+    // infoFilterWrap.style.border = "none";
+    // tpFilterWrap.style.border = "none";
+    // if (!activityFilterBtn.classList.contains("off")) {
+    //     activityFilterBtn.classList.add("off");
+    // }
+    // if (!infoFilterBtn.classList.contains("off")) {
+    //     infoFilterBtn.classList.add("off");
+    // }
+    // if (!tpFilterBtn.classList.contains("off")) {
+    //     tpFilterBtn.classList.add("off");
+    // }
+    // if (noticeFilterBtn.classList.contains("off")) {
+    //     noticeFilterBtn.classList.remove("off");
+    // }
+    // noticeFilterWrap.style.borderBottom = "2px solid #CE201B";
+    //
+    // activityContent.style.display = "none";
+    // infoContent.style.display = "none";
+    // noticeContent.style.display = "block";
+    // tpContent.style.display = "none";
+    //
+    // clubDetailService.getCNList(club.id, page, createListService.showNoticeList).then((text) => {
+    //     clubNoticeWrap.innerHTML = text
+    //     showMoreCNListBtnCheck()
+    // })
 });
 
-// 틴플레이 클릭 시 fetch 후 목록 뿌리는 이벤트
-tpFilterBtn.addEventListener("click", () => {
+const showTeenplayTap = () => {
     activityFilterWrap.style.border = "none";
     infoFilterWrap.style.border = "none";
     noticeFilterWrap.style.border = "none";
@@ -292,6 +320,33 @@ tpFilterBtn.addEventListener("click", () => {
     infoContent.style.display = "none";
     noticeContent.style.display = "none";
     tpContent.style.display = "block";
+}
+
+// 틴플레이 클릭 시 fetch 후 목록 뿌리는 이벤트
+tpFilterBtn.addEventListener("click", () => {
+    page = 1
+    showTeenplayTap()
+    // activityFilterWrap.style.border = "none";
+    // infoFilterWrap.style.border = "none";
+    // noticeFilterWrap.style.border = "none";
+    // if (!activityFilterBtn.classList.contains("off")) {
+    //     activityFilterBtn.classList.add("off");
+    // }
+    // if (!infoFilterBtn.classList.contains("off")) {
+    //     infoFilterBtn.classList.add("off");
+    // }
+    // if (tpFilterBtn.classList.contains("off")) {
+    //     tpFilterBtn.classList.remove("off");
+    // }
+    // if (!noticeFilterBtn.classList.contains("off")) {
+    //     noticeFilterBtn.classList.add("off");
+    // }
+    // tpFilterWrap.style.borderBottom = "2px solid #CE201B";
+    //
+    // activityContent.style.display = "none";
+    // infoContent.style.display = "none";
+    // noticeContent.style.display = "none";
+    // tpContent.style.display = "block";
 
 });
 
@@ -599,7 +654,7 @@ const createListService = (() => {
         } else{
             text += `
                 <div class="club-info-container">
-                    <div class="club-info-texts">${ clubInfo }</div>
+                    <div class="club-info-texts">${ clubInfo.replace(/\n/g, '<br>') }</div>
                 </div>
             `
         }
@@ -645,7 +700,7 @@ const createListService = (() => {
                             </div>
                             <div id="content-wrap${clubNotice.id}" class="club-notice-content-wrap ${clubNotice.id}" style="display: none">
                                 <!-- 이 안에 내용이 들어갑니다. -->
-                                <div class="club-notice-content">${clubNotice.notice_content}</div>
+                                <div class="club-notice-content">${clubNotice.notice_content.replace(/\n/g, '<br>')}</div>
                             </div>
                         </div>
                     </div>
@@ -711,16 +766,23 @@ showMoreNoticeBtn.addEventListener("click", () => {
     showMoreCNListBtnCheck()
 })
 
-// 페이지 로드 시 fetch를 통해 진행중인 행사 정보를 가져와 넣어주는 이벤트
-clubDetailService.getOAList(club.id, createListService.showOngoingList).then((text) => {
-    clubDetailActiveWrap.innerHTML = text;
-})
+if (club.view === 'notice') {
+    showNoticeTap()
+} else if (club.view === 'activity') {
+    // 페이지 로드 시 fetch를 통해 진행중인 행사 정보를 가져와 넣어주는 이벤트
+    clubDetailService.getOAList(club.id, createListService.showOngoingList).then((text) => {
+        clubDetailActiveWrap.innerHTML = text;
+    })
 
-// 페이지 로드 시 fetch를 통해 종료된 행사 정보를 가져와 넣어주는 이벤트
-clubDetailService.getFAList(club.id, page, createListService.showFinishedList).then((text) => {
-    finishedEventsWrap.innerHTML = text
-    showMoreFAListBtnCheck()
-})
+    // 페이지 로드 시 fetch를 통해 종료된 행사 정보를 가져와 넣어주는 이벤트
+    clubDetailService.getFAList(club.id, page, createListService.showFinishedList).then((text) => {
+        finishedEventsWrap.innerHTML = text
+        showMoreFAListBtnCheck()
+    })
+} else{
+    showTeenplayTap()
+}
+
 
 
 
