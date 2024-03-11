@@ -128,10 +128,10 @@ alarmCountWrap.style.left = `calc(100% - ${69 + (memberNickname.length - 2) * 6}
 // 알람 개수 띄우기
 const alarmCount1 = document.querySelector("div.signal-sign");
 const alarmCount2 = document.querySelector(".mypage-menu-signal-count");
-const memberId = document.querySelector("input[name=header-member-id]").value;
+const alarmMemberId = document.querySelector("input[name=header-member-id]").value;
 
-const getAlarmCount = async (memberId, callback) => {
-    const response = await fetch(`/member/alarms/api?member-id=${memberId}`);
+const getAlarmCount = async (alarmMemberId, callback) => {
+    const response = await fetch(`/member/alarms/api?member-id=${alarmMemberId}`);
     const alarmCount = await response.json();
     if (callback) {
         callback(alarmCount);
@@ -143,7 +143,7 @@ const showAlarmCount = (alarmCount) => {
     alarmCount2.innerText = alarmCount;
 }
 
-getAlarmCount(memberId, showAlarmCount)
+getAlarmCount(alarmMemberId, showAlarmCount)
 
 // 카테고리 띄우기
 const headerCategoryWrap = document.querySelector(".category-group-items");
