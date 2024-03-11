@@ -139,8 +139,8 @@ const getAlarmCount = async (alarmMemberId, callback) => {
 }
 
 const showAlarmCount = (alarmCount) => {
-    alarmCount1.innerText = alarmCount;
-    alarmCount2.innerText = alarmCount;
+    alarmCount1.innerText = Number(alarmCount) <= 99 ? alarmCount : '99+';
+    alarmCount2.innerText = Number(alarmCount) <= 99 ? alarmCount : '99+';
 }
 
 getAlarmCount(alarmMemberId, showAlarmCount)
