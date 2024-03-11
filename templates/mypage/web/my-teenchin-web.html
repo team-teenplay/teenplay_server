@@ -58,7 +58,7 @@
                                     <div class="service-title">틴친 목록</div>
                                     <div class="tab-list-box">
                                         <div>
-                                            <input class="teenchin-search-input" type="text" name="" id="" autocomplete="off" placeholder="이름,이메일" />
+                                            <input class="teenchin-search-input" type="text" name="text_insert" id="text_insert" autocomplete="off" placeholder="이름,이메일" />
                                         </div>
                                         <div class="tab-list-contents">
                                             <div>
@@ -68,10 +68,10 @@
                                                 </button>
                                             </div>
                                             <div class="tab-list">
-                                                <a class="tab">전체</a>
-                                                <a class="tab">틴친중</a>
-                                                <a class="tab">신청중</a>
-                                                <a class="tab">수락대기</a>
+                                                <a class="tab" name="">전체</a>
+                                                <a class="tab" name="case-a/">틴친중</a>
+                                                <a class="tab" name="case-b/">신청중</a>
+                                                <a class="tab" name="case-c/">수락대기</a>
                                             </div>
                                         </div>
                                     </div>
@@ -188,6 +188,33 @@
     <script>
     const csrf_Token = '{{ csrf_token }}';
     const member_id = '{{ request.session.member.id }}'
+    
+    const selectbut = document.querySelectorAll(".tab")
+    let status_teenchin = '전체'
+    selectbut.forEach((btn)=>{
+        btn.addEventListener("click", async(e)=>{
+            console.log(status_teenchin)
+            status_teenchin = btn.name
+            page = 1
+            const text = await teenchinService.getList(member_id, page,status_teenchin,search, showList);
+            teenchinshow.innerHTML = text;
+            });
+    })
+
+    let search = '';
+    const textInsert = document.getElementById("text_insert");
+    textInsert.addEventListener("keyup", async (e) => {
+        if (e.keyCode  === 13 && textInsert.value !== '') {
+            search = textInsert.value;  // 수정: 변수에 입력된 텍스트 할당
+            console.log(search);  // 예시: 할당된 값을 콘솔에 출력
+            textInsert.value = ''
+            const text = await teenchinService.getList(member_id, page,status_teenchin,search, showList);
+            teenchinshow.innerHTML = text;
+            
+        }
+    });
+
+    
     </script>
     <script src="{% static 'member/web/js/my-teenchin-module-web.js' %}"></script>
     <script src="{% static 'member/web/js/my-teenchin-web.js' %}"></script>
