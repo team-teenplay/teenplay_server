@@ -1,30 +1,29 @@
 let page = 1;
 
-// 목록 태그
-const noticeBox = document.querySelector(".notice-data")
-// 페이지 번호 박스
+const wishlistBox = document.querySelector(".wishlist-data")
 const mainUserBottomUl = document.querySelector(".main-user-bottom-ul")
 
-// 게시글 목록 가져오기
-const createListService = (() => {
+const wishlistCreateService = (() => {
     const showList = (pagination) => {
         let text = ``;
         pagination.pagination.forEach((page) => {
             text += `
                 <li class="main-user-list" data-id="${page.id}">
-                    <div class="main-comment-list-check">
+                    <div class="main-user-list-check">
                         <input type="checkbox" class="main-comment-list-checkbox" />
                     </div>
-                    <div class="main-user-list-name">${page.notice_title}</div>
-                    <div class="main-user-list-status">${page.created_date}</div>
+                    <div class="main-user-list-name">${page.member_name}</div>
+                    <div class="main-user-list-status">${page.wishlist_content}</div>
+                    <div class="main-user-list-date">${page.wishlist_like_count}</div>
+                    <div class="main-user-list-pay">${page.wishlist_reply_count}</div>
             `;
-            if(page.notice_type === 0) {
+            if (page.is_private === 0) {
                 text += `
-                    <div class="main-user-list-category" >공지사항</div>
+                    <div className="main-user-list-opne">비공개</div>
                 `
-            } else if (page.notice_type === 1) {
+            } else if (page.is_private === 1) {
                 text += `
-                    <div class="main-user-list-category" >자주묻는질문</div>
+                    <div className="main-user-list-opne">공개</div>
                 `
             }
             text += `
@@ -37,7 +36,7 @@ const createListService = (() => {
         return text;
     }
 
-    const showPaging = (pagination) => {
+    const showPaing = (pagination) => {
         let text = ``;
         // 시작 페이지가 1보다 큰 경우
         if (pagination.start_page > 1) {
@@ -66,22 +65,18 @@ const createListService = (() => {
             }
         }
 
-        // x문자열 선언
-        const x = "x"
-
         // i가 0에서 시작; page_count 보다 작을 때까지 반복; i를 1씩 증가;
         for (let i = 0; i < pagination.page_count; i++) {
-            // 반복문을 사용하여 문자열 x를 오른쪽으로 정렬
-            // const padX = x.padEnd(pagination.page_count, ' ');
             // 현재 반복 횟수 + 시작 페이지 <= 진짜 끝나는 페이지 이하라면
             if (i + pagination.start_page <= pagination.real_end) {
+                // 선택된 페이지
                 // 페이지가 현재 반복 횟수 + 시작 페이지와 같다면
                 if (page === i + pagination.start_page) {
                     // 추가
                     text += `
                         <li class="main-margin">
-                            <a href="javascript:void(0)" class="pagination main-user-bottom">
-                                <span class="main-user-number" style="color: #CE201B;">${i + pagination.start_page}</span>
+                            <a href="javascript:void(0)" class="pagination main-user-bottom add-color">
+                                <span class="main-user-number add-text-color">${i + pagination.start_page}</span>
                             </a>
                         </li>
                     `
@@ -112,9 +107,10 @@ const createListService = (() => {
             }
         }
 
-
+        console.log('들어옴')
         if (pagination.end_page < pagination.real_end) {
             if (pagination.order === 'popular') {
+                console.log('들어옴')
                 text += `
                     <li class="main-margin">
                         <a href="${pagination.end_page + 1} popular" class="right main-user-bottom-right">
@@ -136,61 +132,98 @@ const createListService = (() => {
                 `
             }
         }
+        console.log('들어옴')
 
         return text;
     }
 
-    return { showList: showList, showPaging: showPaging }
-})()
+    // 위시리스트 개수 표기 텍스트
+    const wishlistCountText = (pagination) => {
+        let text = ``;
+        text += pagination.total
 
-adminNoticeService.getPagination(page, createListService.showList).then((text) => {
-    noticeBox.innerHTML = text;
-})
-
-adminNoticeService.getPagination(page, createListService.showPaging).then((text) => {
-    mainUserBottomUl.innerHTML = text;
-})
-
-const eventChange = (event) => {
-    event.preventDefault()
-
-
-}
-
-mainUserBottomUl.addEventListener("click", (e) => {
-    const endPage = document.querySelectorAll(".main-user-number")
-    e.preventDefault()
-    console.log(e.target)
-    console.log(e.target.closest(".main-user-bottom-right"))
-    if (e.target.closest(".main-user-bottom") && e.target.closest(".main-user-bottom").classList.contains('pagination')) {
-        console.log("if 들어옴")
-        page = e.target.closest(".main-user-bottom").querySelector(".main-user-number").innerText
-
-        adminNoticeService.getPagination(page, createListService.showList).then((text) => {
-            noticeBox.innerHTML = text;
-        })
-    } else if (e.target.closest(".main-user-bottom-right")) {
-        page = parseInt(endPage[4].innerText) + 1
-
-        adminNoticeService.getPagination(page, createListService.showList).then((text) => {
-            noticeBox.innerHTML = text;
-        })
-
-        adminNoticeService.getPagination(page, createListService.showPaging).then((text) => {
-            mainUserBottomUl.innerHTML = text;
-        })
-    } else if (e.target.closest(".main-user-bottom-left")) {
-        page = parseInt(endPage[0].innerText) - 1
-
-        adminNoticeService.getPagination(page, createListService.showList).then((text) => {
-            noticeBox.innerHTML = text;
-        })
-
-        adminNoticeService.getPagination(page, createListService.showPaging).then((text) => {
-            mainUserBottomUl.innerHTML = text;
-        })
+        return text;
     }
 
-    // const ul = e.target.closest(".main-user-bottom-ul")
-    // console.log(e.target)
+    return {showList: showList, showPaing: showPaing, wishlistCountText: wishlistCountText}
+})()
+
+
+// 공지사항 목록 보여주기
+function wishlistShowList() {
+    adminWishlistService.getPagination(page, wishlistCreateService.showList).then((text) => {
+        wishlistBox.innerHTML = text;
+    })
+}
+wishlistShowList();
+
+// 페이지 번호 보여주기
+function wishlistShowPaging() {
+    adminWishlistService.getPagination(page, wishlistCreateService.showPaging).then((text) => {
+        mainUserBottomUl.innerHTML = text;
+    })
+}
+wishlistShowPaging();
+
+// 페이지 네이션
+// 페이지 번호 박스 클릭 시 이벤트 발생
+mainUserBottomUl.addEventListener("click", (e) => {
+    // 페이지 번호 a태그
+    const mainUserBottom = document.querySelectorAll(".main-user-bottom")
+    // 페이지 번호 박스 속 번호
+    const endPage = document.querySelectorAll(".main-user-number")
+
+    // 페이지 이동 막아주기
+    e.preventDefault()
+
+    // 만약, 페이지 번호 클릭 시
+    if (e.target.closest(".main-user-bottom") && e.target.closest(".main-user-bottom").classList.contains('pagination')) {
+        console.log("if 들어옴")
+
+        // 기존 선택된 페이지 번호 스타일 삭제
+        mainUserBottom.forEach((userBottom) => {
+            userBottom.classList.remove("add-color")
+        })
+        endPage.forEach((userNumber) => {
+            userNumber.classList.remove("add-text-color")
+        })
+
+        // 새롭게 선택된 페이지 번호 스타일 부여
+        e.target.closest(".main-user-bottom").classList.add("add-color")
+        e.target.closest(".main-user-bottom").querySelector(".main-user-number").classList.add("add-text-color")
+
+        // 페이지 번호를 텍스트로 가져와 page로 담기
+        page = e.target.closest(".main-user-bottom").querySelector(".main-user-number").innerText
+
+        // 번호에 따른 게시글 목록 가져오기
+        wishlistShowList();
+    // 페이지 이동 다음 버튼 클릭 시
+    } else if (e.target.closest(".main-user-bottom-right")) {
+        // 페이지 번호 끝(문자열로 가져오기 때문에 정수로 형변환)에서 + 1 (다음 페이지) 해주기
+        page = parseInt(endPage[4].innerText) + 1
+
+        // 페이지에 따른 목록 보여주기
+        wishlistShowList();
+
+        // 페이지에 따른 페이지 번호 목록 보여주기
+        wishlistShowPaging();
+    // 페이지 이동 이전 버튼 클릭 시
+    } else if (e.target.closest(".main-user-bottom-left")) {
+        // 페이지 번호 끝(문자열로 가져오기 때문에 정수로 형변환)에서 - 1 (이전 페이지) 해주기
+        page = parseInt(endPage[0].innerText) - 1
+
+        // 페이지에 따른 목록 보여주기
+        wishlistShowList();
+
+        // 페이지에 따른 페이지 번호 목록 보여주기
+        wishlistShowPaging();
+    }
 })
+
+// 공지사항 개수 표기
+function noticeCountShowText() {
+    adminWishlistService.getPagination(page, createListService.noticeCountText).then((text) => {
+        totalCount.textContent = text;
+    })
+}
+noticeCountShowText();
