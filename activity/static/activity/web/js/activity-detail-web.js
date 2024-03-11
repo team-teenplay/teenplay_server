@@ -669,7 +669,7 @@ const showReplies = async (isAdd, replies) => {
                             <span class="k-comment-info-date">${timeForToday(reply.created_date)}</span>
                         </div>
                         <!-- 개별 댓글 내용 부분 -->
-                        <div class="k-comment-text text${reply.id}">${reply.reply_content}</div>
+                        <div class="k-comment-text text${reply.id}">${reply.reply_content.replace(/\n/g, '<br>')}</div>
                     </div>
                     <div class="comment-modify-button ${reply.id}" style="display: ${reply.member_id !== Number(memberId) ? 'none' : 'block'};">
                         <button class="k-comment-menu" type="button">
@@ -844,3 +844,9 @@ noticeTitles.forEach((title, i) => {
         }
     });
 });
+
+// 활동 카테고리 클릭 시 활동 목록에 해당 카테고리 검색 결과로 이동
+const activityDetailCategoryForm = document.querySelector(".activity-detail-category-form");
+activityDetailCategoryForm.addEventListener("click", () => {
+    activityDetailCategoryForm.submit();
+})
