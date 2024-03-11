@@ -26,7 +26,7 @@
                             <img src="/upload/{{ club_post.image_path }}" class="pr-detail-content-img" />
                         </figure>
                         <p>&nbsp;</p>
-                        {{ club_post.post_content }}
+                        {{ club_post.post_content|linebreaksbr }}
     {#                    틴플레이어스와 함께하실 틴친들을 모집합니다~!#}
     {#                    <br />#}
     {#                    외모, 나이 따지지 않습니다! 오로지 여행에 대한 열정! 하나만으로 뭉쳐서 즐겁게 여행하실 분들과 함께해요~#}
@@ -44,8 +44,9 @@
                             <span class="pr-detail-back-text"> 목록으로 </span>
                         </div>
                         {% if club_post.club.member_id == request.session.member.id %}
-                            <div style="display: flex">
+                            <div style="display: flex; gap: 12px">
                                 <button class="club-post-modify-btn" type="button">수정하기</button>
+                                <button class="club-post-delete-btn" type="button">삭제하기</button>
                             </div>
                         {% endif %}
                     </div>
@@ -209,7 +210,7 @@
                         </div>
                         <div class="letter-content-area">
                             <!-- 쪽지 내용 필요 -->
-                            <textarea name="send-content" rows="10" placeholder="쪽지의 내용을 작성해 주세요."></textarea>
+                            <textarea name="send-content" id="letter-content" rows="10" placeholder="쪽지의 내용을 작성해 주세요."></textarea>
                         </div>
                         <div class="modal-btn-box">
                             <button class="send-close-btn" type="button">닫기</button>
@@ -228,8 +229,10 @@
         const clubPostId = {{ club_post.id }}
         const clubImagePath = '{{ club_post.image_path }}'
         const memberId = {{ request.session.member.id }}
-        const ownerId = {{ club_post.club.member_id }}
+        const memberEmail = `{{ request.session.member.member_email }}`
     </script>
+    <script src="{% static 'club/web/js/club-post-letter-module.js' %}"></script>
     <script src="{% static 'club/web/js/club-pr-post-reply-module.js' %}"></script>
     <script src="{% static 'club/web/js/club-pr-posts-detail-web.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 {% endblock %}
