@@ -92,7 +92,7 @@ document.querySelector(".act-intro").addEventListener("click", () => {
 });
 
 document.querySelector(".act-location").addEventListener("click", () => {
-    const targetDiv = document.querySelector(".filp-more");
+    const targetDiv = document.querySelector(".flex-items-end-container");
 
     window.scrollTo({
         top: targetDiv.offsetTop,
@@ -101,7 +101,7 @@ document.querySelector(".act-location").addEventListener("click", () => {
 });
 
 document.querySelector(".act-info").addEventListener("click", () => {
-    const targetDiv = document.querySelector(".map-text-content-box");
+    const targetDiv = document.querySelector(".club-section");
 
     window.scrollTo({
         top: targetDiv.offsetTop,
@@ -270,12 +270,12 @@ isHiddenShadow = document.querySelector(".is-hidden-shadow");
 
 // 활동 내용의 높이에 따라 활동소개더보기 버튼 표시 유무 및 아랫쪽 흐려짐 여부 설정
 const activityContentBox = document.querySelector(".title-text");
-const flipButtonContainer = document.querySelector(".flex-items-end-container")
+const flipButtonContainer = document.querySelector(".filp-more")
 if (activityContentBox.offsetHeight >= window.innerHeight * 0.8) {
     flipButtonContainer.style.display = "none";
     isHiddenShadow.style.backgroundImage = "none";
 } else {
-    flipButtonContainer.style.display = "flex";
+    flipButtonContainer.style.display = "block";
     isHiddenShadow.style.backgroundImage = "linear-gradient(to top, var(--tw-gradient-stops))";
 }
 filpClickBtn.addEventListener("click", (e) => {
@@ -444,8 +444,12 @@ const sendLetterBtn = document.querySelector(".send-check-btn");
 
 if (sendLetterBtn){
     sendLetterBtn.addEventListener("click", async () => {
+        const letterContent = document.getElementById("letter-content").value;
+        if (!letterContent) return;
+        const receiverId = document.querySelector(".send-receiver-email").innerText;
         await activityLetterService.write({
-
+            letter_content: letterContent,
+            receiver_id: receiverId
         })
         Swal.fire("쪽지가 전송 되었습니다.", "", "success");
     });

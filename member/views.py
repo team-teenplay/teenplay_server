@@ -1,7 +1,13 @@
 from django.db import transaction
+from django.db.models import F, Q
 from django.shortcuts import render, redirect
 from django.views import View
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
+from alarm.models import Alarm
+from friend.models import Friend
+from letter.models import Letter, ReceivedLetter, SentLetter
 from member.models import Member, MemberFavoriteCategory, MemberProfile
 from member.serializers import MemberSerializer
 from teenplay_server.category import Category
@@ -190,3 +196,166 @@ class MypageDeleteWebView(View):
         member.save(update_fields=['status'])
         request.session.clear()
         return redirect('/')
+
+class MypageLetterWebView(View):
+    def get(self,request):
+        member = request.session.get('member')
+        latest_letter = Letter.objects.latest('id')  # 또는 필요한 기준으로 필터링
+        return render(request, 'mypage/web/my-letter-web.html', {"member": member, 'letter_id': latest_letter.id})
+
+
+class MypageWriteAPIWebView(APIView):
+    @transaction.atomic
+    def post(self,request):
+        data = request.data
+
+        receiver_email = data['receiver_id'].split("(")[1][:-1]
+        receiver_instance = Member.objects.filter(member_email=receiver_email).first()
+        receiver_id = receiver_instance.id
+        # Letter 모델 생성
+        letter = Letter.objects.create(
+            receiver_id=receiver_id,
+            letter_content=data['letter_content'],
+            sender_id=request.session['member']['id']
+        )
+
+        # ReceivedLetter 모델 생성
+        ReceivedLetter.objects.create(letter_id=letter.id)
+
+        # SentLetter 모델 생성
+        SentLetter.objects.create(letter_id=letter.id)
+        Alarm.objects.create(target_id=letter.id, alarm_type=4, sender_id=letter.sender_id, receiver_id= letter.receiver_id)
+
+        return Response("good")
+
+
+class MypageListAPIWebView(APIView):
+    @transaction.atomic
+    def get(self, request, member_id, page):
+        status_letter = request.GET.get('status_letter')
+        row_count = 10
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        # 전체 데이터 수를 세는 쿼리
+        total_count = Letter.objects.filter(Q(sender_id=member_id,status=1) | Q(receiver_id=member_id,status=1)).count()
+
+        # 전체 페이지 수 계산
+        total_pages = (total_count + row_count - 1) // row_count
+
+        # 페이지 범위에 해당하는 데이터 조회
+        replies = Letter.objects.filter(Q(sender_id=member_id,status=1) | Q(receiver_id=member_id,status=1)) \
+            .values('letter_content', 'created_date', 'sender__member_nickname', 'receiver__member_nickname','id')[offset:limit]
+
+        sender = Letter.objects.filter(sender_id=member_id, status=1)  \
+                      .values('letter_content', 'created_date', 'sender__member_nickname', 'receiver__member_nickname',
+                              'id')[offset:limit]
+
+        receiver = Letter.objects.filter(receiver_id=member_id, status=1) \
+                      .values('letter_content', 'created_date', 'sender__member_nickname', 'receiver__member_nickname',
+                              'id')[offset:limit]
+
+        # 응답에 전체 페이지 수와 데이터 추가
+        response_data = {
+            'total_pages': total_pages,
+            'replies': replies,
+
+        }
+        if status_letter == 'sender':
+            response_data['replies'] =  Letter.objects.filter(sender_id=member_id, status=1)  \
+                      .values('letter_content', 'created_date', 'sender__member_nickname', 'receiver__member_nickname',
+                              'id')[offset:limit]
+
+            response_data['total_pages'] = (Letter.objects.filter(sender_id=member_id, status=1).count() + row_count - 1)  //row_count
+        elif status_letter == 'receiver':
+            response_data['replies'] = Letter.objects.filter(receiver_id=member_id, status=1) \
+                .values('letter_content', 'created_date', 'sender__member_nickname', 'receiver__member_nickname',
+                        'id')[offset:limit]
+            response_data['total_pages'] = (Letter.objects.filter(receiver_id=member_id, status=1).count() + row_count - 1)  //row_count
+
+        else:
+            response_data['replies'] = Letter.objects.filter(Q(sender_id=member_id,status=1) | Q(receiver_id=member_id,status=1)) \
+            .values('letter_content', 'created_date', 'sender__member_nickname', 'receiver__member_nickname','id')[offset:limit]
+            response_data['total_pages'] = (Letter.objects.filter(Q(sender_id=member_id,status=1) | Q(receiver_id=member_id,status=1)).count() + row_count - 1)  //row_count
+
+        return Response(response_data)
+
+class MypageDeleteAPIWebView(APIView):
+    @transaction.atomic
+    def delete(self, request, letter_id):
+        letter = Letter.objects.filter(id=letter_id)
+        letter.update(status=0)
+        SentLetter.objects.filter(letter_id=letter_id).update(status=0)
+        ReceivedLetter.objects.filter(letter_id=letter_id).update(status=0)
+
+        return Response('good')
+
+    @transaction.atomic
+    def patch(self, request, letter_id):
+        ReceivedLetter.objects.filter(letter_id=letter_id).update(is_read=0)
+
+        return Response('good')
+
+
+class MypageCheckAPIWebViewMa(APIView):
+    @transaction.atomic
+    def post(self, request):
+        member_email = request.data.get('member_email')
+
+        member = Member.enabled_objects.filter(member_email=member_email)
+        if member.exists():
+            member = member.first()
+            data = {
+                'message': f'{member.member_nickname} ({member.member_email})'
+            }
+        else:
+            data = {
+                'message': '존재하지 않는 이메일입니다.'
+            }
+
+        return Response(data)
+
+
+
+
+class MypageAlramView(View):
+    @transaction.atomic
+    def get(self, request):
+        return render(request, 'mypage/web/my-signal-web.html')
+
+
+class MypageAlramAPIView(APIView):
+    @transaction.atomic
+    def get(self, request, member_id, page):
+        row_count = 5
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        alram = Alarm.objects.filter(receiver_id=member_id, status =1).values('id','alarm_type','receiver_id','created_date')[offset:limit]
+
+
+        return Response(alram)
+
+class MypageAlramDeleteAPIView(APIView):
+    @transaction.atomic
+    def delete(self, request, alram_id):
+        Alarm.objects.filter(id= alram_id).update(status = 0)
+        print(Alarm)
+
+
+        return Response('good')
+
+class MypageTeenchinview(View):
+    def get(self, request):
+        return  render(request, 'mypage/web/my-teenchin-web.html')
+
+class MypageTeenchinAPIview(APIView):
+    def get(self, request, member_id, page):
+        row_count = 2
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+
+        teenchin = Friend.objects.filter(receiver_id=member_id).values('id', 'is_friend')[offset:limit]
+
+        return Response(teenchin)

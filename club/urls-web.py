@@ -20,4 +20,5 @@ urlpatterns = [
     path('pr-post-detail/', ClubPrPostDetailView.as_view(), name='pr-post-detail'),
     path('pr-post-write/', ClubPrPostWriteView.as_view(), name='pr-post-write'),
     path('pr-post-update/', ClubPrPostView.as_view(), name='pr-post-update'),
+
 ]

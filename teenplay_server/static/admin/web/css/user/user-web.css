@@ -18,12 +18,12 @@ input {
     }
   }
 
-.member-user-list-button.disabled {
+.toggle-button.disabled {
     border-color: #F2F4F5;
     background-color: #F2F4F5;
 }
 
-.member-user-list-button.disabled:hover {
+.toggle-button.disabled:hover {
     border-color: #F2F4F5;
     background-color: #F2F4F5;
 }
@@ -965,7 +965,6 @@ color: #9ca3af;
     color: #1d1d1e;
     fill: #1d1d1e;
     margin: 0;
-    margin-bottom: 12px;
   }
   
   

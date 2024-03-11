@@ -24,11 +24,8 @@ const adminUserService = (() => {
 
     // 유저 정보 수정하기
     const update = async (id, status) => {
-        console.log(id)
         const user_id = id.user_id;
         const user_status = status.status;
-        console.log(user_id)
-        console.log(user_status)
         await fetch(`/admin/user/update/${user_id}`, {
             method: 'PATCH',
             headers: {

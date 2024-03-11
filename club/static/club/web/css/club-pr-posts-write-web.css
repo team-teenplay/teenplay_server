@@ -200,7 +200,6 @@ button, input, optgroup, select, textarea {
 
 
 .pr-write-main {
-    margin-top: 5rem;
     height: 100vh;
     --tw-bg-opacity: 1;
     background-color: rgb(248 250 251/var(--tw-bg-opacity));
@@ -276,6 +275,15 @@ button, input, optgroup, select, textarea {
     --tw-space-x-reverse: 0;
     margin-right: calc(0.25rem*var(--tw-space-x-reverse));
     margin-left: calc(0.25rem*(1 - var(--tw-space-x-reverse)));
+}
+
+.club-name {
+    max-width: 400px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 17px;
+    font-weight: 700;
 }
 
 .pr-write-button {
@@ -401,13 +409,17 @@ button, input, optgroup, select, textarea {
     border-radius: 0;
     line-height: 1.5rem;
     --tw-shadow: 0 0 #0000;
-    resize: vertical;
+    resize: none;
 }
 
 .pr-write-content::placeholder {
     --tw-text-opacity: 1;
     color: rgb(206 211 214/var(--tw-text-opacity));
     opacity: 1;
+}
+
+.pr-write-content::-webkit-scrollbar {
+    display: none;
 }
 
 .pr-write-image-wrap {
