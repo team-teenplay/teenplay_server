@@ -25,7 +25,7 @@
                                                 <div class="video-wrap">
                                                     <!-- 비디오 -->
                                                     <video class="play-video" preload loop autoplay>
-                                                        <source src="/upload/teenplay_video/2024/03/02/teenplay_example_1.mov" type="video/mp4" />
+                                                        <source src="/upload/{{ context.0.video_path}}" type="video/mp4" />
                                                     </video>
                                                 </div>
                                             </div>
@@ -34,38 +34,47 @@
                                                 <div class="play-info-container">
                                                     <!-- 작성자(모임) 정보 -->
                                                     <div class="play-writer-wrap">
-                                                        <a href="" class="play-writer-image-wrap">
+                                                        <a href="/club/detail/?id={{ context.0.club_id }}" class="play-writer-image-wrap">
                                                             <div class="play-writer-image-container">
                                                                 <!-- 모임 프사 -->
-                                                                <img src="{% static 'teenplay/image/teenplay_example_1_profile.jpg' %}" class="play-writer-image" />
+                                                                <img src="/upload/{{ context.0.club__club_profile_path }}" class="play-writer-image" />
                                                             </div>
                                                         </a>
                                                         <div class="play-writer-container">
                                                             <div class="play-writer-boxes">
                                                                 <div class="play-writer-box">
                                                                     <!-- 모임 이름 -->
-                                                                    <a href="" class="play-writer-name">TEEN_PLAYERS</a>
+                                                                    <a href="/club/detail/?id={{ context.0.club_id }}" class="play-writer-name">{{ context.0.club__club_name }}</a>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="play-like-info-wrap">
                                                             <div class="play-like-wrap">
-                                                                <button class="play-like-btn">
-                                                                    <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                        <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                                                    </svg>
-                                                                    <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon full" viewBox="0 0 20 20" fill="currentColor">
-                                                                        <path data-v-e13ecf0e="" fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-                                                                    </svg>
+                                                                <button class="play-like-btn" value="{{ context.0.id }}">
+                                                                    {% if context.0.like_check %}
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:none">
+                                                                            <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                                                        </svg>
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon full" viewBox="0 0 20 20" fill="currentColor" style="display:block">
+                                                                            <path data-v-e13ecf0e="" fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                                                        </svg>
+                                                                    {% else %}
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:block">
+                                                                            <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                                                        </svg>
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon full" viewBox="0 0 20 20" fill="currentColor" style="display:none">
+                                                                            <path data-v-e13ecf0e="" fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                                                        </svg>
+                                                                    {% endif %}
                                                                 </button>
                                                             </div>
-                                                            <div class="play-like-count">1.3천</div>
+                                                            <div class="play-like-count">{{ context.0.likes }}</div>
                                                         </div>
                                                     </div>
                                                     <!-- 제목(내용) -->
                                                     <h2 class="play-info-title-wrap">
                                                         <div class="play-info-title-container">
-                                                            <span class="play-info-title">틴친들과 함께한 일본여행 VLOG😘 우리 함께 떠나요~! 4박5일!</span>
+                                                            <span class="play-info-title">{{ context.0.club__club_intro }}</span>
                                                         </div>
                                                     </h2>
                                                 </div>
@@ -122,8 +131,8 @@
                                             <div class="play-each-container">
                                                 <div class="video-wrap">
                                                     <!-- 비디오 -->
-                                                    <video class="play-video" preload loop="" autoplay="">
-                                                        <source src="/upload/teenplay_video/2024/03/02/teenplay_example_2.mov" type="video/mp4" />
+                                                    <video class="play-video" preload loop="" autoplay="" >
+                                                        <source src="/upload/{{ context.1.video_path}}" type="video/mp4" />
                                                     </video>
                                                 </div>
                                             </div>
@@ -132,38 +141,47 @@
                                                 <div class="play-info-container">
                                                     <!-- 작성자(모임) 정보 -->
                                                     <div class="play-writer-wrap">
-                                                        <a href="" class="play-writer-image-wrap">
+                                                        <a href="/club/detail/?id={{ context.1.club_id }}" class="play-writer-image-wrap">
                                                             <div class="play-writer-image-container">
                                                                 <!-- 모임 프사 -->
-                                                                <img src="{% static 'teenplay/image/teenplay_example_1_profile.jpg' %}" class="play-writer-image" />
+                                                                <img src="/upload/{{ context.1.club__club_profile_path }}" class="play-writer-image" />
                                                             </div>
                                                         </a>
                                                         <div class="play-writer-container">
                                                             <div class="play-writer-boxes">
                                                                 <div class="play-writer-box">
                                                                     <!-- 모임 이름 -->
-                                                                    <a href="" class="play-writer-name">TEEN_PLAYERS</a>
+                                                                    <a href="/club/detail/?id={{ context.1.club_id }}" class="play-writer-name">{{ context.1.club__club_name }}</a>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="play-like-info-wrap">
                                                             <div class="play-like-wrap">
-                                                                <button class="play-like-btn">
-                                                                    <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                        <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                                                    </svg>
-                                                                    <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon full" viewBox="0 0 20 20" fill="currentColor">
-                                                                        <path data-v-e13ecf0e="" fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-                                                                    </svg>
+                                                                <button class="play-like-btn" value="{{ context.1.id }}">
+                                                                    {% if context.1.like_check %}
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:none">
+                                                                            <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                                                        </svg>
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon full" viewBox="0 0 20 20" fill="currentColor" style="display:block">
+                                                                            <path data-v-e13ecf0e="" fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                                                        </svg>
+                                                                    {% else %}
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:block">
+                                                                            <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                                                        </svg>
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon full" viewBox="0 0 20 20" fill="currentColor" style="display:none">
+                                                                            <path data-v-e13ecf0e="" fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                                                        </svg>
+                                                                    {% endif %}
                                                                 </button>
                                                             </div>
-                                                            <div class="play-like-count">1.3천</div>
+                                                            <div class="play-like-count">{{ context.1.likes }}</div>
                                                         </div>
                                                     </div>
                                                     <!-- 제목(내용) -->
                                                     <h2 class="play-info-title-wrap">
                                                         <div class="play-info-title-container">
-                                                            <span class="play-info-title">틴친들과 함께한 일본여행 VLOG😘</span>
+                                                            <span class="play-info-title">{{ context.1.club__club_intro }}</span>
                                                         </div>
                                                     </h2>
                                                 </div>
@@ -221,7 +239,7 @@
                                                 <div class="video-wrap">
                                                     <!-- 비디오 -->
                                                     <video class="play-video" preload loop="" autoplay="">
-                                                        <source src="/upload/teenplay_video/2024/03/02/teenplay_example_2.mov" type="video/mp4" />
+                                                        <source src="/upload/{{ context.2.video_path}}" type="video/mp4" />
                                                     </video>
                                                 </div>
                                             </div>
@@ -230,38 +248,47 @@
                                                 <div class="play-info-container">
                                                     <!-- 작성자(모임) 정보 -->
                                                     <div class="play-writer-wrap">
-                                                        <a href="" class="play-writer-image-wrap">
+                                                        <a href="/club/detail/?id={{ context.2.club_id }}" class="play-writer-image-wrap">
                                                             <div class="play-writer-image-container">
                                                                 <!-- 모임 프사 -->
-                                                                <img src="{% static 'teenplay/image/teenplay_example_1_profile.jpg' %}" class="play-writer-image" />
+                                                                <img src="/upload/{{ context.2.club__club_profile_path }}" class="play-writer-image" />
                                                             </div>
                                                         </a>
                                                         <div class="play-writer-container">
                                                             <div class="play-writer-boxes">
                                                                 <div class="play-writer-box">
                                                                     <!-- 모임 이름 -->
-                                                                    <a href="" class="play-writer-name">TEEN_PLAYERS</a>
+                                                                    <a href="/club/detail/?id={{ context.2.club_id }}" class="play-writer-name">{{ context.2.club__club_name }}</a>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="play-like-info-wrap">
                                                             <div class="play-like-wrap">
-                                                                <button class="play-like-btn">
-                                                                    <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                        <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                                                    </svg>
-                                                                    <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon full" viewBox="0 0 20 20" fill="currentColor">
-                                                                        <path data-v-e13ecf0e="" fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-                                                                    </svg>
+                                                                <button class="play-like-btn" value="{{ context.2.id }}">
+                                                                    {% if context.2.like_check %}
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:none">
+                                                                            <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                                                        </svg>
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon full" viewBox="0 0 20 20" fill="currentColor" style="display:block">
+                                                                            <path data-v-e13ecf0e="" fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                                                        </svg>
+                                                                    {% else %}
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:block">
+                                                                            <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                                                        </svg>
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon full" viewBox="0 0 20 20" fill="currentColor" style="display:none">
+                                                                            <path data-v-e13ecf0e="" fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                                                        </svg>
+                                                                    {% endif %}
                                                                 </button>
                                                             </div>
-                                                            <div class="play-like-count">1.3천</div>
+                                                            <div class="play-like-count">{{ context.2.likes }}</div>
                                                         </div>
                                                     </div>
                                                     <!-- 제목(내용) -->
                                                     <h2 class="play-info-title-wrap">
                                                         <div class="play-info-title-container">
-                                                            <span class="play-info-title">틴친들과 함께한 일본여행 VLOG😘</span>
+                                                            <span class="play-info-title">{{ context.2.club__club_intro }}</span>
                                                         </div>
                                                     </h2>
                                                 </div>
@@ -319,7 +346,7 @@
                                                 <div class="video-wrap">
                                                     <!-- 비디오 -->
                                                     <video class="play-video" preload loop="" autoplay="">
-                                                        <source src="/upload/teenplay_video/2024/03/02/teenplay_example_2.mov" type="video/mp4" />
+                                                        <source src="/upload/{{ context.3.video_path}}" type="video/mp4" />
                                                     </video>
                                                 </div>
                                             </div>
@@ -328,38 +355,47 @@
                                                 <div class="play-info-container">
                                                     <!-- 작성자(모임) 정보 -->
                                                     <div class="play-writer-wrap">
-                                                        <a href="" class="play-writer-image-wrap">
+                                                        <a href="/club/detail/?id={{ context.3.club_id }}" class="play-writer-image-wrap">
                                                             <div class="play-writer-image-container">
                                                                 <!-- 모임 프사 -->
-                                                                <img src="{% static 'teenplay/image/teenplay_example_1_profile.jpg' %}" class="play-writer-image" />
+                                                                <img src="/upload/{{ context.3.club__club_profile_path }}" class="play-writer-image" />
                                                             </div>
                                                         </a>
                                                         <div class="play-writer-container">
                                                             <div class="play-writer-boxes">
                                                                 <div class="play-writer-box">
                                                                     <!-- 모임 이름 -->
-                                                                    <a href="" class="play-writer-name">TEEN_PLAYERS</a>
+                                                                    <a href="/club/detail/?id={{ context.3.club_id }}" class="play-writer-name">{{ context.3.club__club_name }}</a>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="play-like-info-wrap">
                                                             <div class="play-like-wrap">
-                                                                <button class="play-like-btn">
-                                                                    <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                        <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                                                    </svg>
-                                                                    <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon full" viewBox="0 0 20 20" fill="currentColor">
-                                                                        <path data-v-e13ecf0e="" fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-                                                                    </svg>
+                                                                <button class="play-like-btn" value="{{ context.3.id }}">
+                                                                    {% if context.3.like_check %}
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:none">
+                                                                            <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                                                        </svg>
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon full" viewBox="0 0 20 20" fill="currentColor" style="display:block">
+                                                                            <path data-v-e13ecf0e="" fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                                                        </svg>
+                                                                    {% else %}
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:block">
+                                                                            <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                                                        </svg>
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon full" viewBox="0 0 20 20" fill="currentColor" style="display:none">
+                                                                            <path data-v-e13ecf0e="" fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                                                        </svg>
+                                                                    {% endif %}
                                                                 </button>
                                                             </div>
-                                                            <div class="play-like-count">1.3천</div>
+                                                            <div class="play-like-count">{{ context.3.likes }}</div>
                                                         </div>
                                                     </div>
                                                     <!-- 제목(내용) -->
                                                     <h2 class="play-info-title-wrap">
                                                         <div class="play-info-title-container">
-                                                            <span class="play-info-title">틴친들과 함께한 일본여행 VLOG😘</span>
+                                                            <span class="play-info-title">{{ context.3.club__club_intro }}</span>
                                                         </div>
                                                     </h2>
                                                 </div>
@@ -417,7 +453,7 @@
                                                 <div class="video-wrap">
                                                     <!-- 비디오 -->
                                                     <video class="play-video" preload loop="" autoplay="">
-                                                        <source src="/upload/teenplay_video/2024/03/02/teenplay_example_2.mov" type="video/mp4" />
+                                                        <source src="/upload/{{ context.4.video_path}}" type="video/mp4" />
                                                     </video>
                                                 </div>
                                             </div>
@@ -426,38 +462,47 @@
                                                 <div class="play-info-container">
                                                     <!-- 작성자(모임) 정보 -->
                                                     <div class="play-writer-wrap">
-                                                        <a href="" class="play-writer-image-wrap">
+                                                        <a href="/club/detail/?id={{ context.4.club_id }}" class="play-writer-image-wrap">
                                                             <div class="play-writer-image-container">
                                                                 <!-- 모임 프사 -->
-                                                                <img src="{% static 'teenplay/image/teenplay_example_1_profile.jpg' %}" class="play-writer-image" />
+                                                                <img src="/upload/{{ context.4.club__club_profile_path }}" class="play-writer-image" />
                                                             </div>
                                                         </a>
                                                         <div class="play-writer-container">
                                                             <div class="play-writer-boxes">
                                                                 <div class="play-writer-box">
                                                                     <!-- 모임 이름 -->
-                                                                    <a href="" class="play-writer-name">TEEN_PLAYERS</a>
+                                                                    <a href="/club/detail/?id={{ context.4.club_id }}" class="play-writer-name">{{ context.4.club__club_name }}</a>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="play-like-info-wrap">
                                                             <div class="play-like-wrap">
-                                                                <button class="play-like-btn">
-                                                                    <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                        <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                                                    </svg>
-                                                                    <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon full" viewBox="0 0 20 20" fill="currentColor">
-                                                                        <path data-v-e13ecf0e="" fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-                                                                    </svg>
+                                                                <button class="play-like-btn" value="{{ context.4.id }}">
+                                                                    {% if context.4.like_check %}
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:none">
+                                                                            <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                                                        </svg>
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon full" viewBox="0 0 20 20" fill="currentColor" style="display:block">
+                                                                            <path data-v-e13ecf0e="" fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                                                        </svg>
+                                                                    {% else %}
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:block">
+                                                                            <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                                                        </svg>
+                                                                        <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon full" viewBox="0 0 20 20" fill="currentColor" style="display:none">
+                                                                            <path data-v-e13ecf0e="" fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                                                        </svg>
+                                                                    {% endif %}
                                                                 </button>
                                                             </div>
-                                                            <div class="play-like-count">1.3천</div>
+                                                            <div class="play-like-count">{{ context.4.likes }}</div>
                                                         </div>
                                                     </div>
                                                     <!-- 제목(내용) -->
                                                     <h2 class="play-info-title-wrap">
                                                         <div class="play-info-title-container">
-                                                            <span class="play-info-title">틴친들과 함께한 일본여행 VLOG😘</span>
+                                                            <span class="play-info-title">{{ context.4.club__club_intro }}</span>
                                                         </div>
                                                     </h2>
                                                 </div>
@@ -525,6 +570,13 @@
 </body>
 {% endblock %}
 {% block js %}
+    <script>     
+        {% if member %}
+            memberSessionId = {{ member.id }}
+        {% else %}
+            memberSessionId = 0    
+        {% endif %}
+    </script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="{% static 'teenplay/js/web/teenplay-play-web.js' %}"></script>
 {% endblock %}
