@@ -67,9 +67,10 @@
                                                         </button>
                                                     </div>
                                                     <div class="tab-list">
-                                                        <div class="tab">전체</div>
-                                                        <div class="tab">위시리스트</div>
-                                                        <div class="tab">홍보 게시글</div>
+                                                        <a class="tab" name="">전체</a>
+                                                        <a class="tab" name="wish">위시리스트</a>
+                                                        <a class="tab" name="post">홍보 게시글</a>
+                                                        <a class="tab" name="ac">활동 게시글</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -86,95 +87,23 @@
                                                 <th class="reply-item-time">작성 시간</th>
                                                 <th class="reply-item-gab"></th>
                                             </tr>
-                                            <tr class="reply-details">
-                                                <td class="reply-title">
-                                                    <a href="">대충 실험을 위해 긴 게시글 제목이 있다고 가정하고 쓰고 싶은데 적당한 제목이 떠오르지 않아 적당히 적어보는 제목입니다.</a>
-                                                </td>
-                                                <td class="reply-content">대충 실험을 위해 긴 댓글이 있다고 가정하고 쓰고 싶은데 적당한 댓글이 떠오르지 않아 적당히 적어보는 댓글입니다.</td>
-                                                <td class="reply-category">위시리스트</td>
-                                                <td class="reply-write-time">1일전</td>
-                                                <td>
-                                                    <button class="reply-remove" href="">삭제하기</button>
-                                                </td>
-                                            </tr>
-                                            <tr class="reply-details">
-                                                <td class="reply-title">
-                                                    <a href="">대충 실험을 위해 긴 게시글 제목이 있다고 가정하고 쓰고 싶은데 적당한 제목이 떠오르지 않아 적당히 적어보는 제목입니다.</a>
-                                                </td>
-                                                <td class="reply-content">대충 실험을 위해 긴 댓글이 있다고 가정하고 쓰고 싶은데 적당한 댓글이 떠오르지 않아 적당히 적어보는 댓글입니다.</td>
-                                                <td class="reply-category">위시리스트</td>
-                                                <td class="reply-write-time">2일전</td>
-                                                <td>
-                                                    <button class="reply-remove" href="">삭제하기</button>
-                                                </td>
-                                            </tr>
-                                            <tr class="reply-details">
-                                                <td class="reply-title">
-                                                    <a href="">대충 실험을 위해 긴 게시글 제목이 있다고 가정하고 쓰고 싶은데 적당한 제목이 떠오르지 않아 적당히 적어보는 제목입니다.</a>
-                                                </td>
-                                                <td class="reply-content">대충 실험을 위해 긴 댓글이 있다고 가정하고 쓰고 싶은데 적당한 댓글이 떠오르지 않아 적당히 적어보는 댓글입니다.</td>
-                                                <td class="reply-category">위시리스트</td>
-                                                <td class="reply-write-time">3일전</td>
-                                                <td>
-                                                    <button class="reply-remove" href="">삭제하기</button>
-                                                </td>
-                                            </tr>
-                                            <tr class="reply-details">
-                                                <td class="reply-title">
-                                                    <a href="">대충 실험을 위해 긴 게시글 제목이 있다고 가정하고 쓰고 싶은데 적당한 제목이 떠오르지 않아 적당히 적어보는 제목입니다.</a>
-                                                </td>
-                                                <td class="reply-content">대충 실험을 위해 긴 댓글이 있다고 가정하고 쓰고 싶은데 적당한 댓글이 떠오르지 않아 적당히 적어보는 댓글입니다.</td>
-                                                <td class="reply-category">위시리스트</td>
-                                                <td class="reply-write-time">4일전</td>
-                                                <td>
-                                                    <button class="reply-remove" href="">삭제하기</button>
-                                                </td>
-                                            </tr>
-                                            <tr class="reply-details">
-                                                <td class="reply-title">
-                                                    <a href="">대충 실험을 위해 긴 게시글 제목이 있다고 가정하고 쓰고 싶은데 적당한 제목이 떠오르지 않아 적당히 적어보는 제목입니다.</a>
-                                                </td>
-                                                <td class="reply-content">대충 실험을 위해 긴 댓글이 있다고 가정하고 쓰고 싶은데 적당한 댓글이 떠오르지 않아 적당히 적어보는 댓글입니다.</td>
-                                                <td class="reply-category">위시리스트</td>
-                                                <td class="reply-write-time">5일전</td>
-                                                <td>
-                                                    <button class="reply-remove" href="">삭제하기</button>
-                                                </td>
-                                            </tr>
                                         </tbody>
+                                        <tbody id="inner"></tbody>
                                     </table>
                                 </div>
-                                <div class="test">아직 작성한 댓글이 없습니다.</div>
+                                
                                 <!-- 페이지네이션 1페이지에 10개 -->
                                 <div class="pagination-box">
                                     <div class="pagination-contents">
                                         <div class="pagination-items">
-                                            <button class="prev-btn disabled" type="button">
+                                            <button class="next-btn" type="button" id="leftButton">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="left-arrow-svg" viewBox="0 0 20 20" fill="currentColor">
                                                     <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                                 </svg>
                                             </button>
-                                            <div class="page-numbers">
-                                                <button class="page-number-btn focus-page" type="button">
-                                                    <div class="page-number">1</div>
-                                                </button>
-                                                <button class="page-number-btn" type="button">
-                                                    <div class="page-number">2</div>
-                                                </button>
-                                                <button class="page-number-btn" type="button">
-                                                    <div class="page-number">3</div>
-                                                </button>
-                                                <button class="page-number-btn" type="button">
-                                                    <div class="page-number">4</div>
-                                                </button>
-                                                <button class="page-number-btn" type="button">
-                                                    <div class="page-number">5</div>
-                                                </button>
-                                                <!-- <button class="page-number-btn" type="button">
-                                                    <div class="page-number">...</div>
-                                                </button> -->
+                                            <div class="page-numbers" id="pageButtons">
                                             </div>
-                                            <button class="next-btn" type="button">
+                                            <button class="next-btn" type="button" id="rightButton">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="right-arrow-svg" viewBox="0 0 20 20" fill="currentColor">
                                                     <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                                                 </svg>
@@ -222,5 +151,30 @@
 {% endblock %}
 
 {% block js %}
+    
+        <script>
+    const csrf_Token = '{{ csrf_token }}';
+    const member_id = '{{ request.session.member.id }}'
+    const selectbut = document.querySelectorAll(".tab")
+    let status_reply = '전체'
+    selectbut.forEach((btn)=> {
+        btn.addEventListener("click", async (e) => {
+            status_reply = btn.name
+            console.log(status_reply)
+            page = 1
+            currentPage = 1
+            const text = await replyService.getList(member_id, currentPage, status_reply, showList);
+            inner.innerHTML = text;
+            replyService.getList(member_id, 1, status_reply, async (reply, total_pages) => {
+            maxPage = total_pages;
+
+            updatePageButtons();
+
+            })
+        })
+    })
+    
+    </script>
+    <script src="{% static 'member/web/js/my-reply-module-web.js' %}"></script>
     <script src="{% static 'member/web/js/my-reply-web.js' %}"></script>
 {% endblock %}
