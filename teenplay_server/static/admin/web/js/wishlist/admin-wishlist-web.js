@@ -8,7 +8,7 @@ const wishlistCreateService = (() => {
         let text = ``;
         pagination.pagination.forEach((page) => {
             text += `
-                <li class="main-user-list" data-id="${page.id}">
+                <li class="main-user-list" data-id="${page.wishlist_id}">
                     <div class="main-user-list-check">
                         <input type="checkbox" class="main-comment-list-checkbox" />
                     </div>
@@ -28,7 +28,7 @@ const wishlistCreateService = (() => {
             }
             text += `
                 <div class="main-user-list-detail">
-                        <button class="member-user-list-detail-button toggle-button" data-target="${page.id}">상세보기</button>
+                        <button class="member-user-list-detail-button toggle-button" data-target="${page.wishlist_id}">상세보기</button>
                     </div>
                 </li>
             `
