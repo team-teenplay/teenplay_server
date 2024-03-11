@@ -11,6 +11,7 @@ from activity.models import Activity, ActivityLike
 from alarm.models import Alarm
 from club.models import Club, ClubMember, ClubPost
 from member.models import Member
+from teenplay.models import TeenPlay
 from teenplay_server.category import Category
 
 
@@ -223,3 +224,42 @@ class ClubPrPostDetailView(View):
 class ClubPrPostView(View):
     def get(self, request):
         return render(request, 'club/web/club-pr-posts-web.html')
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+class ClubTeenplayAPIView(APIView):
+    def get(self,request, club_id, page):
+        row_count = 5
+        offset = (page-1) * row_count
+        limit = page * row_count
+
+        context = {
+            'member': request.session['member'],
+            'club': Club.objects.filter(id=club_id).values(),
+            'teenplay_list': TeenPlay.enable_objects.filter(club=club_id).annotate(like_count=Count('teenplaylike__status')).values('like_count','id', 'created_date', 'updated_date','teenplay_title','club_id','video_path','thumbnail_path','status').order_by('-id')[offset:limit],
+            'has_next': TeenPlay.enable_objects.filter(club=club_id)[limit:limit + 1].exists()
+        }
+        return Response(context)
+
+
+
+class ClubTeenplayDeleteAPIView(APIView):
+    @transaction.atomic
+    def get(self,request,  teenplay_id):
+        TeenPlay.enable_objects.filter(id=teenplay_id).update(status=0)
+        return Response("success")
+
+class ClubTeenplayUploadAPIView(APIView):
+    @transaction.atomic
+    def post(self, request):
+        data = request.POST
+        files = request.FILES
+
+        data = {
+            'teenplay_title' : data['title'],
+            'club_id': data['clubId'],
+            'video_path' : files['video'],
+            'thumbnail_path' :files['thumbnail']
+        }
+
+        TeenPlay.objects.create(**data)
+        return Response("success")
