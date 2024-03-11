@@ -183,7 +183,7 @@ class AdminWishlistView(View):
     def get(self, request):
         return render(request, 'admin/web/wishlist-web.html')
 
-
+# 위시리스트 데이터
 class AdminWishlistAPI(APIView):
     def get(self, request, page):
         order = request.GET.get('order', 'recent')
@@ -223,20 +223,36 @@ class AdminWishlistAPI(APIView):
             'wishlist_content',
             'is_private',
             'member__id',
+            'member__member_nickname',
             'member__status'
         ]
 
-        wishlist = Wishlist.objects.filter(member__status=1).values(*columns).order_by(ordering)
+        wishlist = Wishlist.objects.filter(member__status=1, status=1).values(*columns).order_by(ordering)
         wishlist_like = wishlist.values('member__id').annotate(wishlist_like_count=Count('wishlistlike'))
         wishlist_reply = wishlist.values('member__id').annotate(wishlist_reply_count=Count('wishlistreply'))
 
         for i in range(len(list(wishlist))):
-            wishlist[i]['wishlist_like'] = wishlist_like[i]['wishlist_like']
-            wishlist[i]['wishlist_reply'] = wishlist_reply[i]['wishlist_reply']
+            wishlist[i]['wishlist_like_count'] = wishlist_like[i]['wishlist_like_count']
+            wishlist[i]['wishlist_reply_count'] = wishlist_reply[i]['wishlist_reply_count']
 
         context['wishlist'] = list(wishlist[offset:limit])
 
         return Response(context)
+
+
+# 위시리스트 게시글 업데이트
+class AdminWishlistUpdateAPI(APIView):
+    # 게시글 삭제
+    def patch(self, request, wishlist_id):
+        status = 0
+        updated_date = timezone.now()
+
+        wishlist = Wishlist.objects.get(id=wishlist_id)
+        wishlist.status = status
+        wishlist.updated_date = updated_date
+        wishlist.save(update_fields=['status', 'updated_date'])
+
+        return Response('success')
 
 
 # 관리자 전체 모임 관리 페이지 이동
@@ -312,18 +328,18 @@ class AdminNoticePaginationAPI(APIView):
         return Response(context)
 
 
-# class AdminNoticeUpdateAPI(APIView):
-#     # 게시글 삭제
-#     def patch(self, request, notice_id):
-#         status = 0
-#         updated_date = timezone.now()
-#
-#         notice = Notice.objects.get(id=notice_id)
-#         notice.status = status
-#         notice.updated_date = updated_date
-#         notice.save(update_fields=['status', 'updated_date'])
-#
-#         return Response('success')
+class AdminNoticeUpdateAPI(APIView):
+    # 게시글 삭제
+    def patch(self, request, notice_id):
+        status = 0
+        updated_date = timezone.now()
+
+        notice = Notice.objects.get(id=notice_id)
+        notice.status = status
+        notice.updated_date = updated_date
+        notice.save(update_fields=['status', 'updated_date'])
+
+        return Response('success')
 
 
 # 관리자 공지사항 작성 페이지 이동

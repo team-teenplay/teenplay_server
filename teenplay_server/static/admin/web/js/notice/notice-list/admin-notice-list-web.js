@@ -239,7 +239,7 @@ const totalCount = document.getElementById("total-count");
 // 삭제하기 버튼
 const modalDeleteOpenButtons = document.querySelectorAll(".member-user-list-button");
 // 전체 선택 버튼
-    const statusName = document.querySelector(".main-user-status-name");
+const statusName = document.querySelector(".main-user-status-name");
 
 noticeBox.addEventListener('click', (e) => {
     // noticeBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기

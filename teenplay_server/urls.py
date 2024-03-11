@@ -23,7 +23,7 @@ from main.views import MainView, FooterNoticeLatestAPI
 from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroductionView, CompanyNoticeListAPI, \
     AdminMessageView, AdminTeenplayView, AdminPromoteView, AdminActivityView, AdminWishlistView, AdminMeetingView, \
     AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView, AdminUserUpdateAPI, \
-    AdminNoticePaginationAPI, AdminWishlistAPI
+    AdminNoticePaginationAPI, AdminWishlistAPI, AdminWishlistUpdateAPI
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -51,6 +51,7 @@ urlpatterns = [
     path('admin/activity/', AdminActivityView.as_view(), name='admin-activity'),
     path('admin/wishlist/', AdminWishlistView.as_view(), name='admin-wishlist'),
     path('admin/wishlists/<int:page>/', AdminWishlistAPI.as_view(), name='admin-wishlist-api'),
+    path('admin/notice/delete/<int:wishlist_id>/', AdminWishlistUpdateAPI.as_view(), name='admin-wishlist-api'),
     path('admin/meeting/', AdminMeetingView.as_view(), name='admin-meeting'),
     path('admin/festival/', AdminFestivalView.as_view(), name='admin-festival'),
     path('admin/festival/write/<int:page>/', AdminFestivalWrite.as_view(), name='admin-festival-write'),
