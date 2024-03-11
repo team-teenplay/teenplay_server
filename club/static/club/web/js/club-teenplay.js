@@ -202,7 +202,6 @@ teenplayTabButton.addEventListener('click',  (e)=> {
     clubId = club_list[0]['id']
     let page= 1
     clubDetailService.getTeenplayList(clubId, page).then((teenplayInfo) => {
-        console.log(1)
         let teenplayFirstInfo =teenplayInfo.teenplay_list
         // let containTeenplay = teenplayWrap.getElementsByClassName('club-teenplay-contents').length
 
