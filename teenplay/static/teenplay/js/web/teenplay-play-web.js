@@ -15,11 +15,10 @@ let slideContainer = document.querySelector(".play-item");
 let likeBtns = document.querySelectorAll(".play-like-btn");
 let emptyHeart = document.querySelectorAll(".play-like-icon.empty");
 let fullHeart = document.querySelectorAll(".play-like-icon.full");
-
+let slideNumber = 1
 
 // 구글 개인정보 소리 설정 해제 후 동영상 최초 재생 확인
 videos[0].play();
-
 
 // 재생 중이 아닌 영상은 일시정지로 시작
 videoWraps.forEach((videoWrap, i) => {
@@ -92,7 +91,6 @@ videos.forEach((video, i) => {
 function slideNext(idx) {
     slideContainer.style.transition = `all 0.5s ease-in`;
     slideContainer.style.transform = `translateY(-${window.innerHeight * idx}px)`;
-    // slideContainer.style.transform = `translateY(-${674* idx}px)`;
     videoWraps[idx - 1].classList.remove("playing");
     videoWraps[idx].classList.add("playing");
 }
@@ -114,6 +112,7 @@ let idx = 0;
 let check = true;
 let isFetchingTeenplay = false;
 let pageNumber = 5;
+
 slideWrap.addEventListener("wheel", (e) => {
     manageScroll(e);
     if (!check) return;
@@ -164,32 +163,74 @@ slideWrap.addEventListener("wheel", (e) => {
         setTimeout( () => {
             isFetchingTeenplay = true;
             getTeenplay(showTeenplay)
+            slideNumber += 1
             pageNumber += 3
         },500)
     }
 });
 
+
 // 좋아요 아이콘 클릭 시 반영
-likeBtns.forEach((button, i) => {
-    button.addEventListener("click", () => {
-        if (emptyHeart[i].style.display == "none") {
-            emptyHeart[i].style.display = "block";
-            fullHeart[i].style.display = "none";
-        } else {
-            emptyHeart[i].style.display = "none";
-            fullHeart[i].style.display = "block";
+let likeButtons = document.querySelectorAll(".play-like-btn");
+
+likeButtons.forEach((button, i) => {
+    button.addEventListener("click", async () => {
+        if (memberSessionId == 0) {
+            window.location.href = '/member/login/';
+            return;
         }
+
+        let emptyHeartIcon = emptyHeart[i];
+        let fullHeartIcon = fullHeart[i];
+        let currentDisplayStyle = window.getComputedStyle(emptyHeartIcon).display;
+        emptyHeartIcon.style.display = currentDisplayStyle === "none" ? "block" : "none";
+        fullHeartIcon.style.display = currentDisplayStyle === "none" ? "none" : "block";
+
+        let svgTag = button.querySelector("svg");
+        let displayStyle = window.getComputedStyle(svgTag).getPropertyValue("display");
+        let buttonValue = button.value;
+
+        // Fetch를 통해 API 호출 및 응답 처리
+        const likeTeenplay = async (callback) => {
+            const teenplayLikeResponse = await fetch(`like/api/${buttonValue}/${memberSessionId}/${displayStyle}/`);
+            const videoLike = await teenplayLikeResponse.json();
+            if (callback) {
+                callback(videoLike);
+            }
+        };
+
+        // API 응답 후 처리
+        const likeFetchClick = (videoLike) => {
+            const totalLikeCount = videoLike.totalLikeCount;
+            document.querySelectorAll(".play-like-count")[i].innerText = totalLikeCount;
+
+            // 클릭한 버튼의 상태를 변경한 후에 다른 버튼들의 상태도 동일하게 변경
+            likeButtons.forEach((btn, index) => {
+                const emptyHeartIcon = emptyHeart[index];
+                const fullHeartIcon = fullHeart[index];
+
+                // 클릭한 버튼과 동일한 value 값을 가진 버튼들의 상태만 변경
+                if (btn.value === buttonValue) {
+                    emptyHeartIcon.style.display = currentDisplayStyle === "none" ? "block" : "none";
+                    fullHeartIcon.style.display = currentDisplayStyle === "none" ? "none" : "block";
+                    document.querySelectorAll(".play-like-count")[index].innerText = totalLikeCount;
+                }
+            });
+        };
+
+        // Fetch 호출
+        await likeTeenplay(likeFetchClick);
     });
 });
 
-// 좋아요 수 증가는 비동기로 좋아요 db에 반영 후 가져와 넣기 때문에
-// 현재 화면에서는 구현하지 않습니다.
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 화면 데이터를 가져오는 것을 fetch 를 이용해서 값을 가져온다.
 
 const getTeenplay = async (callback) => {
-    const response = await fetch(`new/`)
+    const response = await fetch(`new/api/${slideNumber}/`)
     const teenplay = await response.json();
     if (callback){
         callback(teenplay)
@@ -197,6 +238,7 @@ const getTeenplay = async (callback) => {
 }
 
 const showTeenplay = (teenplay) => {
+
     const playWrap = document.querySelector(".play-item")
 
     playWrap.innerHTML += `  
@@ -207,7 +249,7 @@ const showTeenplay = (teenplay) => {
                 <div class="video-wrap">
                     <!-- 비디오 -->
                     <video class="play-video" preload loop="" autoplay="">
-                        <source src="/upload/teenplay_video/2024/03/02/teenplay_example_1.MOV" type="video/ogg" />
+                        <source src="/upload/${teenplay[0].video_path}" type="video/ogg" />
                     </video>
                 </div>
             </div>
@@ -219,21 +261,20 @@ const showTeenplay = (teenplay) => {
                         <a href="" class="play-writer-image-wrap">
                             <div class="play-writer-image-container">
                                 <!-- 모임 프사 -->
-<!--                                <img src="{% static 'teenplay/image/teenplay_example_1_profile.jpg' %}" class="play-writer-image" />-->
-<!--                                <img src="/teenplay/static/teenplay/image/teenplay_example_1_profile.jpg" class="play-writer-image" />-->
+                                <img src="/upload/${teenplay[0].club__club_profile_path}" class="play-writer-image" />
                             </div>
                         </a>
                         <div class="play-writer-container">
                             <div class="play-writer-boxes">
                                 <div class="play-writer-box">
                                     <!-- 모임 이름 -->
-                                    <a href="" class="play-writer-name">teen</a>
+                                    <a href="" class="play-writer-name">${teenplay[0].club__club_name}</a>
                                 </div>
                             </div>
                         </div>
                         <div class="play-like-info-wrap">
                             <div class="play-like-wrap">
-                                <button class="play-like-btn">
+                                <button class="play-like-btn" value="${teenplay[0].id}">
                                     <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                                     </svg>
@@ -242,13 +283,13 @@ const showTeenplay = (teenplay) => {
                                     </svg>
                                 </button>
                             </div>
-                            <div class="play-like-count">1.3천</div>
+                            <div class="play-like-count">${teenplay[0].likes}</div>
                         </div>
                     </div>
                     <!-- 제목(내용) -->
                     <h2 class="play-info-title-wrap">
                         <div class="play-info-title-container">
-                            <span class="play-info-title">틴친들과 함께한 일본여행 VLOG😘</span>
+                            <span class="play-info-title">${teenplay[0].club__club_intro}</span>
                         </div>
                     </h2>
                 </div>
@@ -305,7 +346,7 @@ const showTeenplay = (teenplay) => {
                 <div class="video-wrap">
                     <!-- 비디오 -->
                     <video class="play-video" preload loop="" autoplay="">
-                        <source src="/upload/teenplay_video/2024/03/02/teenplay_example_1.MOV" type="video/ogg" />
+                        <source src="/upload/${teenplay[1].video_path}" type="video/ogg" />
                     </video>
                 </div>
             </div>
@@ -317,21 +358,20 @@ const showTeenplay = (teenplay) => {
                         <a href="" class="play-writer-image-wrap">
                             <div class="play-writer-image-container">
                                 <!-- 모임 프사 -->
-<!--                                <img src="{% static 'teenplay/image/teenplay_example_1_profile.jpg' %}" class="play-writer-image" />-->
-<!--                                <img src="/teenplay/static/teenplay/image/teenplay_example_1_profile.jpg" class="play-writer-image" />-->
+                                <img src="/upload/${teenplay[1].club__club_profile_path}" class="play-writer-image" />
                             </div>
                         </a>
                         <div class="play-writer-container">
                             <div class="play-writer-boxes">
                                 <div class="play-writer-box">
                                     <!-- 모임 이름 -->
-                                    <a href="" class="play-writer-name">teen</a>
+                                    <a href="" class="play-writer-name">${teenplay[1].club__club_name}</a>
                                 </div>
                             </div>
                         </div>
                         <div class="play-like-info-wrap">
                             <div class="play-like-wrap">
-                                <button class="play-like-btn">
+                                <button class="play-like-btn" value="${teenplay[1].id}">
                                     <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                                     </svg>
@@ -340,13 +380,13 @@ const showTeenplay = (teenplay) => {
                                     </svg>
                                 </button>
                             </div>
-                            <div class="play-like-count">1.3천</div>
+                            <div class="play-like-count">${teenplay[1].likes}</div>
                         </div>
                     </div>
                     <!-- 제목(내용) -->
                     <h2 class="play-info-title-wrap">
                         <div class="play-info-title-container">
-                            <span class="play-info-title">틴친들과 함께한 일본여행 VLOG😘</span>
+                            <span class="play-info-title">${teenplay[1].club__club_intro}</span>
                         </div>
                     </h2>
                 </div>
@@ -403,7 +443,7 @@ const showTeenplay = (teenplay) => {
                 <div class="video-wrap">
                     <!-- 비디오 -->
                     <video class="play-video" preload loop="" autoplay="">
-                        <source src="/upload/teenplay_video/2024/03/02/teenplay_example_1.MOV" type="video/ogg" />
+                        <source src="/upload/${teenplay[2].video_path}" type="video/ogg" />
                     </video>
                 </div>
             </div>
@@ -415,21 +455,20 @@ const showTeenplay = (teenplay) => {
                         <a href="" class="play-writer-image-wrap">
                             <div class="play-writer-image-container">
                                 <!-- 모임 프사 -->
-<!--                                <img src="{% static 'teenplay/image/teenplay_example_1_profile.jpg' %}" class="play-writer-image" />-->
-<!--                                <img src="/teenplay/static/teenplay/image/teenplay_example_1_profile.jpg" class="play-writer-image" />-->
+                                <img src="/upload/${teenplay[2].club__club_profile_path}" class="play-writer-image" />
                             </div>
                         </a>
                         <div class="play-writer-container">
                             <div class="play-writer-boxes">
                                 <div class="play-writer-box">
                                     <!-- 모임 이름 -->
-                                    <a href="" class="play-writer-name">teen</a>
+                                    <a href="" class="play-writer-name">${teenplay[2].club__club_name}</a>
                                 </div>
                             </div>
                         </div>
                         <div class="play-like-info-wrap">
                             <div class="play-like-wrap">
-                                <button class="play-like-btn">
+                                <button class="play-like-btn" value="${teenplay[2].id}">
                                     <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                                     </svg>
@@ -438,13 +477,13 @@ const showTeenplay = (teenplay) => {
                                     </svg>
                                 </button>
                             </div>
-                            <div class="play-like-count">1.3천</div>
+                            <div class="play-like-count">${teenplay[2].likes}</div>
                         </div>
                     </div>
                     <!-- 제목(내용) -->
                     <h2 class="play-info-title-wrap">
                         <div class="play-info-title-container">
-                            <span class="play-info-title">틴친들과 함께한 일본여행 VLOG😘</span>
+                            <span class="play-info-title">${teenplay[2].club__club_intro}</span>
                         </div>
                     </h2>
                 </div>
@@ -512,6 +551,27 @@ const showTeenplay = (teenplay) => {
     let likeBtns = document.querySelectorAll(".play-like-btn");
     let emptyHeart = document.querySelectorAll(".play-like-icon.empty");
     let fullHeart = document.querySelectorAll(".play-like-icon.full");
+
+
+    const indexList  = document.querySelectorAll(".play-like-icon.empty");
+    const indexArray = [];
+
+    indexList.forEach((index, i ) => {
+        indexArray.push(i)
+    })
+    const lastThreeIndex = Array.from(indexArray).slice(-3);
+
+    for (let count = 0; count < lastThreeIndex.length; count++) {
+        if (count < teenplay.length) {
+            if (teenplay[count].like_check) {
+                emptyHeart[lastThreeIndex[count]].style.display = "none";
+                fullHeart[lastThreeIndex[count]].style.display = "block";
+            } else {
+                emptyHeart[lastThreeIndex[count]].style.display = "block";
+                fullHeart[lastThreeIndex[count]].style.display = "none";
+            }
+        }
+    }
 
     videoWraps.forEach((videoWrap, i) => {
         if (!videoWrap.classList.contains("playing")) {
@@ -665,18 +725,57 @@ const showTeenplay = (teenplay) => {
         }
     });
 
-    likeBtns.forEach((button, i) => {
-        button.addEventListener("click", () => {
-            if (emptyHeart[i].style.display == "none") {
-                emptyHeart[i].style.display = "block";
-                fullHeart[i].style.display = "none";
-            } else {
-                emptyHeart[i].style.display = "none";
-                fullHeart[i].style.display = "block";
+    let likeButtons = document.querySelectorAll(".play-like-btn");
+
+    likeButtons.forEach((button, i) => {
+        button.addEventListener("click", async () => {
+            if (memberSessionId == 0) {
+                window.location.href = '/member/login/';
+                return;
             }
+
+            let emptyHeartIcon = emptyHeart[i];
+            let fullHeartIcon = fullHeart[i];
+            let currentDisplayStyle = window.getComputedStyle(emptyHeartIcon).display;
+            emptyHeartIcon.style.display = currentDisplayStyle === "none" ? "block" : "none";
+            fullHeartIcon.style.display = currentDisplayStyle === "none" ? "none" : "block";
+
+            let svgTag = button.querySelector("svg");
+            let displayStyle = window.getComputedStyle(svgTag).getPropertyValue("display");
+            let buttonValue = button.value;
+
+            // Fetch를 통해 API 호출 및 응답 처리
+            const likeTeenplay = async (callback) => {
+                const teenplayLikeResponse = await fetch(`like/api/${buttonValue}/${memberSessionId}/${displayStyle}/`);
+                const videoLike = await teenplayLikeResponse.json();
+                if (callback) {
+                    callback(videoLike);
+                }
+            };
+
+            // API 응답 후 처리
+            const likeFetchClick = (videoLike) => {
+                const totalLikeCount = videoLike.totalLikeCount;
+                document.querySelectorAll(".play-like-count")[i].innerText = totalLikeCount;
+
+                // 클릭한 버튼의 상태를 변경한 후에 다른 버튼들의 상태도 동일하게 변경
+                likeButtons.forEach((btn, index) => {
+                    const emptyHeartIcon = emptyHeart[index];
+                    const fullHeartIcon = fullHeart[index];
+
+                    // 클릭한 버튼과 동일한 value 값을 가진 버튼들의 상태만 변경
+                    if (btn.value === buttonValue) {
+                        emptyHeartIcon.style.display = currentDisplayStyle === "none" ? "block" : "none";
+                        fullHeartIcon.style.display = currentDisplayStyle === "none" ? "none" : "block";
+                        document.querySelectorAll(".play-like-count")[index].innerText = totalLikeCount;
+                    }
+                });
+            };
+
+            // Fetch 호출
+            await likeTeenplay(likeFetchClick);
         });
     });
-
 }
 
 

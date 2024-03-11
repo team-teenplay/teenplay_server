@@ -1,6 +1,8 @@
 const memberSearch = document.getElementById("member-search");
 const memberSearchCansle = document.getElementById("member-search-cansle");
 const memberButton = document.getElementById("member-button");
+
+// 검색어가 있으면 검색 아이콘 x로 변경
 memberSearch.addEventListener("input", function () {
     if (memberSearch.value.trim() !== "") {
         memberSearchCansle.setAttribute(
@@ -9,6 +11,7 @@ memberSearch.addEventListener("input", function () {
         );
         memberSearchCansle.setAttribute("fill", "#CCCCCD");
         memberSearchCansle.setAttribute("color", "#CCCCCD");
+    // 검색어가 없으면 원래대로 복구
     } else {
         memberSearchCansle.setAttribute(
             "d",
@@ -19,6 +22,7 @@ memberSearch.addEventListener("input", function () {
     }
 });
 
+// 취소 버튼 클릭 시 검색창 값 비워지기
 memberButton.addEventListener("click", (e) => {
     memberSearch.value = "";
     memberSearchCansle.setAttribute(

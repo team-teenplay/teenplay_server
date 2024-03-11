@@ -2,15 +2,18 @@ from django.contrib import admin
 from django.urls import path, include
 
 from activity.views import ActivityCreateWebView, ActivityDetailWebView, ActivityLikeAPI, ActivityReplyAPI, \
-    ActivityLikeCountAPI, ActivityListWebView
+    ActivityLikeCountAPI, ActivityListWebView, ActivityListAPI, ActivityCategoryAPI, ActivityJoinWebView
 
 app_name = 'activity'
 
 urlpatterns = [
-    path('create/', ActivityCreateWebView.as_view(), name='create'),
-    path('detail/', ActivityDetailWebView.as_view(), name='detail'),
-    path('replies/api/', ActivityReplyAPI.as_view(), name='reply-api'),
-    path('like/', ActivityLikeAPI.as_view(), name='like'),
-    path('likes/api/', ActivityLikeCountAPI.as_view(), name='like-count'),
-    path('list/', ActivityListWebView.as_view(), name='list')
+    path('create/', ActivityCreateWebView.as_view(), name='activity-create-web'),
+    path('detail/', ActivityDetailWebView.as_view(), name='activity-detail-web'),
+    path('replies/api/', ActivityReplyAPI.as_view(), name='activity-reply-api'),
+    path('like/', ActivityLikeAPI.as_view(), name='activity-like-api'),
+    path('likes/api/', ActivityLikeCountAPI.as_view(), name='activity-like-count-api'),
+    path('list/', ActivityListWebView.as_view(), name='activity-list-web'),
+    path('lists/api/', ActivityListAPI.as_view(), name='activity-lists-api'),
+    path('categories/api/', ActivityCategoryAPI.as_view(), name='activity-categories-api'),
+    path('join/', ActivityJoinWebView.as_view(), name='activity-join-web'),
 ]

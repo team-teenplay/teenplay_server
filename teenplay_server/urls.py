@@ -23,7 +23,7 @@ from main.views import MainView, FooterNoticeLatestAPI
 from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroductionView, CompanyNoticeListAPI, \
     AdminMessageView, AdminTeenplayView, AdminPromoteView, AdminActivityView, AdminWishlistView, AdminMeetingView, \
     AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView, AdminUserUpdateAPI, \
-    AdminNoticeUpdateAPI, AdminNoticePaginationAPI
+    AdminNoticePaginationAPI, AdminWishlistAPI
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -49,13 +49,14 @@ urlpatterns = [
     path('admin/promote/', AdminPromoteView.as_view(), name='admin-promote'),
     path('admin/activity/', AdminActivityView.as_view(), name='admin-activity'),
     path('admin/wishlist/', AdminWishlistView.as_view(), name='admin-wishlist'),
+    path('admin/wishlists/', AdminWishlistAPI.as_view(), name='admin-wishlist-api'),
     path('admin/meeting/', AdminMeetingView.as_view(), name='admin-meeting'),
     path('admin/festival/', AdminFestivalView.as_view(), name='admin-festival'),
-    path('admin/festival/write/', AdminFestivalWrite.as_view(), name='admin-festival-write'),
+    path('admin/festival/write/<int:page>/', AdminFestivalWrite.as_view(), name='admin-festival-write'),
     path('admin/notice/', AdminNoticeView.as_view(), name='admin-notice'),
     # path('admin/notice/<int:page>/', AdminNoticeAPI.as_view(), name='admin-notice-api'),
     path('admin/notices/<int:page>/', AdminNoticePaginationAPI.as_view(), name='admin-notice-page-api'),
-    path('admin/notice/delete/<int:notice_id>', AdminNoticeUpdateAPI.as_view(), name='admin-notice-delete-api'),
+    # path('admin/notice/delete/<int:notice_id>', AdminNoticeUpdateAPI.as_view(), name='admin-notice-delete-api'),
     path('admin/notice/write/', AdminNoticeWriteView.as_view(), name='admin-notice-write'),
     path('admin/comment/', AdminCommentView.as_view(), name='admin-comment'),
     path('terms/', include('terms.urls-web')),
@@ -68,6 +69,8 @@ urlpatterns = [
     path('footer/notice/api/', FooterNoticeLatestAPI.as_view(), name='footer-notice-api'),
     path('pay/', include('pay.urls')),
     path('wishlist/', include('wishlist.urls')),
+    path('search/', include('main.urls-web')),
+    path('app/search/', include('main.urls-app')),
     path('', MainView.as_view())
 ]
 

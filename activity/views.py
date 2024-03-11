@@ -1,7 +1,7 @@
 import math
 
 from django.db import transaction
-from django.db.models import F
+from django.db.models import F, Q
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views import View
@@ -17,7 +17,10 @@ from pay.models import Pay
 from teenplay_server.category import Category
 import re
 
-def make_datetime(date, time):
+from teenplay_server.models import Region
+
+
+def make_datetime(date, time="00:00"):
     date = date.split("/")
     date = "-".join([date[2], date[0], date[1]])
     time = time + ":00"
@@ -219,7 +222,20 @@ class ActivityReplyAPI(APIView):
             'member_id': data['member_id']
         }
 
-        ActivityReply.objects.create(**data)
+        activity_reply = ActivityReply.objects.create(**data)
+
+        # 모임장에게 활동 상세글 댓글 알림 전송
+        activity = Activity.enabled_objects.filter(id=data['activity_id']).first()
+        club = Club.enabled_objects.filter(id=activity.club.id).first()
+        if activity and club:
+            alarm_data = {
+                'target_id': activity.id,
+                'alarm_type': 2,
+                'sender_id': activity_reply.member.id,
+                'receiver_id': club.member.id,
+            }
+            Alarm.objects.create(**alarm_data)
+
         return Response("success")
 
     def patch(self, request):
@@ -248,6 +264,148 @@ class ActivityReplyAPI(APIView):
 
 class ActivityListWebView(View):
     def get(self, request):
-        return render(request, 'activity/web/activity-web.html')
+        selected_category = request.GET.get('category-id')
+        regions = Region.objects.filter(status=True)
+        categories = Category.objects.filter(status=True)
 
+        context = {
+            'regions': list(regions),
+            'categories': list(categories),
+            'selectedCategory': selected_category
+        }
+        return render(request, 'activity/web/activity-web.html', context=context)
+
+
+class ActivityListAPI(APIView):
+    def post(self, request):
+        data = request.data
+
+        member_id = request.session.get('member').get('id')
+
+        # 검색했을 시
+        keyword = data.get('keyword', '')
+        # 나머지들
+        page = int(data.get('page', 1))
+        date = data.get('date', '모든날')
+        region = data.get('region', '')
+        categories = data.get('categories', [])
+        show_finished = data.get('showFinished', False)
+        ordering = data.get('ordering', '새 행사순')
+
+        order_options = {
+            '추천순': '-id',
+            '새 행사순': '-id',
+            '모집 마감일순': 'recruit_end'
+        }
+
+        row_count = 12
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        condition = Q()
+
+        condition &= Q(activity_title__contains=keyword) | Q(activity_content__contains=keyword)
+
+        condition &= Q(activity_address_location__contains=region)
+        if date == '오늘':
+            condition &= Q(activity_start__lte=timezone.now(), activity_end__gte=timezone.now())
+        elif date == '이번주':
+            condition &= Q(activity_start__lte=timezone.now() + timezone.timedelta(days=7),
+                           activity_end__gte=timezone.now())
+        elif date == '이번달':
+            condition &= Q(activity_start__lte=timezone.now() + timezone.timedelta(weeks=4),
+                           activity_end__gte=timezone.now())
+        elif date == '모든날':
+            condition = condition
+        else:
+            start_date, end_date = date.split(' - ')
+            start_date = make_datetime(start_date)
+            end_date = make_datetime(end_date)
+            condition &= Q(activity_start__lte=end_date, activity_end__gte=start_date)
+
+        if categories:
+            condition &= Q(category_id__in=categories)
+
+        if not show_finished:
+            condition &= Q(recruit_start__lte=timezone.now(), recruit_end__gte=timezone.now())
+
+        total_count = Activity.enabled_objects.filter(condition).count()
+
+        page_count = 5
+        end_page = math.ceil(page / page_count) * page_count
+        start_page = end_page - page_count + 1
+        real_end = math.ceil(total_count / row_count)
+        end_page = real_end if end_page > real_end else end_page
+
+        if end_page == 0:
+            end_page = 1
+
+        page_info = {
+            'totalCount': total_count,
+            'startPage': start_page,
+            'endPage': end_page,
+            'page': page,
+            'realEnd': real_end,
+            'pageCount': page_count,
+        }
+
+        activities = list(Activity.enabled_objects.filter(condition)\
+                          .values().order_by(order_options[ordering])[offset:limit])
+        for activity in activities:
+            activity['member_count'] = ActivityMember.enabled_objects.filter(activity_id=activity['id']).count()
+            activity['is_like'] = ActivityLike.enabled_objects.filter(activity_id=activity['id'], member_id=member_id).exists()
+
+        activities.append(page_info)
+        activities.append(total_count)
+
+        return Response(activities)
+
+
+class ActivityCategoryAPI(APIView):
+    def get(self, request):
+        categories = list(Category.objects.filter(status=True).values())
+
+        return Response(categories)
+
+
+class ActivityJoinWebView(View):
+    def get(self, request):
+        activity_id = request.GET.get('id')
+        activity = Activity.enabled_objects.get(id=activity_id)
+        member_count = ActivityMember.enabled_objects.filter(activity_id=activity_id).count()
+        context = {
+            'activity': activity,
+            'member_count': member_count
+        }
+
+        return render(request, 'activity/web/activity-join-web.html', context=context)
+
+    def post(self, request):
+        data = request.POST
+        data = {
+            'activity_id': data.get('activity-id'),
+            'member_id': data.get('member-id'),
+            'status': -1
+        }
+        activity_member, created = ActivityMember.objects.get_or_create(**data)
+        if not created and activity_member.status == 0:
+            activity_member.status = -1
+            activity_member.updated_date = timezone.now()
+            activity_member.save(update_fields=['status', 'updated_date'])
+
+        # 활동 가입 신청 알림 모임장에게 전송하기
+        activity = Activity.enabled_objects.filter(id=data['activity-id']).first()
+        club = Club.enabled_objects.filter(id=activity.club.id).first()
+        if activity and club:
+            alarm_data = {
+                'target_id': activity.id,
+                'alarm_type': 11,
+                'sender_id': data.get('member-id'),
+                'receiver_id': club.member.id
+            }
+            Alarm.objects.create(**alarm_data)
+
+        # 임시로 메인페이지로 redirect 하겠습니다.
+        # 마이페이지의 나의 활동 페이지 view가 완성될 시 해당 view로 보내겠습니다.
+        return redirect('/')
 

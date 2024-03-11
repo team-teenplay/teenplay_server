@@ -36,11 +36,11 @@
                 <div class="load-mask-none" style="display: none">데이터 로드중...</div>
                 <div class="event-body-section">
                     <div class="content-section">
-                        <form class="setting-wrap" name="activity-create" method="post" action="{% url 'activity:create' %}" enctype="multipart/form-data">
+                        <form class="setting-wrap" name="activity-create" method="post" action="/activity/create/" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="setting-container">
                                 <div class="hint-right-text">
-                                    <a class="hint-text" href="{% url 'club:intro' %}" target="_blank">모임 개설 어렵지 않아요</a>
+                                    <a class="hint-text" href="/club/intro/" target="_blank">모임 개설 어렵지 않아요</a>
                                 </div>
                                 <div class="setting-box">
                                     <div class="setting-col">
