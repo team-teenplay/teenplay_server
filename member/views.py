@@ -359,3 +359,12 @@ class MypageTeenchinAPIview(APIView):
         teenchin = Friend.objects.filter(receiver_id=member_id).values('id', 'is_friend')[offset:limit]
 
         return Response(teenchin)
+
+
+class MemberAlarmCountAPI(APIView):
+    def get(self, request):
+        member_id = request.GET.get('member-id')
+        alarm_count = Alarm.enabled_objects.filter(receiver_id=member_id).count()
+
+        return Response(alarm_count)
+
