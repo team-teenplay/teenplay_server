@@ -893,37 +893,37 @@ thumbnailInput.addEventListener("change", (e) => {
 });
 
 // 드래그 앤 드롭으로 썸네일 첨부하기
-thumbnailUploadBox.addEventListener("dragenter", (e) => {
-    e.preventDefault();
-});
-thumbnailUploadBox.addEventListener("dragover", (e) => {
-    e.preventDefault();
-});
-thumbnailUploadBox.addEventListener("dragleave", (e) => {
-    e.preventDefault();
-});
-thumbnailUploadBox.addEventListener("drop", (e) => {
-    e.preventDefault();
-    let file = e.dataTransfer;
-    let checkSize = 1024 * 1024 * THUMBNAIL_SIZE;
-    if (!checkFileSize(file, checkSize)) {
-        thumbnailSizeMsg.style.display = "block";
-        e.preventDefault();
-        return;
-    }
-    thumbnailSizeMsg.style.display = "none";
-    fileSize = file.files[0].size;
-    thumbnailSizeInfo.innerText = getFileSizeWithExtension(fileSize);
-    thumbnailNameInfo.innerText = file.files[0].name;
-    thumbnailUploadBox.classList.remove("appear");
-    thumbnailUploadBox.classList.add("disappear");
-    setTimeout(() => {
-        thumbnailUploadBox.classList.add("hidden");
-        uploadedThumbnailInfo.classList.remove("hidden");
-        uploadedThumbnailInfo.classList.remove("disappear");
-        uploadedThumbnailInfo.classList.add("appear");
-    }, 501);
-});
+// thumbnailUploadBox.addEventListener("dragenter", (e) => {
+//     e.preventDefault();
+// });
+// thumbnailUploadBox.addEventListener("dragover", (e) => {
+//     e.preventDefault();
+// });
+// thumbnailUploadBox.addEventListener("dragleave", (e) => {
+//     e.preventDefault();
+// });
+// thumbnailUploadBox.addEventListener("drop", (e) => {
+//     e.preventDefault();
+//     let file = e.dataTransfer;
+//     let checkSize = 1024 * 1024 * THUMBNAIL_SIZE;
+//     if (!checkFileSize(file, checkSize)) {
+//         thumbnailSizeMsg.style.display = "block";
+//         e.preventDefault();
+//         return;
+//     }
+//     thumbnailSizeMsg.style.display = "none";
+//     fileSize = file.files[0].size;
+//     thumbnailSizeInfo.innerText = getFileSizeWithExtension(fileSize);
+//     thumbnailNameInfo.innerText = file.files[0].name;
+//     thumbnailUploadBox.classList.remove("appear");
+//     thumbnailUploadBox.classList.add("disappear");
+//     setTimeout(() => {
+//         thumbnailUploadBox.classList.add("hidden");
+//         uploadedThumbnailInfo.classList.remove("hidden");
+//         uploadedThumbnailInfo.classList.remove("disappear");
+//         uploadedThumbnailInfo.classList.add("appear");
+//     }, 501);
+// });
 
 // 썸네일 첨부 후 x버튼으로 삭제하기
 const thumbnailRemoveBtn = document.querySelector(".pr-thumbnail-remove-btn");
@@ -950,7 +950,6 @@ thumbnailRemoveBtn.addEventListener("click", (e) => {
 
 // 틴플레이 설명 및 썸네일 업로드 시 업로드 버튼 활성화 (10자 이상)
 teenPlayTextInput.addEventListener("keyup", () => {
-    console.log(20)
     if (teenPlayTextInput.value.length >= 10 && thumbnailInput.files.length) {
         finalSaveButton.classList.remove("disabled");
     } else {
@@ -961,7 +960,6 @@ teenPlayTextInput.addEventListener("keyup", () => {
 });
 
 thumbnailInput.addEventListener("change", (e) => {
-    console.log(10)
     if (e.target.files.length && teenPlayTextInput.value.length >= 10) {
         finalSaveButton.classList.remove("disabled");
     } else {
@@ -970,73 +968,5 @@ thumbnailInput.addEventListener("change", (e) => {
         }
     }
 });
-
-// 업로드 버튼 클릭 시 모달창으로 확인
-// finalSaveButton.addEventListener("click", () => {
-//     Swal.fire({
-//         title: "업로드하시겠습니까?",
-//         text: "한 번 업로드한 틴플레이는 수정이 불가능합니다.",
-//         icon: "warning",
-//         showCancelButton: true,
-//         confirmButtonColor: "#3085d6",
-//         cancelButtonColor: "#d33",
-//         confirmButtonText: "업로드",
-//         cancelButtonText: "취소",
-//     }).then((result) => {
-//         if (result.value) {
-//             // 틴플레이 업로드 관련 서버 작업 코드 입력
-//             // 여기서 fetch 를 사용해서 진행 되어야 할 것으로 예상
-//             console.log(1)
-//             tpModalCloseBtn.click();
-//             Swal.fire("업로드 진행중", "업로드를 진행합니다. <br> 업로드는 최대 5분 안에 완료됩니다!", "success");
-//         } else if (result.dismiss == "cancel") {
-//             return;
-//         }
-//     });
-// });
-
-// 틴플레이 삭제 아이콘 마우스 올리면 색상 변경 및
-// 틴플레이 삭제 아이콘 클릭 시 모달창 출력
-// 실제 삭제는 서버에서 구현합니다.
-
-// const teenplayDeleteIconBlacks = document.querySelectorAll(".club-teenplay-delete");
-// const teenplayDeleteIconHovers = document.querySelectorAll(".club-teenplay-delete-hover");
-// const teenplayDeleteWraps = document.querySelectorAll(".club-teenplay-delete-wrap");
-// const teenplayDeleteIcon = document.querySelectorAll('.club-teenplay-delete-icon')
-// const teenplayContentsWrap = document.querySelector(".club-teenplay-contents-box");
-// const teenplayContents = document.querySelectorAll(".club-teenplay-contents");
-
-// teenplayDeleteIcon.forEach((div, i) => {
-    // div.addEventListener("mouseover", () => {
-    //     teenplayDeleteIconBlacks[i].style.display = "none";
-    //     teenplayDeleteIconHovers[i].style.display = "block";
-    // });
-    // div.addEventListener("mouseout", () => {
-    //     teenplayDeleteIconBlacks[i].style.display = "block";
-    //     teenplayDeleteIconHovers[i].style.display = "none";
-    // });
-    // 다른 파일로 이동 하였습니다.
-    // div.addEventListener("click", () => {
-    //     Swal.fire({
-    //         title: "삭제하시겠습니까?",
-    //         text: "삭제된 틴플레이는 복구가 불가능합니다.",
-    //         icon: "warning",
-    //         showCancelButton: true,
-    //         confirmButtonColor: "#3085d6",
-    //         cancelButtonColor: "#d33",
-    //         confirmButtonText: "삭제",
-    //         cancelButtonText: "취소",
-    //     }).then((result) => {
-    //         if (result.value) {
-    //             // 틴플레이 삭제 관련 서버 작업 코드 입력
-    //             // 완료 시 아래 코드 실행 (실제로는 또 .then(()=>{}) 으로 써야함)
-    //             Swal.fire("삭제 완료", "틴플레이 삭제가 완료되었습니다.", "success");
-    //             teenplayContentsWrap.removeChild(teenplayContents[i]);
-    //         } else if ((result.dismiss = "cancel")) {
-    //             return;
-    //         }
-    //     });
-    // });
-// });
 
 
