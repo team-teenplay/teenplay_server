@@ -55,6 +55,15 @@ searchInput.addEventListener("input", (e) => {
     searchClupSection.style.display = "none";
 });
 
+// 검색 모듈
+const searchService = (() => {
+    const write = async (keyword, callback) => {
+        await fetch(``);
+    }
+
+    return {write: write}
+})();
+
 // 엔터키를 누를 경우 input의 value를 최근 검색기록 목록에 최신순으로 추가
 const recentlyKeywordList = document.querySelector(".recently-keyword-list");
 
