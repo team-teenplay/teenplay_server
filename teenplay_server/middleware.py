@@ -10,7 +10,7 @@ def pre_handle_request(get_response):
                 and 'admin' not in uri and 'upload' not in uri:
             if 'join' not in uri and 'login' not in uri and uri != '/' and 'terms' not in uri \
                     and 'company' not in uri and 'club/intro' not in uri\
-                    and 'notice' not in uri and 'festival' not in uri and 'pr-post-detail' not in uri \
+                    and 'notice' not in uri and 'festival' not in uri \
                     and 'pr-post-list' not in uri and 'teenplay' not in uri and 'wishlist' not in uri:
                 if request.session.get('member') is None:
                     request.session['previous_uri'] = uri
