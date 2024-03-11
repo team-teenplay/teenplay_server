@@ -113,28 +113,20 @@ class TeenPlayLikeAPIView(APIView):
 
 
 class TeenplayClubView(View):
-    def get(self, request):
-
-        # data = request.GET
-        # context = {
-        #     'idex_number': data['idexNumber'],
-        #     'teenplay_id': data['teenplayId'],
-        #     'member_id': request.session.member.member_id, # 이런 식으로 session에 있는 id 가져올것
-        #     'display_style': data['displayStyle'],
-        #     'totalLikeCount': data['totalLikeCount']
-        # }
+    def get(self, request, teenplayId):
+        member_id = request.session['member'].get('id')
 
         # 실제로는 화면에서 request한 값을 받아와서 해야하나 테스트를 위해 아래쪽이 object로 검사한 데이터를 임시로 작성
         like_count = {}
         member_session = {}
-        teenplay = TeenPlay.enable_objects.filter(id=1).annotate(club_name= F('club__club_name')).\
+        teenplay = TeenPlay.enable_objects.filter(id=teenplayId).annotate(club_name= F('club__club_name')).\
             annotate(club_intro=F('club__club_intro')).annotate(club_profile_path = F('club__club_profile_path')).\
             annotate(teenplay_like=Count('teenplaylike__status', filter=Q(teenplaylike__status=1))).\
             values('club_id','club_name','club_intro','club_profile_path','id', 'video_path','teenplay_like').first()
-        member_like = TeenPlayLike.objects.filter(member_id=3, teenplay_id=1, status=1).exists()
+        member_like = TeenPlayLike.objects.filter(member_id=member_id, teenplay_id=teenplayId, status=1).exists()
         like_count['like_check'] = member_like
         # 나중엔 실제 member의 seeion에 있는 id를 teenplay 에 넣어줘야함
-        member_session['memberSessionId'] = 3
+        member_session['memberSessionId'] = member_id
         context = {**like_count, **teenplay, **member_session}
         return render(request, 'teenplay/web/teenplay-play-select-web.html', context)
 
@@ -151,9 +143,6 @@ class TeenplayClubAPIView(APIView):
         limit = (page-1) * row_count
         index_limit= limit+1
         club_teenplay_conut =TeenPlay.enable_objects.all().count()
-        print(page)
-        print(club_teenplay_conut)
-        print(index_limit)
 
         if index_limit != club_teenplay_conut:
             select_teenplay = TeenPlay.enable_objects.filter(club_id=clubId).annotate(club_name=F('club__club_name')). \
@@ -165,22 +154,16 @@ class TeenplayClubAPIView(APIView):
                                          'teenplay_like')[limit:limit + 1][0]
         else:
             select_teenplay = {}
-        print(select_teenplay)
 
-
-        print('+'*20)
         like_count = {}
         member_session = {}
         if 'id' in select_teenplay:
             member_like = TeenPlayLike.objects.filter(member_id=3, teenplay_id=select_teenplay['id'], status=1).exists()
         else:
             member_like = 'false'
-        print(member_like)
-        print('+' * 20)
         like_count['like_check'] = member_like
         member_session['memberSessionId'] = 3
         context = {**like_count, **select_teenplay, **member_session}
-        print(context)
         return Response(context)
 
 

@@ -10,7 +10,7 @@ urlpatterns = [
     path('all/', TeenplayMainListWebView.as_view(), name='teenplay-main-list'),
     path('all/new/api/<int:slideNumber>/', TeenplayMainListAPIView.as_view()),
     path('all/like/api/<int:emptyValue>/<int:memberSessionId>/<str:displayStyle>/', TeenPlayLikeAPIView.as_view()),
-    path('club/select/', TeenplayClubView.as_view(), name='teenplay-club-select-list'),
+    path('club/select/<int:teenplayId>', TeenplayClubView.as_view(), name='teenplay-club-select-list'),
     path('club/select/api/<int:clubId>/<int:page>/', TeenplayClubAPIView.as_view()),
     path('club/select/like/api/<int:emptyValue>/<int:memberSessionId>/<str:displayStyle>/', TeenPlayClubLikeAPIView.as_view()),
 ]

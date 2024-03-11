@@ -148,11 +148,11 @@
                                 <div class="club-teenplay-wrap">
 {#                                    <!-- js로 채워지는 부분 -->#}
                                     <!-- 비어 있을 때 -->
-                                    <div class="club-teenplay-empty-wrap" style="display:flex">
-                                        <div class="club-teenplay-empty-container">
-                                            <div class="club-teenplay-empty">업로드한 틴플레이가 없습니다.</div>
-                                        </div>
-                                    </div>
+{#                                    <div class="club-teenplay-empty-wrap" style="display:flex">#}
+{#                                        <div class="club-teenplay-empty-container">#}
+{#                                            <div class="club-teenplay-empty">업로드한 틴플레이가 없습니다.</div>#}
+{#                                        </div>#}
+{#                                    </div>#}
                                     <!-- 내용 있을 때 -->
                                     <!-- 무한 스크롤입니다. -->
                                     <div class="club-teenplay-contents-wrap">
@@ -317,14 +317,14 @@
                                                 </div>
                                             </div>
                                         </div>
-{#                                        <div class="tp-show-more-btn-wrap">#}
-{#                                            <button class="tp-show-more-btn">#}
-{#                                                <div>더보기</div>#}
-{#                                                <svg xmlns="http://www.w3.org/2000/svg" class="tp-show-more-arrow" viewBox="0 0 20 20" fill="currentColor">#}
-{#                                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>#}
-{#                                                </svg>#}
-{#                                            </button>#}
-{#                                        </div>#}
+                                        <div class="tp-show-more-btn-wrap">
+                                            <button class="tp-show-more-btn">
+                                                <div>더보기</div>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="tp-show-more-arrow" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -427,7 +427,7 @@
                         <div class="upload-modal-upload-button-wrap">
                             <div class="upload-modal-upload-button-text">파일 선택</div>
                         </div>
-                        <input type="file" name="Filedata" class="upload-modal-upload-file" accept="video/*" />
+                        <input type="file" name="Filedata" id='Filedata' class="upload-modal-upload-file" accept="video/*" />
                         <p class="upload-modal-content-disclaimer">
                             Teenplay에 동영상을 제출하면 Teenplay
                             <a href="" class="upload-modal-content-link">서비스 이용약관</a>

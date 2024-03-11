@@ -38,15 +38,34 @@ const clubDetailService = (() => {
         return clubNotices
     }
 
-    const getTeenplayList = async (clubId, callback) => {
-        const response = fetch(`/club/club-teenplay-list/api/${clubId}`)
+    const getTeenplayList = async (clubId, page, callback) => {
+        const response = await fetch(`/club/club-teenplay-list/api/${clubId}/${page}/`)
         const teenplayList = await response
         const teenplayInfo = await teenplayList.json()
-
         if (callback){
             return callback(teenplayInfo)
         }
         return teenplayInfo
+    }
+
+    const updateTeenplayStatus = async(teenplayId, callback) => {
+        const response = await fetch(`/club/club-teenplay-delete/api/${teenplayId}/`)
+        const teenplayIs = await response
+        if(callback){
+            return callback(teenplayIs)
+        }
+        return teenplayIs
+    }
+
+    const uploadTeenplay = async(formData) => {
+
+        const response = await fetch('/club/club-teenplay-upload/api/', {
+            method: "POST",
+            headers: {
+                'X-CSRFToken': csrftoken
+            },
+            body: formData
+        })
     }
 
     const updateClubMemberStatus = async (memberId, clubId) => {
@@ -76,6 +95,8 @@ const clubDetailService = (() => {
         getTPList: getTeenplayList,
         updateCMStatus: updateClubMemberStatus,
         updateActivityLike: updateActivityLike,
-        getTeenplayList: getTeenplayList
+        getTeenplayList: getTeenplayList,
+        updateTeenplayStatus: updateTeenplayStatus,
+        uploadTeenplay:uploadTeenplay
     }
 })()
