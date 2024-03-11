@@ -10,7 +10,23 @@ const adminWishlistService = (() => {
         return pagination;
     }
 
-    // 공지사항 삭제
+
+    // 카테고리 검색
+    const getCategory = async (page, categories, callback) => {
+        const category = parseInt(categories)
+
+        const response = await fetch(`/admin/wishlists/${page}?category=${category}`);
+        const pagination = await response.json();
+
+
+        if (callback){
+            return callback(pagination);
+        }
+        return pagination;
+    }
+
+
+    // 위시리스트 삭제
     const remove = async (targetId) => {
         const wishlist_id = targetId.targetId
         console.log(wishlist_id)
@@ -26,5 +42,5 @@ const adminWishlistService = (() => {
 
     }
 
-    return { getPagination: getPagination, remove: remove }
+    return { getPagination: getPagination, getCategory: getCategory, remove: remove }
 })()

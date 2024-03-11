@@ -23,7 +23,7 @@ from main.views import MainView, FooterNoticeLatestAPI
 from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroductionView, CompanyNoticeListAPI, \
     AdminMessageView, AdminTeenplayView, AdminPromoteView, AdminActivityView, AdminWishlistView, AdminMeetingView, \
     AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView, AdminUserUpdateAPI, \
-    AdminNoticePaginationAPI, AdminWishlistAPI, AdminWishlistUpdateAPI
+    AdminNoticePaginationAPI, AdminWishlistAPI, AdminWishlistUpdateAPI, AdminNoticeUpdateAPI
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -58,9 +58,10 @@ urlpatterns = [
     path('admin/notice/', AdminNoticeView.as_view(), name='admin-notice'),
     # path('admin/notice/<int:page>/', AdminNoticeAPI.as_view(), name='admin-notice-api'),
     path('admin/notices/<int:page>/', AdminNoticePaginationAPI.as_view(), name='admin-notice-page-api'),
-    # path('admin/notice/delete/<int:notice_id>', AdminNoticeUpdateAPI.as_view(), name='admin-notice-delete-api'),
+    path('admin/notice/delete/<int:notice_id>/', AdminNoticeUpdateAPI.as_view(), name='admin-notice-delete-api'),
     path('admin/notice/write/', AdminNoticeWriteView.as_view(), name='admin-notice-write'),
     path('admin/comment/', AdminCommentView.as_view(), name='admin-comment'),
+    path('admin/wishlists/<int:page>/', AdminCommentView.as_view(), name='admin-comment'),
     path('terms/', include('terms.urls-web')),
     path('app/terms/', include('terms.urls-app')),
     path('activity/', include('activity.urls-web')),

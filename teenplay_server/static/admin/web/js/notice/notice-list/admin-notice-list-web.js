@@ -309,6 +309,17 @@ modalDeleteCloseButtons.forEach((button) => {
     });
 });
 
+// 모달 외부를 클릭했을 때 이벤트 처리
+document.addEventListener("click", (e) => {
+    modalDeleteOpenButtons.forEach((button) => {
+        if (!button.contains(e.target) && !deletemodal.contains(e.target)) {
+            // 클릭된 요소가 검색 버튼이 아니고 모달 창에 속하지 않으면 모달을 닫음
+            deletemodal.classList.add("hidden");
+            deletemodalBack.classList.add("hidden");
+        }
+    });
+});
+
 // 삭제 모달 속 삭제 버튼 클릭 시 이벤트 발생
 modalDeleteButtons.forEach((button) => {
     //
@@ -329,6 +340,7 @@ modalDeleteButtons.forEach((button) => {
         deletemodal.classList.add("hidden");
         deletemodalBack.classList.add("hidden");
         noticeShowList();
+        noticeShowPaging();
         noticeCountShowText();
     });
 });

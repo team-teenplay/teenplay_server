@@ -187,6 +187,7 @@ class AdminWishlistView(View):
 class AdminWishlistAPI(APIView):
     def get(self, request, page):
         order = request.GET.get('order', 'recent')
+        category = request.GET.get('category')
 
         row_count = 10
 
@@ -224,10 +225,16 @@ class AdminWishlistAPI(APIView):
             'is_private',
             'member__id',
             'member__member_nickname',
-            'member__status'
+            'member__status',
+            'category__category_name'
         ]
 
-        wishlist = Wishlist.objects.filter(member__status=1, status=1).values(*columns).order_by(ordering)
+        if category:
+            wishlist = Wishlist.objects.filter(member__status=1, status=1, is_private=category).values(*columns).order_by(ordering)
+
+        else:
+            wishlist = Wishlist.objects.filter(member__status=1, status=1).values(*columns).order_by(ordering)
+
         wishlist_like = wishlist.values('member__id').annotate(wishlist_like_count=Count('wishlistlike'))
         wishlist_reply = wishlist.values('member__id').annotate(wishlist_reply_count=Count('wishlistreply'))
 
@@ -240,7 +247,7 @@ class AdminWishlistAPI(APIView):
         return Response(context)
 
 
-# 위시리스트 게시글 업데이트
+# 위시리스트 게시글 삭제
 class AdminWishlistUpdateAPI(APIView):
     # 게시글 삭제
     def patch(self, request, wishlist_id):
@@ -328,6 +335,7 @@ class AdminNoticePaginationAPI(APIView):
         return Response(context)
 
 
+# 공지사항 삭제
 class AdminNoticeUpdateAPI(APIView):
     # 게시글 삭제
     def patch(self, request, notice_id):
