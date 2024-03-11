@@ -222,7 +222,20 @@ class ActivityReplyAPI(APIView):
             'member_id': data['member_id']
         }
 
-        ActivityReply.objects.create(**data)
+        activity_reply = ActivityReply.objects.create(**data)
+
+        # 모임장에게 활동 상세글 댓글 알림 전송
+        activity = Activity.enabled_objects.filter(id=data['activity_id']).first()
+        club = Club.enabled_objects.filter(id=activity.club.id).first()
+        if activity and club:
+            alarm_data = {
+                'target_id': activity.id,
+                'alarm_type': 2,
+                'sender_id': activity_reply.member.id,
+                'receiver_id': club.member.id,
+            }
+            Alarm.objects.create(**alarm_data)
+
         return Response("success")
 
     def patch(self, request):
@@ -379,6 +392,18 @@ class ActivityJoinWebView(View):
             activity_member.status = -1
             activity_member.updated_date = timezone.now()
             activity_member.save(update_fields=['status', 'updated_date'])
+
+        # 활동 가입 신청 알림 모임장에게 전송하기
+        activity = Activity.enabled_objects.filter(id=data['activity-id']).first()
+        club = Club.enabled_objects.filter(id=activity.club.id).first()
+        if activity and club:
+            alarm_data = {
+                'target_id': activity.id,
+                'alarm_type': 11,
+                'sender_id': data.get('member-id'),
+                'receiver_id': club.member.id
+            }
+            Alarm.objects.create(**alarm_data)
 
         # 임시로 메인페이지로 redirect 하겠습니다.
         # 마이페이지의 나의 활동 페이지 view가 완성될 시 해당 view로 보내겠습니다.

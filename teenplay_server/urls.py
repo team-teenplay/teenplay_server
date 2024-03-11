@@ -69,6 +69,8 @@ urlpatterns = [
     path('footer/notice/api/', FooterNoticeLatestAPI.as_view(), name='footer-notice-api'),
     path('pay/', include('pay.urls')),
     path('wishlist/', include('wishlist.urls')),
+    path('search/', include('main.urls-web')),
+    path('app/search/', include('main.urls-app')),
     path('', MainView.as_view())
 ]
 
