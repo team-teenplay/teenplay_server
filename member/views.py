@@ -5,13 +5,16 @@ from django.views import View
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from activity.models import ActivityReply
 from alarm.models import Alarm
+from club.models import ClubPostReply
 from friend.models import Friend
 from letter.models import Letter, ReceivedLetter, SentLetter
 from member.models import Member, MemberFavoriteCategory, MemberProfile, MemberDeleteReason
 from member.serializers import MemberSerializer
 from pay.models import Pay
 from teenplay_server.category import Category
+from wishlist.models import WishlistReply
 
 
 class MemberLoginWebView(View):
@@ -280,6 +283,7 @@ class MypageListAPIWebView(APIView):
         else:
             response_data['replies'] = Letter.objects.filter(Q(sender_id=member_id,status=1) | Q(receiver_id=member_id,status=1)) \
             .values('letter_content', 'created_date', 'sender__member_nickname', 'receiver__member_nickname','id')[offset:limit]
+
             response_data['total_pages'] = (Letter.objects.filter(Q(sender_id=member_id,status=1) | Q(receiver_id=member_id,status=1)).count() + row_count - 1)  //row_count
 
         return Response(response_data)
@@ -376,10 +380,7 @@ class MypageTeenchinAPIview(APIView):
     def get(self, request, member_id, page):
         status_letter = request.GET.get('status_teenchin')
         search_text = request.GET.get('search')[:-1]
-        print("===============")
-        print(search_text)
-        print(status_letter)
-        print("===============")
+
         row_count = 9
         offset = (page - 1) * row_count
         limit = page * row_count
@@ -475,5 +476,96 @@ class MypagePayDeleteAPIVIEW(APIView):
     @transaction.atomic
     def delete(self, request, pay_id):
         Pay.objects.filter(id=pay_id).update(status=0)
+
+        return Response('good')
+
+class MypageReplyView(View):
+    def get(self,request):
+        return render(request, 'mypage/web/my-reply-web.html')
+
+
+class MypageReplyAPIVIEW(APIView):
+    def get(self, request, member_id, page):
+        status_reply = request.GET.get('status_reply')
+        row_count = 10
+        offset = (page - 1) * row_count
+        limit = page * row_count
+        print(status_reply)
+
+
+        total_count = 0
+
+        total_count += WishlistReply.objects.filter(member_id=member_id, status=1).count()
+        total_count += ActivityReply.objects.filter(member_id=member_id, status=1).count()
+        total_count += ClubPostReply.objects.filter(member_id=member_id, status=1).count()
+
+        # 전체 페이지 수 계산
+        total_pages = (total_count + row_count - 1) // row_count
+        reply = []
+
+        reply += WishlistReply.objects.filter(member_id=member_id, status=1).values('id','reply_content','created_date','wishlist_id','wishlist__wishlist_content')
+        reply += ActivityReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content','created_date','activity_id', 'activity__activity_title')
+        reply += ClubPostReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content','created_date','club_post_id','club_post__post_title')
+
+        response_data = {
+            'total_pages': total_pages,
+            'reply': reply[offset:limit],
+
+        }
+
+        if status_reply == 'wish':
+            response_data['reply'] = WishlistReply.objects.filter(member_id=member_id, status=1).values('id','reply_content','created_date','wishlist_id','wishlist__wishlist_content')[offset:limit]
+            response_data['total_pages'] = (WishlistReply.objects.filter(member_id=member_id, status=1).count() + row_count - 1)  //row_count
+            print(response_data['total_pages'])
+
+        elif status_reply == 'post':
+            response_data['reply'] = ClubPostReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content','created_date','club_post_id','club_post__post_title')[offset:limit]
+            response_data['total_pages'] = (ClubPostReply.objects.filter(member_id=member_id, status=1).count()+ row_count - 1)  //row_count
+
+        elif status_reply == 'ac':
+            response_data['reply'] = ActivityReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content','created_date','activity_id', 'activity__activity_title')[offset:limit]
+            response_data['total_pages'] = (ActivityReply.objects.filter(member_id=member_id, status=1).count()+ row_count - 1)  //row_count
+
+        else:
+
+            total_count = 0
+
+            total_count += WishlistReply.objects.filter(member_id=member_id, status=1).count()
+            total_count += ActivityReply.objects.filter(member_id=member_id, status=1).count()
+            total_count += ClubPostReply.objects.filter(member_id=member_id, status=1).count()
+
+            # 전체 페이지 수 계산
+            total_pages = (total_count + row_count - 1) // row_count
+            print(total_pages)
+
+            reply = []
+
+            reply += WishlistReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content',
+                                                                                        'created_date', 'wishlist_id',
+                                                                                        'wishlist__wishlist_content')
+            reply += ActivityReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content',
+                                                                                        'created_date', 'activity_id',
+                                                                                        'activity__activity_title')
+            reply += ClubPostReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content',
+                                                                                        'created_date', 'club_post_id',
+                                                                                        'club_post__post_title')
+
+            response_data = {
+                'total_pages': total_pages,
+                'reply': reply[offset:limit],
+
+            }
+
+        return Response(response_data)
+
+class MypageReplyDeleteAPIVIEW(APIView):
+    @transaction.atomic
+    def delete(self, request, reply_id):
+        if reply_id.startswith('a'):
+            ActivityReply.objects.filter(id=int(reply_id[1:])).update(status=0)
+        elif reply_id.startswith('w'):
+            WishlistReply.objects.filter(id=int(reply_id[1:])).update(status=0)
+        elif reply_id.startswith('p'):
+            ClubPostReply.objects.filter(id=int(reply_id[1:])).update(status=0)
 
         return Response('good')

@@ -4,7 +4,7 @@ from member.views import MemberLoginWebView, MemberJoinWebView, MypageInfoWebVie
     MypageLetterWebView, MypageWriteAPIWebView, MypageListAPIWebView, MypageDeleteAPIWebView, MypageCheckAPIWebViewMa, \
     MypageAlramView, MypageAlramAPIView, MypageAlramDeleteAPIView, MypageTeenchinview, MypageTeenchinAPIview, \
     MemberAlarmCountAPI, MypageTeenchindeleteview, MypageTeenchinLetterAPIview, MapagePaymentView, MypagePayListAPIVIEW, \
-    MypagePayDeleteAPIVIEW
+    MypagePayDeleteAPIVIEW, MypageReplyView, MypageReplyAPIVIEW, MypageReplyDeleteAPIVIEW
 
 app_name = 'member'
 
@@ -29,6 +29,9 @@ urlpatterns = [
     path('mypage-teenchinapi/', MypageTeenchinLetterAPIview.as_view(), name="mypage-teenchinletter"),
     path('mypage-payment/', MapagePaymentView.as_view(), name='mapage-payment'),
     path('mypage-payment/<int:member_id>/<int:page>/', MypagePayListAPIVIEW.as_view(), name='mypage-paymentapl'),
-    path('mypage-payment/<int:pay_id>/', MypagePayDeleteAPIVIEW.as_view(), name="mypage-paydelete")
+    path('mypage-payment/<int:pay_id>/', MypagePayDeleteAPIVIEW.as_view(), name="mypage-paydelete"),
+    path('mypage-reply/', MypageReplyView.as_view(), name="mypage-reply"),
+    path('mypage-reply/<int:member_id>/<int:page>/', MypageReplyAPIVIEW.as_view(), name="mypage-apireply"),
+    path('mypage-reply/<str:reply_id>/', MypageReplyDeleteAPIVIEW.as_view(), name="mypage-deletereply")
 ]
 
