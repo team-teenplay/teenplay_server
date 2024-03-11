@@ -218,18 +218,23 @@ class AdminWishlistAPI(APIView):
         if order == 'popular':
             ordering = '-post_read_count'
 
-        members = Member.objects.filter(status=1).values('member_name')
-        wishlist = members.values('id').annotate(wishlist=F('wishlist')).values('wishlist__id', 'wishlist_content', 'is_private').order_by(ordering)
-        print(wishlist)
-        wishlist_like = members.values('id').annotate(wishlist_like_count=Count('wishlistlike'))
-        wishlist_reply = members.values('id').annotate(wishlist_reply_count=Count('wishlistreply'))
+        columns = [
+            'id',
+            'wishlist_content',
+            'is_private',
+            'member__id',
+            'member__status'
+        ]
 
-        for i in range(len(list(members))):
-            members[i]['wishlist'] = members[i]['wishlist']
-            members[i]['wishlist_like'] = wishlist_like[i]['wishlist_like']
-            members[i]['wishlist_reply'] = wishlist_reply[i]['wishlist_reply']
+        wishlist = Wishlist.objects.filter(member__status=1).values(*columns).order_by(ordering)
+        wishlist_like = wishlist.values('member__id').annotate(wishlist_like_count=Count('wishlistlike'))
+        wishlist_reply = wishlist.values('member__id').annotate(wishlist_reply_count=Count('wishlistreply'))
 
-        context['wishlist'] = list(members[offset:limit])
+        for i in range(len(list(wishlist))):
+            wishlist[i]['wishlist_like'] = wishlist_like[i]['wishlist_like']
+            wishlist[i]['wishlist_reply'] = wishlist_reply[i]['wishlist_reply']
+
+        context['wishlist'] = list(wishlist[offset:limit])
 
         return Response(context)
 

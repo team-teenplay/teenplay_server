@@ -342,6 +342,9 @@
     </main>
 {% endblock %}
 {% block js %}
+    <script>
+        const csrf_token = '{{ csrf_token }}';
+    </script>
     <script src="{% static 'admin/web/js/wishlist/admin-wishlist-module-web.js' %}"></script>
     <script src="{% static 'admin/web/js/wishlist/admin-wishlist-web.js' %}"></script>
 {#    <script src="{% static 'admin/web/js/wishlist/admin-post-wishlist-bottem-web.js' %}"></script>#}

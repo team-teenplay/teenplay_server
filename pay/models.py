@@ -12,3 +12,9 @@ class Pay(Period):
 
     class Meta:
         db_table = 'tbl_pay'
+
+class PayCancel(Period):
+    pay_cancel_reason = models.TextField(null=False, blank=False)
+
+    class Meta:
+        db_table = 'tbl_pay_cancle'

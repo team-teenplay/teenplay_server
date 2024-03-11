@@ -1,10 +1,15 @@
 let page = 1;
 
+// 위시리스트 게시글 박스
 const wishlistBox = document.querySelector(".wishlist-data")
+// 게시글 페이지 번호
 const mainUserBottomUl = document.querySelector(".main-user-bottom-ul")
+// 게시글 개수
+const totalCount = document.getElementById("total-count");
 
 const wishlistCreateService = (() => {
     const showList = (pagination) => {
+        console.log("작동중")
         let text = ``;
         pagination.pagination.forEach((page) => {
             text += `
@@ -19,11 +24,11 @@ const wishlistCreateService = (() => {
             `;
             if (page.is_private === 0) {
                 text += `
-                    <div className="main-user-list-opne">비공개</div>
+                    <div class="main-user-list-opne">비공개</div>
                 `
             } else if (page.is_private === 1) {
                 text += `
-                    <div className="main-user-list-opne">공개</div>
+                    <div class="main-user-list-opne">공개</div>
                 `
             }
             text += `
@@ -36,7 +41,7 @@ const wishlistCreateService = (() => {
         return text;
     }
 
-    const showPaing = (pagination) => {
+    const showPaging = (pagination) => {
         let text = ``;
         // 시작 페이지가 1보다 큰 경우
         if (pagination.start_page > 1) {
@@ -145,17 +150,19 @@ const wishlistCreateService = (() => {
         return text;
     }
 
-    return {showList: showList, showPaing: showPaing, wishlistCountText: wishlistCountText}
-})()
+    return {showList: showList, showPaging: showPaging, wishlistCountText: wishlistCountText}
+})();
 
 
 // 공지사항 목록 보여주기
-function wishlistShowList() {
+// function wishlistShowList() {
+
     adminWishlistService.getPagination(page, wishlistCreateService.showList).then((text) => {
+        console.log("작동중")
         wishlistBox.innerHTML = text;
     })
-}
-wishlistShowList();
+// }
+// wishlistShowList();
 
 // 페이지 번호 보여주기
 function wishlistShowPaging() {
@@ -221,9 +228,9 @@ mainUserBottomUl.addEventListener("click", (e) => {
 })
 
 // 공지사항 개수 표기
-function noticeCountShowText() {
-    adminWishlistService.getPagination(page, createListService.noticeCountText).then((text) => {
+function wishlistCountShowText() {
+    adminWishlistService.getPagination(page, wishlistCreateService.wishlistCountText).then((text) => {
         totalCount.textContent = text;
     })
 }
-noticeCountShowText();
+wishlistCountShowText();
