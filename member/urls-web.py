@@ -2,7 +2,8 @@ from django.urls import path, include
 
 from member.views import MemberLoginWebView, MemberJoinWebView, MypageInfoWebView, MypageDeleteWebView, \
     MypageLetterWebView, MypageWriteAPIWebView, MypageListAPIWebView, MypageDeleteAPIWebView, MypageCheckAPIWebViewMa, \
-    MypageAlramView, MypageAlramAPIView, MypageAlramDeleteAPIView, MypageTeenchinview, MypageTeenchinAPIview
+    MypageAlramView, MypageAlramAPIView, MypageAlramDeleteAPIView, MypageTeenchinview, MypageTeenchinAPIview, \
+    MemberAlarmCountAPI
 
 app_name = 'member'
 
@@ -20,6 +21,7 @@ urlpatterns = [
     path('mypage-alram/<int:member_id>/<int:page>/',MypageAlramAPIView.as_view(), name='mypage-apialram'),
     path('mypage-alram/<int:alram_id>/', MypageAlramDeleteAPIView.as_view(), name='mypage-apideletealram'),
     path('mypage-teenchin/', MypageTeenchinview.as_view(), name='mypage-teenchin'),
-    path('mypage-teenchin/<int:member_id>/<int:page>/', MypageTeenchinAPIview.as_view(), name='mypage-apiteenchin')
+    path('mypage-teenchin/<int:member_id>/<int:page>/', MypageTeenchinAPIview.as_view(), name='mypage-apiteenchin'),
+    path('alarms/api/', MemberAlarmCountAPI.as_view(), name='alarms-count-api')
 ]
 

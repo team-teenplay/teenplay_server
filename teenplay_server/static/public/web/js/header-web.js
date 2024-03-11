@@ -1,16 +1,7 @@
-// const sendEmailATag = document.querySelector(".send-email");
-// const sendEmailModal = document.querySelector(".send-email-modal-container");
+
 const checkBtn = document.querySelector(".check-btn");
 
-// // 인증 메일 발송하기 클릭 시 모달창 block처리 이벤트
-// sendEmailATag.addEventListener("click", () => {
-//     sendEmailModal.style.display = "block";
-// });
 
-// 모달창 내 확인 버튼 클릭 시 모달창 none처리 이벤트
-// checkBtn.addEventListener("click", () => {
-//     sendEmailModal.style.display = "none";
-// });
 
 const mypageServices = document.querySelector(".member-services");
 const mypageMenu = document.querySelector(".mypage-menu");
@@ -140,7 +131,7 @@ const alarmCount2 = document.querySelector(".mypage-menu-signal-count");
 const memberId = document.querySelector("input[name=header-member-id]").value;
 
 const getAlarmCount = async (memberId, callback) => {
-    const response = await fetch(``);
+    const response = await fetch(`/member/alarms/api?member-id=${memberId}`);
     const alarmCount = await response.json();
     if (callback) {
         callback(alarmCount);
@@ -153,3 +144,30 @@ const showAlarmCount = (alarmCount) => {
 }
 
 getAlarmCount(memberId, showAlarmCount)
+
+// 카테고리 띄우기
+const headerCategoryWrap = document.querySelector(".category-group-items");
+
+const getCategories = async (callback) => {
+    const response = await fetch(`/activity/categories/api/`);
+    const categories = await response.json();
+    if (callback) {
+        callback(categories);
+    }
+}
+
+const showCategories = (categories) => {
+    let text = ``;
+    categories.forEach((category) => {
+        text += `
+            <div class="category-item">
+                <a href="/activity/list?category-id=${category.id}" class="item-link" target="_blank">
+                    <span>${category.category_name}</span>
+                </a>
+            </div>
+        `;
+    })
+    headerCategoryWrap.innerHTML = text;
+}
+
+getCategories(showCategories);

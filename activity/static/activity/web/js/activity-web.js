@@ -2,7 +2,10 @@
 let page = 1;
 let date = "모든날";
 let region = '';
-let categories = []
+let categories = [];
+if (selectedCategory !== 'None') {
+    categories.push(selectedCategory);
+}
 let showFinished = false;
 let ordering = '새 행사순';
 
@@ -382,11 +385,14 @@ const manageCategoryHiddenBg = async (checkbox, i) => {
     await getList(page, date, region, categories, showFinished, ordering, showList);
 }
 
-actCategoryCenter.forEach((center, i) => {
+actCategoryCenter.forEach( (center, i) => {
     const checkbox = center.firstElementChild;
     checkbox.addEventListener("click", async () => {
         await manageCategoryHiddenBg(checkbox, i);
     })
+    if (categories.includes(checkbox.value)) {
+        checkbox.click();
+    }
 })
 
 //  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
