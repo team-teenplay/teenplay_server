@@ -1,15 +1,15 @@
 // 공지사항 관리자 서비스 생성
 const adminNoticeService = (() => {
-    const write = async (notice) => {
-        const response= await fetch("/admin/notice/", {
-            mothod: "POST",
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8',
-                'X-CSRFToken': csrf_token
-            },
-            body: JSON.stringify(notice)
-        });
-    }
+    // const write = async (notice) => {
+    //     const response= await fetch("/admin/notice/", {
+    //         method: "POST",
+    //         headers: {
+    //             'Content-Type': 'application/json;charset=utf-8',
+    //             'X-CSRFToken': csrf_token
+    //         },
+    //         body: JSON.stringify(notice)
+    //     });
+    // }
 
     // // 공지사항 목록 가져오기
     // const getList = async (page, callback) => {
@@ -39,11 +39,10 @@ const adminNoticeService = (() => {
 
     const getCategory = async (page, categories, callback) => {
         const category = parseInt(categories)
-        console.log(category)
 
-        const response = await fetch(`/admin/notices/${page}/?category=${category}`);
+        const response = await fetch(`/admin/notices/${page}?category=${category}`);
         const pagination = await response.json();
-        console.log(pagination)
+
 
         if (callback){
             return callback(pagination);
@@ -67,5 +66,5 @@ const adminNoticeService = (() => {
 
     }
 
-    return {write: write, getPagination:getPagination, getCategory: getCategory, remove: remove}
+    return {getPagination:getPagination, getCategory: getCategory, remove: remove}
 })();

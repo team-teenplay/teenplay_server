@@ -390,93 +390,26 @@ searchadd.addEventListener("click", () => {
     searchText.textContent = "자주묻는질문";
 });
 
-const categoryButtons = document.querySelectorAll('.admin-message-modal-search button');
-let category = ''
-categoryButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-        console.log(button.value)
-        categories = button.value;
-        console.log(button.value)
+const categoryButtons = document.querySelectorAll('.category');
+let categories = ''
+function noticeShowCategory() {
+    categoryButtons.forEach( (button) => {
+        let categories = button.value;
 
-
-        adminNoticeService.getCategory(page, categories).then((text) => {
-            noticeBox.innerHTML = text;
+        button.addEventListener("click", () => {
+            console.log(categories)
+            adminNoticeService.getCategory(page, categories, createListService.showList).then((text) => {
+                noticeBox.innerHTML = text;
+            })
         })
-    });
-});
-noticeShowList(adminNoticeService.getCategory);
+    })
+}
+noticeShowCategory();
 
+searchReceive.addEventListener("click", () => {
+    noticeShowList();
+    noticeShowPaging();
+})
 
-
-// // 공개 비공개 버튼
-// document.addEventListener("DOMContentLoaded", () => {
-//     const allItems = document.querySelectorAll(".main-user-list");
-//
-//     function updateTotalCount() {
-//         // 숫자 세는 코드
-//         const visibleItems = document.querySelectorAll(
-//             ".main-user-list:not(.hidden)"
-//         );
-//         const totalCount = visibleItems.length;
-//         // 숫자를 표시할 요소에 totalCount를 업데이트합니다.
-//         document.getElementById("total-count").textContent = totalCount;
-//     }
-//
-//     document
-//         .querySelector(".admin-message-modal-search-receive")
-//         .addEventListener("click", function () {
-//             allItems.forEach((item) => {
-//                 item.classList.remove("hidden");
-//             });
-//             updateTotalCount(); // 버튼 클릭 후 숫자 업데이트
-//         });
-//
-//     document
-//         .querySelector(".admin-message-modal-search-send")
-//         .addEventListener("click", function () {
-//             allItems.forEach((item) => {
-//                 if (
-//                     item
-//                         .querySelector(".main-user-list-category")
-//                         .textContent.trim() !== "공지사항"
-//                 ) {
-//                     item.classList.add("hidden");
-//                 } else {
-//                     item.classList.remove("hidden");
-//                 }
-//             });
-//             updateTotalCount(); // 버튼 클릭 후 숫자 업데이트
-//         });
-//
-//     document
-//         .querySelector(".admin-message-modal-search-donotreceive")
-//         .addEventListener("click", function () {
-//             allItems.forEach((item) => {
-//                 if (
-//                     item
-//                         .querySelector(".main-user-list-category")
-//                         .textContent.trim() !== "자주묻는질문"
-//                 ) {
-//                     item.classList.add("hidden");
-//                 } else {
-//                     item.classList.remove("hidden");
-//                 }
-//             });
-//             updateTotalCount(); // 버튼 클릭 후 숫자 업데이트
-//         });
-//
-//     // 페이지가 로드될 때도 숫자를 업데이트합니다.
-//     updateTotalCount();
-// });
-//
-// updateTotalCount();
-
-// // -----------------
-// // 검색기능
-// const Search = document.getElementById("member-search")
-//
-// Search.addEventListener('keyup', (e) => {
-//     if (e.keyCode === 13) {
-//         console.log(Search.value.trim().toLowerCase());
-//     }
-// })
+// ---------------------------------------------------------------------------------------------------------------------
+// 게시글 작성
