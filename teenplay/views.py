@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.db.models import Count, Q, F
+from django.db.models import Count, Q, F, Exists
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views import View
@@ -32,7 +32,7 @@ class TeenplayMainListWebView(View):
         return member, id
 
     def main_random_list(self, id):
-        teenplay_count = TeenPlay.objects.all().count()
+        teenplay_count = TeenPlay.enable_objects.all().count()
         teenplay_list = []
         for number in range(5):
             like_count = {}
@@ -137,65 +137,71 @@ class TeenplayClubView(View):
 # page +1 > lenght == 0 이면 스크롤 되면 안됨
 
 class TeenplayClubAPIView(APIView):
-    def get(self, request, clubId, page):
+    def get(self, request, clubId, page, teenplayClickId):
+        offset = 0
+        limit = 1
+        page = page-1
 
-        row_count = 1
-        limit = (page-1) * row_count
-        index_limit= limit+1
-        club_teenplay_conut =TeenPlay.enable_objects.all().count()
+        club_teenplay_conut =TeenPlay.enable_objects.filter(club_id=clubId).count()
+        club_teenplay_id_all = list(TeenPlay.enable_objects.filter(club_id=clubId).values('id').order_by('-id'))
 
-        if index_limit != club_teenplay_conut:
-            select_teenplay = TeenPlay.enable_objects.filter(club_id=clubId).annotate(club_name=F('club__club_name')). \
+        # teenplay id의 인덱스 요소 찾기
+        index_of_target = next((index for index, item in enumerate(club_teenplay_id_all) if item['id'] == teenplayClickId), None)
+        if index_of_target is not None:
+            real_index = index_of_target + page
+        else:
+            real_index = None
+
+        if real_index is not None and 0 <= real_index < club_teenplay_conut:
+            currrent_user_like = TeenPlayLike.objects.filter(member_id=request.session['member']['id'],
+                                                      teenplay_id=club_teenplay_id_all[real_index].get('id'), status=1)
+
+            currnet_teenplay_all_count = TeenPlayLike.objects.filter(status=1, teenplay_id=club_teenplay_id_all[real_index].get('id'))
+
+            select_teenplay = TeenPlay.enable_objects.filter(club_id=clubId, id=club_teenplay_id_all[real_index].get('id')).annotate(club_name=F('club__club_name')). \
                                   annotate(club_intro=F('club__club_intro')).annotate(
                 club_profile_path=F('club__club_profile_path')). \
-                                  annotate(
-                teenplay_like=Count('teenplaylike__status', filter=Q(teenplaylike__status=1))). \
-                                  values('club_id', 'club_name', 'club_intro', 'club_profile_path', 'id', 'video_path',
-                                         'teenplay_like')[limit:limit + 1][0]
+                                  annotate(teenplay_like=Count('teenplaylike__status', filter=Q(teenplaylike__status=1))).\
+                                  annotate(member_like=Exists(currrent_user_like)).annotate(tp_all_count=Count('teenplaylike__status', filter=Q(teenplaylike__status=1))).\
+                                  values('club_id', 'club_name', 'club_intro', 'club_profile_path', 'id', 'video_path','teenplay_like','member_like','tp_all_count')[offset:limit][0]
         else:
-            select_teenplay = {}
-
-        like_count = {}
-        member_session = {}
-        if 'id' in select_teenplay:
-            member_like = TeenPlayLike.objects.filter(member_id=3, teenplay_id=select_teenplay['id'], status=1).exists()
+            return Response({'error': 'Invalid'})
+        if select_teenplay:
+            context = select_teenplay
         else:
-            member_like = 'false'
-        like_count['like_check'] = member_like
-        member_session['memberSessionId'] = 3
-        context = {**like_count, **select_teenplay, **member_session}
+            context = {}
+        print(context)
         return Response(context)
 
 
 class TeenPlayClubLikeAPIView(APIView):
     @transaction.atomic
-    def get(self, request, emptyValue, memberSessionId, displayStyle):
+    def get(self, request, teenplayId, memberSessionId, displayStyle):
 
         data = {
             'member_id': memberSessionId,
-            'teenplay_id': emptyValue
+            'teenplay_id': teenplayId
         }
 
         likeData, checked = TeenPlayLike.objects.get_or_create(**data)
         if checked:
-            totalLikeCount = TeenPlayLike.objects.filter(status=1, teenplay_id=emptyValue).count()
+            totalLikeCount = TeenPlayLike.objects.filter(status=1, teenplay_id=teenplayId).count()
         else:
-            if displayStyle== 'none':
-                TeenPlayLike.objects.filter(status=0, teenplay_id=emptyValue, member_id=memberSessionId).update(status=1, updated_date=timezone.now())
-                totalLikeCount = TeenPlayLike.objects.filter(status=1, teenplay_id=emptyValue).count()
+            if displayStyle != 'none':
+                TeenPlayLike.objects.filter(status=0, teenplay_id=teenplayId, member_id=memberSessionId).update(status=1, updated_date=timezone.now())
+                totalLikeCount = TeenPlayLike.objects.filter(status=1, teenplay_id=teenplayId).count()
             else:
-                TeenPlayLike.objects.filter(status=1, teenplay_id=emptyValue, member_id=memberSessionId).update(status=0, updated_date=timezone.now())
-                totalLikeCount = TeenPlayLike.objects.filter(status=1, teenplay_id=emptyValue).count()
+                TeenPlayLike.objects.filter(status=1, teenplay_id=teenplayId, member_id=memberSessionId).update(status=0, updated_date=timezone.now())
+                totalLikeCount = TeenPlayLike.objects.filter(status=1, teenplay_id=teenplayId).count()
 
         context = {
-            'teenplay_id': emptyValue, # teenplay_id
+            'teenplay_id': teenplayId,
             'member_id': memberSessionId,
             'display_style': displayStyle,
             'totalLikeCount': totalLikeCount
         }
 
         return Response(context)
-
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

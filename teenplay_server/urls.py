@@ -23,7 +23,7 @@ from main.views import MainView, FooterNoticeLatestAPI
 from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroductionView, CompanyNoticeListAPI, \
     AdminMessageView, AdminTeenplayView, AdminPromoteView, AdminActivityView, AdminWishlistView, AdminMeetingView, \
     AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView, AdminUserUpdateAPI, \
-    AdminNoticePaginationAPI, AdminWishlistAPI
+    AdminNoticePaginationAPI, AdminWishlistAPI, AdminWishlistUpdateAPI, AdminNoticeUpdateAPI, AdminUserAPI
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -43,23 +43,28 @@ urlpatterns = [
     path('festival/', include('festival.urls-web')),
     path('app/festival/', include('festival.urls-app')),
     path('admin/login/', AdminLoginView.as_view(), name='admin-login'),
+    # 관리자 user url
     path('admin/user/', AdminUserView.as_view(), name='admin-user'),
-    path('admin/user/update/<int:user_id>', AdminUserUpdateAPI.as_view(), name='admin-user-update'),
+    path('admin/users/<int:page>/', AdminUserAPI.as_view(), name='admin-user-api'),
+    path('admin/user/update/<int:member_id>/', AdminUserUpdateAPI.as_view(), name='admin-user-update'),
+    # -----
     path('admin/message/', AdminMessageView.as_view(), name='admin-message'),
     path('admin/teenplay/', AdminTeenplayView.as_view(), name='admin-teenplay'),
     path('admin/promote/', AdminPromoteView.as_view(), name='admin-promote'),
     path('admin/activity/', AdminActivityView.as_view(), name='admin-activity'),
     path('admin/wishlist/', AdminWishlistView.as_view(), name='admin-wishlist'),
     path('admin/wishlists/<int:page>/', AdminWishlistAPI.as_view(), name='admin-wishlist-api'),
+    path('admin/notice/delete/<int:wishlist_id>/', AdminWishlistUpdateAPI.as_view(), name='admin-wishlist-api'),
     path('admin/meeting/', AdminMeetingView.as_view(), name='admin-meeting'),
     path('admin/festival/', AdminFestivalView.as_view(), name='admin-festival'),
     path('admin/festival/write/<int:page>/', AdminFestivalWrite.as_view(), name='admin-festival-write'),
     path('admin/notice/', AdminNoticeView.as_view(), name='admin-notice'),
     # path('admin/notice/<int:page>/', AdminNoticeAPI.as_view(), name='admin-notice-api'),
     path('admin/notices/<int:page>/', AdminNoticePaginationAPI.as_view(), name='admin-notice-page-api'),
-    # path('admin/notice/delete/<int:notice_id>', AdminNoticeUpdateAPI.as_view(), name='admin-notice-delete-api'),
+    path('admin/notice/delete/<int:notice_id>/', AdminNoticeUpdateAPI.as_view(), name='admin-notice-delete-api'),
     path('admin/notice/write/', AdminNoticeWriteView.as_view(), name='admin-notice-write'),
     path('admin/comment/', AdminCommentView.as_view(), name='admin-comment'),
+    path('admin/wishlists/<int:page>/', AdminCommentView.as_view(), name='admin-comment'),
     path('terms/', include('terms.urls-web')),
     path('app/terms/', include('terms.urls-app')),
     path('activity/', include('activity.urls-web')),

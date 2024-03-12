@@ -58,15 +58,9 @@ function updateTotalCount() {
 
 // 모달 수정창
 
-const modalDetailOpenButtons = document.querySelectorAll(
-    ".member-user-list-detail-button"
-);
-const modalDetailCloseButtons = document.querySelectorAll(
-    ".admin-user-modal-left-detail-button"
-);
-const modalAdddetailCloseButtons = document.querySelectorAll(
-    ".admin-user-modal-right-detail-button"
-);
+const modalDetailOpenButtons = document.querySelectorAll(".member-user-list-detail-button");
+const modalDetailCloseButtons = document.querySelectorAll(".admin-user-modal-left-detail-button");
+const modalAdddetailCloseButtons = document.querySelectorAll(".admin-user-modal-right-detail-button");
 const detailmodal = document.getElementById("admin-post-modal");
 const detailmodalBack = document.getElementById("admin-user-modal-backdrop");
 

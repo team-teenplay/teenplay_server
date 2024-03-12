@@ -1,42 +1,43 @@
 // 유저 정보 가져오기
 const adminUserService = (() => {
-    // 비동기
-    const users = async (user) => {
-        const response = await fetch("/admin/user/", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8',
-                'X-CSRFToken': csrf_token
-            },
-            body: JSON.stringify(user)
-        });
-    };
+    // 페이지 가져오기
+    const getPagination = async (page, callback) => {
+        const response = await fetch(`/admin/users/${page}/`);
+        const pagination = await response.json();
 
-    // 유저 목록 가져오기
-    const getList = async (callback) => {
-        const response = await fetch(`/admin/user/`);
-        const users = await respon.json();
         if (callback){
-            return callback(users);
+            return callback(pagination);
         }
-        return users;
+        return pagination;
     }
 
-    // 유저 정보 수정하기
-    const update = async (id, status) => {
-        const user_id = id.user_id;
-        const user_status = status.status;
-        await fetch(`/admin/user/update/${user_id}`, {
-            method: 'PATCH',
+    // 카테고리 검색
+    const getCategory = async (page, categories, callback) => {
+        const category = parseInt(categories)
+
+        const response = await fetch(`/admin/users/${page}?category=${category}`);
+        const pagination = await response.json();
+
+
+        if (callback){
+            return callback(pagination);
+        }
+        return pagination;
+    }
+
+    const remove = async (targetId) => {
+        const member_id = targetId.targetId
+
+        await fetch(`/admin/user/update/${member_id}/`, {
+            method: 'patch',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
                 'X-CSRFToken': csrf_token
             },
-            body: JSON.stringify({'status': user_status})
+            body: JSON.stringify({'member_id': member_id})
         });
 
-        location.reload()
     }
 
-    return {users: users, getList: getList, update: update}
+    return {getPagination:getPagination, getCategory:getCategory, remove:remove}
 })();

@@ -1,137 +1,455 @@
-// 전체 선택 버튼
-const statusName = document.querySelector(".main-user-status-name");
-// 체크박스
-const checkBox = document.querySelectorAll(".main-comment-list-checkbox");
-// 선택된 회원의 명수
-const totalCount = document.getElementById("total-count");
-// 상태 변경 버튼
-const statusUpdateButton = document.querySelector(".toggle-button")
-// 상태 변경 모달창
-const modal = document.getElementById("admin-user-modal");
-const modalBack = document.getElementById("admin-user-modal-backdrop");
-// 취소 버튼
-const modalCloseButtons = document.getElementById("modalCloseButton");
-// 적용하기 버튼
-const ApplyButton = document.getElementById("modalApplyButton")
+let page = 1
 
-// 체크 박스 체크 시 카운트 업데이트 함수 선언
-function checkBoxCount() {
-    // 체크박스 체크 시 전체 숫자 up
-    let checkedCount = 0;
 
-    // 체크박스 반복하여 하나씩 가져오기
-    checkBox.forEach((check) => {
-        // 체크박스 체크 시 체크 카운트 up
-        if (check.checked) {
-            checkedCount++;
-        }
-    });
-
-    // 선택된 회원의 개수(텍스트)에 checkedCount(개수 데이터) 업데이트
-    totalCount.textContent = checkedCount;
-}
-
-// 체크 박스 선택 시 함수 실행
-// 체크 박스 반복하여 하나씩 가져오기
-checkBox.forEach((check) => {
-    // 체크 박스 값 변경(change) 시 이벤트 발생, checkBoxCount 함수 실행
-    check.addEventListener('change', checkBoxCount)
-});
-
-// 체크 박스 전체 선택 버튼 기능 구현
-// 전체 선택 버튼 클릭 시 이벤트 발생
-statusName.addEventListener("click", () => {
-    // 모든 체크박스가 체크되었다고 가정
-    let allChecked = true;
-
-    // 체크 박스 반복하여 하나씩 가져오기
-    checkBox.forEach((checkbox) => {
-        // 만약, 체크 박스가 체크되어 있지 않다면
-        if (!checkbox.checked) {
-                allChecked = false;
-                // 체크박스 체크해주기
-                checkbox.checked = true;
-                // 상태 변경 버튼 활성화
-                statusUpdateButton.classList.remove("disabled");
+const CreateService = (() => {
+    const showList = (pagination) => {
+        let text = ``;
+        console.log(pagination)
+        pagination.members.forEach((page) => {
+            text += `
+                <li class="main-user-list" data-id="${page.id}">
+                    <div class="main-user-list-check">
+                        <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-user-id="${page.id}">
+                    </div>
+                    <div class="main-user-list-name">${page.member_nickname}</div>
+                    <div class="main-user-list-status">${page.created_date}</div>
+                    <div class="main-user-list-date">${page.club_count}</div>
+                    <div class="main-user-list-pay">${page.club_action_count}</div>
+                    <div class="main-user-list-paycount">${page.activity_count}</div>
+            `;
+            if (page.status === -1) {
+                text += `
+                    <div class="main-user-list-message" data-user-status="${page.status}">정지</div>
+                </li>
+            `;
+            } else if (page.status === 0) {
+                text += `
+                    <div class="main-user-list-message" data-user-status="${page.status}">탈퇴</div>
+                </li>
+            `;
+            }if (page.status === 1) {
+                text += `
+                    <div class="main-user-list-message" data-user-status="${page.status}">활동중</div>
+                </li>
+            `
             }
-        });
-    checkBoxCount();
-
-    // 체크 박스 반복하여 하나씩 가져오기
-    checkBox.forEach((checkbox) => {
-        // 모든 체크 박스가 체크 되어 있다면
-        if (allChecked) {
-            // 체크박스 체크 없애기
-            checkbox.checked = false;
-            // 상태 변경 버튼 비활성화
-            statusUpdateButton.classList.add("disabled");
-        }
-    });
-    // checkBoxCount 함수 실행
-    checkBoxCount();
-});
-
-// 체크 박스 선택 여부에 따라 버튼 활성화/비활성화
-// 체크 박스 반복하여 하나씩 가져오기
-checkBox.forEach((checkbox) => {
-    // 체크 박스 값 변경(change) 시 이벤트 발생, checkBoxCount 함수 실행
-    checkbox.addEventListener('change', () => {
-        // 체크 박스 선택 여부에 따라 버튼 활성화/비활성화
-        statusUpdateButton.classList.toggle("disabled", !checkbox.checked);
-    });
-});
-
-// 상태 변경 버튼 클릭 시 이벤트 발생
-statusUpdateButton.addEventListener("click", (event) => {
-    // 이벤트 객체 class명에 disabled가 없다면, 모달 오픈
-    if (!event.currentTarget.classList.contains("disabled")) {
-
-        modal.classList.remove("hidden");
-        modalBack.classList.remove("hidden");
+        })
+        return text;
     }
-});
 
-// 상태 변경 취소 버튼 클릭 시 모달 종료
-modalCloseButtons.addEventListener("click", () => {
-    modal.classList.add("hidden");
-    modalBack.classList.add("hidden");
-});
+    const showPaging = (pagination) => {
+        let text = ``;
+        // 시작 페이지가 1보다 큰 경우
+        if (pagination.start_page > 1) {
+            // 정렬이 popular이라면
+            if (pagination.order === 'popular'){
+                // 추가
+                text += `
+                    <li>
+                        <a href="${pagination.start_page -1} popular" class="reft main-user-bottom-left">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="main-user-bottom-svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M15.58 3.27c.504.405.563 1.115.13 1.587L9.168 12l6.543 7.143a1.076 1.076 0 0 1-.13 1.586 1.26 1.26 0 0 1-1.695-.122L6 12l7.885-8.607a1.26 1.26 0 0 1 1.695-.122Z"></path>
+                            </svg>
+                        </a>
+                    </li>
+                 `
+            } else {
+                text += `
+                    <li>
+                        <a href="${pagination.start_page -1}" class="reft main-user-bottom-left">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="main-user-bottom-svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M15.58 3.27c.504.405.563 1.115.13 1.587L9.168 12l6.543 7.143a1.076 1.076 0 0 1-.13 1.586 1.26 1.26 0 0 1-1.695-.122L6 12l7.885-8.607a1.26 1.26 0 0 1 1.695-.122Z"></path>
+                            </svg>
+                        </a>
+                    </li>
+                 `
+            }
+        }
 
-// 모달 창 밖 화면 클릭 시 모달 종료
-document.addEventListener("click", (e) => {
-    if (!statusUpdateButton.contains(e.target) && !modal.contains(e.target)) {
-        modal.classList.add("hidden");
-        modalBack.classList.add("hidden");
+        // i가 0에서 시작; page_count 보다 작을 때까지 반복; i를 1씩 증가;
+        for (let i = 0; i < pagination.page_count; i++) {
+            // 현재 반복 횟수 + 시작 페이지 <= 진짜 끝나는 페이지 이하라면
+            if (i + pagination.start_page <= pagination.real_end) {
+                // 선택된 페이지
+                // 페이지가 현재 반복 횟수 + 시작 페이지와 같다면
+                if (page === i + pagination.start_page) {
+                    // 추가
+                    text += `
+                        <li class="main-margin">
+                            <a href="javascript:void(0)" class="pagination main-user-bottom add-color">
+                                <span class="main-user-number add-text-color">${i + pagination.start_page}</span>
+                            </a>
+                        </li>
+                    `
+                // 같지 않다면
+                } else {
+                    // 정렬이 popular 와 같다면
+                    if (pagination.order === 'popular') {
+                        // 추가
+                        text += `
+                            <li class="main-margin">
+                                <a href="${i + pagination.start_page} popular" class="pagination main-user-bottom" aria-label="page number button">
+                                    <span class="main-user-number">${i + pagination.start_page}</span>
+                                </a>
+                            </li>
+                        `
+                    // 아니라면
+                    } else {
+                        // 추가
+                        text += `
+                            <li class="main-margin">
+                                <a href="${i + pagination.start_page}" class="pagination main-user-bottom" aria-label="page number button">
+                                    <span class="main-user-number">${i + pagination.start_page}</span>
+                                </a>
+                            </li>
+                        `
+                    }
+                }
+            }
+        }
+
+        if (pagination.end_page < pagination.real_end) {
+            if (pagination.order === 'popular') {
+                text += `
+                    <li class="main-margin">
+                        <a href="${pagination.end_page + 1} popular" class="right main-user-bottom-right">
+                            <svg class="main-user-bottom-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M8.42 20.73a1.076 1.076 0 0 1-.13-1.587L14.832 12 8.289 4.857a1.076 1.076 0 0 1 .13-1.586 1.26 1.26 0 0 1 1.696.122L18 12l-7.885 8.607a1.26 1.26 0 0 1-1.695.122Z"></path>
+                            </svg>
+                        </a>
+                    </li>
+                `
+            } else {
+                text += `
+                    <li class="main-margin">
+                        <a href="${pagination.end_page + 1}" class="right main-user-bottom-right">
+                            <svg class="main-user-bottom-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M8.42 20.73a1.076 1.076 0 0 1-.13-1.587L14.832 12 8.289 4.857a1.076 1.076 0 0 1 .13-1.586 1.26 1.26 0 0 1 1.696.122L18 12l-7.885 8.607a1.26 1.26 0 0 1-1.695.122Z"></path>
+                            </svg>
+                        </a>
+                    </li>
+                `
+            }
+        }
+
+        return text;
+    }
+
+    // 유저 명수 표기 텍스트
+    const CountText = (pagination) => {
+        let text = ``;
+        text += pagination.total
+
+        return text;
+    }
+
+
+    return {showList:showList, showPaging:showPaging, CountText:CountText}
+})();
+
+
+
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// 정보 들어가는 태그
+const userData = document.querySelector(".user-data")
+
+// 목록 보여주기
+function allShowList() {
+    adminUserService.getPagination(page, CreateService.showList).then((text) => {
+        userData.innerHTML = text;
+    })
+}
+allShowList();
+
+// 페이지 번호 들어가는 곳
+const mainUserBottomUl = document.querySelector(".main-user-bottom-ul")
+
+// 페이지 번호 보여주기(전체 데이터)
+function allShowPaging() {
+    adminUserService.getPagination(page, CreateService.showPaging).then((text) => {
+        mainUserBottomUl.innerHTML = text;
+    })
+}
+allShowPaging();
+
+const mainUserTotalNumber = document.querySelector(".main-user-total-number")
+
+// 공지사항 개수 표기 (전체 데이터)
+function CountShowText() {
+    adminUserService.getPagination(page, CreateService.CountText).then((text) => {
+        mainUserTotalNumber.textContent = text;
+    })
+}
+CountShowText();
+
+
+// 페이지 네이션
+// 페이지 번호 박스 클릭 시 이벤트 발생
+mainUserBottomUl.addEventListener("click", (e) => {
+    // 페이지 번호 a태그
+    const mainUserBottom = document.querySelectorAll(".main-user-bottom")
+    // 페이지 번호 박스 속 번호
+    const endPage = document.querySelectorAll(".main-user-number")
+
+    // 페이지 이동 막아주기
+    e.preventDefault()
+
+    // 만약, 페이지 번호 클릭 시
+    if (e.target.closest(".main-user-bottom") && e.target.closest(".main-user-bottom").classList.contains('pagination')) {
+        console.log("if 들어옴")
+
+        // 기존 선택된 페이지 번호 스타일 삭제
+        mainUserBottom.forEach((userBottom) => {
+            userBottom.classList.remove("add-color")
+        })
+        endPage.forEach((userNumber) => {
+            userNumber.classList.remove("add-text-color")
+        })
+
+        // 새롭게 선택된 페이지 번호 스타일 부여
+        e.target.closest(".main-user-bottom").classList.add("add-color")
+        e.target.closest(".main-user-bottom").querySelector(".main-user-number").classList.add("add-text-color")
+
+        // 페이지 번호를 텍스트로 가져와 page로 담기
+        page = e.target.closest(".main-user-bottom").querySelector(".main-user-number").innerText
+
+        // 번호에 따른 게시글 목록 가져오기
+        allShowList();
+    // 페이지 이동 다음 버튼 클릭 시
+    } else if (e.target.closest(".main-user-bottom-right")) {
+        // 페이지 번호 끝(문자열로 가져오기 때문에 정수로 형변환)에서 + 1 (다음 페이지) 해주기
+        page = parseInt(endPage[4].innerText) + 1
+
+        // 페이지에 따른 목록 보여주기
+        allShowList();
+
+        // 페이지에 따른 페이지 번호 목록 보여주기
+        allShowPaging();
+    // 페이지 이동 이전 버튼 클릭 시
+    } else if (e.target.closest(".main-user-bottom-left")) {
+        // 페이지 번호 끝(문자열로 가져오기 때문에 정수로 형변환)에서 - 1 (이전 페이지) 해주기
+        page = parseInt(endPage[0].innerText) - 1
+
+        // 페이지에 따른 목록 보여주기
+        allShowList();
+
+        // 페이지에 따른 페이지 번호 목록 보여주기
+        allShowPaging();
     }
 })
 
-// 적용하기 버튼 클릭 시 이벤트 발생
-ApplyButton.addEventListener("click", async () => {
-    // 체크 박스
-    const checkBox = document.getElementById('checkbox');
-    // 회원 상태
-    const statusBox = document.querySelector('.main-user-list-message');
-    // 만약 체크 박스가 True라면,
-    if (checkBox) {
-        // 체크 박스에 포함된 user.id 정보 가져오기
-        const idValue = checkBox.closest("li").getAttribute('data-id');
-        const id = document.querySelector(`li[data-id="${idValue}"]`);
-        // 회원 상태 태그에 포함된 user.status 정보 가져오기
-        const satus = statusBox.getAttribute('data-user-status');
-        console.log(id)
-        // 만약, status가 -1(정지)이라면
-        if (satus === '-1') {
-            // 해당 유저의 status를 1(활동중)로 변경
-            await adminUserService.update({user_id: id}, {status: 1})
-        // 만약, status가 1(활동중)이라면
-        } else if (satus === '1') {
-            // 해당 유저의 status를 -1(정지)로 변경
-            await adminUserService.update({user_id: id}, {status: -1})
+
+
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// 체크박스
+// 삭제하기 버튼
+const modalDeleteOpenButtons = document.querySelectorAll(".member-user-list-button");
+
+userData.addEventListener('click', (e) => {
+    // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
+    // main-user-list가 있으면 옵셔널 체이닝(?.)을 사용하여 프로퍼티에 접근해 main-comment-list-checkbox를 찾기
+    const checkboxes = e.target.closest(".main-user-list")?.querySelectorAll(".main-comment-list-checkbox");
+
+    checkboxes.forEach((checkbox) => {
+        checkbox.addEventListener('change', () => {
+            const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
+
+            let checkedCount = 0;
+
+            modalDeleteOpenButtons.forEach((deleteButton) => {
+                if (checkedItems.length > 0) {
+                    deleteButton.classList.remove("disabled");
+                    checkedCount = checkedItems.length
+                } else if (checkedItems.length === 0) {
+                    deleteButton.classList.add("disabled");
+                }
+            })
+            mainUserTotalNumber.textContent = checkedCount;
+        });
+    })
+})
+
+// 전체 선택 버튼
+const statusName = document.querySelector(".main-user-status-name");
+
+statusName.addEventListener('click', (e) => {
+    let allChecked = statusName.checked;
+
+    const checkboxes = e.target.closest(".main-user-list")?.querySelectorAll(".main-comment-list-checkbox");
+
+    checkboxes.forEach((checkbox) => {
+        checkbox.checked = allChecked;
+        // deleteButton.classList.remove("disabled");
+    })
+})
+
+
+
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// 모달 속 취소 버튼
+const modalDeleteCloseButtons = document.querySelectorAll(".admin-user-modal-left-button");
+// 모달 속 삭제 버튼
+const modalDeleteButtons = document.querySelectorAll(".admin-user-modal-right-button");
+
+// 상태변경
+const deletemodal = document.getElementById("admin-user-modal");
+const deletemodalBack = document.getElementById("admin-user-modal-backdrop");
+
+let currentTargetLi;
+
+// 삭제하기 버튼 클릭 시 이벤트 발생
+modalDeleteOpenButtons.forEach((button) => {
+    button.addEventListener("click", (event) => {
+        const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
+
+        // 타겟의 아이디 값 가져오기
+        const targetId = event.currentTarget.getAttribute("data-target");
+        currentTargetLi = document.querySelector(`li[data-number="${targetId}"]`
+        );
+
+        // 모달 열기
+        if (checkedItems.length > 0) {
+            deletemodal.classList.remove("hidden");
+            deletemodalBack.classList.remove("hidden");
+        }
+    });
+});
+
+// 삭제 모달 속 닫기 버튼 클릭 시 이벤트 발생
+modalDeleteCloseButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+        // 삭제 모달 비활성화
+        deletemodal.classList.add("hidden");
+        deletemodalBack.classList.add("hidden");
+    });
+});
+
+// 모달 외부를 클릭했을 때 이벤트 처리
+document.addEventListener("click", (e) => {
+    modalDeleteOpenButtons.forEach((button) => {
+        if (!button.contains(e.target) && !deletemodal.contains(e.target)) {
+            // 클릭된 요소가 검색 버튼이 아니고 모달 창에 속하지 않으면 모달을 닫음
+            deletemodal.classList.add("hidden");
+            deletemodalBack.classList.add("hidden");
+        }
+    });
+});
+
+// 삭제 모달 속 삭제 버튼 클릭 시 이벤트 발생
+modalDeleteButtons.forEach((button) => {
+    //
+    button.addEventListener("click", async () => {
+        // 체크된 체크 박스 가져오기
+        const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
+
+        // 체크된 체크 박스 반복하여 하나씩 checkbox에 담기
+        for (const checkbox of checkedItems) {
+            // 체크된 checkbox와 가장 가까운 li 요소를 찾고 data-id 값을 가져오기
+            const targetId = checkbox.closest("li").getAttribute("data-id");
+
+            // data-id 속성 값이 같은 li 요소를 가져오기
+            await adminUserService.remove({ targetId: targetId });
         }
 
-    }
+        // 모달 닫기
+        deletemodal.classList.add("hidden");
+        deletemodalBack.classList.add("hidden");
+        allShowList();
+        allShowPaging();
+        CountShowText();
+    });
+});
 
-    // 다 끝나면 모달 종료
-    modal.classList.add("hidden");
-    modalBack.classList.add("hidden");
+
+
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+let categories = " ";
+
+// 카테고리 버튼
+const searchOpen = document.querySelector(".main-wish-sellect-button");
+// 카테고리 버튼 속 텍스트
+const searchText = document.querySelector(".main-wish-sellect-button-span");
+// 카테고리 선택 모달
+const searchModal = document.querySelector(".admin-message-modal-search");
+// 카테고리 모달 속 카테고리 버튼
+const searchReceive = document.querySelector(".admin-message-modal-search-receive");
+// 카테고리 모달 속 공지사항 버튼
+const searchSend = document.querySelector(".admin-message-modal-search-send");
+// 카테고리 자주묻는질문 버튼
+const searchadd = document.querySelector(".admin-message-modal-search-donotreceive");
+// 버튼 이미지
+const path = document.querySelector(".main-comment-info-button-svg");
+
+// 검색 버튼 클릭 시 모달 열기
+searchOpen.addEventListener("click", () => {
+    // 이벤트 전파를 막기 위해 stopPropagation() 호출
+    // event.stopPropagation();
+    path.setAttribute("transform", "rotate(180)");
+    searchModal.classList.remove("hidden");
+});
+
+// 모달 외부를 클릭했을 때 이벤트 처리
+document.addEventListener("click", (e) => {
+    if (!searchOpen.contains(e.target) && !searchModal.contains(e.target)) {
+        // 클릭된 요소가 검색 버튼이 아니고 모달 창에 속하지 않으면 모달을 닫음
+        path.removeAttribute("transform");
+        searchModal.classList.add("hidden");
+    }
+});
+
+// "전체" 버튼 클릭 시 모달 닫고 텍스트 변경
+searchReceive.addEventListener("click", () => {
+    path.removeAttribute("transform");
+    searchModal.classList.add("hidden");
+    searchText.textContent = "전체";
+});
+
+// " 활동중" 버튼 클릭 시 모달 닫고 텍스트 변경
+searchSend.addEventListener("click", () => {
+    path.removeAttribute("transform");
+    searchModal.classList.add("hidden");
+    searchText.textContent = "활동중";
+});
+
+// "정지" 버튼 클릭 시 모달 닫고 텍스트 변경
+searchadd.addEventListener("click", () => {
+    path.removeAttribute("transform");
+    searchModal.classList.add("hidden");
+    searchText.textContent = "정지";
+});
+
+// 카테고리 버튼 가져오기
+const categoryButtons = document.querySelectorAll('.category');
+function noticeShowCategory() {
+    categoryButtons.forEach( (button) => {
+        let categories = button.value;
+
+        button.addEventListener("click", () => {
+            console.log(categories)
+            adminUserService.getCategory(page, categories, CreateService.showList).then((text) => {
+                userData.innerHTML = text;
+            })
+            adminUserService.getCategory(page, categories, CreateService.showPaging).then((text) => {
+                mainUserBottomUl.innerHTML = text;
+            })
+            adminUserService.getCategory(page, categories, CreateService.CountText).then((text) => {
+                mainUserTotalNumber.textContent = text;
+            })
+        })
+    })
+}
+noticeShowCategory();
+
+searchReceive.addEventListener("click", () => {
+    allShowList();
+    allShowPaging();
+    CountShowText();
 })
