@@ -5,12 +5,16 @@ from django.views import View
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from activity.models import ActivityReply
 from alarm.models import Alarm
+from club.models import ClubPostReply
 from friend.models import Friend
 from letter.models import Letter, ReceivedLetter, SentLetter
-from member.models import Member, MemberFavoriteCategory, MemberProfile
+from member.models import Member, MemberFavoriteCategory, MemberProfile, MemberDeleteReason
 from member.serializers import MemberSerializer
+from pay.models import Pay
 from teenplay_server.category import Category
+from wishlist.models import WishlistReply
 
 
 class MemberLoginWebView(View):
@@ -65,13 +69,13 @@ class MypageInfoWebView(View):
             member_files = list(member_file.values('profile_path').filter(status=1))
             if len(member_files) != 0:
                 request.session['member_files'] = member_files
-            member_file = request.session['member_files']
+            member_file = request.session.get('member_files')
 
             category_session = MemberFavoriteCategory.objects.filter(member_id=member['id'])
             category_session = list(category_session.values('status', 'category_id'))
             if len(category_session) != 0:
                 request.session['member_category'] = category_session
-            member_category = request.session['member_category']
+            member_category = request.session.get('member_category')
 
             categories = Category.objects.all()
 
@@ -190,6 +194,9 @@ class MypageDeleteWebView(View):
     @transaction.atomic
     def post(self,request):
         member_data = request.session.get('member')
+        text = request.POST.get("reason-text")
+        number = request.POST.get("select_bum")
+        MemberDeleteReason.objects.create(delete_text=text,delete_reason=number)
         member_id = member_data['id']
         member = Member.objects.get(id=member_id)
         member.status = 0
@@ -276,6 +283,7 @@ class MypageListAPIWebView(APIView):
         else:
             response_data['replies'] = Letter.objects.filter(Q(sender_id=member_id,status=1) | Q(receiver_id=member_id,status=1)) \
             .values('letter_content', 'created_date', 'sender__member_nickname', 'receiver__member_nickname','id')[offset:limit]
+
             response_data['total_pages'] = (Letter.objects.filter(Q(sender_id=member_id,status=1) | Q(receiver_id=member_id,status=1)).count() + row_count - 1)  //row_count
 
         return Response(response_data)
@@ -359,3 +367,205 @@ class MypageTeenchinAPIview(APIView):
         teenchin = Friend.objects.filter(receiver_id=member_id).values('id', 'is_friend')[offset:limit]
 
         return Response(teenchin)
+
+
+class MemberAlarmCountAPI(APIView):
+    def get(self, request):
+        member_id = request.GET.get('member-id')
+        alarm_count = Alarm.enabled_objects.filter(receiver_id=member_id).count()
+
+        return Response(alarm_count)
+
+class MypageTeenchinAPIview(APIView):
+    def get(self, request, member_id, page):
+        status_letter = request.GET.get('status_teenchin')
+        search_text = request.GET.get('search')[:-1]
+
+        row_count = 9
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+
+        teenchin = Friend.objects.filter(Q(sender_id=member_id, is_friend= 1) | Q(receiver_id=member_id, is_friend= 1)| Q(sender_id=member_id, is_friend= -1)| Q(receiver_id=member_id, is_friend= -1))\
+                       .values('id', 'is_friend','sender_id','receiver_id','sender__member_nickname','receiver__member_nickname',)[offset:limit]
+
+        if status_letter == 'case-a/':
+            teenchin = Friend.objects.filter(Q(sender_id=member_id,is_friend= 1) | Q(receiver_id=member_id,is_friend=1)).values('id', 'is_friend','sender_id','receiver_id','sender__member_nickname','receiver__member_nickname',)[offset:limit]
+            if search_text:
+                teenchin = Friend.objects.filter(Q(receiver_id=member_id,is_friend= 1,sender__member_nickname__icontains=search_text) | Q(receiver_id=member_id,is_friend= 1,sender__member_email__icontains=search_text) | Q(sender_id=member_id,is_friend= 1,receiver__member_nickname__icontains=search_text) | Q(sender_id=member_id,is_friend= 1,receiver__member_email__icontains=search_text)).values('id', 'is_friend','sender_id','receiver_id','sender__member_nickname','receiver__member_nickname',)[offset:limit]
+
+        elif status_letter == 'case-b/':
+            teenchin = Friend.objects.filter(Q(sender_id=member_id, is_friend= -1)).values('id', 'is_friend','sender_id','receiver_id','sender__member_nickname','receiver__member_nickname',)[offset:limit]
+            if search_text:
+                teenchin = Friend.objects.filter(Q(sender_id=member_id, is_friend=-1,receiver__member_nickname__icontains=search_text) | Q(sender_id=member_id, is_friend=-1,receiver__member_email__icontains=search_text)).values('id', 'is_friend',
+                                                                                              'sender_id',
+                                                                                              'receiver_id',
+                                                                                              'sender__member_nickname',
+                                                                                              'receiver__member_nickname', )[offset:limit]
+
+        elif status_letter == 'case-c/':
+            teenchin = Friend.objects.filter(Q(receiver_id=member_id,is_friend= -1)).values('id', 'is_friend','sender_id','receiver_id','sender__member_nickname','receiver__member_nickname',)[offset:limit]
+            if search_text:
+                teenchin = Friend.objects.filter(Q(receiver_id=member_id, is_friend=-1, sender__member_nickname__icontains=search_text) | Q(receiver_id=member_id, is_friend=-1, sender__member_email__icontains=search_text)).values('id', 'is_friend',
+                                                                                                'sender_id',
+                                                                                                'receiver_id',
+                                                                                                'sender__member_nickname',
+                                                                                                'receiver__member_nickname', )[
+                           offset:limit]
+
+        else:
+            teenchin = Friend.objects.filter(
+                Q(sender_id=member_id, is_friend=1) | Q(receiver_id=member_id, is_friend=1) | Q(sender_id=member_id,is_friend=-1) | Q(receiver_id=member_id, is_friend=-1)) \
+                           .values('id', 'is_friend', 'sender_id', 'receiver_id', 'sender__member_nickname','receiver__member_nickname', )[offset:limit]
+            if search_text:
+                teenchin = Friend.objects.filter(
+                Q(sender_id=member_id, is_friend=1, receiver__member_nickname__icontains=search_text) | Q(sender_id=member_id, is_friend=1, receiver__member_email__icontains=search_text) | Q(receiver_id=member_id, is_friend=1, sender__member_email__icontains=search_text) |Q(receiver_id=member_id, is_friend=1, sender__member_nickname__icontains=search_text) | Q(sender_id=member_id,is_friend=-1, receiver__member_email__icontains=search_text) | Q(sender_id=member_id,is_friend=-1, receiver__member_nickname__icontains=search_text) | Q(receiver_id=member_id, is_friend=-1 ,sender__member_email__icontains=search_text) | Q(receiver_id=member_id, is_friend=-1 ,sender__member_nickname__icontains=search_text)) \
+                           .values('id', 'is_friend', 'sender_id', 'receiver_id', 'sender__member_nickname','receiver__member_nickname', )[offset:limit]
+
+
+        return Response(teenchin)
+class MypageTeenchindeleteview(APIView):
+    @transaction.atomic
+    def delete(self, request, friend_id):
+        print(friend_id)
+        Friend.objects.filter(id= friend_id).update(is_friend = 0)
+
+        return Response('good')
+
+    @transaction.atomic
+    def patch(self, request, friend_id):
+        Friend.objects.filter(id= friend_id).update(is_friend = 1)
+
+        return Response('good')
+
+class MypageTeenchinLetterAPIview(APIView):
+    @transaction.atomic
+    def post(self, request):
+        data = request.data
+
+        receiver_id = data['receiver_id']
+        letter = Letter.objects.create(
+            receiver_id=receiver_id,
+            letter_content=data['letter_content'],
+            sender_id=request.session['member']['id']
+        )
+        ReceivedLetter.objects.create(letter_id=letter.id)
+
+        # SentLetter 모델 생성
+        SentLetter.objects.create(letter_id=letter.id)
+        Alarm.objects.create(target_id=letter.id, alarm_type=4, sender_id=letter.sender_id, receiver_id= letter.receiver_id)
+
+        return Response("good")
+
+class MapagePaymentView(View):
+    def get(self, request):
+        return  render(request, 'mypage/web/my-payment-web.html')
+
+class MypagePayListAPIVIEW(APIView):
+
+    def get(self, request, member_id, page):
+        row_count = 1
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        pay = Pay.objects.filter(member_id=member_id, status=1).values('id', 'created_date','member__club__club_name','member__club__club_profile_path','member__club__club_intro','activity__activity_title')[offset:limit]
+
+        return Response(pay)
+
+class MypagePayDeleteAPIVIEW(APIView):
+    @transaction.atomic
+    def delete(self, request, pay_id):
+        Pay.objects.filter(id=pay_id).update(status=0)
+
+        return Response('good')
+
+class MypageReplyView(View):
+    def get(self,request):
+        return render(request, 'mypage/web/my-reply-web.html')
+
+
+class MypageReplyAPIVIEW(APIView):
+    def get(self, request, member_id, page):
+        status_reply = request.GET.get('status_reply')
+        row_count = 10
+        offset = (page - 1) * row_count
+        limit = page * row_count
+        print(status_reply)
+
+
+        total_count = 0
+
+        total_count += WishlistReply.objects.filter(member_id=member_id, status=1).count()
+        total_count += ActivityReply.objects.filter(member_id=member_id, status=1).count()
+        total_count += ClubPostReply.objects.filter(member_id=member_id, status=1).count()
+
+        # 전체 페이지 수 계산
+        total_pages = (total_count + row_count - 1) // row_count
+        reply = []
+
+        reply += WishlistReply.objects.filter(member_id=member_id, status=1).values('id','reply_content','created_date','wishlist_id','wishlist__wishlist_content')
+        reply += ActivityReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content','created_date','activity_id', 'activity__activity_title')
+        reply += ClubPostReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content','created_date','club_post_id','club_post__post_title')
+
+        response_data = {
+            'total_pages': total_pages,
+            'reply': reply[offset:limit],
+
+        }
+
+        if status_reply == 'wish':
+            response_data['reply'] = WishlistReply.objects.filter(member_id=member_id, status=1).values('id','reply_content','created_date','wishlist_id','wishlist__wishlist_content')[offset:limit]
+            response_data['total_pages'] = (WishlistReply.objects.filter(member_id=member_id, status=1).count() + row_count - 1)  //row_count
+            print(response_data['total_pages'])
+
+        elif status_reply == 'post':
+            response_data['reply'] = ClubPostReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content','created_date','club_post_id','club_post__post_title')[offset:limit]
+            response_data['total_pages'] = (ClubPostReply.objects.filter(member_id=member_id, status=1).count()+ row_count - 1)  //row_count
+
+        elif status_reply == 'ac':
+            response_data['reply'] = ActivityReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content','created_date','activity_id', 'activity__activity_title')[offset:limit]
+            response_data['total_pages'] = (ActivityReply.objects.filter(member_id=member_id, status=1).count()+ row_count - 1)  //row_count
+
+        else:
+
+            total_count = 0
+
+            total_count += WishlistReply.objects.filter(member_id=member_id, status=1).count()
+            total_count += ActivityReply.objects.filter(member_id=member_id, status=1).count()
+            total_count += ClubPostReply.objects.filter(member_id=member_id, status=1).count()
+
+            # 전체 페이지 수 계산
+            total_pages = (total_count + row_count - 1) // row_count
+            print(total_pages)
+
+            reply = []
+
+            reply += WishlistReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content',
+                                                                                        'created_date', 'wishlist_id',
+                                                                                        'wishlist__wishlist_content')
+            reply += ActivityReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content',
+                                                                                        'created_date', 'activity_id',
+                                                                                        'activity__activity_title')
+            reply += ClubPostReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content',
+                                                                                        'created_date', 'club_post_id',
+                                                                                        'club_post__post_title')
+
+            response_data = {
+                'total_pages': total_pages,
+                'reply': reply[offset:limit],
+
+            }
+
+        return Response(response_data)
+
+class MypageReplyDeleteAPIVIEW(APIView):
+    @transaction.atomic
+    def delete(self, request, reply_id):
+        if reply_id.startswith('a'):
+            ActivityReply.objects.filter(id=int(reply_id[1:])).update(status=0)
+        elif reply_id.startswith('w'):
+            WishlistReply.objects.filter(id=int(reply_id[1:])).update(status=0)
+        elif reply_id.startswith('p'):
+            ClubPostReply.objects.filter(id=int(reply_id[1:])).update(status=0)
+
+        return Response('good')

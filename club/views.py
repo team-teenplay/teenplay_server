@@ -9,8 +9,9 @@ from rest_framework.views import APIView
 
 from activity.models import Activity, ActivityLike
 from alarm.models import Alarm
-from club.models import Club, ClubMember, ClubPost
+from club.models import Club, ClubMember, ClubPost, ClubPostReply
 from member.models import Member
+from teenplay.models import TeenPlay
 from teenplay_server.category import Category
 
 
@@ -46,6 +47,8 @@ class ClubCreateView(View):
 class ClubDetailView(View):
     def get(self, request):
         club_id = request.GET['id']
+        view = request.GET.get('view', 'activity')
+
         columns = [
             'id',
             'club_name',
@@ -73,6 +76,7 @@ class ClubDetailView(View):
         club_list = list(club_list)
 
         club_list[0]['club_activity_count'] = club_activity_count.get('club_activity_count')
+        club_list[0]['view'] = view
 
         context = {
             'club_list': club_list
@@ -195,6 +199,15 @@ class ClubPrPostWriteView(View):
 
         return render(request, 'club/web/club-pr-posts-write-web.html', context)
 
+        # if club.member_id == request.GET['member']['id']:
+        #     context = {
+        #         'club_id': club.id,
+        #         'club_name': club.club_name,
+        #     }
+        #
+        #     return render(request, 'club/web/club-pr-posts-write-web.html', context)
+        # return render(request, '/')
+
     @transaction.atomic
     def post(self, request):
         datas = request.POST
@@ -217,9 +230,132 @@ class ClubPrPostWriteView(View):
 
 class ClubPrPostDetailView(View):
     def get(self, request):
-        return render(request, 'club/web/club-pr-posts-detail-web.html')
+        club_post = ClubPost.enabled_objects.get(id=request.GET['id'])
+        replies = ClubPostReply.enabled_objects.filter(club_post=club_post).values()
+
+        print(club_post)
+        print(type(club_post.created_date))
+
+        context = {
+            'club_post': club_post,
+            'replies': list(replies)
+        }
+
+        return render(request, 'club/web/club-pr-posts-detail-web.html', context)
 
 
-class ClubPrPostView(View):
+class ClubPrPostReplyAPI(APIView):
+    def get(self, request):
+        page = int(request.GET.get('page', 1))
+        club_post_id = request.GET.get('club_post_id')
+
+        row_count = 4
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        replies = ClubPostReply.enabled_objects.filter(club_post_id=club_post_id)\
+            .annotate(member_email=F('member__member_email'), member_name=F('member__member_nickname'), member_path=F('member__memberprofile__profile_path'))\
+            .values('id', 'reply_content', 'created_date', 'member_id', 'member_email', 'member_name', 'member_path').order_by('-id')
+
+        replies_count = replies.count()
+        replies_info = {
+            'replies': replies[offset:limit],
+            'replies_count': replies_count
+        }
+        print(replies_count)
+        print(replies)
+        print(replies[offset:limit])
+
+        return Response(replies_info)
+
+    @transaction.atomic
+    def post(self, request):
+        data = request.data
+        data = {
+            'reply_content': data['reply_content'],
+            'club_post_id': data['club_post_id'],
+            'member_id': request.session['member']['id']
+        }
+
+        ClubPostReply.objects.create(**data)
+
+        club_post = ClubPost.enabled_objects.get(id=data['club_post_id'])
+
+        data = {
+            'target_id': data['club_post_id'],
+            'alarm_type': 1,
+            'sender_id': request.session['member']['id'],
+            'receiver_id': club_post.club.member_id
+        }
+
+        Alarm.objects.create(**data)
+
+        return Response("success")
+
+    @transaction.atomic
+    def patch(self, request):
+        reply_content = request.data['reply_content']
+        reply_id = request.data['id']
+
+        club_post_reply = ClubPostReply.enabled_objects.get(id=reply_id)
+        club_post_reply.reply_content = reply_content
+        club_post_reply.updated_date = timezone.now()
+        club_post_reply.save(update_fields=['reply_content', 'updated_date'])
+
+        return Response("success")
+
+    @transaction.atomic
+    def delete(self, request):
+        reply_id = request.data['reply_id']
+
+        club_post_reply = ClubPostReply.enabled_objects.get(id=reply_id)
+        club_post_reply.status = 0
+        club_post_reply.updated_date = timezone.now()
+        club_post_reply.save(update_fields=['status', 'updated_date'])
+
+        return Response("success")
+
+
+class ClubPrPostListView(View):
     def get(self, request):
         return render(request, 'club/web/club-pr-posts-web.html')
+
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+class ClubTeenplayAPIView(APIView):
+    def get(self,request, club_id, page):
+        row_count = 5
+        offset = (page-1) * row_count
+        limit = page * row_count
+
+        context = {
+            'member': request.session['member'],
+            'club': Club.objects.filter(id=club_id).values(),
+            'teenplay_list': TeenPlay.enable_objects.filter(club=club_id).annotate(like_count=Count('teenplaylike__status')).values('like_count','id', 'created_date', 'updated_date','teenplay_title','club_id','video_path','thumbnail_path','status').order_by('-id')[offset:limit],
+            'has_next': TeenPlay.enable_objects.filter(club=club_id)[limit:limit + 1].exists()
+        }
+        return Response(context)
+
+
+class ClubTeenplayDeleteAPIView(APIView):
+    @transaction.atomic
+    def get(self,request,  teenplay_id):
+        TeenPlay.enable_objects.filter(id=teenplay_id).update(status=0)
+        return Response("success")
+
+
+class ClubTeenplayUploadAPIView(APIView):
+    @transaction.atomic
+    def post(self, request):
+        data = request.POST
+        files = request.FILES
+
+        data = {
+            'teenplay_title' : data['title'],
+            'club_id': data['clubId'],
+            'video_path' : files['video'],
+            'thumbnail_path' :files['thumbnail']
+        }
+
+        TeenPlay.objects.create(**data)
+        return Response("success")

@@ -15,6 +15,8 @@ from notice.models import Notice
 
 from django.utils import timezone
 
+from wishlist.models import Wishlist
+
 
 # 관리자 로그인 페이지 이동
 class AdminLoginView(View):
@@ -120,10 +122,6 @@ class AdminUserView(View):
             'status'
         ]
 
-        # context['users'] = list(Member.objects.filter(Q(status=1) | Q(status=-1))\
-        #             .annotate(club_count=Count('club'), club_action_count=Count('clubmember__id', filter=Q(clubmember__status=1), distinct=True), activity_count=Count('club__activity'))\
-        #             .values('id', 'member_nickname', 'created_date', 'club_count', 'club_action_count', 'activity_count', 'status').order_by(ordering))[offset:limit]
-
         members = Member.objects.filter(Q(status=1) | Q(status=-1)).values(*columns).order_by(ordering)
         club_count = members.values('id').annotate(club_count=Count('club'))
         club_action_count = members.values('id').annotate(club_action_count=Count('clubmember', filter=Q(clubmember__status=1)))
@@ -186,6 +184,61 @@ class AdminWishlistView(View):
         return render(request, 'admin/web/wishlist-web.html')
 
 
+class AdminWishlistAPI(APIView):
+    def get(self, request, page):
+        order = request.GET.get('order', 'recent')
+
+        row_count = 10
+
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        total = Notice.objects.filter(status=1).all().count()
+
+        page_count = 5
+
+        end_page = math.ceil(page / page_count) * page_count
+        start_page = end_page - page_count + 1
+        real_end = math.ceil(total / row_count)
+        end_page = real_end if end_page > real_end else end_page
+
+        if end_page == 0:
+            end_page = 1
+
+        context = {
+            'total': total,
+            'order': order,
+            'start_page': start_page,
+            'end_page': end_page,
+            'real_end': real_end,
+            'page_count': page_count,
+        }
+
+        ordering = '-id'
+        if order == 'popular':
+            ordering = '-post_read_count'
+
+        columns = [
+            'id',
+            'wishlist_content',
+            'is_private',
+            'member__id',
+            'member__status'
+        ]
+
+        wishlist = Wishlist.objects.filter(member__status=1).values(*columns).order_by(ordering)
+        wishlist_like = wishlist.values('member__id').annotate(wishlist_like_count=Count('wishlistlike'))
+        wishlist_reply = wishlist.values('member__id').annotate(wishlist_reply_count=Count('wishlistreply'))
+
+        for i in range(len(list(wishlist))):
+            wishlist[i]['wishlist_like'] = wishlist_like[i]['wishlist_like']
+            wishlist[i]['wishlist_reply'] = wishlist_reply[i]['wishlist_reply']
+
+        context['wishlist'] = list(wishlist[offset:limit])
+
+        return Response(context)
+
+
 # 관리자 전체 모임 관리 페이지 이동
 class AdminMeetingView(View):
     def get(self, request):
@@ -210,24 +263,15 @@ class AdminNoticeView(View):
         return render(request, 'admin/web/notice-list-web.html')
 
 
-# class AdminNoticeAPI(APIView):
-#     def get(self, request, page):
-#         notices = Notice.objects.filter(status=1).values('id', 'notice_title', 'created_date', 'notice_content', 'notice_type')
-#         row_count = 5
-#         offset = (page - 1) * row_count
-#         limit = page * row_count
-#         return Response(notices[offset:limit])
-
 class AdminNoticePaginationAPI(APIView):
     def get(self, request, page):
         order = request.GET.get('order', 'recent')
+        category = request.GET.get('category')
 
-        row_count = 1
+        row_count = 10
 
         offset = (page - 1) * row_count
         limit = page * row_count
-
-        page_number = request.GET.get('pageNumber', 1)
 
         total = Notice.objects.filter(status=1).all().count()
 
@@ -242,6 +286,7 @@ class AdminNoticePaginationAPI(APIView):
             end_page = 1
 
         context = {
+            'category': category,
             'total': total,
             'order': order,
             'start_page': start_page,
@@ -249,37 +294,36 @@ class AdminNoticePaginationAPI(APIView):
             'real_end': real_end,
             'page_count': page_count,
         }
+
         ordering = '-id'
         if order == 'popular':
             ordering = '-post_read_count'
 
+        if category:
+            context['pagination'] = list(Notice.objects.filter(status=1, notice_type=category)\
+                                         .values('id', 'notice_title', 'created_date', 'notice_content', 'notice_type')\
+                                         .order_by(ordering)[offset:limit])
 
-
-        if page == page_number:
+        else:
             context['pagination'] = list(Notice.objects.filter(status=1) \
-                                  .values('id', 'notice_title', 'created_date', 'notice_content',
-                                          'notice_type').order_by(ordering)[offset:limit])
-        # elif page == 1:
-        #     context['pagination'] = list(Notice.objects.filter(status=1) \
-        #                                  .values('id', 'notice_title', 'created_date', 'notice_content',
-        #                                          'notice_type').order_by(ordering)[offset:limit])
+                                         .values('id', 'notice_title', 'created_date', 'notice_content', 'notice_type') \
+                                         .order_by(ordering)[offset:limit])
 
         return Response(context)
 
 
-class AdminNoticeUpdateAPI(APIView):
-    # 게시글 삭제
-    def patch(self, request, notice_id):
-        status = 0
-        updated_date = timezone.now()
-
-        notice = Notice.objects.get(id=notice_id)
-        notice.status = status
-        notice.updated_date = updated_date
-        notice.save(update_fields=['status', 'updated_date'])
-
-        return Response('success')
-
+# class AdminNoticeUpdateAPI(APIView):
+#     # 게시글 삭제
+#     def patch(self, request, notice_id):
+#         status = 0
+#         updated_date = timezone.now()
+#
+#         notice = Notice.objects.get(id=notice_id)
+#         notice.status = status
+#         notice.updated_date = updated_date
+#         notice.save(update_fields=['status', 'updated_date'])
+#
+#         return Response('success')
 
 
 # 관리자 공지사항 작성 페이지 이동
@@ -287,12 +331,27 @@ class AdminNoticeWriteView(View):
     def get(self, request):
         return render(request, 'admin/web/notice-create-web.html')
 
+    @transaction.atomic
+    def post(self, request):
+        data = request.POST
+
+        data = {
+            'notice_title': data['notice_title'],
+            'notice_content': data['notice_content'],
+            'notice_type': data['selection']
+        }
+        print(data)
+
+        Notice.objects.create(**data)
+        return redirect('/admin/notice/')
+
 
 # 관리자 댓글 관리 페이지 이동
 class AdminCommentView(View):
     def get(self, request):
         return render(request, 'admin/web/comment-web.html')
-# 여기까지~
+
+# ----------------------------------------------------------------------------------------------------------------------
 
 
 # 회사 소개 페이지 이동

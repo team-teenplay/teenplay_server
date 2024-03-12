@@ -76,7 +76,7 @@
                             <div>
                                 <div class="main-user-info-seach">
                                     <label class="main-user-info-label">
-                                        <input class="main-user-info-input" placeholder="공지사항 검색" type="search" value="" id="member-search" />
+                                        <input class="main-user-info-input" placeholder="공지사항 검색" type="search" value=" " id="member-search" />
                                         <button class="main-user-search-button" id="member-button">
                                             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="main-user-search-box">
                                                 <path id="member-search-cansle" fill-rule="evenodd" clip-rule="evenodd" d="M15.83 16.561a7.8 7.8 0 1 1 1.233-1.312l3.465 3.465a.9.9 0 1 1-1.272 1.273L15.83 16.56Zm1.13-5.961a6.16 6.16 0 1 1-12.32 0 6.16 6.16 0 0 1 12.32 0Z"></path>
@@ -91,7 +91,7 @@
                             <!-- 첫번째(왼쪽 전체0) -->
                             <div class="main-user-total-list">
                                 <span class="main-user-total-text">전체</span>
-                                <span class="main-user-total-number" id="total-count">{{ total }}</span>
+                                <span class="main-user-total-number" id="total-count">0</span>
                             </div>
                             <!-- 2번째 -->
                             <!-- 일단은 없애요^^ -->
@@ -108,10 +108,10 @@
                                                 </div>
                                             </button>
                                             <!-- 공개 비공개 모달창 -->
-                                            <ul id="admin-message-modal-search" class="hidden">
-                                                <button class="admin-message-modal-search-receive">카테고리</button>
-                                                <button class="admin-message-modal-search-send">공지사항</button>
-                                                <button class="admin-message-modal-search-donotreceive">자주묻는질문</button>
+                                            <ul id="admin-message-modal-search" class="admin-message-modal-search hidden">
+                                                <button class="admin-message-modal-search-receive" value="2">카테고리</button>
+                                                <button class="admin-message-modal-search-send category" value="0">공지사항</button>
+                                                <button class="admin-message-modal-search-donotreceive category" value="1">자주묻는질문</button>
                                             </ul>
                                         </div>
                                     </div>
@@ -119,9 +119,9 @@
                                 <div class="main-user-total-search">
                                     <div class="main-user-total-member-status">
                                         <div class="main-user-total-member-list">
-                                            <button class="main-user-total-button">
+                                            <a href="/admin/notice/write/" class="main-user-total-button">
                                                 <span class="main-user-total-span">공지사항 작성하기</span>
-                                            </button>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -379,15 +379,14 @@
 {% block js %}
     <script>
         const csrf_token = '{{ csrf_token }}';
-        
         {#const memberId = '{{ request.session.member.id }}'#}
     </script>
     <script src="{% static 'admin/web/js/notice/admin-notice-module-web.js' %}"></script>
-    <script src="{% static 'admin/web/js/notice/admin-notice-web.js' %}"></script>
+    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-web.js' %}"></script>
+    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-search-web.js' %}"></script>
 {#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-bottem-web.js' %}"></script>#}
 {#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-button-web.js' %}"></script>#}
-{#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-delete-web.js' %}"></script>#}
-    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-modal-web.js' %}"></script>
+{#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-modal-web.js' %}"></script>#}
 {#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-redbox-web.js' %}"></script>#}
-{#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-search-web.js' %}"></script>#}
+{#    <script src="{% static 'admin/web/js/notice/notice-list/admin-notice-list-total-web.js' %}"></script>#}
 {% endblock %}

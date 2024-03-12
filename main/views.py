@@ -21,3 +21,7 @@ class FooterNoticeLatestAPI(APIView):
         }
         return Response(notices)
 
+
+# 최근 검색어 띄우기
+class RecentSearchKeywordAPI(APIView):
+    pass

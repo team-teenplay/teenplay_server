@@ -237,10 +237,7 @@ infoFilterBtn.addEventListener("click", () => {
     clubInfoWrap.innerHTML = createListService.showClubInfo(club.club_info);
 });
 
-// 모임 공지 클릭 시 fetch 후 목록 뿌리는 이벤트
-noticeFilterBtn.addEventListener("click", () => {
-    page = 1
-
+const showNoticeTap = () => {
     activityFilterWrap.style.border = "none";
     infoFilterWrap.style.border = "none";
     tpFilterWrap.style.border = "none";
@@ -267,10 +264,41 @@ noticeFilterBtn.addEventListener("click", () => {
         clubNoticeWrap.innerHTML = text
         showMoreCNListBtnCheck()
     })
+}
+
+// 모임 공지 클릭 시 fetch 후 목록 뿌리는 이벤트
+noticeFilterBtn.addEventListener("click", () => {
+    page = 1
+    showNoticeTap()
+    // activityFilterWrap.style.border = "none";
+    // infoFilterWrap.style.border = "none";
+    // tpFilterWrap.style.border = "none";
+    // if (!activityFilterBtn.classList.contains("off")) {
+    //     activityFilterBtn.classList.add("off");
+    // }
+    // if (!infoFilterBtn.classList.contains("off")) {
+    //     infoFilterBtn.classList.add("off");
+    // }
+    // if (!tpFilterBtn.classList.contains("off")) {
+    //     tpFilterBtn.classList.add("off");
+    // }
+    // if (noticeFilterBtn.classList.contains("off")) {
+    //     noticeFilterBtn.classList.remove("off");
+    // }
+    // noticeFilterWrap.style.borderBottom = "2px solid #CE201B";
+    //
+    // activityContent.style.display = "none";
+    // infoContent.style.display = "none";
+    // noticeContent.style.display = "block";
+    // tpContent.style.display = "none";
+    //
+    // clubDetailService.getCNList(club.id, page, createListService.showNoticeList).then((text) => {
+    //     clubNoticeWrap.innerHTML = text
+    //     showMoreCNListBtnCheck()
+    // })
 });
 
-// 틴플레이 클릭 시 fetch 후 목록 뿌리는 이벤트
-tpFilterBtn.addEventListener("click", () => {
+const showTeenplayTap = () => {
     activityFilterWrap.style.border = "none";
     infoFilterWrap.style.border = "none";
     noticeFilterWrap.style.border = "none";
@@ -292,6 +320,33 @@ tpFilterBtn.addEventListener("click", () => {
     infoContent.style.display = "none";
     noticeContent.style.display = "none";
     tpContent.style.display = "block";
+}
+
+// 틴플레이 클릭 시 fetch 후 목록 뿌리는 이벤트
+tpFilterBtn.addEventListener("click", () => {
+    page = 1
+    showTeenplayTap()
+    // activityFilterWrap.style.border = "none";
+    // infoFilterWrap.style.border = "none";
+    // noticeFilterWrap.style.border = "none";
+    // if (!activityFilterBtn.classList.contains("off")) {
+    //     activityFilterBtn.classList.add("off");
+    // }
+    // if (!infoFilterBtn.classList.contains("off")) {
+    //     infoFilterBtn.classList.add("off");
+    // }
+    // if (tpFilterBtn.classList.contains("off")) {
+    //     tpFilterBtn.classList.remove("off");
+    // }
+    // if (!noticeFilterBtn.classList.contains("off")) {
+    //     noticeFilterBtn.classList.add("off");
+    // }
+    // tpFilterWrap.style.borderBottom = "2px solid #CE201B";
+    //
+    // activityContent.style.display = "none";
+    // infoContent.style.display = "none";
+    // noticeContent.style.display = "none";
+    // tpContent.style.display = "block";
 
 });
 
@@ -599,7 +654,7 @@ const createListService = (() => {
         } else{
             text += `
                 <div class="club-info-container">
-                    <div class="club-info-texts">${ clubInfo }</div>
+                    <div class="club-info-texts">${ clubInfo.replace(/\n/g, '<br>') }</div>
                 </div>
             `
         }
@@ -645,7 +700,7 @@ const createListService = (() => {
                             </div>
                             <div id="content-wrap${clubNotice.id}" class="club-notice-content-wrap ${clubNotice.id}" style="display: none">
                                 <!-- 이 안에 내용이 들어갑니다. -->
-                                <div class="club-notice-content">${clubNotice.notice_content}</div>
+                                <div class="club-notice-content">${clubNotice.notice_content.replace(/\n/g, '<br>')}</div>
                             </div>
                         </div>
                     </div>
@@ -711,16 +766,23 @@ showMoreNoticeBtn.addEventListener("click", () => {
     showMoreCNListBtnCheck()
 })
 
-// 페이지 로드 시 fetch를 통해 진행중인 행사 정보를 가져와 넣어주는 이벤트
-clubDetailService.getOAList(club.id, createListService.showOngoingList).then((text) => {
-    clubDetailActiveWrap.innerHTML = text;
-})
+if (club.view === 'notice') {
+    showNoticeTap()
+} else if (club.view === 'activity') {
+    // 페이지 로드 시 fetch를 통해 진행중인 행사 정보를 가져와 넣어주는 이벤트
+    clubDetailService.getOAList(club.id, createListService.showOngoingList).then((text) => {
+        clubDetailActiveWrap.innerHTML = text;
+    })
 
-// 페이지 로드 시 fetch를 통해 종료된 행사 정보를 가져와 넣어주는 이벤트
-clubDetailService.getFAList(club.id, page, createListService.showFinishedList).then((text) => {
-    finishedEventsWrap.innerHTML = text
-    showMoreFAListBtnCheck()
-})
+    // 페이지 로드 시 fetch를 통해 종료된 행사 정보를 가져와 넣어주는 이벤트
+    clubDetailService.getFAList(club.id, page, createListService.showFinishedList).then((text) => {
+        finishedEventsWrap.innerHTML = text
+        showMoreFAListBtnCheck()
+    })
+} else{
+    showTeenplayTap()
+}
+
 
 
 
@@ -893,37 +955,37 @@ thumbnailInput.addEventListener("change", (e) => {
 });
 
 // 드래그 앤 드롭으로 썸네일 첨부하기
-thumbnailUploadBox.addEventListener("dragenter", (e) => {
-    e.preventDefault();
-});
-thumbnailUploadBox.addEventListener("dragover", (e) => {
-    e.preventDefault();
-});
-thumbnailUploadBox.addEventListener("dragleave", (e) => {
-    e.preventDefault();
-});
-thumbnailUploadBox.addEventListener("drop", (e) => {
-    e.preventDefault();
-    let file = e.dataTransfer;
-    let checkSize = 1024 * 1024 * THUMBNAIL_SIZE;
-    if (!checkFileSize(file, checkSize)) {
-        thumbnailSizeMsg.style.display = "block";
-        e.preventDefault();
-        return;
-    }
-    thumbnailSizeMsg.style.display = "none";
-    fileSize = file.files[0].size;
-    thumbnailSizeInfo.innerText = getFileSizeWithExtension(fileSize);
-    thumbnailNameInfo.innerText = file.files[0].name;
-    thumbnailUploadBox.classList.remove("appear");
-    thumbnailUploadBox.classList.add("disappear");
-    setTimeout(() => {
-        thumbnailUploadBox.classList.add("hidden");
-        uploadedThumbnailInfo.classList.remove("hidden");
-        uploadedThumbnailInfo.classList.remove("disappear");
-        uploadedThumbnailInfo.classList.add("appear");
-    }, 501);
-});
+// thumbnailUploadBox.addEventListener("dragenter", (e) => {
+//     e.preventDefault();
+// });
+// thumbnailUploadBox.addEventListener("dragover", (e) => {
+//     e.preventDefault();
+// });
+// thumbnailUploadBox.addEventListener("dragleave", (e) => {
+//     e.preventDefault();
+// });
+// thumbnailUploadBox.addEventListener("drop", (e) => {
+//     e.preventDefault();
+//     let file = e.dataTransfer;
+//     let checkSize = 1024 * 1024 * THUMBNAIL_SIZE;
+//     if (!checkFileSize(file, checkSize)) {
+//         thumbnailSizeMsg.style.display = "block";
+//         e.preventDefault();
+//         return;
+//     }
+//     thumbnailSizeMsg.style.display = "none";
+//     fileSize = file.files[0].size;
+//     thumbnailSizeInfo.innerText = getFileSizeWithExtension(fileSize);
+//     thumbnailNameInfo.innerText = file.files[0].name;
+//     thumbnailUploadBox.classList.remove("appear");
+//     thumbnailUploadBox.classList.add("disappear");
+//     setTimeout(() => {
+//         thumbnailUploadBox.classList.add("hidden");
+//         uploadedThumbnailInfo.classList.remove("hidden");
+//         uploadedThumbnailInfo.classList.remove("disappear");
+//         uploadedThumbnailInfo.classList.add("appear");
+//     }, 501);
+// });
 
 // 썸네일 첨부 후 x버튼으로 삭제하기
 const thumbnailRemoveBtn = document.querySelector(".pr-thumbnail-remove-btn");
@@ -969,65 +1031,4 @@ thumbnailInput.addEventListener("change", (e) => {
     }
 });
 
-// 업로드 버튼 클릭 시 모달창으로 확인
-finalSaveButton.addEventListener("click", () => {
-    Swal.fire({
-        title: "업로드하시겠습니까?",
-        text: "한 번 업로드한 틴플레이는 수정이 불가능합니다.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "업로드",
-        cancelButtonText: "취소",
-    }).then((result) => {
-        if (result.value) {
-            // 틴플레이 업로드 관련 서버 작업 코드 입력
-            tpModalCloseBtn.click();
-            Swal.fire("업로드 진행중", "업로드를 진행합니다. <br> 업로드는 최대 5분 안에 완료됩니다!", "success");
-        } else if (result.dismiss == "cancel") {
-            return;
-        }
-    });
-});
 
-// 틴플레이 삭제 아이콘 마우스 올리면 색상 변경 및
-// 틴플레이 삭제 아이콘 클릭 시 모달창 출력
-// 실제 삭제는 서버에서 구현합니다.
-const teenplayDeleteIconBlacks = document.querySelectorAll(".club-teenplay-delete");
-const teenplayDeleteIconHovers = document.querySelectorAll(".club-teenplay-delete-hover");
-const teenplayDeleteWraps = document.querySelectorAll(".club-teenplay-delete-wrap");
-const teenplayContentsWrap = document.querySelector(".club-teenplay-contents-box");
-const teenplayContents = document.querySelectorAll(".club-teenplay-contents");
-
-teenplayDeleteWraps.forEach((div, i) => {
-    div.addEventListener("mouseover", () => {
-        teenplayDeleteIconBlacks[i].style.display = "none";
-        teenplayDeleteIconHovers[i].style.display = "block";
-    });
-    div.addEventListener("mouseout", () => {
-        teenplayDeleteIconBlacks[i].style.display = "block";
-        teenplayDeleteIconHovers[i].style.display = "none";
-    });
-    div.addEventListener("click", () => {
-        Swal.fire({
-            title: "삭제하시겠습니까?",
-            text: "삭제된 틴플레이는 복구가 불가능합니다.",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "삭제",
-            cancelButtonText: "취소",
-        }).then((result) => {
-            if (result.value) {
-                // 틴플레이 삭제 관련 서버 작업 코드 입력
-                // 완료 시 아래 코드 실행 (실제로는 또 .then(()=>{}) 으로 써야함)
-                Swal.fire("삭제 완료", "틴플레이 삭제가 완료되었습니다.", "success");
-                teenplayContentsWrap.removeChild(teenplayContents[i]);
-            } else if ((result.dismiss = "cancel")) {
-                return;
-            }
-        });
-    });
-});

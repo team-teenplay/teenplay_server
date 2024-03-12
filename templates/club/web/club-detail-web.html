@@ -72,15 +72,27 @@
                                     <button class="club-detail-filter-button off">틴플레이</button>
                                 </div>
                                 <!-- 아래 버튼은 틴플레이 업로드 버튼으로, 모임장일 때에만 표시되도록 합니다. -->
-                                <div class="club-detail-filter-upload-wrap">
-                                    <button class="club-detail-filter-upload">
-                                        <svg id="Layer_1" fill="currentColor" class="teenplay-upload-icon" version="1.1" viewBox="0 0 512 512" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                            <g>
-                                                <path d="M256,48C141.1,48,48,141.1,48,256s93.1,208,208,208c114.9,0,208-93.1,208-208S370.9,48,256,48z M384,265H264v119h-17V265   H128v-17h119V128h17v120h120V265z" />
-                                            </g>
-                                        </svg>
-                                    </button>
-                                </div>
+                                {% if club.owner_id == request.session.member.id %}
+                                    <div class="club-detail-filter-upload-wrap ">
+                                        <button class="club-detail-filter-upload">
+                                            <svg id="Layer_1" fill="currentColor" class="teenplay-upload-icon" version="1.1" viewBox="0 0 512 512" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                                <g>
+                                                    <path d="M256,48C141.1,48,48,141.1,48,256s93.1,208,208,208c114.9,0,208-93.1,208-208S370.9,48,256,48z M384,265H264v119h-17V265   H128v-17h119V128h17v120h120V265z" />
+                                                </g>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                {% else %}
+                                    <div class="club-detail-filter-upload-wrap hidden">
+                                        <button class="club-detail-filter-upload">
+                                            <svg id="Layer_1" fill="currentColor" class="teenplay-upload-icon" version="1.1" viewBox="0 0 512 512" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                                <g>
+                                                    <path d="M256,48C141.1,48,48,141.1,48,256s93.1,208,208,208c114.9,0,208-93.1,208-208S370.9,48,256,48z M384,265H264v119h-17V265   H128v-17h119V128h17v120h120V265z" />
+                                                </g>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                         <div id="club-service-wrap">
@@ -135,18 +147,18 @@
                             <div class="club-teenplay">
                                 <div class="club-teenplay-wrap">
 {#                                    <!-- js로 채워지는 부분 -->#}
-{#                                    <!-- 비어 있을 때 -->#}
-{#                                    <div class="club-teenplay-empty-wrap">#}
+                                    <!-- 비어 있을 때 -->
+{#                                    <div class="club-teenplay-empty-wrap" style="display:flex">#}
 {#                                        <div class="club-teenplay-empty-container">#}
 {#                                            <div class="club-teenplay-empty">업로드한 틴플레이가 없습니다.</div>#}
 {#                                        </div>#}
 {#                                    </div>#}
-{#                                    <!-- 내용 있을 때 -->#}
-{#                                    <!-- 무한 스크롤입니다. -->#}
-{#                                    <div class="club-teenplay-contents-wrap">#}
-{#                                        <div class="club-teenplay-contents-container">#}
-{#                                            <div class="club-teenplay-contents-boxes">#}
-{#                                                <div class="club-teenplay-contents-box">#}
+                                    <!-- 내용 있을 때 -->
+                                    <!-- 무한 스크롤입니다. -->
+                                    <div class="club-teenplay-contents-wrap">
+                                        <div class="club-teenplay-contents-container">
+                                            <div class="club-teenplay-contents-boxes">
+                                                <div class="club-teenplay-contents-box">
 {#                                                    <!-- 아래 div가 반복 -->#}
 {#                                                    <div class="club-teenplay-contents">#}
 {#                                                        <a href="" class="club-teenplay-thumbnail-wrap">#}
@@ -302,18 +314,18 @@
 {#                                                            <img src="/staticfiles/images/club/club-detail/teenplay_delete_icon_hover.png" class="club-teenplay-delete-hover" />#}
 {#                                                        </div>#}
 {#                                                    </div>#}
-{#                                                </div>#}
-{#                                            </div>#}
-{#                                        </div>#}
-{#                                        <div class="tp-show-more-btn-wrap">#}
-{#                                            <button class="tp-show-more-btn">#}
-{#                                                <div>더보기</div>#}
-{#                                                <svg xmlns="http://www.w3.org/2000/svg" class="tp-show-more-arrow" viewBox="0 0 20 20" fill="currentColor">#}
-{#                                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>#}
-{#                                                </svg>#}
-{#                                            </button>#}
-{#                                        </div>#}
-{#                                    </div>#}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tp-show-more-btn-wrap">
+                                            <button class="tp-show-more-btn">
+                                                <div>더보기</div>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="tp-show-more-arrow" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -415,7 +427,7 @@
                         <div class="upload-modal-upload-button-wrap">
                             <div class="upload-modal-upload-button-text">파일 선택</div>
                         </div>
-                        <input type="file" name="Filedata" class="upload-modal-upload-file" accept="video/*" />
+                        <input type="file" name="Filedata" id='Filedata' class="upload-modal-upload-file" accept="video/*" />
                         <p class="upload-modal-content-disclaimer">
                             Teenplay에 동영상을 제출하면 Teenplay
                             <a href="" class="upload-modal-content-link">서비스 이용약관</a>
@@ -460,7 +472,7 @@
                             <div class="cover-thumbnail-wrap">
                                 <div class="cover-thumbnail-container"></div>
                                 <img src="https://event-us.kr/Content/neweventus/image/hostcenter/hostcenter_create_upload_01.png" alt="커버 썸네일" />
-                                <div class="cover-upload-wrap">썸네일 업로드</div>
+                                <div class="cover-upload-wrap">썸네일 업로드 (Click)</div>
                                 <div class="cover-hidden">
                                     <input type="file" id="background-image" data-ratio="1:1.7" accept="image/*" />
                                 </div>
@@ -500,6 +512,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="{% static 'club/web/js/club-detail-module.js' %}"></script>
     <script src="{% static 'club/web/js/club-detail-web.js' %}"></script>
+    <script src="{% static 'club/web/js/club-teenplay.js' %}"></script>
 {% endblock %}
     
     

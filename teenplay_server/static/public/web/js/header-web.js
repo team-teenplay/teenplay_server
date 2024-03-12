@@ -1,16 +1,7 @@
-// const sendEmailATag = document.querySelector(".send-email");
-// const sendEmailModal = document.querySelector(".send-email-modal-container");
+
 const checkBtn = document.querySelector(".check-btn");
 
-// // 인증 메일 발송하기 클릭 시 모달창 block처리 이벤트
-// sendEmailATag.addEventListener("click", () => {
-//     sendEmailModal.style.display = "block";
-// });
 
-// 모달창 내 확인 버튼 클릭 시 모달창 none처리 이벤트
-// checkBtn.addEventListener("click", () => {
-//     sendEmailModal.style.display = "none";
-// });
 
 const mypageServices = document.querySelector(".member-services");
 const mypageMenu = document.querySelector(".mypage-menu");
@@ -63,6 +54,15 @@ searchInput.addEventListener("input", (e) => {
     searchActivitySection.style.display = "none";
     searchClupSection.style.display = "none";
 });
+
+// 검색 모듈
+const searchService = (() => {
+    const write = async (keyword, callback) => {
+        await fetch(``);
+    }
+
+    return {write: write}
+})();
 
 // 엔터키를 누를 경우 input의 value를 최근 검색기록 목록에 최신순으로 추가
 const recentlyKeywordList = document.querySelector(".recently-keyword-list");
@@ -126,3 +126,57 @@ recommendKeywordsMore.addEventListener("click", (e) => {
 });
 
 // 카테고리 불러오기
+
+
+// 닉네임 길이에 따라 헤더 내 알림 개수 위치 변경하기
+const memberNickname = document.querySelector("span.nicknaem").innerText;
+const alarmCountWrap = document.querySelector(".signal-sign-item");
+alarmCountWrap.style.left = `calc(100% - ${69 + (memberNickname.length - 2) * 6}px)`;
+
+
+// 알람 개수 띄우기
+const alarmCount1 = document.querySelector("div.signal-sign");
+const alarmCount2 = document.querySelector(".mypage-menu-signal-count");
+const alarmMemberId = document.querySelector("input[name=header-member-id]").value;
+
+const getAlarmCount = async (alarmMemberId, callback) => {
+    const response = await fetch(`/member/alarms/api?member-id=${alarmMemberId}`);
+    const alarmCount = await response.json();
+    if (callback) {
+        callback(alarmCount);
+    }
+}
+
+const showAlarmCount = (alarmCount) => {
+    alarmCount1.innerText = Number(alarmCount) <= 99 ? alarmCount : '99+';
+    alarmCount2.innerText = Number(alarmCount) <= 99 ? alarmCount : '99+';
+}
+
+getAlarmCount(alarmMemberId, showAlarmCount)
+
+// 카테고리 띄우기
+const headerCategoryWrap = document.querySelector(".category-group-items");
+
+const getCategories = async (callback) => {
+    const response = await fetch(`/activity/categories/api/`);
+    const categories = await response.json();
+    if (callback) {
+        callback(categories);
+    }
+}
+
+const showCategories = (categories) => {
+    let text = ``;
+    categories.forEach((category) => {
+        text += `
+            <div class="category-item">
+                <a href="/activity/list?category-id=${category.id}" class="item-link" target="_blank">
+                    <span>${category.category_name}</span>
+                </a>
+            </div>
+        `;
+    })
+    headerCategoryWrap.innerHTML = text;
+}
+
+getCategories(showCategories);

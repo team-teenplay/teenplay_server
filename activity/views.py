@@ -222,7 +222,20 @@ class ActivityReplyAPI(APIView):
             'member_id': data['member_id']
         }
 
-        ActivityReply.objects.create(**data)
+        activity_reply = ActivityReply.objects.create(**data)
+
+        # 모임장에게 활동 상세글 댓글 알림 전송
+        activity = Activity.enabled_objects.filter(id=data['activity_id']).first()
+        club = Club.enabled_objects.filter(id=activity.club.id).first()
+        if activity and club:
+            alarm_data = {
+                'target_id': activity.id,
+                'alarm_type': 2,
+                'sender_id': activity_reply.member.id,
+                'receiver_id': club.member.id,
+            }
+            Alarm.objects.create(**alarm_data)
+
         return Response("success")
 
     def patch(self, request):
@@ -251,12 +264,14 @@ class ActivityReplyAPI(APIView):
 
 class ActivityListWebView(View):
     def get(self, request):
+        selected_category = request.GET.get('category-id')
         regions = Region.objects.filter(status=True)
         categories = Category.objects.filter(status=True)
 
         context = {
             'regions': list(regions),
-            'categories': list(categories)
+            'categories': list(categories),
+            'selectedCategory': selected_category
         }
         return render(request, 'activity/web/activity-web.html', context=context)
 
@@ -344,3 +359,53 @@ class ActivityListAPI(APIView):
         activities.append(total_count)
 
         return Response(activities)
+
+
+class ActivityCategoryAPI(APIView):
+    def get(self, request):
+        categories = list(Category.objects.filter(status=True).values())
+
+        return Response(categories)
+
+
+class ActivityJoinWebView(View):
+    def get(self, request):
+        activity_id = request.GET.get('id')
+        activity = Activity.enabled_objects.get(id=activity_id)
+        member_count = ActivityMember.enabled_objects.filter(activity_id=activity_id).count()
+        context = {
+            'activity': activity,
+            'member_count': member_count
+        }
+
+        return render(request, 'activity/web/activity-join-web.html', context=context)
+
+    def post(self, request):
+        data = request.POST
+        data = {
+            'activity_id': data.get('activity-id'),
+            'member_id': data.get('member-id'),
+            'status': -1
+        }
+        activity_member, created = ActivityMember.objects.get_or_create(**data)
+        if not created and activity_member.status == 0:
+            activity_member.status = -1
+            activity_member.updated_date = timezone.now()
+            activity_member.save(update_fields=['status', 'updated_date'])
+
+        # 활동 가입 신청 알림 모임장에게 전송하기
+        activity = Activity.enabled_objects.filter(id=data['activity-id']).first()
+        club = Club.enabled_objects.filter(id=activity.club.id).first()
+        if activity and club:
+            alarm_data = {
+                'target_id': activity.id,
+                'alarm_type': 11,
+                'sender_id': data.get('member-id'),
+                'receiver_id': club.member.id
+            }
+            Alarm.objects.create(**alarm_data)
+
+        # 임시로 메인페이지로 redirect 하겠습니다.
+        # 마이페이지의 나의 활동 페이지 view가 완성될 시 해당 view로 보내겠습니다.
+        return redirect('/')
+

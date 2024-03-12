@@ -1550,7 +1550,12 @@ margin-left: 16px;}
 }
 
 .add-color{
-    background-color: #CE201B;}
+    background-color: #CE201B;
+}
+
+.add-text-color{
+    color: #FFFFFF!important;
+}
     
 .main-user-number{
     font-weight: 700;

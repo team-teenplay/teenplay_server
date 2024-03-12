@@ -73,3 +73,11 @@ class MemberFavoriteCategory(Period):
 
     class Meta:
         db_table = 'tbl_member_favorite_category'
+
+
+class MemberDeleteReason(Period):
+    delete_reason = models.SmallIntegerField(blank=False, null=False)
+    delete_text = models.TextField(null=True)
+
+    class Meta:
+        db_table = 'tbl_member_delete_reason'
