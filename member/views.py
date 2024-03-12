@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from activity.models import ActivityReply
 from alarm.models import Alarm
-from club.models import ClubPostReply
+from club.models import ClubPostReply, ClubMember
 from friend.models import Friend
 from letter.models import Letter, ReceivedLetter, SentLetter
 from member.models import Member, MemberFavoriteCategory, MemberProfile, MemberDeleteReason
@@ -764,3 +764,18 @@ class TeenChinAPI(APIView):
             return Response("success")
 
         return Response("fail")
+
+
+class ClubAlarmManageAPI(APIView):
+    def get(self, request):
+        member_id = request.session.get('member').get('id')
+        club_id = request.GET.get('club-id')
+        club_member = ClubMember.enabled_objects.filter(member_id=member_id, club_id=club_id)
+        if not club_member.exists():
+            return Response("Not found")
+        club_member = club_member.first()
+        club_member.alarm_status = not club_member.alarm_status
+        club_member.updated_date = timezone.now()
+        club_member.save(update_fields=['alarm_status', 'updated_date'])
+
+        return Response("success")
