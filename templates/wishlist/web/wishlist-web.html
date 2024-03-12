@@ -292,7 +292,7 @@
                 <div class="modal-screen"></div>
                 <div class="modal-divison">
                     <!-- 틴친 프로필 정보 부분 -->
-                    <div class="teenchin-box" data-headlessui-state="open">
+                    <div class="teenchin-box post-update-wrap" data-headlessui-state="open">
                         <div class="teenchin-items">
                             <!-- 틴친 프로필 사진 부분 -->
                             <!-- 틴친 상세프로필 이동 주소 필요 -->
@@ -311,7 +311,7 @@
                                 </div>
                                 <!-- 틴친 프로필 이름 부분 -->
                                 <div class="profile-info-contents">
-                                    <div class="profile-name">핏자</div>
+                                    <div class="profile-name"></div>
                                 </div>
                             </a>
                             <!-- 틴친 프로필 버튼 부분 -->
@@ -365,26 +365,26 @@
                         <div class="send-modal-box">
                             <div>
                                 <h2 class="modal-header-box">
-                                    <div class="send-modal-title">쪽지 보내기</div>
+                                    <div class="send- modal-title">쪽지 보내기</div>
                                 </h2>
                             </div>
                             <div class="sender-receiver-box">
                                 <div class="sender-box">
                                     <div class="sender-title">보낸 사람</div>
                                     <!-- 회원의 이름과 이메일이 필요 -->
-                                    <div class="send-sender-email" type="text">아무개(example@sample.com)</div>
+                                    <div class="send-sender-email" type="text"></div>
                                 </div>
                                 <div class="receiver-box">
                                     <div class="receiver-title">받는 사람</div>
                                     <!-- 형식: 아무개(example@sample.com) -->
                                     <div class="send-receiver-email-box">
-                                        <input class="send-receiver-email" autocomplete="off" type="text" placeholder="example@sample.com" />
+                                        <div class="send-receiver-email"></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="letter-content-area">
                                 <!-- 쪽지 내용 필요 -->
-                                <textarea name="send-content" rows="10" placeholder="쪽지의 내용을 작성해 주세요."></textarea>
+                                <textarea name="send-content" id="letter-content" rows="10" placeholder="쪽지의 내용을 작성해 주세요."></textarea>
                             </div>
                             <div class="modal-btn-box">
                                 <button class="send-close-btn" type="button">닫기</button>
@@ -395,6 +395,9 @@
                 </div>
             </div>
         </div>
+        <input type="hidden" name="member-id" value="{{ request.session.member.id }}">
+        <input type="hidden" name="member-name" value="{{ request.session.member.member_nickname }}">
+        <input type="hidden" name="member-email" value="{{ request.session.member.member_email }}">
 {% endblock %}
 {% block js %}
         <script>

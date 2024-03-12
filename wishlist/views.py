@@ -57,21 +57,11 @@ class WishListAPI(APIView):
             'member_name',
             'category_name',
             'created_date',
-            'id'
+            'id',
+            'member_email'
         ]
 
-        # if category:
-        #     wishlists = Wishlist.enabled_objects.filter(category_id = category)\
-        #                     .annotate(member_name=F("member__member_nickname"),category_name=F("category__category_name"))\
-        #                     .values(*columns)[offset:limit]
-        # elif condition:
-        #     wishlists = Wishlist.enabled_objects.filter(condition)\
-        #                     .annotate(member_name=F("member__member_nickname"),category_name=F("category__category_name"))\
-        #                     .values(*columns)[offset:limit]
-        # else:
-        #     wishlists = Wishlist.enabled_objects.annotate(member_name=F("member__member_nickname"),category_name=F("category__category_name")).values(*columns)[offset:limit]
-
-        wishlists = Wishlist.enabled_objects.filter(condition).annotate(member_name=F("member__member_nickname"),category_name=F("category__category_name")).values(*columns)[offset:limit]
+        wishlists = Wishlist.enabled_objects.filter(condition).annotate(member_name=F("member__member_nickname"),category_name=F("category__category_name"),member_email=F('member__member_email')).values(*columns)[offset:limit]
 
         wishlist_ids = [item['id'] for item in wishlists]
 
@@ -147,10 +137,11 @@ class ReplyListAPI(APIView):
             'member_name',
             'reply_content',
             'created_date',
+            'member_email',
             'id'
         ]
 
-        replies = WishlistReply.enabled_objects.filter(wishlist_id=wishlist_id).annotate(member_name=F("member__member_nickname")).values(*columns)
+        replies = WishlistReply.enabled_objects.filter(wishlist_id=wishlist_id).annotate(member_name=F("member__member_nickname"),member_email=F('member__member_email')).values(*columns)
 
         return Response(replies)
 
