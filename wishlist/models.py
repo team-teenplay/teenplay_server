@@ -20,6 +20,7 @@ class Wishlist(Period):
 
     class Meta:
         db_table = 'tbl_wishlist'
+        ordering = ['-id']
 
 class WishListLike(Like):
     wishlist = models.ForeignKey(Wishlist, null=False, blank=False, on_delete=models.PROTECT)
@@ -41,6 +42,7 @@ class WishlistReply(Period):
 
     class Meta:
         db_table = 'tbl_wishlist_reply'
+        ordering = ['-id']
 
 
 class WishlistTag(Period):
