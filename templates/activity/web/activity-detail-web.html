@@ -17,7 +17,11 @@
                         <div class="right-sticky">
                             <div class="right-notranslation">
                                 <div class="flex-divide">
-                                    <a class="divide-link-f" href="" target="_blank"> <span>{{ category.category_name }}</span></a>
+                                    <form class="activity-detail-category-form" action="/activity/list/" method="post" style="cursor: pointer;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="category-id" value="{{ category.id }}">
+                                        <div class="divide-link-f"> <span>{{ category.category_name }}</span></div>
+                                    </form>
                                 </div>
                                 <div class="divide-title-bold">{{ activity.activity_title }}</div>
                                 <input type="hidden" name="club-id" value="{{ club.id }}">
@@ -273,7 +277,7 @@
                                     <span>공지/안내</span>
                                 </div>
                                 <div class="club-notice-more">
-                                        <a href="/club/detail/?id={{ club.id }}" class="club-notice-more-link">
+                                        <a href="/club/detail/?id={{ club.id }}&view=notice" class="club-notice-more-link">
                                             <span>공지사항 더보기</span>
                                             <svg class="s-profile-club-line" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path
@@ -311,7 +315,7 @@
                                                 </div>
                                                 <div class="club-notice-content-wrap" style="display: none">
                                                     <!-- 이 안에 내용이 들어갑니다. -->
-                                                    <div class="club-notice-content">{{ club_notice.notice_content }}</div>
+                                                    <div class="club-notice-content">{{ club_notice.notice_content|linebreaksbr }}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -579,6 +583,7 @@
     <script>
         const csrf_token = `{{ csrf_token }}`;
     </script>
+    <script src="{% static 'activity/web/js/activity-teenchin-module.js' %}"></script>
     <script src="{% static 'activity/web/js/activity-like-module.js' %}"></script>
     <script src="{% static 'activity/web/js/activity-letter-module.js' %}"></script>
     <script src="{% static 'activity/web/js/activity-reply-module.js' %}"></script>
