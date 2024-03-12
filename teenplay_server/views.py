@@ -80,10 +80,17 @@ class AdminLoginView(View):
 #         return Response(user_info)
 
 
+# 유저 페이지 이동
 class AdminUserView(View):
     def get(self, request):
+        return render(request, 'admin/web/user-web.html')
+
+
+# 유저 데이터 가져오기
+class AdminUserAPI(APIView):
+    def get(self, request, page):
         order = request.GET.get('order', 'recent')
-        page = int(request.GET.get('page', 1))
+        category = request.GET.get('category')
 
         row_count = 10
 
@@ -107,10 +114,10 @@ class AdminUserView(View):
             'order': order,
             'start_page': start_page,
             'end_page': end_page,
-            'page': page,
             'real_end': real_end,
             'page_count': page_count,
         }
+
         ordering = '-id'
         if order == 'popular':
             ordering = '-post_read_count'
@@ -122,7 +129,12 @@ class AdminUserView(View):
             'status'
         ]
 
-        members = Member.objects.filter(Q(status=1) | Q(status=-1)).values(*columns).order_by(ordering)
+        if category:
+            members = Member.objects.filter(status=category).values(*columns).order_by(ordering)
+
+        else:
+            members = Member.objects.filter(Q(status=1) | Q(status=-1)).values(*columns).order_by(ordering)
+
         club_count = members.values('id').annotate(club_count=Count('club'))
         club_action_count = members.values('id').annotate(club_action_count=Count('clubmember', filter=Q(clubmember__status=1)))
         activity_count = members.values('id').annotate(activity_count=Count('activitymember', filter=Q(activitymember__status=1)))
@@ -133,23 +145,24 @@ class AdminUserView(View):
             members[i]['club_action_count'] = club_action_count[i]['club_action_count']
             members[i]['activity_count'] = activity_count[i]['activity_count'] + activity_club_count[i]['activity_club_count']
 
-        print(members)
+        context['members'] = list(members[offset:limit])
 
-        context['users'] = list(members[offset:limit])
-
-        return render(request, 'admin/web/user-web.html', context)
+        return Response(context)
 
 
 class AdminUserUpdateAPI(APIView):
-    @transaction.atomic
-    def patch(self, request, user_id):
-        user_satus = request.data['status']
+    def patch(self, request, member_id):
         updated_date = timezone.now()
 
-        user = Member.objects.get(id=user_id)
-        user.status = user_satus
-        user.update_date = updated_date
-        user.save(update_fields=['status', 'updated_date'])
+        member = Member.objects.get(id=member_id)
+
+        if member.status == 1:
+            member.status = -1
+        elif member.status == -1:
+            member.status = 1
+
+        member.update_date = updated_date
+        member.save(update_fields=['status', 'updated_date'])
 
         return Response('success')
 

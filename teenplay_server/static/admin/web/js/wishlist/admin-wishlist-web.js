@@ -112,10 +112,8 @@ const wishlistCreateService = (() => {
             }
         }
 
-        console.log('들어옴')
         if (pagination.end_page < pagination.real_end) {
             if (pagination.order === 'popular') {
-                console.log('들어옴')
                 text += `
                     <li class="main-margin">
                         <a href="${pagination.end_page + 1} popular" class="right main-user-bottom-right">
@@ -137,7 +135,6 @@ const wishlistCreateService = (() => {
                 `
             }
         }
-        console.log('들어옴')
 
         return text;
     }

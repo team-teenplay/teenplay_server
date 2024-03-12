@@ -29,7 +29,6 @@ const adminWishlistService = (() => {
     // 위시리스트 삭제
     const remove = async (targetId) => {
         const wishlist_id = targetId.targetId
-        console.log(wishlist_id)
 
         await fetch(`/admin/notice/delete/${wishlist_id}/`, {
             method: 'patch',
@@ -43,4 +42,4 @@ const adminWishlistService = (() => {
     }
 
     return { getPagination: getPagination, getCategory: getCategory, remove: remove }
-})()
+})();

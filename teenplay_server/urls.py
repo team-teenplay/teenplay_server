@@ -23,7 +23,7 @@ from main.views import MainView, FooterNoticeLatestAPI
 from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroductionView, CompanyNoticeListAPI, \
     AdminMessageView, AdminTeenplayView, AdminPromoteView, AdminActivityView, AdminWishlistView, AdminMeetingView, \
     AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView, AdminUserUpdateAPI, \
-    AdminNoticePaginationAPI, AdminWishlistAPI, AdminWishlistUpdateAPI, AdminNoticeUpdateAPI
+    AdminNoticePaginationAPI, AdminWishlistAPI, AdminWishlistUpdateAPI, AdminNoticeUpdateAPI, AdminUserAPI
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -43,8 +43,11 @@ urlpatterns = [
     path('festival/', include('festival.urls-web')),
     path('app/festival/', include('festival.urls-app')),
     path('admin/login/', AdminLoginView.as_view(), name='admin-login'),
+    # 관리자 user url
     path('admin/user/', AdminUserView.as_view(), name='admin-user'),
-    path('admin/user/update/<int:user_id>', AdminUserUpdateAPI.as_view(), name='admin-user-update'),
+    path('admin/users/<int:page>/', AdminUserAPI.as_view(), name='admin-user-api'),
+    path('admin/user/update/<int:member_id>/', AdminUserUpdateAPI.as_view(), name='admin-user-update'),
+    # -----
     path('admin/message/', AdminMessageView.as_view(), name='admin-message'),
     path('admin/teenplay/', AdminTeenplayView.as_view(), name='admin-teenplay'),
     path('admin/promote/', AdminPromoteView.as_view(), name='admin-promote'),

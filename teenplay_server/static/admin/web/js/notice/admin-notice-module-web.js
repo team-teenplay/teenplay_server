@@ -54,7 +54,7 @@ const adminNoticeService = (() => {
     // 공지사항 삭제
     const remove = async (targetId) => {
         const notice_id = targetId.targetId
-        console.log(notice_id)
+        console.log(typeof(notice_id))
 
         await fetch(`/admin/notice/delete/${notice_id}/`, {
             method: 'patch',
@@ -64,6 +64,7 @@ const adminNoticeService = (() => {
             },
             body: JSON.stringify({'notice_id': notice_id})
         });
+        console.log('왜안돼')
 
     }
 
