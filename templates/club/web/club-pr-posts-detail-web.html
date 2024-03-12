@@ -37,12 +37,12 @@
     {#                    <br />#}
                     </div>
                     <div class="pr-detail-back-wrap">
-                        <div class="pr-list-btn">
+                        <a class="pr-list-btn" href="/club/pr-post-list/">
                             <svg xmlns="http://www.w3.org/2000/svg" class="pr-detail-back-icon" viewBox="0 1 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                             </svg>
                             <span class="pr-detail-back-text"> 목록으로 </span>
-                        </div>
+                        </a>
                         {% if club_post.club.member_id == request.session.member.id %}
                             <div style="display: flex; gap: 12px">
                                 <button class="club-post-modify-btn" type="button">수정하기</button>
@@ -221,6 +221,23 @@
             </div>
         </div>
     </div>
+    <!-- 삭제모달 -->
+    <div id="admin-user-modal" class="hidden">
+        <h4 class="admin-user-modal-title">정말 삭제하시겠습니까?</h4>
+        <div class="admin-user-modal-button">
+            <div class="admin-user-modal-left">
+                <button class="admin-user-modal-left-button" id="modalCloseButton" type="button">취소</button>
+            </div>
+            <div class="admin-user-modal-right">
+                <button class="admin-user-modal-right-button" id="modalApplyButton" type="button">삭제하기</button>
+            </div>
+        </div>
+    </div>
+    <div id="admin-user-modal-backdrop" class="hidden"></div>
+    <form id="delete-form" action="{% url 'club:pr-post-delete' %}" method="post" style="display: none">
+        {% csrf_token %}
+        <input type="hidden" name="id" value="{{ club_post.id }}">
+    </form>
 {% endblock %}
 
 {% block js %}
@@ -229,8 +246,10 @@
         const clubPostId = {{ club_post.id }}
         const clubImagePath = '{{ club_post.image_path }}'
         const memberId = {{ request.session.member.id }}
+        const memberName = '{{ request.session.member.member_nickname }}'
         const memberEmail = `{{ request.session.member.member_email }}`
     </script>
+    <script src="{% static 'club/web/js/club-pr-post-teenchin-module.js' %}"></script>
     <script src="{% static 'club/web/js/club-post-letter-module.js' %}"></script>
     <script src="{% static 'club/web/js/club-pr-post-reply-module.js' %}"></script>
     <script src="{% static 'club/web/js/club-pr-posts-detail-web.js' %}"></script>

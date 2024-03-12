@@ -1,13 +1,14 @@
 from django.db import transaction
 from django.db.models import F, Q
 from django.shortcuts import render, redirect
+from django.utils import timezone
 from django.views import View
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from activity.models import ActivityReply
 from alarm.models import Alarm
-from club.models import ClubPostReply
+from club.models import ClubPostReply, ClubMember
 from friend.models import Friend
 from letter.models import Letter, ReceivedLetter, SentLetter
 from member.models import Member, MemberFavoriteCategory, MemberProfile, MemberDeleteReason
@@ -569,3 +570,212 @@ class MypageReplyDeleteAPIVIEW(APIView):
             ClubPostReply.objects.filter(id=int(reply_id[1:])).update(status=0)
 
         return Response('good')
+
+
+class TeenChinAPI(APIView):
+    def get(self, request):
+        member_id = request.session.get('member').get('id')
+        teenchin_id = request.GET.get('teenchin-id')
+        send_friend = Friend.objects.filter(sender_id=member_id, receiver_id=teenchin_id)
+        receive_friend = Friend.objects.filter(receiver_id=member_id, sender_id=teenchin_id)
+        teenchin_status = 0
+        if send_friend.exists():
+            send_friend = send_friend.first()
+            teenchin_status = send_friend.is_friend
+        elif receive_friend.exists():
+            receive_friend = receive_friend.first()
+            teenchin_status = receive_friend.is_friend
+
+        return Response({'teenchinStatus': teenchin_status})
+
+    def post(self, request):
+        member_id = request.session.get('member').get('id')
+        teenchin_id = request.data.get('teenchinId')
+
+        # 혹시 이미 친구인데 넘어왔을 경우 바로 return
+        send_friend = Friend.objects.filter(sender_id=member_id, receiver_id=teenchin_id, is_friend=1)
+        if send_friend.exists():
+            return Response("already exists")
+        receive_friend = Friend.objects.filter(sender_id=teenchin_id, receiver_id=member_id, is_friend=1)
+        if receive_friend.exists():
+            return Response("already exists")
+
+        # 먼저 상태가 0인 컬럼이 있는지 검사(sender와 receiver가 다르므로 두 번 해야한다)
+        send_friend = Friend.objects.filter(sender_id=member_id, receiver_id=teenchin_id, is_friend=0)
+        if send_friend.exists():
+            send_friend = send_friend.first()
+            send_friend.is_friend = -1
+            send_friend.updated_date = timezone.now()
+            send_friend.save(update_fields=['is_friend', 'updated_date'])
+            # 알람 추가
+            alarm_data = {
+                'target_id': member_id,
+                'alarm_type': 5,
+                'sender_id': member_id,
+                'receiver_id': teenchin_id
+            }
+            alarm, created = Alarm.objects.get_or_create(**alarm_data)
+            if not created:
+                alarm.status = 1
+                alarm.updated_date = timezone.now()
+                alarm.save(update_fields=['status', 'updated_date'])
+
+            return Response("success")
+        receive_friend = Friend.objects.filter(sender_id=teenchin_id, receiver_id=member_id, is_friend=0)
+        if receive_friend.exists():
+            receive_friend = receive_friend.first()
+            receive_friend.is_friend = -1
+            receive_friend.updated_date = timezone.now()
+            receive_friend.save(update_fields=['is_friend', 'updated_date'])
+            # 알람 추가
+            alarm_data = {
+                'target_id': member_id,
+                'alarm_type': 5,
+                'sender_id': member_id,
+                'receiver_id': teenchin_id
+            }
+            alarm, created = Alarm.objects.get_or_create(**alarm_data)
+            if not created:
+                alarm.status = 1
+                alarm.updated_date = timezone.now()
+                alarm.save(update_fields=['status', 'updated_date'])
+
+            return Response("success")
+        # 없다면 새로 생성
+        Friend.objects.create(sender_id=member_id, receiver_id=teenchin_id)
+        # 알람 추가
+        alarm_data = {
+            'target_id': member_id,
+            'alarm_type': 5,
+            'sender_id': member_id,
+            'receiver_id': teenchin_id
+        }
+        alarm, created = Alarm.objects.get_or_create(**alarm_data)
+        if not created:
+            alarm.status = 1
+            alarm.updated_date = timezone.now()
+            alarm.save(update_fields=['status', 'updated_date'])
+
+        return Response("success")
+
+    def patch(self, request):
+        member_id = request.session.get('member').get('id')
+        teenchin_id = request.data.get('teenchinId')
+
+        # 혹시 이미 친구인데 넘어왔을 경우 바로 return
+        send_friend = Friend.objects.filter(sender_id=member_id, receiver_id=teenchin_id, is_friend=1)
+        if send_friend.exists():
+            return Response("already exists")
+        receive_friend = Friend.objects.filter(sender_id=teenchin_id, receiver_id=member_id, is_friend=1)
+        if receive_friend.exists():
+            return Response("already exists")
+
+        send_friend = Friend.objects.filter(sender_id=member_id, receiver_id=teenchin_id, is_friend=-1)
+        if send_friend.exists():
+            send_friend = send_friend.first()
+            send_friend.is_friend = 0
+            send_friend.updated_date = timezone.now()
+            send_friend.save(update_fields=['is_friend', 'updated_date'])
+            # 신청할 때 떴던 알람의 status를 0으로 바꿔주자!
+            alarm_data = {
+                'target_id': member_id,
+                'alarm_type': 5,
+                'sender_id': member_id,
+                'receiver_id': teenchin_id,
+            }
+            alarm = Alarm.objects.filter(**alarm_data)
+            if alarm.exists():
+                alarm = alarm.first()
+                alarm.status = 0
+                alarm.updated_date = timezone.now()
+                alarm.save(update_fields=['status', 'updated_date'])
+
+            return Response("success")
+
+        receive_friend = Friend.objects.filter(sender_id=teenchin_id, receiver_id=member_id, is_friend=-1)
+        if receive_friend.exists():
+            receive_friend = receive_friend.first()
+            receive_friend.is_friend = 0
+            receive_friend.updated_date = timezone.now()
+            receive_friend.save(update_fields=['is_friend', 'updated_date'])
+            # 신청할 때 떴던 알람의 status를 0으로 바꿔주자!
+            alarm_data = {
+                'target_id': member_id,
+                'alarm_type': 5,
+                'sender_id': member_id,
+                'receiver_id': teenchin_id,
+            }
+            alarm = Alarm.objects.filter(**alarm_data)
+            if alarm.exists():
+                alarm = alarm.first()
+                alarm.status = 0
+                alarm.updated_date = timezone.now()
+                alarm.save(update_fields=['status', 'updated_date'])
+
+            return Response("success")
+
+        return Response("fail")
+
+    def delete(self, request):
+        member_id = request.session.get('member').get('id')
+        teenchin_id = request.data.get('teenchinId')
+        send_friend = Friend.objects.filter(sender_id=member_id, receiver_id=teenchin_id, is_friend=1)
+        if send_friend.exists():
+            send_friend = send_friend.first()
+            send_friend.is_friend = 0
+            send_friend.updated_date = timezone.now()
+            send_friend.save(update_fields=['is_friend', 'updated_date'])
+            # 거절 알림
+            alarm_data = {
+                'target_id': member_id,
+                'alarm_type': 15,
+                'sender_id': member_id,
+                'receiver_id': teenchin_id
+            }
+            alarm, created = Alarm.objects.get_or_create(**alarm_data)
+            if not created:
+                alarm = alarm.first()
+                alarm.status = 1
+                alarm.updated_date = timezone.now()
+                alarm.save(update_fields=['status', 'updated_date'])
+
+            return Response("success")
+
+        receive_friend = Friend.objects.filter(sender_id=teenchin_id, receiver_id=member_id, is_friend=1)
+        if receive_friend.exists():
+            receive_friend = receive_friend.first()
+            receive_friend.is_friend = 0
+            receive_friend.updated_date = timezone.now()
+            receive_friend.save(update_fields=['is_friend', 'updated_date'])
+            # 거절 알림
+            alarm_data = {
+                'target_id': member_id,
+                'alarm_type': 15,
+                'sender_id': member_id,
+                'receiver_id': teenchin_id
+            }
+            alarm, created = Alarm.objects.get_or_create(**alarm_data)
+            if not created:
+                alarm = alarm.first()
+                alarm.status = 1
+                alarm.updated_date = timezone.now()
+                alarm.save(update_fields=['status', 'updated_date'])
+
+            return Response("success")
+
+        return Response("fail")
+
+
+class ClubAlarmManageAPI(APIView):
+    def get(self, request):
+        member_id = request.session.get('member').get('id')
+        club_id = request.GET.get('club-id')
+        club_member = ClubMember.enabled_objects.filter(member_id=member_id, club_id=club_id)
+        if not club_member.exists():
+            return Response("Not found")
+        club_member = club_member.first()
+        club_member.alarm_status = not club_member.alarm_status
+        club_member.updated_date = timezone.now()
+        club_member.save(update_fields=['alarm_status', 'updated_date'])
+
+        return Response("success")

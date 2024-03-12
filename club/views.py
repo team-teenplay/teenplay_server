@@ -1,3 +1,5 @@
+import os.path
+
 from django.db import transaction, models
 from django.db.models import Count, F, Q, OuterRef, Subquery, Count
 from django.db.models.functions import Coalesce
@@ -12,6 +14,7 @@ from alarm.models import Alarm
 from club.models import Club, ClubMember, ClubPost, ClubPostReply
 from member.models import Member
 from teenplay.models import TeenPlay
+from teenplay_server import settings
 from teenplay_server.category import Category
 
 
@@ -244,6 +247,54 @@ class ClubPrPostDetailView(View):
         return render(request, 'club/web/club-pr-posts-detail-web.html', context)
 
 
+class ClubPrPostUpdateView(View):
+    def get(self, request):
+        club_post_id = request.GET['id']
+        club_post = ClubPost.enabled_objects.get(id=club_post_id)
+
+        file_path = os.path.join(settings.MEDIA_ROOT, club_post.image_path.path)
+        file_size = os.path.getsize(file_path)
+
+        context = {
+            'club_post': club_post,
+            'file_size': file_size
+        }
+
+        return render(request, 'club/web/club-pr-posts-update-web.html', context)
+
+    def post(self, request):
+        datas = request.POST
+        files = request.FILES
+
+        club_post = ClubPost.objects.get(id=datas['club_post_id'])
+        category = Category.objects.get(category_name=datas['category'])
+
+        club_post.post_title = datas['title']
+        club_post.post_content = datas['content']
+        club_post.category = category
+        if files:
+            club_post.image_delete()
+            club_post.image_path = files['image']
+            club_post.updated_date = timezone.now()
+            club_post.save(update_fields=['post_title', 'post_content', 'category', 'image_path', 'updated_date'])
+        else:
+            club_post.updated_date = timezone.now()
+            club_post.save(update_fields=['post_title', 'post_content', 'category', 'updated_date'])
+
+        return redirect(club_post.get_absolute_url())
+
+
+class ClubPrPostDeleteView(View):
+    def post(self, request):
+        datas = request.POST
+        club_post = ClubPost.objects.get(id=datas['id'])
+        club_post.status = 0
+        club_post.updated_date = timezone.now()
+        club_post.save(update_fields=['status', 'updated_date'])
+
+        return redirect('/club/pr-post-list/')
+
+
 class ClubPrPostReplyAPI(APIView):
     def get(self, request):
         page = int(request.GET.get('page', 1))
@@ -306,7 +357,7 @@ class ClubPrPostReplyAPI(APIView):
 
     @transaction.atomic
     def delete(self, request):
-        reply_id = request.data['reply_id']
+        reply_id = request.GET.get('id')
 
         club_post_reply = ClubPostReply.enabled_objects.get(id=reply_id)
         club_post_reply.status = 0
@@ -318,6 +369,7 @@ class ClubPrPostReplyAPI(APIView):
 
 class ClubPrPostListView(View):
     def get(self, request):
+        page = request.GET.get('page', 1)
         return render(request, 'club/web/club-pr-posts-web.html')
 
 

@@ -14,6 +14,7 @@ from club.models import Club, ClubMember, ClubNotice
 from festival.models import Festival
 from member.models import Member, MemberProfile
 from pay.models import Pay
+from search.models import RecentSearch
 from teenplay_server.category import Category
 import re
 
@@ -264,14 +265,36 @@ class ActivityReplyAPI(APIView):
 
 class ActivityListWebView(View):
     def get(self, request):
-        selected_category = request.GET.get('category-id')
+        selected_category = ''
         regions = Region.objects.filter(status=True)
         categories = Category.objects.filter(status=True)
+        keyword = ''
+        context = {
+            'selected_category': selected_category,
+            'categories': categories,
+            'regions': regions,
+            'keyword': keyword
+        }
+        return render(request, 'activity/web/activity-web.html', context=context)
+
+    def post(self, request):
+        selected_category = request.POST.get('category-id')
+        regions = Region.objects.filter(status=True)
+        categories = Category.objects.filter(status=True)
+        keyword = request.POST.get('keyword', '')
+
+        if keyword:
+            recent_search, created = RecentSearch.objects.get_or_create(member_id=request.session.get('member').get('id'), keyword=keyword)
+            if not created:
+                recent_search.status = 1
+                recent_search.updated_date = timezone.now()
+                recent_search.save(update_fields=['status', 'updated_date'])
 
         context = {
-            'regions': list(regions),
-            'categories': list(categories),
-            'selectedCategory': selected_category
+            'selected_category': selected_category,
+            'categories': categories,
+            'regions': regions,
+            'keyword': keyword
         }
         return render(request, 'activity/web/activity-web.html', context=context)
 
@@ -284,6 +307,8 @@ class ActivityListAPI(APIView):
 
         # 검색했을 시
         keyword = data.get('keyword', '')
+        if keyword == "None":
+            keyword = ""
         # 나머지들
         page = int(data.get('page', 1))
         date = data.get('date', '모든날')
@@ -291,22 +316,21 @@ class ActivityListAPI(APIView):
         categories = data.get('categories', [])
         show_finished = data.get('showFinished', False)
         ordering = data.get('ordering', '새 행사순')
-
         order_options = {
             '추천순': '-id',
             '새 행사순': '-id',
             '모집 마감일순': 'recruit_end'
         }
-
         row_count = 12
         offset = (page - 1) * row_count
         limit = page * row_count
 
         condition = Q()
 
-        condition &= Q(activity_title__contains=keyword) | Q(activity_content__contains=keyword)
+        condition &= Q(activity_title__icontains=keyword) | Q(activity_content__icontains=keyword)
 
-        condition &= Q(activity_address_location__contains=region)
+        condition &= Q(activity_address_location__icontains=region)
+
         if date == '오늘':
             condition &= Q(activity_start__lte=timezone.now(), activity_end__gte=timezone.now())
         elif date == '이번주':
@@ -325,7 +349,6 @@ class ActivityListAPI(APIView):
 
         if categories:
             condition &= Q(category_id__in=categories)
-
         if not show_finished:
             condition &= Q(recruit_start__lte=timezone.now(), recruit_end__gte=timezone.now())
 
@@ -348,13 +371,11 @@ class ActivityListAPI(APIView):
             'realEnd': real_end,
             'pageCount': page_count,
         }
-
         activities = list(Activity.enabled_objects.filter(condition)\
                           .values().order_by(order_options[ordering])[offset:limit])
         for activity in activities:
             activity['member_count'] = ActivityMember.enabled_objects.filter(activity_id=activity['id']).count()
             activity['is_like'] = ActivityLike.enabled_objects.filter(activity_id=activity['id'], member_id=member_id).exists()
-
         activities.append(page_info)
         activities.append(total_count)
 

@@ -1,5 +1,6 @@
 import datetime
 import math
+import os
 
 from django.db import models
 
@@ -109,6 +110,9 @@ class ClubPost(Period):
 
         gap = math.floor(gap / 12)
         return f"{gap}년 전"
+
+    def image_delete(self):
+        os.remove(self.image_path.path)
 
 
 class ClubPostReply(Period):

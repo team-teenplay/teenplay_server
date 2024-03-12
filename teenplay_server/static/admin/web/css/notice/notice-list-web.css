@@ -29,6 +29,7 @@ input {
 .toggle-button.disabled {
     border-color: #F2F4F5;
     background-color: #F2F4F5;
+    cursor: default;
 }
 
 .toggle-button.disabled:hover {
@@ -1920,5 +1921,5 @@ margin-left: 16px;}
     vertical-align: middle;
     position: fixed;
     top: 181px;
-    right: 382px;
+    right: 503px;
   }
