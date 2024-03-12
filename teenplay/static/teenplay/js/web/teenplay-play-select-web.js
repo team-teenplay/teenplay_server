@@ -383,17 +383,19 @@ let idx = 0;
 let check = true;
 let page = 1
 slideWrap.addEventListener("wheel", (e) => {
+
     manageScroll(e);
     if (!check) return;
     check = false;
 
     if(e.deltaY >0){
-        console.log('down')
         // 데이터가 있고 내 화면에 있는지 확인할 것 (확인 후 더해야 함)
+        const closestPlayEach = e.target.closest('.play-each');
+        console.log(''closestPlayEach.classList[1])
         teenplayClubService.getList(clubId, ++page, teenplayClickId,showList).then((text) => {
-            if(text && page >=1 ){
+            if(text && page >=1 && idx == videoWraps.length -1){
                 slideContainer.innerHTML += text
-                console.log(page)
+                console.log('downupdate')
                 let currentHeight = parseInt(window.getComputedStyle(slideContainer).height);
                 // 현재 뷰포트의 높이를 가져오기
                 let viewportHeight = window.innerHeight;
@@ -402,6 +404,8 @@ slideWrap.addEventListener("wheel", (e) => {
                 // 새로운 높이를 설정
                 slideContainer.style.height = newHeightInVh + "vh";
                 updateVideoWraps()
+                const closestPlayEach = e.target.closest('.play-each');
+                console.log(closestPlayEach.classList[1])
             }
         })
         setTimeout(() => {
@@ -421,35 +425,48 @@ slideWrap.addEventListener("wheel", (e) => {
         pauseIcons[idx].style.display = "block";
         playIcons[idx].style.display = "none";
     } else {
-        console.log('up')
-        page--
-        if(page < 1){
-            // const currentPlayingTag = document.querySelector('.play-item');
-            const currentPlayingTag = document.querySelector('.play-each.playing');
-            teenplayClubService.getList(clubId, page, teenplayClickId, showList).then((text)=> {
-                if(text){
-                    // currentPlayingTag.insertAdjacentHTML('afterbegin', text)
-                    currentPlayingTag.insertAdjacentHTML('beforebegin', text)
-                    let currentHeight = parseInt(window.getComputedStyle(slideContainer).height);
-                    // 현재 뷰포트의 높이를 가져오기
-                    let viewportHeight = window.innerHeight;
-                    // 기존 높이에 674px (953px)를 더한 후 이를 vh 단위로 변환
-                    let newHeightInVh = ((currentHeight + 953) / viewportHeight) * 100;
-                    // 새로운 높이를 설정
-                    slideContainer.style.height = newHeightInVh + "vh";
-                    updateVideoWraps()
-                }
-
-            })
-        }
         // page--
+        const currentPlayingTag = document.querySelector('.play-item');
+        // const currentPlayingTag = document.querySelector('.play-each.playing');
+        teenplayClubService.getList(clubId, --page, teenplayClickId, showList).then((text)=> {
+            console.log(text)
+            if(text){
+                currentPlayingTag.insertAdjacentHTML('afterbegin', text)
+                // currentPlayingTag.insertAdjacentHTML('beforebegin', text)
+                console.log('up update')
+                let currentHeight = parseInt(window.getComputedStyle(slideContainer).height);
+                // 현재 뷰포트의 높이를 가져오기
+                let viewportHeight = window.innerHeight;
+                // 기존 높이에 674px (953px)를 더한 후 이를 vh 단위로 변환
+                let newHeightInVh = ((currentHeight + 953) / viewportHeight) * 100;
+                // 새로운 높이를 설정
+                slideContainer.style.height = newHeightInVh + "vh";
+                updateVideoWraps()
+                setTimeout(() => {
+                    check = true;
+                }, 800);
+                if (idx == 0) {
+                    return;
+                }
+                slidePrev(idx - 1);
+                videos[idx].pause();
+                globalThis.flags[idx] = true;
+                pauseIcons[idx].style.display = "none";
+                playIcons[idx].style.display = "block";
+                idx--;
+                videos[idx].play();
+                globalThis.flags[idx] = false;
+                pauseIcons[idx].style.display = "block";
+                playIcons[idx].style.display = "none";
+            }
+        })
+
         setTimeout(() => {
             check = true;
         }, 800);
         if (idx == 0) {
             return;
         }
-
         slidePrev(idx - 1);
         videos[idx].pause();
         globalThis.flags[idx] = true;

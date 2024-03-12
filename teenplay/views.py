@@ -56,7 +56,7 @@ class TeenplayMainListWebView(View):
 class TeenplayMainListAPIView(APIView):
     # 해당 url 로 호출을 받으면
     def get(self, request, slideNumber):
-        teenplay_count = TeenPlay.objects.all().count()
+        teenplay_count = TeenPlay.enable_objects.all().count()
 
         if 'member' in request.session and 'id' in request.session['member']:
             id = request.session['member']['id']
