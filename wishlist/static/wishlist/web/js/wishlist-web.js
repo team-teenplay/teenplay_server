@@ -225,40 +225,29 @@ moreButton.addEventListener("click", (e) => {
 
 // 전체 댓글 보여주기
 const replyshowList = (replies) => {
-    // console.log(replies[0].wishlist_id)
+    console.log(replies.length)
     let text = ``;
-    for (let i = 0; i < replies.length; i++) {
         text = `
                             <!-- 위시리스트 댓글 추가 부분 -->
                             <div class="comment-input-box-all-wrap">
                                 <div class="comment-input-box-wrap">
                                     <div class="comment-input-wrap">
                                         <div class="comment-input-username-container">${memberName}</div>
-    <!--                                    <form class="comment-input-container" method="post" data-hs-cf-bound="true">-->
                                             <input type="hidden" name="csrfmiddlewaretoken" id="csrfmiddlewaretoken" value="${csrf_token}">
                                             <input class="comment-input-hidden" name="CommunityBoardArticleId" hidden="" />
                                             <textarea class="comment-input-guide" id="reply-content" name="content" type="text" placeholder="댓글을 남겨주세요. 욕설, 비방글은 무통보 삭제됩니다." autocomplete="off" required=""></textarea>
                                             <div class="comment-input-upload-wrap">
                                                 <div class="comment-input-upload-container">
-                                                    <button class="comment-input-upload-button ${replies[i].wishlist_id}" id="comment-upload-button" type="submit">등록</button>
+                                                    <button class="comment-input-upload-button" id="comment-upload-button" type="submit">등록</button>
                                                 </div>
                                             </div>
-    <!--                                    </form>-->
                                     </div>
                                 </div>
                             </div>
                             <!-- 위시리스트 댓글 개수 정보 부분 -->
                             <div class="comment-count-wrap">댓글 ${replies.length}</div>
              `
-    }
     replies.forEach((reply) => {
-        // console.log(replies.length)
-        if(reply.length === 0) {
-            // text = `
-            //     <span>작성된 댓글이 없습니다.</span>
-            // `
-        } else {
-            // console.log(reply)
             text += `
                         <!-- 위시리스트 전체 댓글 부분 -->
                         <div class="comment-list-box-wrap">
@@ -337,8 +326,7 @@ const replyshowList = (replies) => {
                     </div>
                 </div>
             `
-        }
-    });
+        })
     return text;
 }
 
@@ -612,22 +600,26 @@ div.addEventListener("click", async (e) => {
 
 //댓글 등록 버튼 클릭 시 작성 완료
 div.addEventListener("click", async (e) => {
+
     if (e.target.id === 'comment-upload-button') {
         // console.log(e.target)
         const replyBtn = document.getElementById("comment-upload-button")
         replyBtn.addEventListener("click", async () => {
+
             const replyContent = document.getElementById("reply-content")
-            const wishlistId = replyBtn.classList[1]
-            // console.log(wishlistId)
+            // const wishlistId = replyBtn.classList[1]
+            const wishlistId = document.querySelector(".reply-open-button").classList[1]
+            const comment = document.getElementById(`reply-form${wishlistId}`)
             await wishlistService.replyWrite({
                 reply_content: replyContent.value,
                 wishlist_id: wishlistId
             });
 
             replyContent.value = "";
-            // console.log("작성완료")
-            const text = await wishlistService.replygetList(wishlistId, replyshowList);
-                div.innerHTML = text;
+
+            wishlistService.replygetList(wishlistId, replyshowList).then((replies) => {
+                comment.innerHTML = replies;
+            })
         })
     }
 });
