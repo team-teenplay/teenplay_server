@@ -709,6 +709,7 @@ input, select, textarea {
     border-bottom-width: 1px;
     border-top-width: 1px;
     margin-bottom: 1rem;
+    display: none;
 }
 
 .post-watch-wrap {
