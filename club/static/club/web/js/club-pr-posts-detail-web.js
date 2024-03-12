@@ -473,44 +473,39 @@ clubPostRelyService.getList(clubPostId, page, showList).then((text) => {
     addClickEventReplyProfile()
 })
 
-// // 위시리스트 댓글 메뉴 열고 닫기 이벤트
-// const wishlistCommentMenuButton = document.querySelector(".comment-menu");
-// const wishlistCommentMenu = document.querySelector(".comment-menu-open-wrap");
-//
-// wishlistCommentMenuButton.addEventListener("click", () => {
-//     wishlistCommentMenu.classList.toggle("hidden");
-// });
-//
-// // 위시리스트 댓글 메뉴 닫기 이벤트
-// document.addEventListener("click", (e) => {
-//     if (
-//         !wishlistCommentMenuButton.contains(e.target) &&
-//         !wishlistCommentMenu.contains(e.target)
-//     ) {
-//         wishlistCommentMenu.classList.add("hidden");
-//     }
-// });
-//
-// // 댓글 수정 이벤트
-// const commentMenuOpenUpdate = document.getElementById(
-//     "comment-menu-open-update"
-// );
-// const commentInputUpdate = document.querySelector(
-//     ".comment-update-box-all-wrap"
-// );
-// const commentComment = document.querySelector(".comment-list-all-wrap");
-//
-// commentMenuOpenUpdate.addEventListener("click", () => {
-//     commentInputUpdate.classList.remove("hidden");
-//     commentComment.classList.add("hidden");
-// });
-//
-// const commentUploadFinish = document.getElementById("comment-update-upload");
-//
-// commentUploadFinish.addEventListener("click", () => {
-//     commentInputUpdate.classList.add("hidden");
-//     commentComment.classList.remove("hidden");
-// });
+// 홍보글 수정 버튼 클릭 시 페이지 이동하는 이벤트
+const clubPostModifyBtn = document.querySelector(".club-post-modify-btn")
+clubPostModifyBtn.addEventListener("click", () => {
+    window.location.href = `/club/pr-post-update/?id=${clubPostId}`
+})
+
+// 홍보글 삭제 버튼 클릭 시 발생하는 이벤트
+const prDetailBackWrap = document.querySelector(".pr-detail-back-wrap")
+const adminUserModal = document.querySelector("#admin-user-modal")
+const adminUserModalBackdrop = document.querySelector("#admin-user-modal-backdrop")
+
+prDetailBackWrap.addEventListener("click", (e) => {
+    if (e.target.classList.contains("club-post-delete-btn")) {
+        adminUserModal.classList.remove("hidden")
+        adminUserModalBackdrop.classList.remove("hidden")
+    } else if (e.target.classList.contains("club-post-update-btn")) {
+        // window.location.href = `/club/pr-post-update/?club_post_id=${clubPostId}`
+    }
+})
+
+// 삭제 모달 내 버튼클릭 시 발생하는 이벤트
+const adminUserModalLeftButton = document.querySelector(".admin-user-modal-left-button");
+
+adminUserModalLeftButton.addEventListener("click", () => {
+    adminUserModal.classList.add("hidden")
+    adminUserModalBackdrop.classList.add("hidden")
+})
+
+const adminUserModalRightButton = document.querySelector(".admin-user-modal-right-button");
+const deleteForm = document.querySelector("#delete-form");
+adminUserModalRightButton.addEventListener("click", () => {
+    deleteForm.submit();
+})
 
 function timeForToday(datetime) {
     const today = new Date();

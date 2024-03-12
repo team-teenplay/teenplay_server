@@ -15,7 +15,7 @@ const imgInput = document.querySelector(".pr-write-image-hidden");
 const errorMsg = document.querySelector(".pr-write-error");
 
 writeBtn.addEventListener("click", (e) => {
-    if (!imgInput.files.length) {
+    if (!fileNameInfo.innerText) {
         errorMsg.style.display = "block";
         e.preventDefault();
     }
@@ -29,7 +29,7 @@ const contentInput = document.querySelector(".pr-write-content");
 let tempDraggedFile = false;
 
 function checkValuesAndValidateButton() {
-    if (!categorySelect.value || !titleInput.value || !contentInput.value || !imgInput.files.length) {
+    if (!categorySelect.value || !titleInput.value || !contentInput.value || !fileNameInfo.innerText) {
         writeBtn.disabled = true;
         return;
     }
