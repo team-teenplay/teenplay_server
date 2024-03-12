@@ -265,6 +265,7 @@
                                     <span class="text-title-primary"></span>
                                     <span class="text-title-content">개의 활동이 검색되었습니다.</span>
                                 </h1>
+                                <input type="hidden" name="search-keyword" value="{{ keyword }}">
                                 <div class="right-text-box">
                                     <div class="right-text-tie">
                                         <button class="best-text-btn" type="button" name="selected-recommend-btn">
@@ -303,6 +304,14 @@
                             <!-- <div class="hidden-filter-container-default"></div> -->
                             <!-- 검색 필터 사용되는 경우  -->
                             <div class="hidden-filter-container-check" id="hidden-filter-container-check">
+                                <div class="find-filter-keyword" style="display: none">
+                                    <div id="keyword-text"></div>
+                                    <button class="find-filter-exit">
+                                        <svg class="exit-icon-button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" id="exit-icon-button">
+                                            <path class="exit-icon-button" fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
+                                </div>
                                 <div class="find-filter-bg" style="display: none">
                                     <div id="date-text"></div>
                                     <button class="find-filter-exit">
@@ -331,8 +340,8 @@
                             <div class="activity-find-all"></div>
                             <div class="filter-display-none">
                                 <div class="filter-none-text-tie">
-                                    <p class="text-base">선택하신 필터에 맞는 행사가 없습니다.</p>
-                                    <p class="text-base">다른 조건으로 선택하거나 초기화 해보세요</p>
+                                    <p class="text-base">선택하신 필터에 맞는 활동이 없습니다.</p>
+                                    <p class="text-base">다른 조건으로 선택하거나 초기화 해보세요!</p>
                                 </div>
                             </div>
                         </div>
@@ -467,7 +476,7 @@
 {% block js %}
     <script>
         const csrf_token = `{{ csrf_token }}`;
-        const selectedCategory = `{{ selectedCategory }}`;
+        const selectedCategory = `{{ selected_category }}`;
     </script>
     <script src="{% static 'activity/web/js/activity-like-module.js' %}"></script>
     <script src="{% static 'activity/web/js/activity-web.js' %}"></script>
