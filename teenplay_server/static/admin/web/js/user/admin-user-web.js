@@ -12,7 +12,7 @@ const CreateService = (() => {
                         <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-user-id="${page.id}">
                     </div>
                     <div class="main-user-list-name">${page.member_nickname}</div>
-                    <div class="main-user-list-status">${page.created_date}</div>
+                    <div class="main-user-list-status">${page.created_date.slice(0, 10)}</div>
                     <div class="main-user-list-date">${page.club_count}</div>
                     <div class="main-user-list-pay">${page.club_action_count}</div>
                     <div class="main-user-list-paycount">${page.activity_count}</div>
@@ -245,9 +245,10 @@ mainUserBottomUl.addEventListener("click", (e) => {
 
 
 // ---------------------------------------------------------------------------------------------------------------------
-// 체크박스
-// 삭제하기 버튼
+// 찾아오기
 const modalDeleteOpenButtons = document.querySelectorAll(".member-user-list-button");
+// 전체 선택 버튼
+const statusName = document.querySelector(".main-user-status-name");
 
 userData.addEventListener('click', (e) => {
     // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
@@ -255,6 +256,7 @@ userData.addEventListener('click', (e) => {
     const checkboxes = e.target.closest(".main-user-list")?.querySelectorAll(".main-comment-list-checkbox");
 
     checkboxes.forEach((checkbox) => {
+        // console.log(checkbox)
         checkbox.addEventListener('change', () => {
             const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
 
@@ -272,23 +274,6 @@ userData.addEventListener('click', (e) => {
         });
     })
 })
-
-// 전체 선택 버튼
-const statusName = document.querySelector(".main-user-status-name");
-
-statusName.addEventListener('click', (e) => {
-    let allChecked = statusName.checked;
-
-    const checkboxes = e.target.closest(".main-user-list")?.querySelectorAll(".main-comment-list-checkbox");
-
-    checkboxes.forEach((checkbox) => {
-        checkbox.checked = allChecked;
-        // deleteButton.classList.remove("disabled");
-    })
-})
-
-
-
 
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -429,7 +414,7 @@ searchadd.addEventListener("click", () => {
 // 카테고리 버튼 가져오기
 const categoryButtons = document.querySelectorAll('.category');
 function noticeShowCategory() {
-    categoryButtons.forEach( (button) => {
+    categoryButtons.forEach((button) => {
         let categories = button.value;
 
         button.addEventListener("click", () => {

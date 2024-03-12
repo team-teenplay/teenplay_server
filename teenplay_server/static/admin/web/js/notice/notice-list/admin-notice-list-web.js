@@ -17,16 +17,16 @@ const createListService = (() => {
                         <input type="checkbox" class="main-comment-list-checkbox" data-id="${page.id}"/>
                     </div>
                     <div class="main-user-list-name">${page.notice_title}</div>
-                    <div class="main-user-list-status">${page.created_date}</div>
+                    <div class="main-user-list-status">${page.created_date.slice(0, 10)}</div>
             `;
             if(page.notice_type === 0) {
                 text += `
                     <div class="main-user-list-category" >공지사항</div>
-                `
+            `
             } else if (page.notice_type === 1) {
                 text += `
                     <div class="main-user-list-category" >자주묻는질문</div>
-                `
+            `
             }
             text += `
                 <div class="main-user-list-detail">
@@ -407,21 +407,34 @@ let categories = ''
 function noticeShowCategory() {
     categoryButtons.forEach( (button) => {
         let categories = button.value;
+        console.log('1',categories)
 
         button.addEventListener("click", () => {
             console.log(categories)
             adminNoticeService.getCategory(page, categories, createListService.showList).then((text) => {
                 noticeBox.innerHTML = text;
             })
+            console.log(categories)
+            adminNoticeService.getCategory(page, categories, createListService.showPaging).then((text) => {
+                mainUserBottomUl.innerHTML = text;
+            })
+            adminNoticeService.getCategory(page, categories, createListService.noticeCountText).then((text) => {
+                mainUserBottomUl.innerHTML = text;
+            })
         })
     })
 }
+console.log(1000)
 noticeShowCategory();
 
 searchReceive.addEventListener("click", () => {
     noticeShowList();
     noticeShowPaging();
 })
+
+
+
+
 
 // ---------------------------------------------------------------------------------------------------------------------
 // 게시글 작성

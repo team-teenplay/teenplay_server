@@ -97,7 +97,11 @@ class AdminUserAPI(APIView):
         offset = (page - 1) * row_count
         limit = page * row_count
 
-        total = Member.objects.filter(Q(status=1) | Q(status=-1)).all().count()
+        if category:
+            total = Member.objects.filter(status=category).all().count()
+
+        else:
+            total = Member.objects.filter(Q(status=1) | Q(status=-1)).all().count()
 
         page_count = 5
 

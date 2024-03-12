@@ -25,18 +25,18 @@ const wishlistCreateService = (() => {
             if (page.is_private === 0) {
                 text += `
                     <div class="main-user-list-opne">비공개</div>
-                `
+            `;
             } else if (page.is_private === 1) {
                 text += `
                     <div class="main-user-list-opne">공개</div>
-                `
+            `;
             }
             text += `
                 <div class="main-user-list-detail">
                         <button class="member-user-list-detail-button toggle-button" data-target="${page.id}">상세보기</button>
                     </div>
                 </li>
-            `
+            `;
         })
         return text;
     }

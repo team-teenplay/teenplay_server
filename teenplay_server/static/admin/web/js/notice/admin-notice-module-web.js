@@ -38,6 +38,7 @@ const adminNoticeService = (() => {
     }
 
     const getCategory = async (page, categories, callback) => {
+        console.log(50000)
         const category = parseInt(categories)
 
         const response = await fetch(`/admin/notices/${page}?category=${category}`);
