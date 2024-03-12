@@ -16,7 +16,12 @@ let likeBtns = document.querySelectorAll(".play-like-btn");
 let emptyHeart = document.querySelectorAll(".play-like-icon.empty");
 let fullHeart = document.querySelectorAll(".play-like-icon.full");
 
-const showList = (teenplayList) => {
+// console.log(clubId, page, teenplayClickId)
+// teenplayClubService.getList(clubId, page, teenplayClickId).then((teenplayInfo) => {
+//     // console.log(teenplayInfo)
+// })
+
+const addList = (teenplayList) => {
     if('id' in teenplayList){
         if(teenplayList.member_like){
             let text = `
@@ -376,38 +381,89 @@ function manageScroll(e) {
     return;
 }
 
+function updateVideoWraps(){
+    videoWraps = document.querySelectorAll(".play-each")
+    pauseIcons = document.querySelectorAll(".pause");
+    playIcons = document.querySelectorAll(".restart");
+    videos = document.querySelectorAll(".play-video");
+    videoInfos = document.querySelectorAll(".play-info-wrap");
+    controlButtons = document.querySelectorAll(".play-control-wrap");
+    progressBars = document.querySelectorAll(".progress-bar-now");
+    muteIcons = document.querySelectorAll(".mute");
+    unmuteIcons = document.querySelectorAll(".unmute");
+    likeBtns = document.querySelectorAll(".play-like-btn");
+    emptyHeart = document.querySelectorAll(".play-like-icon.empty");
+    fullHeart = document.querySelectorAll(".play-like-icon.full");
+    likeInfoWrap = document.querySelector('.play-like-info-wrap')
+
+    for (let i = 0; i < videoWraps.length; i++) {
+        if (videoWraps[i].classList.contains("playing")) {
+            idx = i;
+            break;
+        }
+    }
+    videoWraps.forEach((videoWrap, i) => {
+        if (!videoWrap.classList.contains("playing")) {
+            videos[i].autoplay = false;
+        } else {
+            videos[i].autoplay = true;
+        }
+    });
+
+    videos.forEach((video, i) => {
+        video.addEventListener("timeupdate", (e) => {
+            let percent = (e.target.currentTime / e.target.duration) * 100;
+            progressBars[i].style.width = `${percent}%`;
+        });
+    });
+}
+
+
+// 글자 Text 추가 함수 (아래로 내리기)
+const addTextFunction = async ()=>{
+    const delayText = await teenplayClubService.getList(clubId, page, teenplayClickId,addList)
+    defaultCheck.add(page)
+    slideContainer.innerHTML += delayText
+    updateVideoWraps()
+}
+
+const downTextFunction = async () => {
+    const downDelayText = await teenplayClubService.getList(clubId, page, teenplayClickId,addList)
+    defaultCheck.add(page)
+    document.querySelector('.play-each.playing').insertAdjacentHTML('beforebegin', downDelayText)
+    updateVideoWraps()
+}
 
 // 틴플레이 휠 이동에 따른 액션
 
 let idx = 0;
 let check = true;
-let page = 1
-slideWrap.addEventListener("wheel", (e) => {
+let defaultCheck = new Set()
+
+slideWrap.addEventListener("wheel", async (e) => {
+    const closestPlayEach = e.target.closest('.play-each');
+    if (closestPlayEach) {
+        // '.play-each' 내부에서 이벤트가 발생했습니다.
+        const closestPlayItem = closestPlayEach.closest('.play-item');
+        // 이제 'closestPlayItem'을 사용하여 필요한 작업을 수행합니다.
+    }
+
 
     manageScroll(e);
     if (!check) return;
     check = false;
 
     if(e.deltaY >0){
-        // 데이터가 있고 내 화면에 있는지 확인할 것 (확인 후 더해야 함)
-        const closestPlayEach = e.target.closest('.play-each');
-        console.log(''closestPlayEach.classList[1])
-        teenplayClubService.getList(clubId, ++page, teenplayClickId,showList).then((text) => {
-            if(text && page >=1 && idx == videoWraps.length -1){
-                slideContainer.innerHTML += text
-                console.log('downupdate')
-                let currentHeight = parseInt(window.getComputedStyle(slideContainer).height);
-                // 현재 뷰포트의 높이를 가져오기
-                let viewportHeight = window.innerHeight;
-                // 기존 높이에 674px (953px)를 더한 후 이를 vh 단위로 변환
-                let newHeightInVh = ((currentHeight + 953) / viewportHeight) * 100;
-                // 새로운 높이를 설정
-                slideContainer.style.height = newHeightInVh + "vh";
-                updateVideoWraps()
-                const closestPlayEach = e.target.closest('.play-each');
-                console.log(closestPlayEach.classList[1])
-            }
-        })
+
+        console.log('down print')
+        page = page + 1
+        console.log(page)
+        if(!defaultCheck.has(page)){
+            await addTextFunction()
+        }
+
+
+
         setTimeout(() => {
             check = true;
         }, 800);
@@ -425,41 +481,12 @@ slideWrap.addEventListener("wheel", (e) => {
         pauseIcons[idx].style.display = "block";
         playIcons[idx].style.display = "none";
     } else {
-        // page--
-        const currentPlayingTag = document.querySelector('.play-item');
-        // const currentPlayingTag = document.querySelector('.play-each.playing');
-        teenplayClubService.getList(clubId, --page, teenplayClickId, showList).then((text)=> {
-            console.log(text)
-            if(text){
-                currentPlayingTag.insertAdjacentHTML('afterbegin', text)
-                // currentPlayingTag.insertAdjacentHTML('beforebegin', text)
-                console.log('up update')
-                let currentHeight = parseInt(window.getComputedStyle(slideContainer).height);
-                // 현재 뷰포트의 높이를 가져오기
-                let viewportHeight = window.innerHeight;
-                // 기존 높이에 674px (953px)를 더한 후 이를 vh 단위로 변환
-                let newHeightInVh = ((currentHeight + 953) / viewportHeight) * 100;
-                // 새로운 높이를 설정
-                slideContainer.style.height = newHeightInVh + "vh";
-                updateVideoWraps()
-                setTimeout(() => {
-                    check = true;
-                }, 800);
-                if (idx == 0) {
-                    return;
-                }
-                slidePrev(idx - 1);
-                videos[idx].pause();
-                globalThis.flags[idx] = true;
-                pauseIcons[idx].style.display = "none";
-                playIcons[idx].style.display = "block";
-                idx--;
-                videos[idx].play();
-                globalThis.flags[idx] = false;
-                pauseIcons[idx].style.display = "block";
-                playIcons[idx].style.display = "none";
-            }
-        })
+        console.log('up print')
+        page = page - 1
+        console.log(page)
+        if (!defaultCheck.has(page)){
+            await downTextFunction
+        }
 
         setTimeout(() => {
             check = true;
@@ -479,42 +506,6 @@ slideWrap.addEventListener("wheel", (e) => {
         playIcons[idx].style.display = "none";
     }
 
-    function updateVideoWraps(){
-        videoWraps = document.querySelectorAll(".play-each")
-        pauseIcons = document.querySelectorAll(".pause");
-        playIcons = document.querySelectorAll(".restart");
-        videos = document.querySelectorAll(".play-video");
-        videoInfos = document.querySelectorAll(".play-info-wrap");
-        controlButtons = document.querySelectorAll(".play-control-wrap");
-        progressBars = document.querySelectorAll(".progress-bar-now");
-        muteIcons = document.querySelectorAll(".mute");
-        unmuteIcons = document.querySelectorAll(".unmute");
-        likeBtns = document.querySelectorAll(".play-like-btn");
-        emptyHeart = document.querySelectorAll(".play-like-icon.empty");
-        fullHeart = document.querySelectorAll(".play-like-icon.full");
-        likeInfoWrap = document.querySelector('.play-like-info-wrap')
-
-        for (let i = 0; i < videoWraps.length; i++) {
-            if (videoWraps[i].classList.contains("playing")) {
-                idx = i;
-                break;
-            }
-        }
-        videoWraps.forEach((videoWrap, i) => {
-            if (!videoWrap.classList.contains("playing")) {
-                videos[i].autoplay = false;
-            } else {
-                videos[i].autoplay = true;
-            }
-        });
-
-        videos.forEach((video, i) => {
-            video.addEventListener("timeupdate", (e) => {
-                let percent = (e.target.currentTime / e.target.duration) * 100;
-                progressBars[i].style.width = `${percent}%`;
-            });
-        });
-    }
 });
 
 
