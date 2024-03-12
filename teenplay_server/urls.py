@@ -25,6 +25,17 @@ from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroduc
     AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView, AdminUserUpdateAPI, \
     AdminNoticePaginationAPI, AdminWishlistAPI, AdminWishlistUpdateAPI, AdminNoticeUpdateAPI, AdminUserAPI
 
+# urls에 음수 값 넣기 가능!
+class IntConverter:
+    regex = '-?\d+'
+
+    def to_python(self, value):
+        return int(value)
+
+    def to_url(self, value):
+        return str(value)
+
+
 urlpatterns = [
     # path('admin/', admin.site.urls),
     path('club/', include('club.urls-web')),
@@ -42,29 +53,39 @@ urlpatterns = [
     path('app/notice/', include('notice.urls-app')),
     path('festival/', include('festival.urls-web')),
     path('app/festival/', include('festival.urls-app')),
+    # 관리자
     path('admin/login/', AdminLoginView.as_view(), name='admin-login'),
-    # 관리자 user url
+    # 관리자 - 유저 관리
     path('admin/user/', AdminUserView.as_view(), name='admin-user'),
     path('admin/users/<int:page>/', AdminUserAPI.as_view(), name='admin-user-api'),
     path('admin/user/update/<int:member_id>/', AdminUserUpdateAPI.as_view(), name='admin-user-update'),
-    # -----
+    # 관리자 - 쪽지 관리
     path('admin/message/', AdminMessageView.as_view(), name='admin-message'),
+    # 관리자 - 틴플레이 관리
     path('admin/teenplay/', AdminTeenplayView.as_view(), name='admin-teenplay'),
+    # 관리자 - 게시글 홍보글 관리
     path('admin/promote/', AdminPromoteView.as_view(), name='admin-promote'),
+    # 관리자 - 게시글 활동모집글 관리
     path('admin/activity/', AdminActivityView.as_view(), name='admin-activity'),
+    # 관리자 - 게시글 위시리스트 관리
     path('admin/wishlist/', AdminWishlistView.as_view(), name='admin-wishlist'),
     path('admin/wishlists/<int:page>/', AdminWishlistAPI.as_view(), name='admin-wishlist-api'),
     path('admin/notice/delete/<int:wishlist_id>/', AdminWishlistUpdateAPI.as_view(), name='admin-wishlist-api'),
+    # 관리자 - 전체 모임 관리
     path('admin/meeting/', AdminMeetingView.as_view(), name='admin-meeting'),
+    # 관리자 - 축제 관리
     path('admin/festival/', AdminFestivalView.as_view(), name='admin-festival'),
     path('admin/festival/write/<int:page>/', AdminFestivalWrite.as_view(), name='admin-festival-write'),
+    # 관리자 - 공지사항 관리
     path('admin/notice/', AdminNoticeView.as_view(), name='admin-notice'),
     # path('admin/notice/<int:page>/', AdminNoticeAPI.as_view(), name='admin-notice-api'),
     path('admin/notices/<int:page>/', AdminNoticePaginationAPI.as_view(), name='admin-notice-page-api'),
     path('admin/notice/delete/<int:notice_id>/', AdminNoticeUpdateAPI.as_view(), name='admin-notice-delete-api'),
     path('admin/notice/write/', AdminNoticeWriteView.as_view(), name='admin-notice-write'),
+    # 관리자 - 댓글 관리
     path('admin/comment/', AdminCommentView.as_view(), name='admin-comment'),
     path('admin/wishlists/<int:page>/', AdminCommentView.as_view(), name='admin-comment'),
+    # 여기까지~
     path('terms/', include('terms.urls-web')),
     path('app/terms/', include('terms.urls-app')),
     path('activity/', include('activity.urls-web')),

@@ -41,44 +41,6 @@ class AdminLoginView(View):
 
         return render(request, 'admin/web/user-web.html', context)
 
-        # url = 'admin/web/admin-login-web.html'
-        #
-        # if admin.exists():
-        #     request.session['admin'] = AdminAccountSerializer(admin.first()).data
-        #
-        #     url = 'admin/web/user-web.html'
-        #
-        # return redirect(url)
-
-
-# 추가
-# 관리자 유저 관리 페이지로 이동
-# class AdminUserView(View):
-#     def get(self, request):
-#         return render(request, 'admin/web/user-web.html')
-
-
-# # 관리자 유저 관리 페이지 - 유저 정보 불러오기
-# class AdminUserAPI(APIView):
-#     def get(self, request, page):
-#         row_count = 5
-#
-#         offset = (page - 1) * row_count
-#         limit = page * row_count
-#
-#         users = Member.objects.filter(Q(status=1) | Q(status=2))\
-#                     .annotate(club_count=Count('club'), club_action_count=Count('clubmember', filter=Q(status=1)), activity_count=Count('club__activity'))\
-#                     .values('member_nickname', 'created_date', 'club_count', 'club_action_count', 'activity_count', 'status')[offset:limit]
-#
-#         has_next = Member.objects.filter(Q(status=1) | Q(status=2))[limit:limit + 1].exists()
-#
-#         user_info = {
-#             'users': users,
-#             'hasNext': has_next,
-#         }
-#
-#         return Response(user_info)
-
 
 # 유저 페이지 이동
 class AdminUserView(View):
@@ -90,18 +52,22 @@ class AdminUserView(View):
 class AdminUserAPI(APIView):
     def get(self, request, page):
         order = request.GET.get('order', 'recent')
-        category = request.GET.get('category')
+        category = request.GET.get('category', '')
+        keyword = request.GET.get('keyword', '')
 
         row_count = 10
 
         offset = (page - 1) * row_count
         limit = page * row_count
 
+        condition = Q(status=1) | Q(status=-1)
         if category:
-            total = Member.objects.filter(status=category).all().count()
+            condition &= Q(status=category)
 
-        else:
-            total = Member.objects.filter(Q(status=1) | Q(status=-1)).all().count()
+        if keyword:
+            condition &= Q(member_nickname__contains=keyword)
+
+        total = Member.objects.filter(condition).all().count()
 
         page_count = 5
 
@@ -133,11 +99,7 @@ class AdminUserAPI(APIView):
             'status'
         ]
 
-        if category:
-            members = Member.objects.filter(status=category).values(*columns).order_by(ordering)
-
-        else:
-            members = Member.objects.filter(Q(status=1) | Q(status=-1)).values(*columns).order_by(ordering)
+        members = Member.objects.filter(condition).values(*columns).order_by(ordering)
 
         club_count = members.values('id').annotate(club_count=Count('club'))
         club_action_count = members.values('id').annotate(club_action_count=Count('clubmember', filter=Q(clubmember__status=1)))
@@ -165,7 +127,7 @@ class AdminUserUpdateAPI(APIView):
         elif member.status == -1:
             member.status = 1
 
-        member.update_date = updated_date
+        member.updated_date = updated_date
         member.save(update_fields=['status', 'updated_date'])
 
         return Response('success')
@@ -200,18 +162,27 @@ class AdminWishlistView(View):
     def get(self, request):
         return render(request, 'admin/web/wishlist-web.html')
 
+
 # 위시리스트 데이터
 class AdminWishlistAPI(APIView):
     def get(self, request, page):
         order = request.GET.get('order', 'recent')
         category = request.GET.get('category')
+        keyword = request.GET.get('keyword')
 
         row_count = 10
 
         offset = (page - 1) * row_count
         limit = page * row_count
 
-        total = Notice.objects.filter(status=1).all().count()
+        if category:
+            total = Wishlist.objects.filter(member__status=1, status=1, is_private=category).all().count()
+
+        elif keyword:
+            total = Wishlist.objects.filter(member__status=1, status=1, member_nickname__contains=keyword).all().count()
+
+        else:
+            total = Wishlist.objects.filter(member__status=1, status=1, ).all().count()
 
         page_count = 5
 
@@ -248,6 +219,9 @@ class AdminWishlistAPI(APIView):
 
         if category:
             wishlist = Wishlist.objects.filter(member__status=1, status=1, is_private=category).values(*columns).order_by(ordering)
+
+        elif keyword:
+            wishlist = Wishlist.objects.filter(member__status=1, status=1, member_nickname__contains=keyword).values(*columns).order_by(ordering)
 
         else:
             wishlist = Wishlist.objects.filter(member__status=1, status=1).values(*columns).order_by(ordering)
@@ -306,14 +280,22 @@ class AdminNoticeView(View):
 class AdminNoticePaginationAPI(APIView):
     def get(self, request, page):
         order = request.GET.get('order', 'recent')
-        category = request.GET.get('category')
+        category = request.GET.get('category', '')
+        keyword = request.GET.get('keyword', '')
 
         row_count = 10
 
         offset = (page - 1) * row_count
         limit = page * row_count
 
-        total = Notice.objects.filter(status=1).all().count()
+        condition = Q(status=1)
+        if category:
+            condition &= Q(notice_type=category)
+
+        if keyword:
+            condition &= Q(notice_title__contains=keyword)
+
+        total = Notice.objects.filter(condition).all().count()
 
         page_count = 5
 
@@ -339,15 +321,17 @@ class AdminNoticePaginationAPI(APIView):
         if order == 'popular':
             ordering = '-post_read_count'
 
-        if category:
-            context['pagination'] = list(Notice.objects.filter(status=1, notice_type=category)\
-                                         .values('id', 'notice_title', 'created_date', 'notice_content', 'notice_type')\
-                                         .order_by(ordering)[offset:limit])
+        columns = [
+            'id',
+            'notice_title',
+            'created_date',
+            'notice_content',
+            'notice_type'
+        ]
 
-        else:
-            context['pagination'] = list(Notice.objects.filter(status=1) \
-                                         .values('id', 'notice_title', 'created_date', 'notice_content', 'notice_type') \
-                                         .order_by(ordering)[offset:limit])
+        notices = Notice.objects.filter(condition).values(*columns).order_by(ordering)
+
+        context['notices'] = list(notices[offset:limit])
 
         return Response(context)
 
@@ -358,6 +342,7 @@ class AdminNoticeUpdateAPI(APIView):
     def patch(self, request, notice_id):
         status = 0
         updated_date = timezone.now()
+        print('왜 안돼')
 
         notice = Notice.objects.get(id=notice_id)
         notice.status = status
