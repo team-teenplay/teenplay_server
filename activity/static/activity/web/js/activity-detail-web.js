@@ -353,11 +353,55 @@ const sendLetterAddInfo = (replyId) => {
     receiverInfo.innerText = `${receiverName} (${receiverEmail})`;
 }
 
+// 틴친 여부에 따라 버튼 다르게 표시하기
+/////////////////////////////////////
+// 틴친 신청 버튼
+const teenchinAddButton = document.querySelector(".teenchin-add-btn");
+// 틴친 신청취소 버튼
+const teenchinCancelButton = document.querySelector(".teenchin-request-btn");
+// 틴친 끊기 버튼
+const teenchinDeleteButton = document.querySelector(".teenchin-btn");
+
+// 보여주는 함수
+const helpShowButton = (button) => {
+    if (button.classList.contains("hidden")) {
+        button.classList.remove("hidden");
+    }
+}
+// 숨겨주는 함수
+const helpHideButton = (button) => {
+    if (!button.classList.contains("hidden")) {
+        button.classList.add("hidden");
+    }
+}
+
+// 이제 위 요소들을 사용하여 틴친 상태에 따라 버튼을 바꿔줄 함수 정의
+const showButtonsByTeenchinStatus = (teenchinStatus) => {
+    if (teenchinStatus === 0) {
+        helpShowButton(teenchinAddButton);
+        helpHideButton(teenchinCancelButton);
+        helpHideButton(teenchinDeleteButton);
+    } else if (teenchinStatus === 1) {
+        helpShowButton(teenchinDeleteButton);
+        helpHideButton(teenchinAddButton);
+        helpHideButton(teenchinCancelButton);
+    } else {
+        helpShowButton(teenchinCancelButton);
+        helpHideButton(teenchinAddButton);
+        helpHideButton(teenchinDeleteButton);
+    }
+}
+
+// 위에서 정의한 함수를 사용할 때, 댓글에서 프로필 사진을 클릭하면 
+// 해당 멤버의 id를 같이 넘겨 틴친 상태에 따라 버튼을 바로 바꿔줘야 합니다.
+// 따라서 프로필 모달이 표시됨과 동시에 이루어지도록 합니다.
+
 // 틴친 클릭 시 프로필 모달 나오도록 하기
 const profileModal = document.querySelector("div.profile");
 const profileModalProfileImage = document.querySelector(".profile-default-img");
 const profileModalMemberName = document.querySelector("div.profile-name");
-const showMemberProfileModal = (replyId) => {
+let opponentTeenchinId = 0;
+const showMemberProfileModal = async (replyId) => {
     if (profileModal.classList.contains("hidden")) {
         profileModal.classList.remove("hidden")
         const memberProfileImage = document.querySelector(`.profile-image${replyId}`);
@@ -365,6 +409,8 @@ const showMemberProfileModal = (replyId) => {
         const memberProfileName = document.querySelector(`.member-name${replyId}`);
         profileModalMemberName.innerText = memberProfileName.innerText;
         sendLetterAddInfo(replyId);
+        opponentTeenchinId = document.querySelector(`.reply-writer-id${replyId}`).value;
+        await activityTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
     }
 }
 
@@ -470,12 +516,10 @@ if (teenFriendAdd){
             cancelButtonColor: "#E1E1E1",
             confirmButtonText: "친구추가",
             cancelButtonText: "닫기",
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.value) {
-                // 틴플레이 삭제 관련 서버 작업 코드 입력
-                // 완료 시 아래 코드 실행 (실제로는 또 .then(()=>{}) 으로 써야함)
-                teenFriendAdd.classList.add("hidden");
-                teenFriendRequest.classList.remove("hidden");
+                await activityTeenchinService.apply(opponentTeenchinId);
+                await activityTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
             } else if ((result.dismiss = "cancel")) {
                 return;
             }
@@ -495,12 +539,10 @@ if (teenFriendRequest){
             cancelButtonColor: "#E1E1E1",
             confirmButtonText: "신청취소",
             cancelButtonText: "닫기",
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.value) {
-                // 틴플레이 삭제 관련 서버 작업 코드 입력
-                // 완료 시 아래 코드 실행 (실제로는 또 .then(()=>{}) 으로 써야함)
-                teenFriendRequest.classList.add("hidden");
-                teenFriendAdd.classList.remove("hidden");
+                await activityTeenchinService.cancelApplyTeenchin(opponentTeenchinId);
+                await activityTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
             } else if ((result.dismiss = "cancel")) {
                 return;
             }
@@ -522,12 +564,10 @@ if (teenFriendCancle){
             cancelButtonColor: "#E1E1E1",
             confirmButtonText: "틴친끊기",
             cancelButtonText: "닫기",
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.value) {
-                // 틴플레이 삭제 관련 서버 작업 코드 입력
-                // 완료 시 아래 코드 실행 (실제로는 또 .then(()=>{}) 으로 써야함)
-                teenFriendCancle.classList.add("hidden");
-                teenFriendAdd.classList.remove("hidden");
+                await activityTeenchinService.removeTeenchin(opponentTeenchinId);
+                await activityTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
             } else if ((result.dismiss = "cancel")) {
                 return;
             }
@@ -663,6 +703,8 @@ const showReplies = async (isAdd, replies) => {
                     <div class="k-comment-content-container">
                         <!-- 댓글 정보 부분 -->
                         <div class="k-comment-info">
+                            <!-- 댓글 작성자 id -->
+                            <input type="hidden" name="writer-id" class="reply-writer-id${reply.id}" value="${reply.member_id}">
                             <!-- 댓글 작성자 이름 부분 -->
                             <span class="member-name${reply.id}">${reply.member_nickname}</span>
                             <!-- 댓글 작성 날짜 부분 -->
