@@ -32,13 +32,12 @@ const clubPostRelyService = (() => {
     }
 
     const remove = async (id) => {
-        await fetch(`/clubs/pr-post-reply/api/`, {
+        await fetch(`/clubs/pr-post-reply/api/?id=${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
                 'X-CSRFToken': csrf_token
-            },
-            body: JSON.stringify(id)
+            }
         })
     }
 

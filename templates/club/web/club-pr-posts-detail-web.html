@@ -221,6 +221,23 @@
             </div>
         </div>
     </div>
+    <!-- 삭제모달 -->
+    <div id="admin-user-modal" class="hidden">
+        <h4 class="admin-user-modal-title">정말 삭제하시겠습니까?</h4>
+        <div class="admin-user-modal-button">
+            <div class="admin-user-modal-left">
+                <button class="admin-user-modal-left-button" id="modalCloseButton" type="button">취소</button>
+            </div>
+            <div class="admin-user-modal-right">
+                <button class="admin-user-modal-right-button" id="modalApplyButton" type="button">삭제하기</button>
+            </div>
+        </div>
+    </div>
+    <div id="admin-user-modal-backdrop" class="hidden"></div>
+    <form id="delete-form" action="{% url 'club:pr-post-delete' %}" method="post" style="display: none">
+        {% csrf_token %}
+        <input type="hidden" name="id" value="{{ club_post.id }}">
+    </form>
 {% endblock %}
 
 {% block js %}
@@ -231,6 +248,7 @@
         const memberId = {{ request.session.member.id }}
         const memberEmail = `{{ request.session.member.member_email }}`
     </script>
+    <script src="{% static 'club/web/js/club-pr-post-module.js' %}"></script>
     <script src="{% static 'club/web/js/club-post-letter-module.js' %}"></script>
     <script src="{% static 'club/web/js/club-pr-post-reply-module.js' %}"></script>
     <script src="{% static 'club/web/js/club-pr-posts-detail-web.js' %}"></script>
