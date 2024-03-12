@@ -608,11 +608,18 @@ class TeenChinAPI(APIView):
             send_friend.updated_date = timezone.now()
             send_friend.save(update_fields=['is_friend', 'updated_date'])
             # 알람 추가
-            # alarm_data = {
-            #     'target_id': member_id,
-            #     'alarm_type':
-            # }
-            # alarm, created = Alarm.objects.get_or_create()
+            alarm_data = {
+                'target_id': member_id,
+                'alarm_type': 5,
+                'sender_id': member_id,
+                'receiver_id': teenchin_id
+            }
+            alarm, created = Alarm.objects.get_or_create(**alarm_data)
+            if not created:
+                alarm.status = 1
+                alarm.updated_date = timezone.now()
+                alarm.save(update_fields=['status', 'updated_date'])
+
             return Response("success")
         receive_friend = Friend.objects.filter(sender_id=teenchin_id, receiver_id=member_id, is_friend=0)
         if receive_friend.exists():
@@ -620,9 +627,35 @@ class TeenChinAPI(APIView):
             receive_friend.is_friend = -1
             receive_friend.updated_date = timezone.now()
             receive_friend.save(update_fields=['is_friend', 'updated_date'])
+            # 알람 추가
+            alarm_data = {
+                'target_id': member_id,
+                'alarm_type': 5,
+                'sender_id': member_id,
+                'receiver_id': teenchin_id
+            }
+            alarm, created = Alarm.objects.get_or_create(**alarm_data)
+            if not created:
+                alarm.status = 1
+                alarm.updated_date = timezone.now()
+                alarm.save(update_fields=['status', 'updated_date'])
+
             return Response("success")
         # 없다면 새로 생성
         Friend.objects.create(sender_id=member_id, receiver_id=teenchin_id)
+        # 알람 추가
+        alarm_data = {
+            'target_id': member_id,
+            'alarm_type': 5,
+            'sender_id': member_id,
+            'receiver_id': teenchin_id
+        }
+        alarm, created = Alarm.objects.get_or_create(**alarm_data)
+        if not created:
+            alarm.status = 1
+            alarm.updated_date = timezone.now()
+            alarm.save(update_fields=['status', 'updated_date'])
+
         return Response("success")
 
     def patch(self, request):
@@ -643,13 +676,42 @@ class TeenChinAPI(APIView):
             send_friend.is_friend = 0
             send_friend.updated_date = timezone.now()
             send_friend.save(update_fields=['is_friend', 'updated_date'])
+            # 신청할 때 떴던 알람의 status를 0으로 바꿔주자!
+            alarm_data = {
+                'target_id': member_id,
+                'alarm_type': 5,
+                'sender_id': member_id,
+                'receiver_id': teenchin_id,
+            }
+            alarm = Alarm.objects.filter(**alarm_data)
+            if alarm.exists():
+                alarm = alarm.first()
+                alarm.status = 0
+                alarm.updated_date = timezone.now()
+                alarm.save(update_fields=['status', 'updated_date'])
+
             return Response("success")
+
         receive_friend = Friend.objects.filter(sender_id=teenchin_id, receiver_id=member_id, is_friend=-1)
         if receive_friend.exists():
             receive_friend = receive_friend.first()
             receive_friend.is_friend = 0
             receive_friend.updated_date = timezone.now()
             receive_friend.save(update_fields=['is_friend', 'updated_date'])
+            # 신청할 때 떴던 알람의 status를 0으로 바꿔주자!
+            alarm_data = {
+                'target_id': member_id,
+                'alarm_type': 5,
+                'sender_id': member_id,
+                'receiver_id': teenchin_id,
+            }
+            alarm = Alarm.objects.filter(**alarm_data)
+            if alarm.exists():
+                alarm = alarm.first()
+                alarm.status = 0
+                alarm.updated_date = timezone.now()
+                alarm.save(update_fields=['status', 'updated_date'])
+
             return Response("success")
 
         return Response("fail")
@@ -663,13 +725,42 @@ class TeenChinAPI(APIView):
             send_friend.is_friend = 0
             send_friend.updated_date = timezone.now()
             send_friend.save(update_fields=['is_friend', 'updated_date'])
+            # 거절 알림
+            alarm_data = {
+                'target_id': member_id,
+                'alarm_type': 15,
+                'sender_id': member_id,
+                'receiver_id': teenchin_id
+            }
+            alarm, created = Alarm.objects.get_or_create(**alarm_data)
+            if not created:
+                alarm = alarm.first()
+                alarm.status = 1
+                alarm.updated_date = timezone.now()
+                alarm.save(update_fields=['status', 'updated_date'])
+
             return Response("success")
+
         receive_friend = Friend.objects.filter(sender_id=teenchin_id, receiver_id=member_id, is_friend=1)
         if receive_friend.exists():
             receive_friend = receive_friend.first()
             receive_friend.is_friend = 0
             receive_friend.updated_date = timezone.now()
             receive_friend.save(update_fields=['is_friend', 'updated_date'])
+            # 거절 알림
+            alarm_data = {
+                'target_id': member_id,
+                'alarm_type': 15,
+                'sender_id': member_id,
+                'receiver_id': teenchin_id
+            }
+            alarm, created = Alarm.objects.get_or_create(**alarm_data)
+            if not created:
+                alarm = alarm.first()
+                alarm.status = 1
+                alarm.updated_date = timezone.now()
+                alarm.save(update_fields=['status', 'updated_date'])
+
             return Response("success")
 
         return Response("fail")
