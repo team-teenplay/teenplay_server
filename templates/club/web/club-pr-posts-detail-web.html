@@ -246,9 +246,10 @@
         const clubPostId = {{ club_post.id }}
         const clubImagePath = '{{ club_post.image_path }}'
         const memberId = {{ request.session.member.id }}
+        const memberName = '{{ request.session.member.member_nickname }}'
         const memberEmail = `{{ request.session.member.member_email }}`
     </script>
-    <script src="{% static 'club/web/js/club-pr-post-module.js' %}"></script>
+    <script src="{% static 'club/web/js/club-pr-post-teenchin-module.js' %}"></script>
     <script src="{% static 'club/web/js/club-post-letter-module.js' %}"></script>
     <script src="{% static 'club/web/js/club-pr-post-reply-module.js' %}"></script>
     <script src="{% static 'club/web/js/club-pr-posts-detail-web.js' %}"></script>
