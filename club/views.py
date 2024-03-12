@@ -38,8 +38,8 @@ class ClubCreateView(View):
             'club_name': data['club-name'],
             'club_intro': data['club-intro'],
             'member': member,
-            'club_profile_path': file['club-profile'],
-            'club_banner_path': file['club-banner']
+            'club_profile_path': file.get('club-profile'),
+            'club_banner_path': file.get('club-banner')
         }
 
         club = Club.objects.create(**data)
@@ -80,6 +80,9 @@ class ClubDetailView(View):
 
         club_list[0]['club_activity_count'] = club_activity_count.get('club_activity_count')
         club_list[0]['view'] = view
+
+        if club_list[0]['club_info'] is None:
+            club_list[0]['club_info'] = ''
 
         context = {
             'club_list': club_list
@@ -236,8 +239,9 @@ class ClubPrPostDetailView(View):
         club_post = ClubPost.enabled_objects.get(id=request.GET['id'])
         replies = ClubPostReply.enabled_objects.filter(club_post=club_post).values()
 
-        print(club_post)
-        print(type(club_post.created_date))
+        club_post.view_count += 1
+        club_post.updated_date = timezone.now()
+        club_post.save(update_fields=['view_count', 'updated_date'])
 
         context = {
             'club_post': club_post,
@@ -369,8 +373,19 @@ class ClubPrPostReplyAPI(APIView):
 
 class ClubPrPostListView(View):
     def get(self, request):
+        keyword = request.GET.get('keyword', '')
+        category = request.GET.get('category', '')
+        order = request.GET.get('order', 'recent')
         page = request.GET.get('page', 1)
-        return render(request, 'club/web/club-pr-posts-web.html')
+
+        context = {
+            'keyword': keyword,
+            'category': category,
+            'order': order,
+            'page': page
+        }
+
+        return render(request, 'club/web/club-pr-posts-web.html', context)
 
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

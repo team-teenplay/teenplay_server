@@ -484,7 +484,7 @@ const createListService = (() => {
                 text += `
                     <div class="club-detail-active">
                         <div class="club-detail-img-wrap">
-                            <a href="" class="club-detail-img-link">
+                            <a href="/activity/detail?id=${ongoingActivity.id}" class="club-detail-img-link">
                     `
                 if (ongoingActivity.thumbnail_path) {
                     text += `
@@ -533,7 +533,7 @@ const createListService = (() => {
                                 </div>
                             </div>
                             <div class="event-title-wrap">
-                                <a href="" class="event-title"> ${ongoingActivity.activity_title} </a>
+                                <a href="/activity/detail?id=${ongoingActivity.id}" class="event-title"> ${ongoingActivity.activity_title} </a>
                             </div>
                             <div class="event-detail-wrap">
                                 <div class="event-usercount-wrap">
@@ -571,7 +571,7 @@ const createListService = (() => {
                 text += `
                     <div class="finished-events-boxes">
                         <div class="finished-events-img-wrap">
-                            <a href="" class="finished-events-img-link">
+                            <a href="/activity/detail?id=${finishedActivity.id}" class="finished-events-img-link">
                 `
                 if (finishedActivity.thumbnail_path) {
                     text += `
@@ -621,7 +621,7 @@ const createListService = (() => {
                                 </div>
                             </div>
                             <div class="finished-events-name-wrap">
-                                <a href="" class="finished-events-name"> ${finishedActivity.activity_title} </a>
+                                <a href="/activity/detail?id=${finishedActivity.id}" class="finished-events-name"> ${finishedActivity.activity_title} </a>
                             </div>
                             <div class="finished-events-price-wrap">
                                 <div class="finished-events-count-wrap">
