@@ -3,13 +3,15 @@ let page = 1;
 let date = "모든날";
 let region = '';
 let categories = [];
-if (selectedCategory !== 'None') {
+
+if (selectedCategory !== 'None' && selectedCategory) {
     categories.push(selectedCategory);
 }
 let showFinished = false;
 let ordering = '새 행사순';
+let searchKeyword = document.querySelector("input[name=search-keyword]").value;
 
-const getList = async (page, date, region, categories, showFinished, ordering, callback) => {
+const getList = async (keyword, page, date, region, categories, showFinished, ordering, callback) => {
     const response = await fetch(`/activity/lists/api/`, {
         method: 'POST',
         headers: {
@@ -17,6 +19,7 @@ const getList = async (page, date, region, categories, showFinished, ordering, c
             'X-CSRFToken': csrf_token
         },
         body: JSON.stringify({
+            keyword: keyword,
             page: page,
             date: date,
             region: region,
@@ -53,19 +56,19 @@ const addClickEventToPages = (pageInfo) => {
     leftArrowButton.addEventListener("click", async () => {
         if (pageInfo.currentPage <= 1) return;
         page--;
-        await getList(page, date, region, categories, showFinished, ordering, showList);
+        await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
     })
 
     rightArrowButton.addEventListener("click", async () => {
         if (pageInfo.currentPage === pageInfo.realEnd) return;
         page++;
-        await getList(page, date, region, categories, showFinished, ordering, showList);
+        await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
     })
 
     pageButtons.forEach((btn, i) => {
         btn.addEventListener("click", async (e) => {
             page = pageTexts[i].innerText;
-            await getList(page, date, region, categories, showFinished, ordering, showList);
+            await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
         })
     })
 }
@@ -154,8 +157,13 @@ const addClickEventManageLike = () => {
 const showList = (activityLists) => {
     foundActivityCountBox.innerText = activityLists[activityLists.length-1]
     let text = ``;
-    if (activityLists.length === 1) {
+    if (activityLists.length === 2) {
+        activityLists.pop();
         emptyActivityMessage.style.display = "block";
+        const pageInfo = activityLists.pop()
+        updatePageLists(pageInfo);
+        activityContentWrap.innerHTML = text;
+        addClickEventManageLike();
     } else {
         activityLists.pop();
         emptyActivityMessage.style.display = "none";
@@ -212,7 +220,7 @@ const showList = (activityLists) => {
     }
 }
 
-getList(page, date, region, categories, showFinished, ordering, showList);
+getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
 
 // (일시) 라디오 버튼을 모두 돌면서 1개만 선택하도록 체크
 document.querySelectorAll(".content-date .radio-everyday").forEach(function (radio) {
@@ -260,13 +268,21 @@ buttons.forEach((button, i) => {
                 span.classList.add("font-bold-choice");
                 ordering = span.innerText;
                 page = 1;
-                await getList(page, date, region, categories, showFinished, ordering, showList);
+                await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
             } else if (i !== j && span.classList.contains("font-bold-choice")) {
                 span.classList.remove("font-bold-choice");
             }
         });
     });
 });
+
+// 검색해서 들어왔을 시 필터 추가해놓기
+if (searchKeyword) {
+    const keywordFilterWrap = document.querySelector(".find-filter-keyword");
+    const keywordFilterContent = document.getElementById("keyword-text");
+    keywordFilterContent.innerText = `검색어: ${searchKeyword}`;
+    keywordFilterWrap.style.display = "flex";
+}
 
 //  radio 버튼 클릭 된 값을 가져와서 hidden box의 명칭을 변경하기
 let radioCheck = document.querySelectorAll(".date-box .radio-everyday");
@@ -288,7 +304,7 @@ radioCheck.forEach((radio) => {
         }
         date = e.target.value;
         page = 1;
-        await getList(page, date, region, categories, showFinished, ordering, showList);
+        await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
     });
 });
 
@@ -302,13 +318,13 @@ blockLocation.addEventListener("change",async (e) => {
         locationTextRadio.style.display = "none";
         region = '';
         page = 1;
-        await getList(page, date, region, categories, showFinished, ordering, showList);
+        await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
     } else {
         locationText.innerHTML = e.target.value;
         locationTextRadio.style.display = "flex";
         region = e.target.value;
         page = 1;
-        await getList(page, date, region, categories, showFinished, ordering, showList);
+        await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
     }
 });
 
@@ -327,7 +343,7 @@ endDateTie.addEventListener("click", async (e) => {
                                         </button>
                                     </div>`;
             showFinished = true;
-            await getList(page, date, region, categories, showFinished, ordering, showList);
+            await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
         }
     }
 });
@@ -342,7 +358,7 @@ endDateTie.addEventListener("click", async (e) => {
                 divToRemove.remove();
             }
             showFinished = false;
-            await getList(page, date, region, categories, showFinished, ordering, showList);
+            await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
             // divToRemove.parentNode.removeChild(divToRemove);
             // 위에서 div 생성 시 id값으로 생성해 줬기 때문에 해당 id 값을 찾아서 div를 지워주면 된다
         }
@@ -373,7 +389,7 @@ const manageCategoryHiddenBg = async (checkbox, i) => {
         if (!categories.includes(checkbox.value)){
             categories.push(checkbox.value);
         }
-        await getList(page, date, region, categories, showFinished, ordering, showList);
+        await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
         return;
     }
     const filterToRemove = document.getElementById(`checkbox${checkbox.value}`);
@@ -382,7 +398,7 @@ const manageCategoryHiddenBg = async (checkbox, i) => {
     if (categories.includes(checkbox.value)){
         categories = categories.filter(item => item !== checkbox.value);
     }
-    await getList(page, date, region, categories, showFinished, ordering, showList);
+    await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
 }
 
 actCategoryCenter.forEach( (center, i) => {
@@ -399,6 +415,19 @@ actCategoryCenter.forEach( (center, i) => {
 // 필터 타이틀에서 x 버튼 클릭 시 display 가 none으로 변경되고 초기 상태로 돌아가는 기능
 let checkExit = document.getElementById("hidden-filter-container-check");
 
+// 검색 키워드 있을 시 x를 클릭하여 검색 필터 초기화
+checkExit.addEventListener("click", async (e) => {
+    if (e.target.classList.contains("exit-icon-button")) {
+        let parentDiv = e.target.closest(".find-filter-keyword");
+        if (parentDiv) {
+            parentDiv.style.display = "none";
+            document.getElementById("keyword-text").innerText = "";
+            searchKeyword = "";
+            await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
+        }
+    }
+})
+
 checkExit.addEventListener("click", (e) => {
     if (e.target.classList.contains("exit-icon-button")) {
         let parentDiv = e.target.closest(".find-filter-bg");
@@ -411,7 +440,7 @@ checkExit.addEventListener("click", (e) => {
                     page = 1;
                     const dateRange = document.querySelector(".date-display-none");
                     dateRange.style.display = "none";
-                    await getList(page, date, region, categories, showFinished, ordering, showList);
+                    await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
                 } else {
                     otherRadio.checked = false;
                 }
@@ -434,7 +463,7 @@ checkExit.addEventListener("click", async (e) => {
 
             region = '';
             page = 1;
-            await getList(page, date, region, categories, showFinished, ordering, showList);
+            await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
         }
     }
 });
@@ -449,7 +478,7 @@ checkExit.addEventListener("click", async (e) => {
             categoryCheck[Number(parentDiv.classList[2])-1] = false;
             categories = categories.filter(item => item !== parentDiv.classList[2]);
             parentDiv.remove();
-            await getList(page, date, region, categories, showFinished, ordering, showList);
+            await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
         }
     }
 });
@@ -473,7 +502,7 @@ endDateCheck.forEach((textCategoryValue) => {
                 }
             });
             showFinished = false;
-            await getList(page, date, region, categories, showFinished, ordering, showList);
+            await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
         }
     });
 });
@@ -543,7 +572,7 @@ filterReset.addEventListener("click", async (e) => {
     let showFinished = false;
     let ordering = '새 행사순';
 
-    await getList(page, date, region, categories, showFinished, ordering, showList);
+    await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
 });
 
 //  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

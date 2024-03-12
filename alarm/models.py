@@ -24,6 +24,8 @@ class Alarm(Period):
     #     11. 활동 참가신청 관련 알림
     #     12. 활동 참가승인 알림
     #     13. 활동 참가거절 알림
+    #     14. 틴친 승인 알림
+    #     15. 틴친 거절 알림
     alarm_type = models.IntegerField(null=False, blank=False)
     sender = models.ForeignKey(Member, related_name='sender', null=False, blank=False, on_delete=models.PROTECT)
     receiver = models.ForeignKey(Member, related_name='receiver', null=False, blank=False, on_delete=models.PROTECT)
