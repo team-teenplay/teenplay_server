@@ -4,15 +4,12 @@ const addButton = document.querySelector(".post-watch");
 const moreButton = document.querySelector(".post-watch-button")
 const categoryBtn = document.querySelectorAll(".top-categroy-item")
 
-
-// 상단 카테고리 선택 이벤트
-// 각 카테고리 버튼 클릭 시 이벤트 발생
+// 각 카테고리 버튼 클릭 시 카테고리별 위시리스트 보여주기
 categoryBtn.forEach((button) => {
     button.addEventListener('click', () => {
         // 더보기 버튼 눌렀을 때 ++page 로 2가 된 page 를 1로 초기화
         page = 1
-        // 특정 카테고리 선택 시 전체 카테고리의 선택 속성 해제 후
-        // 선택한 카테고리에만 선택 속성 부여
+        // 특정 카테고리 선택 시 전체 카테고리의 선택 속성 해제 후 선택한 카테고리에만 선택 속성 부여
         categoryBtn.forEach((item) => {
             item.classList.remove("all");
         });
@@ -22,28 +19,9 @@ categoryBtn.forEach((button) => {
         // 카테고리에 해당하는 위시리스트 추가
         wishlistService.getList(page, category, showList).then((text) => {
             div.innerHTML = text;
-            // console.log("카테고리 위시리스트 추가")
-            // 위시리스트 게시글 메뉴 열고 닫기 이벤트
-            // 위시리스트 게시글 내 메뉴 버튼 쿼리
-            const wishlistPostMenuButton = document.querySelectorAll(".post-menu-container");
-            // 위시리스트 게시글 메뉴(기본 가려짐) 쿼리
-            const wishlistPostMenu = document.querySelectorAll(".post-menu-open");
 
-            // 위시리스트 게시글 내 메뉴 버튼 클릭 시 클릭 이벤트 발생
-            // 위시리스트 게시글 메뉴를 활성화 or 비활성화
-            wishlistPostMenuButton.forEach((btn, i) => {
-                wishlistPostMenuButton[i].addEventListener("click", () => {
-                    wishlistPostMenu[i].classList.toggle("hidden");
-                });
-                // 위시리스트 메뉴 닫기 이벤트
-                // 여백 클릭 시 위시리스트 메뉴 자동 숨기기
-                document.addEventListener("click", () => {
-                    if (!wishlistPostMenuButton[i] && !wishlistPostMenu[i]) {
-                        console.log("눌러조")
-                        wishlistPostMenu[i].classList.add("hidden");
-                    }
-                });
-            })
+        mySearchInput.value ="";
+
         });
     });
 });
@@ -57,17 +35,18 @@ wishlistService.getList(page + 1, category).then((wishlists) => {
 
 
 //전체 위시리스트 보여주기
-const showList = (wishlists) => {
+const showList = (data) => {
     let text = ``;
-    wishlists.forEach((wishlist) => {
-        if(wishlists.length === 0) {
+    data['wishlists'].forEach((wishlist) => {
+        if(data['wishlists'].length === 0) {
             text = `
                 <!-- 카테고리에  게시글이 없을 때 출력 -->
                 <div class="post-error">
                     <span>게시글이 존재하지 않습니다.</span>
                 </div>
             `
-        } else {
+        }
+        else {
             text += `
                 <!-- 위시리스트 게시글 부분 -->
                 <div class="wishlist-post">
@@ -131,8 +110,8 @@ const showList = (wishlists) => {
                                     <div class="post-menu-open hidden" aria-labelledby="main-wishlist-content-menu" role="menu" tabindex="0" data-headlessui-state="open">
                                         <div class="post-menu-open-container" role="none">
                                             <div class="post-menu-open-divison" role="none">
-                                                <button class="post-menu-open-choice" type="button" id="post-menu-open-update" role="menuitem" tabindex="-1">수정</button>
-                                                <button class="post-menu-open-choice" type="button" id="post-menu-open-delete" role="menuitem" tabindex="-1">삭제</button>
+                                                <button class="post-menu-open-choice ${wishlist.id}" type="button" id="post-menu-open-update" role="menuitem" tabindex="-1">수정</button>
+                                                <button class="post-menu-open-choice ${wishlist.id}" type="button" id="post-menu-open-delete" role="menuitem" tabindex="-1">삭제</button>
                                             </div>
                                         </div>
                                     </div>
@@ -147,12 +126,12 @@ const showList = (wishlists) => {
                             <div class="post-title-text">${wishlist.wishlist_content}</div>
                         </div>
                             <!-- 위시리스트 게시글 태그 부분 -->
-                            <div class="post-tags-wrap">
-                                <span class="post-tag">${wishlist.tag_name}</span>
-                                <span class="post-tag">${wishlist.tag_name}</span>
-                                <span class="post-tag">${wishlist.tag_name}</span>
-                                <span class="post-tag">${wishlist.tag_name}</span>
-                                <span class="post-tag">${wishlist.tag_name}</span>
+                            <div class="post-tags-wrap ${wishlist.id}">
+                `
+            for (let i = 0; i < data['tags'][wishlist.id].length; i++) {
+                            text += `<span class="post-tag">${data['tags'][wishlist.id][i]}</span>`;
+                        }
+            text += `
                             </div>
                     </div>
                     <!-- 위시리스트 댓글 열기 부분 -->
@@ -185,35 +164,38 @@ const showList = (wishlists) => {
 
 wishlistService.getList(page, category, showList).then((text) => {
     div.innerHTML = text;
-    // 위시리스트 게시글 메뉴 열고 닫기 이벤트
-    // 위시리스트 게시글 내 메뉴 버튼 쿼리
-    const wishlistPostMenuButton = document.querySelectorAll(".post-menu-container");
-    // 위시리스트 게시글 메뉴(기본 가려짐) 쿼리
-    const wishlistPostMenu = document.querySelectorAll(".post-menu-open");
-
-    // 위시리스트 게시글 내 메뉴 버튼 클릭 시 클릭 이벤트 발생
-    // 위시리스트 게시글 메뉴를 활성화 or 비활성화
-    wishlistPostMenuButton.forEach((btn, i) => {
-        wishlistPostMenuButton[i].addEventListener("click", () => {
-            wishlistPostMenu[i].classList.toggle("hidden");
-        });
-        // 위시리스트 메뉴 닫기 이벤트
-        // 여백 클릭 시 위시리스트 메뉴 자동 숨기기
-        document.addEventListener("click", () => {
-            if (!wishlistPostMenuButton[i] && !wishlistPostMenu[i]) {
-                console.log("눌러조")
-                wishlistPostMenu[i].classList.add("hidden");
-            }
-        });
-    })
 });
 
+//위시리스트 메뉴 열고 닫기 (수정/삭제)
+div.addEventListener("click", async (e) => {
+    // console.log(e.target)
+    if (e.target.classList[0] === 'post-menu-icon') {
+        // 위시리스트 게시글 메뉴 열고 닫기 이벤트
+        const wishlistPostMenuButton = document.querySelectorAll(".post-menu-container");
+        const wishlistPostMenu = document.querySelectorAll(".post-menu-open");
+        // 위시리스트 게시글 내 메뉴 버튼 클릭 시 클릭 이벤트 발생
+        // 위시리스트 게시글 메뉴를 활성화 or 비활성화
+        wishlistPostMenuButton.forEach((btn, i) => {
+            wishlistPostMenuButton[i].addEventListener("click", () => {
+                wishlistPostMenu[i].classList.toggle("hidden");
+            });
+            // 위시리스트 메뉴 닫기 이벤트
+            // 여백 클릭 시 위시리스트 메뉴 자동 숨기기
+            document.addEventListener("click", (e) => {
+                const clickedElement = e.target;
+                // 클릭한 요소가 메뉴 버튼 또는 메뉴 자체가 아닌 경우에는 메뉴를 닫음
+                if (!wishlistPostMenuButton[i].contains(clickedElement) && !wishlistPostMenu[i].contains(clickedElement)) {
+                    wishlistPostMenu[i].classList.add("hidden");
+                }
+            });
+        })
+    }
+});
 
 // 더보기 버튼 누르면 위시리스트 나오기
 moreButton.addEventListener("click", (e) => {
     wishlistService.getList(++page, category, showList).then((text) => {
         // console.log(category)
-        // console.log("더보기로 추가됐어요!")
         div.innerHTML += text;
             // 위시리스트 게시글 메뉴 열고 닫기 이벤트
             const wishlistPostMenuButton = document.querySelectorAll(".post-menu-container");
@@ -236,7 +218,6 @@ moreButton.addEventListener("click", (e) => {
     });
     wishlistService.getList(page + 1,category).then((wishlists) => {
         if (wishlists.length === 0) {
-            // console.log("사라졌지롱")
             addButton.style.display = "none";
         }
     });
@@ -244,58 +225,45 @@ moreButton.addEventListener("click", (e) => {
 
 // 전체 댓글 보여주기
 const replyshowList = (replies) => {
+    // console.log(replies[0].wishlist_id)
     let text = ``;
+    for (let i = 0; i < replies.length; i++) {
+        text = `
+                            <!-- 위시리스트 댓글 추가 부분 -->
+                            <div class="comment-input-box-all-wrap">
+                                <div class="comment-input-box-wrap">
+                                    <div class="comment-input-wrap">
+                                        <div class="comment-input-username-container">${memberName}</div>
+    <!--                                    <form class="comment-input-container" method="post" data-hs-cf-bound="true">-->
+                                            <input type="hidden" name="csrfmiddlewaretoken" id="csrfmiddlewaretoken" value="${csrf_token}">
+                                            <input class="comment-input-hidden" name="CommunityBoardArticleId" hidden="" />
+                                            <textarea class="comment-input-guide" id="reply-content" name="content" type="text" placeholder="댓글을 남겨주세요. 욕설, 비방글은 무통보 삭제됩니다." autocomplete="off" required=""></textarea>
+                                            <div class="comment-input-upload-wrap">
+                                                <div class="comment-input-upload-container">
+                                                    <button class="comment-input-upload-button ${replies[i].wishlist_id}" id="comment-upload-button" type="submit">등록</button>
+                                                </div>
+                                            </div>
+    <!--                                    </form>-->
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 위시리스트 댓글 개수 정보 부분 -->
+                            <div class="comment-count-wrap">댓글 ${replies.length}</div>
+             `
+    }
     replies.forEach((reply) => {
         // console.log(replies.length)
-        if(replies.length === 0) {
-            text = `
-                        <!-- 위시리스트 댓글 추가 부분 -->
-                        <div class="comment-input-box-all-wrap">
-                            <div class="comment-input-box-wrap">
-                                <div class="comment-input-wrap">
-                                    <div class="comment-input-username-container">>${memberName}</div>
-                                    <form class="comment-input-container" method="post" data-hs-cf-bound="true">
-                                        <input class="comment-input" name="__RequestVerificationToken" type="hidden" value="lQ1k2HcglUXXMwOa0SIMa_JXSkG8dcFibXk3jrgj1xqrlfkZnxzZ69pIbMszXgP7-1CrLPr7j5y-xEsj8UfSWd2EpmvQnlNfBilqDAT5vUaOv7fZgaT00ILqYk8j9LZOYraW8JeO8poPFXuOtKyENA2" />
-                                        <input class="comment-input-hidden" name="CommunityBoardArticleId" hidden="" />
-                                        <textarea class="comment-input-guide" name="content" type="text" placeholder="댓글을 남겨주세요. 욕설, 비방글은 무통보 삭제됩니다." autocomplete="off" required=""></textarea>
-                                        <div class="comment-input-upload-wrap">
-                                            <div class="comment-input-upload-container">
-                                                <button class="comment-input-upload-button" id="comment-upload-button" type="submit">등록</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- 위시리스트 댓글 개수 정보 부분 -->
-                        <div class="comment-count-wrap">댓글 ${replies.length}</div>
-            `
+        if(reply.length === 0) {
+            // text = `
+            //     <span>작성된 댓글이 없습니다.</span>
+            // `
         } else {
+            // console.log(reply)
             text += `
-                        <!-- 위시리스트 댓글 추가 부분 -->
-                        <div class="comment-input-box-all-wrap">
-                            <div class="comment-input-box-wrap">
-                                <div class="comment-input-wrap">
-                                    <div class="comment-input-username-container">${memberName}</div>
-                                    <form class="comment-input-container" method="post" data-hs-cf-bound="true">
-                                        <input class="comment-input" name="__RequestVerificationToken" type="hidden" value="lQ1k2HcglUXXMwOa0SIMa_JXSkG8dcFibXk3jrgj1xqrlfkZnxzZ69pIbMszXgP7-1CrLPr7j5y-xEsj8UfSWd2EpmvQnlNfBilqDAT5vUaOv7fZgaT00ILqYk8j9LZOYraW8JeO8poPFXuOtKyENA2" />
-                                        <input class="comment-input-hidden" name="CommunityBoardArticleId" hidden="" />
-                                        <textarea class="comment-input-guide" name="content" type="text" placeholder="댓글을 남겨주세요. 욕설, 비방글은 무통보 삭제됩니다." autocomplete="off" required=""></textarea>
-                                        <div class="comment-input-upload-wrap">
-                                            <div class="comment-input-upload-container">
-                                                <button class="comment-input-upload-button" id="comment-upload-button" type="submit">등록</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- 위시리스트 댓글 개수 정보 부분 -->
-                        <div class="comment-count-wrap">댓글 ${replies.length}</div>
                         <!-- 위시리스트 전체 댓글 부분 -->
                         <div class="comment-list-box-wrap">
                             <!-- 댓글 구분선 -->
-                            <div class="comment-line"></div> 
+                        <!-- <div class="comment-line"></div> -->
                             <!-- 위시리스트 댓글 수정 부분 -->
                             <div class="comment-update-box-all-wrap hidden">
                                 <div class="comment-update-box-wrap">
@@ -353,8 +321,8 @@ const replyshowList = (replies) => {
                                     <div class="comment-menu-open-wrap hidden" aria-labelledby="main-wishlist-content-menu" role="menu" tabindex="0" data-headlessui-state="open">
                                         <div class="comment-menu-open-container" role="none">
                                             <div class="comment-menu-open-divison" role="none">
-                                                <button class="comment-menu-open-choice" type="button" id="comment-menu-open-update" role="menuitem" tabindex="-1">수정</button>
-                                                <button class="comment-menu-open-choice" type="button" id="comment-menu-open-delete" role="menuitem" tabindex="-1">삭제</button>
+                                                <button class="comment-menu-open-choice ${reply.id} ${reply.wishlist_id}" type="button" id="comment-menu-open-update" role="menuitem" tabindex="-1">수정</button>
+                                                <button class="comment-menu-open-choice ${reply.id} ${reply.wishlist_id}" type="button" id="comment-menu-open-delete" role="menuitem" tabindex="-1">삭제</button>
                                             </div>
                                         </div>
                                     </div>
@@ -407,33 +375,325 @@ div.addEventListener("click", async (e)  => {
         comment.classList.add("hidden");
     }
 })
-//
-// // 위시리스트별 태그 추가하기
-// const tagshowList = (tags) => {
-//     let text = ``;
-//     tags.forEach((tag) => {
-//         console.log(replies.length)
-//             text += `
-//                                 <span class="post-tag">${tag.tag_name}</span>
-//                                 <span class="post-tag">${tag.tag_name}</span>
-//                                 <span class="post-tag">${tag.tag_name}</span>
-//                                 <span class="post-tag">${tag.tag_name}</span>
-//                                 <span class="post-tag">${tag.tag_name}</span>
-//             `
-//         }
-//     );
-//     return text;
-// }
-//
-// const addTag = document.getElementById(`reply-form${wishlistId}`)
-// wishlistService.taggetList(wishlistId, tagshowList).then((text) => {
-//     addTag.innerHTML = text;
-// });
+
+// 위시리스트 생성
+const wishlistCreate = document.querySelector(".extra-create-button")
+const modalCreateInput = document.querySelector(".post-create")
+const modalCreateClose = document.querySelector(".create-close-container")
+const modalCreateFinish = document.querySelector(".create-finish-container")
+
+// 위시리스트 생성 모달창 열기 이벤트
+wishlistCreate.addEventListener("click", () => {
+    modalCreateInput.classList.remove("hidden");
+});
+
+// 위시리스트 생성 모달창 닫기(아이콘) 이벤트
+modalCreateClose.addEventListener("click", () => {
+    modalCreateInput.classList.add("hidden");
+});
+
+// 위시리스트 발행하기 버튼 클릭 시 작성 완료
+modalCreateFinish.addEventListener("click", async () => {
+    const wishlistContent = document.getElementById("wishlist-content")
+    const isPrivate = document.getElementById("is-private")
+    const category = document.getElementById("category").value;
+    const tagElements = document.querySelectorAll('.create-tag-list span');
+    const tagNames = Array.from(tagElements).map(span => span.textContent.trim());
+    await wishlistService.write({
+        is_private: isPrivate.value,
+        wishlist_content: wishlistContent.value,
+        category_id: category,
+        tag_name: tagNames
+    });
+
+    wishlistContent.value = "";
+    isPrivate.value = "1";
+    category.value = "100";
+    tagElements.innerHTML = "";
+
+    // console.log("작성완료")
+    const text = await wishlistService.getList(page, category, showList);
+    div.innerHTML = text;
+
+    //더보기 버튼 추가 검사
+
+    modalCreateInput.classList.add("hidden");
+});
 
 
 
+// 위시리스트 게시글 태그 추가 이벤트
+const createTagInput = document.querySelector(".create-tags-input-container .create-tags-input");
+const createTagWrap = document.querySelector(".create-tags-wrap");
+const createTag = document.querySelector(".create-tags-wrap .create-tag");
+const createTagError = document.querySelector(".create-tag-error");
+
+// 위시리스트 생성 모달 태그 입력 시 이벤트 발생
+createTagInput.addEventListener("keyup", (e) => {
+    // 만약, enter 입력 시
+    if (e.keyCode === 13) {
+        // 위리시리스트 생성 모달 태그 목록 쿼리
+        const createTags = document.querySelectorAll(".create-tags-wrap .create-tag-list");
+
+        // 입력 값의 길이가 10 이하이며, 목록의 태그 개수가 5이하면,
+        // 태그 값 추가(태그 생성)
+        if (e.target.value.length <= 10 && createTags.length <= 5) {
+            if (e.target.value) {
+                const createTagDiv = document.createElement("div");
+                createTagDiv.classList.add("create-tag-list");
+                createTagDiv.innerHTML = `
+                    <span style="display: flex; align-items: center;">
+                        ${e.target.value}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14px">
+                          <line x1="15" y1="5" x2="5" y2="15"></line>
+                          <line x1="5" y1="5" x2="15" y2="15"></line>
+                        </svg>
+                    </span>`;
+                createTag.appendChild(createTagDiv);
+                e.target.value = "";
+                createTagError.classList.add("hidden")
+
+                // createTagDiv 클릭 시 태그 삭제 이벤트 발생
+                createTagDiv.addEventListener("click", (e) => {
+                    // 취소
+                    e.stopPropagation();
+                    createTag.removeChild(createTagDiv);
+                    createTagError.classList.add("hidden")
+                });
+            }
+        //에러 메시지 출력
+        } else {
+            createTagError.classList.remove("hidden")
+        }
+    }
+});
 
 
+
+// 위시리스트 생성 모달창 닫기(여백) 이벤트
+const postCreateWrap = document.querySelector(".post-create-wrap");
+// 여백 클릭 시 생성 모달 비활성화 이벤트 발생
+document.addEventListener("click", (e) => {
+    if (!wishlistCreate.contains(e.target) && !postCreateWrap.contains(e.target)) {
+        modalCreateInput.classList.add("hidden");
+
+        const wishlistContent = document.getElementById("wishlist-content")
+        const isPrivate = document.getElementById("is-private")
+        const category = document.getElementById("category")
+        const tagElements = document.querySelector('.create-tag-list');
+
+        wishlistContent.value = "";
+        isPrivate.value = "1";
+        category.value = "100";
+        tagElements.innerHTML = "";
+    }
+});
+
+
+// 위시리스트 메뉴 버튼을 눌렀을 때 수정하기/삭제하기
+div.addEventListener("click", async (e) => {
+    // 수정 버튼 클릭시 수정 모달창 생성 및 수정하기
+    if(e.target.id === 'post-menu-open-update'){
+        // console.log("눌림")
+        const wishlistId = e.target.classList[1]
+        const postUpdateButton = document.getElementById("post-menu-open-update");
+        const modalPostUpdate = document.querySelector(".post-update");
+        const modalPostUpdateClose = document.querySelector(".update-close-container");
+        const modalPostUpdateFinish = document.querySelector(".update-finish-botton");
+
+        // 위시리스트 수정 메뉴 버튼 클릭 시 이벤트 발생
+        postUpdateButton.addEventListener("click", () => {
+            modalPostUpdate.classList.remove("hidden");
+        });
+
+        // 위시리스트 수정 모달 돌아가기 버튼 클릭 시 이벤트 발생
+        modalPostUpdateClose.addEventListener("click", () => {
+            modalPostUpdate.classList.add("hidden");
+        });
+
+        // 위시리스트 수정 모달 발행하기 버튼 클릭 시 이벤트 발생
+        modalPostUpdateFinish.addEventListener("click", () => {
+            modalPostUpdate.classList.add("hidden");
+        });
+
+        // 위시리스트 게시글 수정 타이틀 입력 이벤트
+        const updatePostTitle = document.querySelector(".update-category-input");
+
+        // 위시리스트 게시글 수정 모달 발행하기 버튼 클릭 시 이벤트 발생
+        // 수정 모달에 타이틀이 입력되지 않으면 안내 문구 빨간색으로 출력
+        modalPostUpdateFinish.addEventListener("click", () => {
+            if (!updatePostTitle.value) {
+                updatePostTitle.classList.add("red");
+                return;
+            } else {
+                updatePostTitle.classList.remove("red");
+            }
+        });
+
+        // 위시리스트 게시글 태그 수정 이벤트
+        const tagInput = document.querySelector(".update-tags-input-container .update-tags-input");
+        const tagWrap = document.querySelector(".update-tags-wrap");
+        const tag = document.querySelector(".update-tags-wrap .tag");
+        const tagError = document.querySelector(".tag-error-text");
+
+        // 위시리스트 수정 모달에서 태그 입력 시 이벤트 발생
+        // 만약, 엔터를 입력했다면,
+        tagInput.addEventListener("keyup", (e) => {
+            if (e.keyCode === 13) {
+                // 위시리스트 수정 모달 태그 목록 쿼리
+                const tags = document.querySelectorAll(".update-tags-wrap .tag-list");
+
+                // 입력 값의 길이가 10 이하이며, 목록의 태그 개수가 5이하면,
+                // 태그 값 추가(태그 생성)
+                if (e.target.value.length <= 10 && tags.length <= 5) {
+                    if (e.target.value) {
+                        const tagDiv = document.createElement("div");
+                        tagDiv.classList.add("tag-list");
+                        tagDiv.innerHTML = `
+                            <span style="display: flex; align-items: center;">
+                                ${e.target.value}
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14px">
+                                  <line x1="15" y1="5" x2="5" y2="15"></line>
+                                  <line x1="5" y1="5" x2="15" y2="15"></line>
+                                </svg>
+                            </span>`;
+                        tag.appendChild(tagDiv);
+                        e.target.value = "";
+                        tagError.classList.add("hidden")
+
+                        // tagDiv 클릭 시 이벤트 발생
+                        tagDiv.addEventListener("click", (e) => {
+                            // 태그 삭제
+                            e.stopPropagation();
+                            tag.removeChild(tagDiv);
+                            tagError.classList.add("hidden")
+                        });
+                    }
+                } else {
+                    // 위 값이 아니라면, 오류 메시지 출력
+                    tagError.classList.remove("hidden")
+                }
+            }
+        });
+
+        // 위시리스트 게시글 수정 모달창 닫기 이벤트
+        const postUpdateWrap = document.querySelector(".post-update-wrap");
+
+        // 화면 클릭 시 위시리스트 게시글 수정 모달 숨기기
+        document.addEventListener("click", (e) => {
+            if (!postUpdateButton.contains(e.target) && !postUpdateWrap.contains(e.target)) {
+                modalPostUpdate.classList.add("hidden");
+
+                const wishlistContent = document.getElementById("update-content")
+                const isPrivate = document.getElementById("update-private")
+                const category = document.getElementById("update-category")
+                const tagElements = document.querySelector('.tag-list');
+
+                wishlistContent.value = "";
+                isPrivate.value = "1";
+                category.value = "100";
+                tagElements.innerHTML = "";
+            }
+        });
+
+    // 삭제 버튼 클릭시 삭제하기 (status =0)
+    } else if (e.target.id === 'post-menu-open-delete'){
+        const wishlistId = e.target.classList[1]
+        console.log(wishlistId)
+        await wishlistService.wishlistRemove(wishlistId);
+        page = 1
+        const text = await wishlistService.getList(page, category, showList);
+        div.innerHTML = text;
+
+        // const wishlists = await wishlistService.getList(category, page +1);
+        // 더보기 검사 추가
+    }
+})
+
+//댓글 등록 버튼 클릭 시 작성 완료
+div.addEventListener("click", async (e) => {
+    if (e.target.id === 'comment-upload-button') {
+        // console.log(e.target)
+        const replyBtn = document.getElementById("comment-upload-button")
+        replyBtn.addEventListener("click", async () => {
+            const replyContent = document.getElementById("reply-content")
+            const wishlistId = replyBtn.classList[1]
+            // console.log(wishlistId)
+            await wishlistService.replyWrite({
+                reply_content: replyContent.value,
+                wishlist_id: wishlistId
+            });
+
+            replyContent.value = "";
+            // console.log("작성완료")
+            const text = await wishlistService.replygetList(wishlistId, replyshowList);
+                div.innerHTML = text;
+        })
+    }
+});
+
+// 댓글 메뉴 버튼 생성하기
+div.addEventListener("click", async (e) => {
+    // 수정하기
+    if (e.target.classList[0] === 'comment-menu-icon') {
+        // console.log(e.target)
+        // 위시리스트 댓글 메뉴 열고 닫기 이벤트
+        const wishlistCommentMenuButton = document.querySelector(".comment-menu");
+        const wishlistCommentMenu = document.querySelector(".comment-menu-open-wrap");
+
+        // 위시리스트 댓글 버튼 클릭 시 이벤트 발생
+        wishlistCommentMenuButton.addEventListener("click", () => {
+            wishlistCommentMenu.classList.toggle("hidden");
+        });
+        // 위시리스트 댓글 메뉴 닫기 이벤트
+        // 여백 클릭 시 댓글 메뉴 비활성화
+        document.addEventListener("click", (e) => {
+            if (!wishlistCommentMenuButton.contains(e.target) && !wishlistCommentMenu.contains(e.target)) {
+                wishlistCommentMenu.classList.add("hidden");
+            }
+        });
+    }
+})
+
+// 댓글 메뉴 버튼을 눌렀을 때 수정하기/삭제하기
+div.addEventListener("click", async (e) => {
+    // 수정 버튼 클릭시 수정하기
+    if (e.target.id === 'comment-menu-open-update') {
+        const commentMenuOpenUpdate = document.getElementById("comment-menu-open-update");
+        const commentInputUpdate = document.querySelector(".comment-update-box-all-wrap");
+        const commentComment = document.querySelector(".comment-list-all-wrap");
+        const commentUploadFinish =document.getElementById("comment-update-upload");
+
+        // 댓글 수정 입력 활성화 후 개별 댓글 숨기기
+        commentMenuOpenUpdate.addEventListener("click", () => {
+            commentInputUpdate.classList.remove("hidden");
+            commentComment.classList.add("hidden");
+
+        });
+        // 댓글 수정 입력 비활성화 개별 댓글 활성화
+        commentUploadFinish.addEventListener("click", () => {
+            commentInputUpdate.classList.add("hidden");
+            commentComment.classList.remove("hidden");
+        });
+
+
+    // 삭제 버튼 클릭시 삭제하기 (status =0)
+    } else if (e.target.id === 'comment-menu-open-delete') {
+        const  replyId = e.target.classList[1]
+        const wishlistId = e.target.classList[2]
+        const comment = document.getElementById(`reply-form${wishlistId}`)
+        // console.log(replyId)
+        // console.log(wishlistId)
+        await wishlistService.replyRemove(replyId)
+        // page = 1
+        wishlistService.replygetList(wishlistId, replyshowList).then((replies) => {
+            comment.innerHTML = replies;
+        })
+    }
+})
+
+
+//작성 날짜 계산하기
 function timeForToday(datetime) {
     const today = new Date();
     const date = new Date(datetime);
@@ -470,3 +730,20 @@ function timeForToday(datetime) {
 
     return `${gap}년 전`;
 }
+
+// 태그 검색시 검색결과 보여주기
+const mySearchInput = document.querySelector("input[name=keyword]");
+mySearchInput.addEventListener("keyup", async (e) => {
+    if (e.keyCode === 13){
+        // console.log(e.target.value)
+        if (!e.target.value) return;
+        let keyword = e.target.value;
+        let page = 1;
+        const response = await fetch(`/wishlist/list/${page}/?keyword=${keyword}&category=${category}`);
+        const wishlists = await response.json();
+        // console.log(wishlists);
+        const text = await showList(wishlists);
+        div.innerHTML = text;
+
+    }
+})

@@ -12,11 +12,11 @@ const wishlistService = (() => {
 
     const getList = async (page, category, callback) => {
         const response = await fetch(`/wishlist/list/${page}/?category=${category}`);
-        const wishlists = await response.json();
+        const data = await response.json();
         if (callback) {
-            return callback(wishlists);
+            return callback(data);
         }
-        return wishlists;
+        return data;
     }
 
     const replyWrite = async (reply) => {
@@ -40,14 +40,42 @@ const wishlistService = (() => {
         return replies;
     }
 
-    const taggetList = async (page, callback) => {
-        const response = await fetch(`/wishlist/list/${page}/`);
-        const tags = await response.json();
-        if (callback) {
-            return callback(tags);
-        }
-        return tags;
+    const wishlistRemove = async (wishlistId) => {
+        await fetch(`/wishlist/${wishlistId}/`, {
+            method: 'post',
+            headers: {'X-CSRFToken': csrf_token}
+        });
     }
 
-    return { write: write, getList: getList, replyWrite:replyWrite, replygetList:replygetList, taggetList:taggetList }
+    const wishlistUpdate = async (wishlist) => {
+        await fetch(`/wishlist/${wishlist.wishlistId}/`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'X-CSRFToken': csrf_token
+            },
+            body: JSON.stringify({'wishlist_content': wishlist.wishlistContent})
+        });
+    }
+
+    const replyRemove = async (replyId) => {
+        await fetch(`/wishlist/reply/${replyId}/`, {
+            method: 'post',
+            headers: {'X-CSRFToken': csrf_token}
+        });
+    }
+
+    const replyUpdate = async (reply) => {
+        await fetch(`/wishlist/reply/${reply.replyId}/`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'X-CSRFToken': csrf_token
+            },
+            body: JSON.stringify({'reply_content': reply.replyContent})
+        });
+    }
+
+
+    return { write: write, getList: getList, replyWrite:replyWrite, replygetList:replygetList, wishlistRemove:wishlistRemove, wishlistUpdate:wishlistUpdate, replyRemove:replyRemove, replyUpdate:replyUpdate }
 })();
