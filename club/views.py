@@ -273,6 +273,7 @@ class ClubPrPostUpdateView(View):
         club_post.post_content = datas['content']
         club_post.category = category
         if files:
+            club_post.image_delete()
             club_post.image_path = files['image']
             club_post.updated_date = timezone.now()
             club_post.save(update_fields=['post_title', 'post_content', 'category', 'image_path', 'updated_date'])
