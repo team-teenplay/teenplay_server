@@ -169,6 +169,7 @@ const showMoreNoticeBtnWrap = document.querySelector(".show-more-notice-btn-wrap
 const showMoreNoticeBtn = document.querySelector(".show-more-notice-btn");
 
 let page = 1
+let pageNumber= 1
 
 // 활동 클릭 시 fetch 후 뿌리는 이벤트
 activityFilterBtn.addEventListener("click", () => {
@@ -295,8 +296,7 @@ const showTeenplayTap = () => {
     noticeContent.style.display = "none";
     tpContent.style.display = "block";
     clubId =club_list[0]['id']
-    let page= 1
-    loadTeenplayList(clubId, page)
+    loadTeenplayList(clubId, pageNumber)
 }
 
 // 틴플레이 클릭 시 fetch 후 목록 뿌리는 이벤트
