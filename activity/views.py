@@ -135,6 +135,7 @@ class ActivityDetailWebView(View):
         activity_member_count = ActivityMember.enabled_objects.filter(activity_id=activity_id).count()
         activity_recruit_check = activity.recruit_end >= timezone.now() >= activity.recruit_start
         activity_replies = list(ActivityReply.enabled_objects.filter(activity_id=activity_id))
+        activity_member_check = activity.club.member_id == member_id
 
         # 댓글 작성자 프사
         for reply in activity_replies:
@@ -164,6 +165,7 @@ class ActivityDetailWebView(View):
             'club_notices': club_notices,
             'recommended_activities': recommended_activities,
             'is_like': is_like,
+            'activity_member_check': activity_member_check
         }
 
         return render(request, 'activity/web/activity-detail-web.html', context)
