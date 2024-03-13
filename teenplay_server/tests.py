@@ -11,38 +11,44 @@ from wishlist.models import Wishlist
 class AdminTests(TestCase):
     columns = [
         'member_name',
-        'title'
-        'create_date',
+        'title',
+        'created_date',
         'reply',
         'member_status'
     ]
 
-    activities = Activity.objects\
+    activities = Activity.objects \
         .annotate(
         member_name=F('activityreply__member__member_nickname'),
         title=F('activityreply__activity__activity_title'),
-        create_date=F('activityreply__create_date'),
+        created=F('activityreply__created_date'),
         reply=F('activityreply__reply_content'),
-    )\
-        .values('member_name')
+        member_status=F('activityreply__member__status')
+    ) \
+        .values(*columns)
 
-    wishes = Wishlist.objects\
+    wishes = Wishlist.objects \
         .annotate(
         member_name=F('wishlistreply__member__member_nickname'),
         title=F('wishlistreply__wishlist__wishlist_content'),
-        create_date=F('wishlistreply__created_date'),
+        created=F('wishlistreply__created_date'),
         reply=F('wishlistreply__reply_content'),
-    )\
-        .values('member_name')
+        member_status=F('wishlistreply__member__status')
+    ) \
+        .values(*columns)
 
-    club_posts = ClubPost.objects\
+    club_posts = ClubPost.objects \
         .annotate(
+        member_name=F('clubpostreply__member__member_nickname'),
+        title=F('clubpostreply__club_post__post_title'),
+        created=F('clubpostreply__created_date'),
         reply=F('clubpostreply__reply_content'),
-        member_name=F('clubpostreply__member__member_nickname')
-    )\
-        .values('member_name', 'create_date')
+        member_status=F('clubpostreply__member__status')
+    ) \
+        .values(*columns)
 
-    print(activities.union(wishes).union(club_posts).order_by('-created_date'))
+    comment = activities.union(wishes).union(club_posts).order_by('-created_date')
+    print(len(comment))
     # results = list(members.values('id', 'member_nickname', 'status') \
     #     .annotate(activity_title=F('activityreply__activity__activity_title'),
     #               activity_reply=F('activityreply__reply_content'),

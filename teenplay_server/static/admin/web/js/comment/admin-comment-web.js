@@ -8,15 +8,17 @@ const CreateService = (() => {
     // 게시글 텍스트
     const showList = (pagination) => {
         let text = ``;
-        pagination.member.forEach((page) => {
+        console.log(pagination)
+        pagination.comment.forEach((page) => {
+            console.log(page)
             text += `
                 <li class="main-user-list" data-id="${page.id}">
                     <div class="main-user-list-check">
                         <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-user-id="${page.id}">
                     </div>
-                    <div class="main-comment-list-status">${page.member_nickname}</div>
+                    <div class="main-comment-list-status">${page.member__member_nickname}</div>
                     <div class="main-comment-list-paycount">${page.post_title}</div>
-                    <div class="main-comment-list-date">${page.post_created.slice(0, 10)}</div>
+                    <div class="main-comment-list-date">${page.post_created}</div>
                     <div class="main-comment-list-check">
                         <span class="main-comment-list-input" type="text" readonly>${page.post_reply}</span>
                     </div>
@@ -137,6 +139,7 @@ const CreateService = (() => {
 
     // 댓글 개수 표기 텍스트
     const CountText = (pagination) => {
+        console.log(pagination)
         let text = ``;
         text += pagination.total
 
