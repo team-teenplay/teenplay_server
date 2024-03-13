@@ -5,13 +5,8 @@ from django.utils import timezone
 from django.views import View
 from rest_framework.response import Response
 from rest_framework.views import APIView
-<<<<<<< HEAD
-from datetime import datetime
-from activity.models import ActivityReply, Activity, ActivityMember
-=======
 
-from activity.models import ActivityReply, Activity, ActivityLike
->>>>>>> 6e7c711b521b76ff6d9001ead13b8eeae461d9f8
+from activity.models import ActivityReply, Activity, ActivityLike, ActivityMember
 from alarm.models import Alarm
 from club.models import ClubPostReply, ClubMember, Club, ClubNotice
 from friend.models import Friend
@@ -909,7 +904,6 @@ class ClubAlarmManageAPI(APIView):
 
         return Response("success")
 
-<<<<<<< HEAD
 
 class MypageClubMainView(View):
     def get(self, request):
@@ -1117,7 +1111,6 @@ class MypageNoticeCreateView(View):
 class MypageSettingView(View):
     def get(self, request):
         return render(request, 'mypage/web/management-club-setting-web.html')
-=======
 class MypageActivityVIEW(View):
     def get(self, request):
         return render(request, 'mypage/web/my-activity-web.html')
@@ -1167,4 +1160,3 @@ class MypageActivityLikeAPIVIEW(APIView):
         like.status = 1 - like.status
         like.save()
         return Response('good')
->>>>>>> 6e7c711b521b76ff6d9001ead13b8eeae461d9f8
