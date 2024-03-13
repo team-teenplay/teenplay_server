@@ -385,122 +385,124 @@
     <!-- 틴플레이 업로드 모달 부분 -->
     <div class="club-upload-modal-wrap">
         <div class="club-upload-modal-bg"></div>
-        <div class="club-upload-modal-container">
-            <div class="upload-modal-wrap">
-                <div class="upload-modal-container">
-                    <div class="upload-modal-title-wrap">
-                        <div class="upload-modal-title-container">
-                            <div class="upload-modal-title">틴플레이 업로드</div>
-                        </div>
-                        <div class="upload-modal-close-wrap">
-                            <div class="upload-modal-close-container">
-                                <div class="upload-modal-close-button">
-                                    <svg viewBox="0 0 24 24" fill="currentColor" preserveAspectRatio="xMidYMid meet" focusable="false" class="upload-modal-close" style="pointer-events: none; display: block; width: 100%; height: 100%">
-                                        <g class="style-scope tp-yt-iron-icon"><path d="M12.7,12l6.6,6.6l-0.7,0.7L12,12.7l-6.6,6.6l-0.7-0.7l6.6-6.6L4.6,5.4l0.7-0.7l6.6,6.6l6.6-6.6l0.7,0.7L12.7,12z" class="style-scope tp-yt-iron-icon"></path></g>
-                                    </svg>
+        <form id="teenplay-modal-reset-form">
+            <div class="club-upload-modal-container">
+                <div class="upload-modal-wrap">
+                    <div class="upload-modal-container">
+                        <div class="upload-modal-title-wrap">
+                            <div class="upload-modal-title-container">
+                                <div class="upload-modal-title">틴플레이 업로드</div>
+                            </div>
+                            <div class="upload-modal-close-wrap">
+                                <div class="upload-modal-close-container">
+                                    <div class="upload-modal-close-button">
+                                        <svg viewBox="0 0 24 24" fill="currentColor" preserveAspectRatio="xMidYMid meet" focusable="false" class="upload-modal-close" style="pointer-events: none; display: block; width: 100%; height: 100%">
+                                            <g class="style-scope tp-yt-iron-icon"><path d="M12.7,12l6.6,6.6l-0.7,0.7L12,12.7l-6.6,6.6l-0.7-0.7l6.6-6.6L4.6,5.4l0.7-0.7l6.6,6.6l6.6-6.6l0.7,0.7L12.7,12z" class="style-scope tp-yt-iron-icon"></path></g>
+                                        </svg>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="upload-modal-content-wrap">
-                    <!-- 파일 선택 전 -->
-                    <div class="upload-modal-content-container before">
-                        <div class="upload-modal-content-icon-wrap">
-                            <div class="upload-modal-content-icon-container">
-                                <div class="upload-modal-content-icon-boxes">
-                                    <div class="upload-modal-content-arrow-wrap">
-                                        <div class="upload-modal-content-arrow-tip"></div>
-                                        <div class="upload-modal-content-smoke"></div>
-                                        <div class="upload-modal-content-arrow-line"></div>
+                    <div class="upload-modal-content-wrap">
+                        <!-- 파일 선택 전 -->
+                        <div class="upload-modal-content-container before" name="teenplay-upload-before">
+                            <div class="upload-modal-content-icon-wrap">
+                                <div class="upload-modal-content-icon-container">
+                                    <div class="upload-modal-content-icon-boxes">
+                                        <div class="upload-modal-content-arrow-wrap">
+                                            <div class="upload-modal-content-arrow-tip"></div>
+                                            <div class="upload-modal-content-smoke"></div>
+                                            <div class="upload-modal-content-arrow-line"></div>
+                                        </div>
+                                        <div class="upload-modal-content-arrow-underline"></div>
                                     </div>
-                                    <div class="upload-modal-content-arrow-underline"></div>
-                                </div>
-                                <div class="upload-modal-content-speedline">
-                                    <img src="https://www.gstatic.com/youtube/img/creator/uploads/speed_line.svg" class="upload-modal-content-speedline-img" />
-                                </div>
-                            </div>
-                        </div>
-                        <p class="upload-modal-content-msg-bold">동영상 파일을 드래그 앤 드롭하여 업로드</p>
-                        <p class="upload-modal-content-msg">최대 15초 길이, 최대 20MB 용량까지 업로드할 수 있습니다.</p>
-                        <div class="upload-modal-error-wrap"></div>
-                        <div class="upload-modal-upload-button-wrap">
-                            <div class="upload-modal-upload-button-text">파일 선택</div>
-                        </div>
-                        <input type="file" name="Filedata" id='Filedata' class="upload-modal-upload-file" accept="video/*" />
-                        <p class="upload-modal-content-disclaimer">
-                            Teenplay에 동영상을 제출하면 Teenplay
-                            <a href="" class="upload-modal-content-link">서비스 이용약관</a>
-                            에 동의하게 됩니다.
-                        </p>
-                        <p class="upload-modal-content-disclaimer">
-                            <span class="upload-modal-content-notice"> 불법촬영물 게재 시 삭제 조치되고 관련 법에 따라 처벌받을 수 있습니다. </span>
-                            <span class="upload-modal-content-notice"> 타인의 저작권 또는 개인 정보 보호 권리를 침해해서는 안 됩니다. </span>
-                        </p>
-                    </div>
-                    <!-- 파일 선택 후 -->
-                    <div class="upload-modal-content-container after">
-                        <div class="name-form-text-wrap">
-                            <div class="name-form-text-title">틴플레이의 설명을 작성해주세요.</div>
-                            <div class="name-form-text-content">
-                                영상 아래에 모임 프로필과 함께 표시됩니다.
-                                <br />
-                                활동과 모임을 홍보할 수 있도록 센스있게 작성해주세요!
-                            </div>
-                        </div>
-                        <div class="name-form-input-wrap">
-                            <input type="text" class="name-form-input" placeholder="최소 10자, 최대 40자까지 입력할 수 있어요." maxlength="40" autocomplete="false" />
-                        </div>
-                        <div class="pr-write-uploaded-image-wrap">
-                            <div class="pr-write-uploaded-image-container">
-                                <div class="pr-file-name-wrap">
-                                    <div>
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="pr-file-icon">
-                                            <path fill-rule="evenodd" d="M18.97 3.659a2.25 2.25 0 00-3.182 0l-10.94 10.94a3.75 3.75 0 105.304 5.303l7.693-7.693a.75.75 0 011.06 1.06l-7.693 7.693a5.25 5.25 0 11-7.424-7.424l10.939-10.94a3.75 3.75 0 115.303 5.304L9.097 18.835l-.008.008-.007.007-.002.002-.003.002A2.25 2.25 0 015.91 15.66l7.81-7.81a.75.75 0 011.061 1.06l-7.81 7.81a.75.75 0 001.054 1.068L18.97 6.84a2.25 2.25 0 000-3.182z" clip-rule="evenodd"></path>
-                                        </svg>
+                                    <div class="upload-modal-content-speedline">
+                                        <img src="https://www.gstatic.com/youtube/img/creator/uploads/speed_line.svg" class="upload-modal-content-speedline-img" />
                                     </div>
-                                    <div class="pr-file-name">shorts1.mp4</div>
-                                </div>
-                                <div class="pr-file-info-wrap">
-                                    <div class="pr-file-size">10.25MB</div>
-                                    <button class="pr-remove-btn" type="button">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="pr-file-remove-icon"><path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clip-rule="evenodd"></path></svg>
-                                    </button>
                                 </div>
                             </div>
-                            <div class="img-form-profile-size-error">최대 10MB 이하의 이미지만 첨부할 수 있습니다.</div>
-                            <div class="cover-thumbnail-wrap">
-                                <div class="cover-thumbnail-container"></div>
-                                <img src="https://event-us.kr/Content/neweventus/image/hostcenter/hostcenter_create_upload_01.png" alt="커버 썸네일" />
-                                <div class="cover-upload-wrap">썸네일 업로드 (Click)</div>
-                                <div class="cover-hidden">
-                                    <input type="file" id="background-image" data-ratio="1:1.7" accept="image/*" />
-                                </div>
+                            <p class="upload-modal-content-msg-bold">동영상 파일을 드래그 앤 드롭하여 업로드</p>
+                            <p class="upload-modal-content-msg">최대 15초 길이, 최대 20MB 용량까지 업로드할 수 있습니다.</p>
+                            <div class="upload-modal-error-wrap"></div>
+                            <div class="upload-modal-upload-button-wrap">
+                                <div class="upload-modal-upload-button-text">파일 선택</div>
                             </div>
-                            <div class="pr-write-uploaded-thumbnail-container hidden">
-                                <div class="pr-thumbnail-name-wrap">
-                                    <div>
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="pr-thumbnail-icon">
-                                            <path fill-rule="evenodd" d="M18.97 3.659a2.25 2.25 0 00-3.182 0l-10.94 10.94a3.75 3.75 0 105.304 5.303l7.693-7.693a.75.75 0 011.06 1.06l-7.693 7.693a5.25 5.25 0 11-7.424-7.424l10.939-10.94a3.75 3.75 0 115.303 5.304L9.097 18.835l-.008.008-.007.007-.002.002-.003.002A2.25 2.25 0 015.91 15.66l7.81-7.81a.75.75 0 011.061 1.06l-7.81 7.81a.75.75 0 001.054 1.068L18.97 6.84a2.25 2.25 0 000-3.182z" clip-rule="evenodd"></path>
-                                        </svg>
-                                    </div>
-                                    <div class="pr-thumbnail-name">thumbnail1.jpg</div>
-                                </div>
-                                <div class="pr-thumbnail-info-wrap">
-                                    <div class="pr-thumbnail-size">6MB</div>
-                                    <button class="pr-thumbnail-remove-btn" type="button">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="pr-thumbnail-remove-icon"><path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clip-rule="evenodd"></path></svg>
-                                    </button>
-                                </div>
-                            </div>
+                            <input type="file" name="Filedata" id='Filedata' class="upload-modal-upload-file" accept="video/*" />
+                            <p class="upload-modal-content-disclaimer">
+                                Teenplay에 동영상을 제출하면 Teenplay
+                                <a href="" class="upload-modal-content-link">서비스 이용약관</a>
+                                에 동의하게 됩니다.
+                            </p>
+                            <p class="upload-modal-content-disclaimer">
+                                <span class="upload-modal-content-notice"> 불법촬영물 게재 시 삭제 조치되고 관련 법에 따라 처벌받을 수 있습니다. </span>
+                                <span class="upload-modal-content-notice"> 타인의 저작권 또는 개인 정보 보호 권리를 침해해서는 안 됩니다. </span>
+                            </p>
                         </div>
-                        <div class="upload-modal-confirm-button-wrap disabled">
-                            <div class="upload-modal-confirm-button-text">업로드</div>
+                        <!-- 파일 선택 후 -->
+                        <div class="upload-modal-content-container after" name="teenplay-upload-after">
+                            <div class="name-form-text-wrap">
+                                <div class="name-form-text-title">틴플레이의 설명을 작성해주세요.</div>
+                                <div class="name-form-text-content">
+                                    영상 아래에 모임 프로필과 함께 표시됩니다.
+                                    <br />
+                                    활동과 모임을 홍보할 수 있도록 센스있게 작성해주세요!
+                                </div>
+                            </div>
+                            <div class="name-form-input-wrap">
+                                <input type="text" class="name-form-input" placeholder="최소 10자, 최대 40자까지 입력할 수 있어요." maxlength="40" autocomplete="false" />
+                            </div>
+                            <div class="pr-write-uploaded-image-wrap">
+                                <div class="pr-write-uploaded-image-container">
+                                    <div class="pr-file-name-wrap">
+                                        <div>
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="pr-file-icon">
+                                                <path fill-rule="evenodd" d="M18.97 3.659a2.25 2.25 0 00-3.182 0l-10.94 10.94a3.75 3.75 0 105.304 5.303l7.693-7.693a.75.75 0 011.06 1.06l-7.693 7.693a5.25 5.25 0 11-7.424-7.424l10.939-10.94a3.75 3.75 0 115.303 5.304L9.097 18.835l-.008.008-.007.007-.002.002-.003.002A2.25 2.25 0 015.91 15.66l7.81-7.81a.75.75 0 011.061 1.06l-7.81 7.81a.75.75 0 001.054 1.068L18.97 6.84a2.25 2.25 0 000-3.182z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="pr-file-name">shorts1.mp4</div>
+                                    </div>
+                                    <div class="pr-file-info-wrap">
+                                        <div class="pr-file-size">10.25MB</div>
+                                        <button class="pr-remove-btn" type="button">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="pr-file-remove-icon"><path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clip-rule="evenodd"></path></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="img-form-profile-size-error">최대 10MB 이하의 이미지만 첨부할 수 있습니다.</div>
+                                <div class="cover-thumbnail-wrap">
+                                    <div class="cover-thumbnail-container"></div>
+                                    <img src="https://event-us.kr/Content/neweventus/image/hostcenter/hostcenter_create_upload_01.png" alt="커버 썸네일" />
+                                    <div class="cover-upload-wrap">썸네일 업로드 (Click)</div>
+                                    <div class="cover-hidden">
+                                        <input type="file" id="background-image" data-ratio="1:1.7" accept="image/*" />
+                                    </div>
+                                </div>
+                                <div class="pr-write-uploaded-thumbnail-container hidden">
+                                    <div class="pr-thumbnail-name-wrap">
+                                        <div>
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="pr-thumbnail-icon">
+                                                <path fill-rule="evenodd" d="M18.97 3.659a2.25 2.25 0 00-3.182 0l-10.94 10.94a3.75 3.75 0 105.304 5.303l7.693-7.693a.75.75 0 011.06 1.06l-7.693 7.693a5.25 5.25 0 11-7.424-7.424l10.939-10.94a3.75 3.75 0 115.303 5.304L9.097 18.835l-.008.008-.007.007-.002.002-.003.002A2.25 2.25 0 015.91 15.66l7.81-7.81a.75.75 0 011.061 1.06l-7.81 7.81a.75.75 0 001.054 1.068L18.97 6.84a2.25 2.25 0 000-3.182z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="pr-thumbnail-name">thumbnail1.jpg</div>
+                                    </div>
+                                    <div class="pr-thumbnail-info-wrap">
+                                        <div class="pr-thumbnail-size">6MB</div>
+                                        <button class="pr-thumbnail-remove-btn" type="button">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="pr-thumbnail-remove-icon"><path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clip-rule="evenodd"></path></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="upload-modal-confirm-button-wrap disabled">
+                                <div class="upload-modal-confirm-button-text">업로드</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </form>    
     </div>
 {% endblock %}
 {% block js %}
