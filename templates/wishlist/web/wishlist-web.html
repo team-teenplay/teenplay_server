@@ -290,30 +290,22 @@
         <div class="profile hidden">
             <div class="modal-full-wrap" role="dialog" aria-modal="true" data-headlessui-state="open" aria-labelledby="headlessui-dialog-title-42" aria-describedby="headlessui-description-43">
                 <div class="modal-screen"></div>
-                <div class="modal-divison">
+                <div class="modal-divison teenchin-modal">
                     <!-- 틴친 프로필 정보 부분 -->
                     <div class="teenchin-box post-update-wrap" data-headlessui-state="open">
                         <div class="teenchin-items">
                             <!-- 틴친 프로필 사진 부분 -->
-                            <!-- 틴친 상세프로필 이동 주소 필요 -->
-                            <a href="">
-                                <div class="profile-img-contents">
-                                    <div class="profile-img-box">
-                                        <!-- 프로필 사진이 있을 경우 이미지 사진 출력 -->
-                                        <!-- <img class="profile-img" src="/staticfiles/images/teenplay_logo/logo1.png"> -->
-                                        <!-- 프로필 기본 이미지 -->
-                                        <svg class="profile-defalut-img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd"></path>
-                                        </svg>
-                                    </div>
-                                    <!-- 틴친 프로필 이미지 여백 부분 -->
-                                    <div class="profile-img-gap"></div>
+                            <div class="profile-img-contents">
+                                <div class="profile-img-box">
+                                    <img class="profile-default-img" src="" alt="프로필사진">
                                 </div>
-                                <!-- 틴친 프로필 이름 부분 -->
-                                <div class="profile-info-contents">
-                                    <div class="profile-name"></div>
-                                </div>
-                            </a>
+                                <!-- 틴친 프로필 이미지 여백 부분 -->
+                                <div class="profile-img-gap"></div>
+                            </div>
+                            <!-- 틴친 프로필 이름 부분 -->
+                            <div class="profile-info-contents">
+                                <div class="profile-name"></div>
+                            </div>
                             <!-- 틴친 프로필 버튼 부분 -->
                             <div class="teenchin-btn-container">
                                 <div class="teenchin-btn-box">
@@ -372,7 +364,7 @@
                                 <div class="sender-box">
                                     <div class="sender-title">보낸 사람</div>
                                     <!-- 회원의 이름과 이메일이 필요 -->
-                                    <div class="send-sender-email" type="text"></div>
+                                    <div class="send-sender-email"></div>
                                 </div>
                                 <div class="receiver-box">
                                     <div class="receiver-title">받는 사람</div>
@@ -404,6 +396,7 @@
         const categoryButton = document.querySelectorAll(".top-categroy-item")
         const csrf_token = '{{ csrf_token }}';
         const memberId = '{{ request.session.member.id }}';
+        const loginId = {{ request.session.member.id }};
         const memberName = '{{ request.session.member.member_nickname }}';
         // 카테고리 버튼을 눌렀을 때 카테고리에 category_id = name 값 담기
         let category = ''

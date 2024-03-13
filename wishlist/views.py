@@ -58,10 +58,11 @@ class WishListAPI(APIView):
             'category_name',
             'created_date',
             'id',
-            'member_email'
+            'member_email',
+            'member_path'
         ]
 
-        wishlists = Wishlist.enabled_objects.filter(condition).annotate(member_name=F("member__member_nickname"),category_name=F("category__category_name"),member_email=F('member__member_email')).values(*columns)[offset:limit]
+        wishlists = Wishlist.enabled_objects.filter(condition).annotate(member_name=F("member__member_nickname"),category_name=F("category__category_name"),member_email=F('member__member_email'), member_path=F('member__memberprofile__profile_path')).values(*columns)[offset:limit]
 
         wishlist_ids = [item['id'] for item in wishlists]
 
@@ -138,10 +139,11 @@ class ReplyListAPI(APIView):
             'reply_content',
             'created_date',
             'member_email',
-            'id'
+            'id',
+            'member_path'
         ]
 
-        replies = WishlistReply.enabled_objects.filter(wishlist_id=wishlist_id).annotate(member_name=F("member__member_nickname"),member_email=F('member__member_email')).values(*columns)
+        replies = WishlistReply.enabled_objects.filter(wishlist_id=wishlist_id).annotate(member_name=F("member__member_nickname"),member_email=F('member__member_email'), member_path=F('member__memberprofile__profile_path')).values(*columns)
 
         return Response(replies)
 
