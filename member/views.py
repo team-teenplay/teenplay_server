@@ -6,7 +6,7 @@ from django.views import View
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from activity.models import ActivityReply
+from activity.models import ActivityReply, Activity, ActivityLike
 from alarm.models import Alarm
 from club.models import ClubPostReply, ClubMember
 from friend.models import Friend
@@ -579,14 +579,19 @@ class TeenChinAPI(APIView):
         send_friend = Friend.objects.filter(sender_id=member_id, receiver_id=teenchin_id)
         receive_friend = Friend.objects.filter(receiver_id=member_id, sender_id=teenchin_id)
         teenchin_status = 0
+        is_sender = False
         if send_friend.exists():
             send_friend = send_friend.first()
             teenchin_status = send_friend.is_friend
+            is_sender = True
         elif receive_friend.exists():
             receive_friend = receive_friend.first()
             teenchin_status = receive_friend.is_friend
 
-        return Response({'teenchinStatus': teenchin_status})
+        return Response({
+            'teenchinStatus': teenchin_status,
+            'isSender': is_sender,
+        })
 
     def post(self, request):
         member_id = request.session.get('member').get('id')
@@ -661,6 +666,11 @@ class TeenChinAPI(APIView):
     def patch(self, request):
         member_id = request.session.get('member').get('id')
         teenchin_id = request.data.get('teenchinId')
+        is_sender = request.data.get('isSender')
+        is_accept = request.data.get('isAccept')
+        
+        # is_sender > True -> 신청 취소만 가능 (is_accept는 관계없음)
+        # is_sender > False -> is_accept가 True면 수락, False면 거절
 
         # 혹시 이미 친구인데 넘어왔을 경우 바로 return
         send_friend = Friend.objects.filter(sender_id=member_id, receiver_id=teenchin_id, is_friend=1)
@@ -670,31 +680,53 @@ class TeenChinAPI(APIView):
         if receive_friend.exists():
             return Response("already exists")
 
-        send_friend = Friend.objects.filter(sender_id=member_id, receiver_id=teenchin_id, is_friend=-1)
-        if send_friend.exists():
-            send_friend = send_friend.first()
-            send_friend.is_friend = 0
-            send_friend.updated_date = timezone.now()
-            send_friend.save(update_fields=['is_friend', 'updated_date'])
-            # 신청할 때 떴던 알람의 status를 0으로 바꿔주자!
-            alarm_data = {
-                'target_id': member_id,
-                'alarm_type': 5,
-                'sender_id': member_id,
-                'receiver_id': teenchin_id,
-            }
-            alarm = Alarm.objects.filter(**alarm_data)
-            if alarm.exists():
-                alarm = alarm.first()
-                alarm.status = 0
-                alarm.updated_date = timezone.now()
-                alarm.save(update_fields=['status', 'updated_date'])
+        # 내가 보냈을 경우 신청을 취소하는 로직
+        if is_sender:
+            send_friend = Friend.objects.filter(sender_id=member_id, receiver_id=teenchin_id, is_friend=-1)
+            if send_friend.exists():
+                send_friend = send_friend.first()
+                send_friend.is_friend = 0
+                send_friend.updated_date = timezone.now()
+                send_friend.save(update_fields=['is_friend', 'updated_date'])
+                # 신청할 때 떴던 알람의 status를 0으로 바꿔주자!
+                alarm_data = {
+                    'target_id': member_id,
+                    'alarm_type': 5,
+                    'sender_id': member_id,
+                    'receiver_id': teenchin_id,
+                }
+                alarm = Alarm.objects.filter(**alarm_data)
+                if alarm.exists():
+                    alarm = alarm.first()
+                    alarm.status = 0
+                    alarm.updated_date = timezone.now()
+                    alarm.save(update_fields=['status', 'updated_date'])
 
-            return Response("success")
+                return Response("success")
 
+        # 다른 틴친으로부터 온 요청을 수락/거절할 때
         receive_friend = Friend.objects.filter(sender_id=teenchin_id, receiver_id=member_id, is_friend=-1)
         if receive_friend.exists():
             receive_friend = receive_friend.first()
+            # 수락할 때
+            if is_accept:
+                receive_friend.is_friend = 1
+                receive_friend.updated_date = timezone.now()
+                receive_friend.save(update_fields=['is_friend', 'updated_date'])
+                alarm_data = {
+                    'target_id': teenchin_id,
+                    'alarm_type': 14,
+                    'sender_id': teenchin_id,
+                    'receiver_id': member_id
+                }
+                alarm, created = Alarm.objects.get_or_create(**alarm_data)
+                if not created:
+                    alarm.status = 1
+                    alarm.updated_date = timezone.now()
+                    alarm.save(update_fields=['status', 'updated_date'])
+                return Response("success")
+
+            # 거절할 때
             receive_friend.is_friend = 0
             receive_friend.updated_date = timezone.now()
             receive_friend.save(update_fields=['is_friend', 'updated_date'])
@@ -779,3 +811,53 @@ class ClubAlarmManageAPI(APIView):
         club_member.save(update_fields=['alarm_status', 'updated_date'])
 
         return Response("success")
+
+class MypageActivityVIEW(View):
+    def get(self, request):
+        return render(request, 'mypage/web/my-activity-web.html')
+
+class MypageActivityAPIVIEW(APIView):
+    @transaction.atomic
+    def get(self,request, member_id,page):
+        status_like = request.GET.get('status_like')
+        print(status_like)
+        row_count = 10
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+
+        activity_data = Activity.objects.filter(Q(club__member_id=member_id) |Q(activitymember__member_id=member_id)).values('id', 'created_date', 'activity_title', 'thumbnail_path', 'activity_address_location','activitymember__status', 'club__member_id', 'activity_end')
+        for activity in activity_data:
+            activity_id = activity.get('id')
+            activity_like = ActivityLike.enabled_objects.filter(activity_id=activity_id ,member_id=member_id)
+            activity['is_like'] = activity_like.exists()
+
+
+
+        if status_like == 'like':
+            activity_data = ActivityLike.objects.filter(member_id=member_id, status=1).values('id','status','activity__thumbnail_path','activity__activity_end' ,'activity__activity_title','activity_id')
+        else:
+            activity_data = Activity.objects.filter(
+                Q(club__member_id=member_id) | Q(activitymember__member_id=member_id)).values('id', 'created_date',
+                                                                                              'activity_title',
+                                                                                              'thumbnail_path',
+                                                                                              'activity_address_location',
+                                                                                              'activitymember__status',
+                                                                            'club__member_id',
+                                                                                              'activity_end')
+            for activity in activity_data:
+                activity_id = activity.get('id')
+                activity_like = ActivityLike.enabled_objects.filter(activity_id=activity_id, member_id=member_id)
+                activity['status'] = activity_like.exists()
+
+
+        return Response(activity_data[offset:limit])
+
+class MypageActivityLikeAPIVIEW(APIView):
+    @transaction.atomic
+    def patch(self, request, activity_id):
+        like, created = ActivityLike.objects.get_or_create(activity_id=activity_id, member_id=request.session['member']['id'])
+        # 반전시키기
+        like.status = 1 - like.status
+        like.save()
+        return Response('good')
