@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 
+import sys
+
+# 요청의 데이터 크기 제한 설정
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 10
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 

@@ -11,7 +11,7 @@ clubNoticeCheckboxes.forEach((clubNoticeCheckbox) => {
         disabledBtn();
 
         // 체크된 체크박스 개수가 전체 체크박스 개수와 같다면 allChecked 체크상태로, 아니라면 풀린상태로
-        if (clubNoticeCheckedCheckboxes.length == clubNoticeCheckboxes.length) {
+        if (clubNoticeCheckedCheckboxes.length === clubNoticeCheckboxes.length) {
             allChecked.checked = true;
         } else {
             allChecked.checked = false;
@@ -44,11 +44,11 @@ const deleteModalBtns = deleteModalWrap.querySelectorAll("button");
 deleteModalBtns.forEach((deleteModalBtn) => {
     deleteModalBtn.addEventListener("click", (e) => {
         deleteModalContainer.style.animation = "popDown 0.5s";
-        if (e.target.className == "delete-modal-cancle-btn") {
+        if (e.target.className === "delete-modal-cancle-btn") {
             setTimeout(() => {
                 deleteModalWrap.style.display = "none";
             }, 450);
-        } else if (e.target.className == "delete-btn") {
+        } else if (e.target.className === "delete-btn") {
             let clubNoticeCheckedCheckboxes = document.querySelectorAll("#club-notice-checkbox:checked");
 
             clubNoticeCheckedCheckboxes.forEach((clubNoticeCheckedCheckbox) => {
@@ -80,7 +80,7 @@ const disabledBtn = () => {
     const clubNoticeCheckedCheckboxes = document.querySelectorAll("#club-notice-checkbox:checked");
 
     // 체크된 체크박스가 없다면 공지 삭제 비활성화, 있다면 활성화
-    if (clubNoticeCheckedCheckboxes.length == 0) {
+    if (clubNoticeCheckedCheckboxes.length === 0) {
         clubNoticeDelete.disabled = true;
     } else {
         clubNoticeDelete.disabled = false;
@@ -104,4 +104,24 @@ clubNoticeTitles.forEach((clubNoticeTitle) => {
         clubNoticeTitle.querySelector(".club-notice-show-icon").setAttribute("transform", "rotate(180)");
         clubNoticeTitle.closest(".club-notice-info").querySelector(".club-notice-content-box").style.display = "block";
     });
+});
+
+
+const clubNoticeList = document.querySelector('.club-notice-list')
+
+// 버튼에 클릭 이벤트 리스너 추가
+clubNoticeDelete.addEventListener('click', () => {
+    let list = [];
+    const checkboxes = document.querySelectorAll('.club-notice-checkbox');
+    const checkedCheckboxes = Array.from(checkboxes).filter(checkbox => checkbox.checked);
+    checkedCheckboxes.forEach(checkbox => {
+        const clubNoticeInfo = checkbox.closest('.club-notice-info');
+        if (clubNoticeInfo) {
+            list.push(clubNoticeInfo.classList[1])
+        }
+    });
+    const deleteBtn = document.querySelector('.delete-btn');
+    deleteBtn.addEventListener('click', ()=>{
+        clubNoticeService.del(list)
+    })
 });
