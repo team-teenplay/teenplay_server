@@ -294,7 +294,9 @@ const showTeenplayTap = () => {
     infoContent.style.display = "none";
     noticeContent.style.display = "none";
     tpContent.style.display = "block";
-
+    clubId =club_list[0]['id']
+    let page= 1
+    loadTeenplayList(clubId, page)
 }
 
 // 틴플레이 클릭 시 fetch 후 목록 뿌리는 이벤트
@@ -984,4 +986,25 @@ thumbnailInput.addEventListener("change", (e) => {
     }
 });
 
+// 틴플레이 최초 업로드 함수
+function loadTeenplayList(clubId, page){
+    clubDetailService.getTeenplayList(clubId, page).then((teenplayInfo) => {
+        let teenplayFirstInfo =teenplayInfo.teenplay_list
+        // let containTeenplay = teenplayWrap.getElementsByClassName('club-teenplay-contents').length
 
+        if (teenplayFirstInfo.length > 0){
+            teenplayWrap.innerHTML = ''
+            teenplayWrap.innerHTML += showList(teenplayFirstInfo)
+            if(teenplayInfo.has_next){
+                teenplayMoreButtonWrap.style.display='flex'
+            }
+            else{
+                teenplayMoreButtonWrap.style.display = "none"
+            }
+        }
+        else{
+            teenplayMoreButtonWrap.style.display = "none"
+            teenplayViewList.innerHTML = noneText
+        }
+    })
+}
