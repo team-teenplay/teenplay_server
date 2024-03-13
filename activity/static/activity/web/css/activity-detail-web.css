@@ -593,6 +593,82 @@ pre {
     background-color: #9f0d08 !important;
 }
 
+.end-item-box {
+    --tw-space-y-reverse: 0;
+    margin-top: calc(1rem * (1 - var(--tw-space-y-reverse)));
+    margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+    padding: 0;
+    border-top-width: 0;
+    position: static;
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+}
+
+.end-item {
+    flex-direction: column;
+    display: flex;
+}
+
+.end-message {
+    --tw-text-opacity: 1;
+    color: rgb(232 103 98);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    line-height: 1;
+    font-weight: 400;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    --tw-bg-opacity: 1;
+    border-radius: 0.375rem;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 3rem;
+    display: flex;
+    background-color: rgb(255 255 255);
+}
+
+.manage-activity-box {
+    --tw-space-y-reverse: 0;
+    margin-top: calc(1rem * (1 - var(--tw-space-y-reverse)));
+    margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+    padding: 0;
+    border-top-width: 0;
+    position: static;
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+}
+
+.manage-button-item {
+    flex-direction: column;
+    display: flex;
+}
+
+.manage-item-button {
+    --tw-border-opacity: 1;
+    border-color: #ce201b;
+    --tw-text-opacity: 1;
+    color: #fff;
+    --tw-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.05);
+    --tw-shadow-colored: 0 1px 1px 0 var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    line-height: 1;
+    font-weight: 400;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    --tw-bg-opacity: 1;
+    background-color: #ce201b !important;
+    border-radius: 0.375rem;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 3rem;
+    display: flex;
+}
+
+.manage-item-button:hover {
+    background-color: #9f0d08 !important;
+}
+
 .divide-button-tie {
     --tw-space-y-reverse: 0;
     margin-top: calc(0.5rem * (1 - var(--tw-space-y-reverse)));
@@ -2737,6 +2813,28 @@ button:focus {
 }
 
 .teenchin-request-btn:hover {
+    background-color: #ffb6ac;
+}
+
+/* 틴친 수락대기 버튼 부분 */
+.teenchin-accept-btn {
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    --tw-border-opacity: 1;
+    border-color: rgb(245 242 255 / var(--tw-border-opacity));
+    color: #ce201b;
+    width: 100%;
+    background-color: #fff0ee;
+    border-radius: 0.375rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    justify-content: center;
+    align-items: center;
+    height: 2.5rem;
+    display: flex;
+}
+
+.teenchin-accept-btn:hover {
     background-color: #ffb6ac;
 }
 

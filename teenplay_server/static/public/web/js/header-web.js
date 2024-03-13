@@ -240,6 +240,7 @@ if (memberServiceWrap) {
     // 알람 개수 띄우기
     const alarmCount1 = document.querySelector("div.signal-sign");
     const alarmCount2 = document.querySelector(".mypage-menu-signal-count");
+    const alarmWrap1 = document.querySelector(".signal-sign-box");
     const alarmMemberId = document.querySelector("input[name=header-member-id]").value;
 
     const getAlarmCount = async (alarmMemberId, callback) => {
@@ -251,6 +252,13 @@ if (memberServiceWrap) {
     }
 
     const showAlarmCount = (alarmCount) => {
+        if (Number(alarmCount) === 0) {
+            alarmWrap1.style.display = "none";
+            alarmCount2.style.display = "none";
+            return;
+        }
+        alarmWrap1.style.display = "flex";
+        alarmCount2.style.display = "flex";
         alarmCount1.innerText = Number(alarmCount) <= 99 ? alarmCount : '99+';
         alarmCount2.innerText = Number(alarmCount) <= 99 ? alarmCount : '99+';
     }
