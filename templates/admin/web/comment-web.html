@@ -134,10 +134,10 @@
                                     </div>
                                 </div>
                                 <div class="main-comment-list-stopa">
-                                    <button class="member-user-list-button toggle-button">상태변경</button>
+                                    <button class="member-user-list-button toggle-button disabled">상태변경</button>
                                 </div>
                                 <div class="main-comment-list-delete">
-                                    <button class="member-user-list-delete-button">댓글삭제</button>
+                                    <button class="member-user-list-delete-button toggle-button disabled">댓글삭제</button>
                                 </div>
                             </div>
                         </div>
@@ -270,13 +270,13 @@
     <!-- 모달창 -->
 
     <!-- 회원정지 모달창 -->
-    <div id="admin-user-modal" class="hidden">
-        <h4 class="admin-user-modal-title">정지사유를 작성해주세요!</h4>
-        <div>
-            <div>
-                <textarea class="admin-user-modal-text" id="modal-text" oninput="resizeTextarea()"></textarea>
-            </div>
-        </div>
+    <div id="admin-user-modal" class="admin-user-modal hidden">
+        <h4 class="admin-user-modal-title">정말 변경하시겠습니까?</h4>
+{#        <div>#}
+{#            <div>#}
+{#                <textarea class="admin-user-modal-text" id="modal-text" oninput="resizeTextarea()"></textarea>#}
+{#            </div>#}
+{#        </div>#}
         <div class="admin-user-modal-button">
             <div class="admin-user-modal-left">
                 <button class="admin-user-modal-left-button" id="modalCloseButton">취소</button>
@@ -300,7 +300,7 @@
         </div>
     </div>
     <!-- 삭제모달 -->
-    <div id="admin-user-modal-delete" class="hidden">
+    <div id="admin-user-modal-delete" class="admin-user-modal-delete hidden">
         <h4 class="admin-user-modal-title">정말 삭제하시겠습니까?</h4>
         <div class="admin-user-modal-button">
             <div class="admin-user-modal-left">
@@ -311,7 +311,7 @@
             </div>
         </div>
     </div>
-    <div id="admin-comment-modal-backdrop" class="hidden"></div>
+    <div id="admin-comment-modal-backdrop" class="admin-comment-modal-backdrop hidden"></div>
     <!-- 검색창 모달 -->
 {% endblock %}
 {% block js %}
