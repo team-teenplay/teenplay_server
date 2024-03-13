@@ -6,30 +6,19 @@ let type = ""
 const CreateService = (() => {
     const showList = (pagination) => {
         let text = ``;
-        pagination.wishlist.forEach((page) => {
+        pagination.activity.forEach((page) => {
             text += `
                 <li class="main-user-list" data-id="${page.id}">
                     <div class="main-user-list-check">
                         <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-id="${page.id}" />
                     </div>
-                    <div class="main-user-list-name">${page.member__member_nickname}</div>
-                    <div class="main-user-list-status">${page.wishlist_content}</div>
-                    <div class="main-user-list-date">${page.wishlist_reply_count}</div>
-                    <div class="main-user-list-pay">${page.wishlist_like_count}</div>
-
-                `;
-                if(page.is_private === false) {
-                    text += `
-                            <div class="main-user-list-opne">비공개</div>
-                    `
-                } else if (page.is_private === true) {
-                    text += `
-                            <div class="main-user-list-opne">공개</div>
-                    `
-                }
-                text += `
+                    <div class="main-user-list-name">단풍구름</div>
+                    <div class="main-user-list-date">내일 놀사람</div>
+                    <div class="main-user-list-status">23.02.01</div>
+                    <div class="main-user-list-pay">0</div>
+                    <div class="main-user-list-comment">0</div>
                     <div class="main-user-list-detail">
-                        <button class="member-user-list-detail-button toggle-button" data-id="${page.id}">상세보기</button>
+                        <button class="member-user-list-detail-button toggle-button" data-target="1">상세보기</button>
                     </div>
                 </li>
             `;
@@ -146,52 +135,9 @@ const CreateService = (() => {
     //
     const showDetail = (pagination) => {
         let text = ``;
-        pagination.wishlist.forEach((page) => {
-            console.log(page)
+        pagination.activity.forEach((page) => {
             text += `
-                <div id="admin-post-modal" class="admin-post-modal hidden">
-                    <h4 class="admin-post-modal-title">위시리스트 상세보기</h4>
-                    <div class="admin-post-modal-warp">
-                        <div class="titleqq">
-                            <p class="admin-post-modal-title-name">위시리스트</p>
-                            <label class="admin-post-modal-title-label">
-                                <input id="wishlistTitleInput" oninput="updateButtonStatus()" type="text" class="admin-post-modal-title-input" readonly value="${page.wishlist_content}" />
-                            </label>
-                            <!-- 값 미입력시 -->
-                            <div id="red-title" class="hidden">
-                                <div class="redbox">
-                                    <svg viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" class="redfont">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12.008 22.05c5.523.023 10.019-4.436 10.042-9.959.023-5.523-4.436-10.018-9.959-10.041C6.568 2.027 2.073 6.485 2.05 12.008c-.023 5.523 4.435 10.019 9.958 10.042Zm1.527-6.494a1.5 1.5 0 1 1-3-.013 1.5 1.5 0 0 1 3 .013Zm-1.181-2.505a.5.5 0 0 0 .498-.436l.646-4.997a.5.5 0 0 0-.494-.564l-1.867-.008a.5.5 0 0 0-.499.56l.604 5.002a.5.5 0 0 0 .495.44l.617.003Z"></path>
-                                    </svg>
-                                    값을 입력해주세요.
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="admin-post-modal-content-name">카테고리</p>
-                            <label class="admin-post-modal-content-label">
-                                <input oninput="updateButtonStatus()" type="text" class="admin-post-modal-content-input" readonly value="${page.category__category_name}" />
-                            </label>
-                        </div>
-                        <!-- 요거는 마지막에 sellect로 바꿔줍시다. -->
-                        <div>
-                            <p class="admin-post-modal-place-name">태그 관리</p>
-                            <div class="create-tag-list">
-                                <div class="tag-list-add"><span>태그1 ×</span></div>
-                                <div class="tag-list-add"><span>태그2 ×</span></div>
-                                <div class="tag-list-add"><span>태그3 ×</span></div>
-                                <div class="tag-list-add"><span>태그4 ×</span></div>
-                            </div>
-                        </div>
-                     </div>
-                    <!-- 버튼 아래 있는것들 -->
-                    <!-- 버튼은 다 이름 수정해줘야합니다 밥먹고 합시다 -->
-                    <div class="admin-user-modal-button">
-                        <div class="admin-user-modal-left">
-                            <button class="admin-user-modal-left-detail-button" id="modalCloseButton">닫기</button>
-                        </div>
-                    </div>
-                </div>
+
             `
     })
         return text;
@@ -206,11 +152,12 @@ const CreateService = (() => {
 
 // ---------------------------------------------------------------------------------------------------------------------
 // 위시리스트 게시글 태그
-const wishlistData = document.querySelector(".wishlist-data")
-// 공지사항 목록 보여주기
+const promoteData = document.querySelector(".promote-data")
+
+// 게시글 목록 보여주기
 function allShowList() {
-    adminWishlistService.getPagination(page, CreateService.showList).then((text) => {
-        wishlistData.innerHTML = text;
+    adminPromoteService.getPagination(page, CreateService.showList).then((text) => {
+        promoteData.innerHTML = text;
     })
 }
 allShowList();
@@ -220,7 +167,7 @@ const mainUserBottomUl = document.querySelector(".main-user-bottom-ul")
 
 // 페이지 번호 보여주기
 function allShowPaging() {
-    adminWishlistService.getPagination(page, CreateService.showPaging).then((text) => {
+    adminPromoteService.getPagination(page, CreateService.showPaging).then((text) => {
         mainUserBottomUl.innerHTML = text;
     })
 }
@@ -231,7 +178,7 @@ const totalCount = document.getElementById("total-count");
 
 // 공지사항 개수 표기
 function CountShowText() {
-    adminWishlistService.getPagination(page, CreateService.CountText).then((text) => {
+    adminPromoteService.getPagination(page, CreateService.CountText).then((text) => {
         totalCount.textContent = text;
     })
 }
@@ -309,13 +256,12 @@ const statusName = document.querySelector(".main-user-status-name");
 // 전체 텍스트
 const statusNameText = document.querySelector(".main-user-total-text")
 
-wishlistData.addEventListener('click', (e) => {
+promoteData.addEventListener('click', (e) => {
     // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
     // main-user-list가 있으면 옵셔널 체이닝(?.)을 사용하여 프로퍼티에 접근해 main-comment-list-checkbox를 찾기
     const checkboxes = e.target.closest(".main-user-list")?.querySelectorAll(".main-comment-list-checkbox");
 
     checkboxes.forEach((checkbox) => {
-        // console.log(checkbox)
         checkbox.addEventListener('change', () => {
             const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
 
@@ -347,7 +293,7 @@ const modalDeleteButtons = document.querySelectorAll(".admin-user-modal-right-bu
 
 // 상태변경
 const deletemodal = document.getElementById("admin-user-modal");
-const deletemodalBack = document.getElementById("admin-user-modal-backdrop");
+const deletemodalBack = document.querySelector(".admin-delete-modal-backdrop");
 
 let currentTargetLi;
 
@@ -401,7 +347,7 @@ modalDeleteButtons.forEach((button) => {
             // 체크된 checkbox와 가장 가까운 li 요소를 찾고 data-id 값을 가져오기
             const targetId = checkbox.closest("li").getAttribute("data-id");
             // data-id 속성 값이 같은 li 요소를 가져오기
-            await adminWishlistService.remove({ targetId: targetId });
+            await adminPromoteService.remove({ targetId: targetId });
         }
 
         // 모달 닫기
@@ -418,87 +364,87 @@ modalDeleteButtons.forEach((button) => {
 
 
 // ---------------------------------------------------------------------------------------------------------------------
-// 카테고리
-// 카테고리 버튼
-const searchOpen = document.querySelector(".main-wish-sellect-button");
-// 카테고리 버튼 속 텍스트
-const searchText = document.querySelector(".main-wish-sellect-button-span");
-// 카테고리 선택 모달
-const searchModal = document.querySelector(".admin-message-modal-search");
-// 카테고리 모달 속 카테고리 버튼
-const searchReceive = document.querySelector(".admin-message-modal-search-receive");
-// 카테고리 모달 속 공지사항 버튼
-const searchSend = document.querySelector(".admin-message-modal-search-send");
-// 카테고리 자주묻는질문 버튼
-const searchadd = document.querySelector(".admin-message-modal-search-donotreceive");
-// 버튼 이미지
-const path = document.querySelector(".main-comment-info-button-svg");
-
-// 검색 버튼 클릭 시 모달 열기
-searchOpen.addEventListener("click", () => {
-    // 이벤트 전파를 막기 위해 stopPropagation() 호출
-    // event.stopPropagation();
-    path.setAttribute("transform", "rotate(180)");
-    searchModal.classList.remove("hidden");
-});
-
-// 모달 외부를 클릭했을 때 이벤트 처리
-document.addEventListener("click", (e) => {
-    if (!searchOpen.contains(e.target) && !searchModal.contains(e.target)) {
-        // 클릭된 요소가 검색 버튼이 아니고 모달 창에 속하지 않으면 모달을 닫음
-        path.removeAttribute("transform");
-        searchModal.classList.add("hidden");
-    }
-});
-
-// "전체" 버튼 클릭 시 모달 닫고 텍스트 변경
-searchReceive.addEventListener("click", () => {
-    path.removeAttribute("transform");
-    searchModal.classList.add("hidden");
-    searchText.textContent = "전체";
-});
-
-// " 활동중" 버튼 클릭 시 모달 닫고 텍스트 변경
-searchSend.addEventListener("click", () => {
-    path.removeAttribute("transform");
-    searchModal.classList.add("hidden");
-    searchText.textContent = "공개";
-});
-
-// "정지" 버튼 클릭 시 모달 닫고 텍스트 변경
-searchadd.addEventListener("click", () => {
-    path.removeAttribute("transform");
-    searchModal.classList.add("hidden");
-    searchText.textContent = "비공개";
-});
-
-// 카테고리 버튼 가져오기
-const categoryButtons = document.querySelectorAll('.category');
-function noticeShowCategory() {
-    categoryButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-            category = button.value;
-            adminWishlistService.getCategory(page, category, CreateService.showList).then((text) => {
-                wishlistData.innerHTML = text;
-            })
-            adminWishlistService.getCategory(page, category, CreateService.showPaging).then((text) => {
-                mainUserBottomUl.innerHTML = text;
-            })
-            adminWishlistService.getCategory(page, category, CreateService.CountText).then((text) => {
-                totalCount.textContent = text;
-            })
-
-            searchInput.value ="";
-            keyword = "";
-        })
-    })
-}
-noticeShowCategory();
-
-
-
-
-
+// // 카테고리
+// // 카테고리 버튼
+// const searchOpen = document.querySelector(".main-wish-sellect-button");
+// // 카테고리 버튼 속 텍스트
+// const searchText = document.querySelector(".main-wish-sellect-button-span");
+// // 카테고리 선택 모달
+// const searchModal = document.querySelector(".admin-message-modal-search");
+// // 카테고리 모달 속 카테고리 버튼
+// const searchReceive = document.querySelector(".admin-message-modal-search-receive");
+// // 카테고리 모달 속 공지사항 버튼
+// const searchSend = document.querySelector(".admin-message-modal-search-send");
+// // 카테고리 자주묻는질문 버튼
+// const searchadd = document.querySelector(".admin-message-modal-search-donotreceive");
+// // 버튼 이미지
+// const path = document.querySelector(".main-comment-info-button-svg");
+//
+// // 검색 버튼 클릭 시 모달 열기
+// searchOpen.addEventListener("click", () => {
+//     // 이벤트 전파를 막기 위해 stopPropagation() 호출
+//     // event.stopPropagation();
+//     path.setAttribute("transform", "rotate(180)");
+//     searchModal.classList.remove("hidden");
+// });
+//
+// // 모달 외부를 클릭했을 때 이벤트 처리
+// document.addEventListener("click", (e) => {
+//     if (!searchOpen.contains(e.target) && !searchModal.contains(e.target)) {
+//         // 클릭된 요소가 검색 버튼이 아니고 모달 창에 속하지 않으면 모달을 닫음
+//         path.removeAttribute("transform");
+//         searchModal.classList.add("hidden");
+//     }
+// });
+//
+// // "전체" 버튼 클릭 시 모달 닫고 텍스트 변경
+// searchReceive.addEventListener("click", () => {
+//     path.removeAttribute("transform");
+//     searchModal.classList.add("hidden");
+//     searchText.textContent = "전체";
+// });
+//
+// // " 활동중" 버튼 클릭 시 모달 닫고 텍스트 변경
+// searchSend.addEventListener("click", () => {
+//     path.removeAttribute("transform");
+//     searchModal.classList.add("hidden");
+//     searchText.textContent = "공개";
+// });
+//
+// // "정지" 버튼 클릭 시 모달 닫고 텍스트 변경
+// searchadd.addEventListener("click", () => {
+//     path.removeAttribute("transform");
+//     searchModal.classList.add("hidden");
+//     searchText.textContent = "비공개";
+// });
+//
+// // 카테고리 버튼 가져오기
+// const categoryButtons = document.querySelectorAll('.category');
+// function noticeShowCategory() {
+//     categoryButtons.forEach((button) => {
+//         button.addEventListener("click", () => {
+//             category = button.value;
+//             adminPromoteService.getCategory(page, category, CreateService.showList).then((text) => {
+//                 wishlistData.innerHTML = text;
+//             })
+//             adminPromoteService.getCategory(page, category, CreateService.showPaging).then((text) => {
+//                 mainUserBottomUl.innerHTML = text;
+//             })
+//             adminPromoteService.getCategory(page, category, CreateService.CountText).then((text) => {
+//                 totalCount.textContent = text;
+//             })
+//
+//             searchInput.value ="";
+//             keyword = "";
+//         })
+//     })
+// }
+// noticeShowCategory();
+//
+//
+//
+//
+//
 // ---------------------------------------------------------------------------------------------------------------------
 // 검색
 // 검색 타입(모달 열기 버튼)
@@ -535,37 +481,31 @@ searchTypePButton.addEventListener("click", (button) => {
     type = button.value;
 });
 
-// " 활동중" 버튼 클릭 시 모달 닫고 텍스트 변경
+// " 제목" 버튼 클릭 시 모달 닫고 텍스트 변경
 searchTypeWButton.addEventListener("click", (button) => {
     searchTypeModal.classList.add("hidden");
-    seartchTypeText.textContent = "위시리스트";
+    seartchTypeText.textContent = "제목";
     type = button.value;
 });
 
-
-//     searchTypeWButton.forEach((button) => {
-//         button.addEventListener("click", () => {
-//         type = button.value;
-//     })
-// })
 searchInput.addEventListener('keyup', (e) => {
     if (e.keyCode === 13) {
         const typeValue = document.querySelector(".main-message-info-button-text-add")
         if (typeValue.innerHTML === '작성자') {
-            type = 'p'
-        } else if (typeValue.innerHTML === '위시리스트') {
             type = 'w'
+        } else if (typeValue.innerHTML === '제목') {
+            type = 'p'
         }
 
         keyword = e.target.value
 
-        adminWishlistService.search(page, category, type, keyword, CreateService.showList).then((text) => {
-            wishlistData.innerHTML = text;
+        adminPromoteService.search(page, category, type, keyword, CreateService.showList).then((text) => {
+            promoteData.innerHTML = text;
         })
-        adminWishlistService.search(page, category, type, keyword, CreateService.showPaging).then((text) => {
+        adminPromoteService.search(page, category, type, keyword, CreateService.showPaging).then((text) => {
             mainUserBottomUl.innerHTML = text;
         })
-        adminWishlistService.search(page, category, type, keyword, CreateService.CountText).then((text) => {
+        adminPromoteService.search(page, category, type, keyword, CreateService.CountText).then((text) => {
             totalCount.textContent = text;
         })
     }
@@ -577,26 +517,24 @@ searchInput.addEventListener('keyup', (e) => {
 // 상세 추가 태그
 const detailBox = document.querySelector(".detail-box")
 
-wishlistData.addEventListener('click', (e) => {
+promoteData.addEventListener('click', (e) => {
     // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
     // main-user-list가 있으면 옵셔널 체이닝(?.)을 사용하여 프로퍼티에 접근해 main-comment-list-checkbox를 찾기
     const showDetailButtons = e.target.closest(".main-user-list-detail")?.querySelectorAll(".member-user-list-detail-button");
 
-    console.log(showDetailButtons)
     showDetailButtons.forEach((showDetailButton) => {
         showDetailButton.addEventListener('click', async () => {
-            console.log(showDetailButton)
             let targetID = showDetailButton.getAttribute("data-id");
             console.log(targetID)
 
-            await adminWishlistService.showDetail(page, targetID, CreateService.showDetail).then((text) => {
+            await adminPromoteService.showDetail(page, targetID, CreateService.showDetail).then((text) => {
                 console.log("작동중")
                 detailBox.innerHTML = text;
             })
 
             // 모달창
             const detailModel = document.querySelector(".admin-post-modal");
-            const detailModelBack = document.querySelector(".detail-box-backdrop");
+            const detailModelBack = document.querySelector(".admin-user-modal-backdrop");
 
             await detailModel.classList.remove("hidden");
             await detailModelBack.classList.remove("hidden");
@@ -615,26 +553,10 @@ detailBox.addEventListener('click', (e) => {
 
             // 모달창
             const detailModel = document.querySelector(".admin-post-modal");
-            const detailModelBack = document.querySelector(".detail-box-backdrop");
+            const detailModelBack = document.querySelector(".admin-user-modal-backdrop");
 
             await detailModel.classList.add("hidden")
             await detailModelBack.classList.add("hidden")
         });
     })
 })
-
-// // 모달창
-// const detailModel = document.querySelector(".admin-post-modal");
-// const detailModelBack = document.querySelector(".detail-box-backdrop");
-//
-// const showDetailButtons = document.querySelectorAll(".member-user-list-detail-button")
-// // 모달 외부를 클릭했을 때 이벤트 처리
-// document.addEventListener("click", (e) => {
-//     showDetailButtons.forEach((button) => {
-//         if (!button.contains(e.target) && !detailModel.contains(e.target)) {
-//             // 클릭된 요소가 검색 버튼이 아니고 모달 창에 속하지 않으면 모달을 닫음
-//             detailModel.classList.add("hidden");
-//             detailModelBack.classList.add("hidden");
-//         }
-//     });
-// });

@@ -154,10 +154,182 @@ class AdminPromoteView(View):
         return render(request, 'admin/web/promote-web.html')
 
 
+class AdminPromoteAPI(APIView):
+    def get(self, request, page):
+        order = request.GET.get('order', 'recent')
+        type = request.GET.get('type', '')
+        keyword = request.GET.get('keyword', '')
+
+        row_count = 10
+
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        condition = Q(status=1)
+
+        if type:
+            if keyword:
+                # 작성자
+                if type == 'w':
+                    condition &= Q(club__member__member_nickname__contains=keyword)
+
+                # 제목
+                elif type == 'p':
+                    condition &= Q(activity_title__contains=keyword)
+
+        total = Activity.objects.filter(condition).all().count()
+
+        page_count = 5
+
+        end_page = math.ceil(page / page_count) * page_count
+        start_page = end_page - page_count + 1
+        real_end = math.ceil(total / row_count)
+        end_page = real_end if end_page > real_end else end_page
+
+        if end_page == 0:
+            end_page = 1
+
+        context = {
+            'total': total,
+            'order': order,
+            'start_page': start_page,
+            'end_page': end_page,
+            'real_end': real_end,
+            'page_count': page_count,
+        }
+
+        ordering = '-id'
+        if order == 'popular':
+            ordering = '-post_read_count'
+
+        columns = [
+            'id',
+            'activity_title',
+            'activity_content',
+            'created_date',
+            'recruit_start',
+            'recruit_end',
+        ]
+
+        activity = Activity.objects.filter(condition).values(*columns).order_by(ordering)
+        activity_writer = activity.annotate(activity_writer=F('club__member__member_nickname'))
+        member_count = activity.annotate(member_count=Count('activitymember__member__id'))
+
+        for i in range(len(list(activity))):
+            activity[i]['activity_writer'] = activity_writer[i]['activity_writer']
+            activity[i]['member_count'] = member_count[i]['member_count']
+
+        context['activity'] = list(activity[offset:limit])
+
+        return Response(context)
+
+
+# 홍보 게시글 삭제
+class AdminPromoteDeleteAPI(APIView):
+    # 게시글 삭제
+    @transaction.atomic
+    def delete(self, request, activity_id):
+        status = 0
+        updated_date = timezone.now()
+
+        activity = Activity.objects.get(id=activity_id)
+        activity.status = status
+        activity.updated_date = updated_date
+        activity.save(update_fields=['status', 'updated_date'])
+
+        return Response('success')
+
+
 # 관리자 게시글 - 활동 모집글 관리 페이지 이동
 class AdminActivityView(View):
     def get(self, request):
         return render(request, 'admin/web/activity-web.html')
+
+
+class AdminActivityAPI(APIView):
+    def get(self, request, page):
+        order = request.GET.get('order', 'recent')
+        type = request.GET.get('type', '')
+        keyword = request.GET.get('keyword', '')
+
+        row_count = 10
+
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        condition = Q(status=1)
+
+        if type:
+            if keyword:
+                # 작성자
+                if type == 'w':
+                    condition &= Q(club__member__member_nickname__contains=keyword)
+
+                # 제목
+                elif type == 'p':
+                    condition &= Q(activity_title__contains=keyword)
+
+        total = Activity.objects.filter(condition).all().count()
+
+        page_count = 5
+
+        end_page = math.ceil(page / page_count) * page_count
+        start_page = end_page - page_count + 1
+        real_end = math.ceil(total / row_count)
+        end_page = real_end if end_page > real_end else end_page
+
+        if end_page == 0:
+            end_page = 1
+
+        context = {
+            'total': total,
+            'order': order,
+            'start_page': start_page,
+            'end_page': end_page,
+            'real_end': real_end,
+            'page_count': page_count,
+        }
+
+        ordering = '-id'
+        if order == 'popular':
+            ordering = '-post_read_count'
+
+        columns = [
+            'id',
+            'activity_title',
+            'activity_content',
+            'created_date',
+            'recruit_start',
+            'recruit_end',
+        ]
+
+        activity = Activity.objects.filter(condition).values(*columns).order_by(ordering)
+        activity_writer = activity.annotate(activity_writer=F('club__member__member_nickname'))
+        member_count = activity.annotate(member_count=Count('activitymember__member__id'))
+
+        for i in range(len(list(activity))):
+            activity[i]['activity_writer'] = activity_writer[i]['activity_writer']
+            activity[i]['member_count'] = member_count[i]['member_count']
+
+        context['activity'] = list(activity[offset:limit])
+
+        return Response(context)
+
+
+# 위시리스트 게시글 삭제
+class AdminActivityDeleteAPI(APIView):
+    # 게시글 삭제
+    @transaction.atomic
+    def delete(self, request, activity_id):
+        status = 0
+        updated_date = timezone.now()
+
+        activity = Activity.objects.get(id=activity_id)
+        activity.status = status
+        activity.updated_date = updated_date
+        activity.save(update_fields=['status', 'updated_date'])
+
+        return Response('success')
 
 
 # 관리자 게시글 - 위시리스트 관리 페이지 이동
@@ -374,11 +546,11 @@ class AdminNoticeWriteView(View):
     @transaction.atomic
     def post(self, request):
         data = request.POST
-
+        print('들어옴 ㅎㅎ')
         data = {
             'notice_title': data['notice_title'],
             'notice_content': data['notice_content'],
-            'notice_type': data['selection']
+            'notice_type': data['notice_type']
         }
 
         Notice.objects.create(**data)
@@ -404,20 +576,20 @@ class AdminCommentAPI(APIView):
         offset = (page - 1) * row_count
         limit = page * row_count
 
-        # condition = Q(status=1) | Q(status=-1)
-        #
-        # if category:
-        #     condition &= Q(status=category)
-        #
-        # if type:
-        #     if keyword:
-        #         # 작성자
-        #         if type == 'w':
-        #             condition &= Q(member_nickname__contains=keyword)
-        #
-        #         # 포스트
-        #         elif type == 'p':
-        #             condition &= Q(activityreply__activity__activity_title__contains=keyword) & Q(wishlistreply__wishlist__wishlist_content__contains=keyword) & Q(clubpostreply__club_post__post_title__contains=keyword)
+        condition = Q(member_status=1) | Q(member_status=-1)
+
+        if category:
+            condition &= Q(member_status=category)
+
+        if type:
+            if keyword:
+                # 작성자
+                if type == 'w':
+                    condition &= Q(member_name__contains=keyword)
+
+                # 포스트
+                elif type == 'p':
+                    condition &= Q(title__contains=keyword)
 
         columns = [
             'member_name',
@@ -443,7 +615,7 @@ class AdminCommentAPI(APIView):
                 reply_status=F('activityreply__status'),
                 reply_updated_date=F('activityreply__updated_date'),
             ) \
-            .values(*columns).filter(member_name__isnull=False)
+            .values(*columns).filter(member_name__isnull=False, reply_status=1)
 
         wishes = Wishlist.enabled_objects \
             .annotate(
@@ -457,7 +629,7 @@ class AdminCommentAPI(APIView):
                 reply_status=F('wishlistreply__status'),
                 reply_updated_date=F('wishlistreply__updated_date')
             ) \
-            .values(*columns).filter(member_name__isnull=False)
+            .values(*columns).filter(member_name__isnull=False, reply_status=1)
 
         club_posts = ClubPost.enabled_objects \
             .annotate(
@@ -471,9 +643,13 @@ class AdminCommentAPI(APIView):
                 reply_status=F('clubpostreply__status'),
                 reply_updated_date=F('clubpostreply__updated_date')
             ) \
-            .values(*columns).filter(member_name__isnull=False)
+            .values(*columns).filter(member_name__isnull=False, reply_status=1)
 
-        total = activities.union(wishes).union(club_posts).count()
+        activity = activities.filter(condition)
+        wishlist = wishes.filter(condition)
+        club_post = club_posts.filter(condition)
+
+        total = activity.union(wishlist).union(club_post).count()
 
         page_count = 5
 
@@ -498,7 +674,7 @@ class AdminCommentAPI(APIView):
         if order == 'popular':
             ordering = '-post_read_count'
 
-        comment = activities.union(wishes).union(club_posts).order_by('-created')
+        comment = activity.union(wishlist).union(club_post).order_by('-created')
 
         context['comment'] = list(comment[offset:limit])
 

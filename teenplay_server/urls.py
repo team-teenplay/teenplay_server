@@ -24,7 +24,8 @@ from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroduc
     AdminMessageView, AdminTeenplayView, AdminPromoteView, AdminActivityView, AdminWishlistView, AdminMeetingView, \
     AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView, AdminUserUpdateAPI, \
     AdminNoticePaginationAPI, AdminWishlistAPI, AdminWishlistUpdateAPI, AdminNoticeUpdateAPI, AdminUserAPI, \
-    AdminCommentAPI, AdminCommentDeleteAPI
+    AdminCommentAPI, AdminCommentDeleteAPI, AdminActivityAPI, AdminActivityDeleteAPI, AdminPromoteAPI, \
+    AdminPromoteDeleteAPI
 
 
 # urls에 음수 값 넣기 가능!
@@ -67,8 +68,12 @@ urlpatterns = [
     path('admin/teenplay/', AdminTeenplayView.as_view(), name='admin-teenplay'),
     # 관리자 - 게시글 홍보글 관리
     path('admin/promote/', AdminPromoteView.as_view(), name='admin-promote'),
+    path('admin/promotes/<int:page>/', AdminPromoteView.as_view(), name='admin-promote-api'),
+    path('admin/promotes/delete/<int:promote_id>/', AdminPromoteView.as_view(), name='admin-promote-delete'),
     # 관리자 - 게시글 활동모집글 관리
     path('admin/activity/', AdminActivityView.as_view(), name='admin-activity'),
+    path('admin/activities/<int:page>/', AdminPromoteAPI.as_view(), name='admin-activity-api'),
+    path('admin/activities/delete/<int:activity_id>/', AdminPromoteDeleteAPI.as_view(), name='admin-activity-delete'),
     # 관리자 - 게시글 위시리스트 관리
     path('admin/wishlist/', AdminWishlistView.as_view(), name='admin-wishlist'),
     path('admin/wishlists/<int:page>/', AdminWishlistAPI.as_view(), name='admin-wishlist-api'),

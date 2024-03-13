@@ -276,6 +276,8 @@ const modalUpdateOpenButtons = document.querySelectorAll(".member-user-list-butt
 const modalDeleteOpenButtons = document.querySelectorAll(".member-user-list-delete-button");
 // 전체 선택 버튼
 const statusName = document.querySelector(".main-user-status-name");
+// 전체 텍스트
+const statusNameText = document.querySelector(".main-comment-total-text")
 
 commentData.addEventListener('click', (e) => {
     // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
@@ -306,7 +308,7 @@ commentData.addEventListener('click', (e) => {
                     deleteButton.classList.add("disabled");
                 }
             })
-
+            statusNameText.textContent = '전제 중';
             totalCount.textContent = checkedCount;
         });
     })
@@ -479,158 +481,159 @@ modalDeleteButtons.forEach((button) => {
 
 
 // ---------------------------------------------------------------------------------------------------------------------
-// // 카테고리
-// // 카테고리 버튼
-// const searchOpen = document.querySelector(".main-wish-sellect-button");
-// // 카테고리 버튼 속 텍스트
-// const searchText = document.querySelector(".main-wish-sellect-button-span");
-// // 카테고리 선택 모달
-// const searchModal = document.querySelector(".admin-message-modal-search");
-// // 카테고리 모달 속 카테고리 버튼
-// const searchReceive = document.querySelector(".admin-message-modal-search-receive");
-// // 카테고리 모달 속 공지사항 버튼
-// const searchSend = document.querySelector(".admin-message-modal-search-send");
-// // 카테고리 자주묻는질문 버튼
-// const searchadd = document.querySelector(".admin-message-modal-search-donotreceive");
-// // 버튼 이미지
-// const path = document.querySelector(".main-comment-info-button-svg");
-//
-// // 검색 버튼 클릭 시 모달 열기
-// searchOpen.addEventListener("click", () => {
-//     // 이벤트 전파를 막기 위해 stopPropagation() 호출
-//     // event.stopPropagation();
-//     path.setAttribute("transform", "rotate(180)");
-//     searchModal.classList.remove("hidden");
-// });
-//
-// // 모달 외부를 클릭했을 때 이벤트 처리
-// document.addEventListener("click", (e) => {
-//     if (!searchOpen.contains(e.target) && !searchModal.contains(e.target)) {
-//         // 클릭된 요소가 검색 버튼이 아니고 모달 창에 속하지 않으면 모달을 닫음
-//         path.removeAttribute("transform");
-//         searchModal.classList.add("hidden");
-//     }
-// });
-//
-// // "전체" 버튼 클릭 시 모달 닫고 텍스트 변경
-// searchReceive.addEventListener("click", () => {
-//     path.removeAttribute("transform");
-//     searchModal.classList.add("hidden");
-//     searchText.textContent = "전체";
-// });
-//
-// // " 활동중" 버튼 클릭 시 모달 닫고 텍스트 변경
-// searchSend.addEventListener("click", () => {
-//     path.removeAttribute("transform");
-//     searchModal.classList.add("hidden");
-//     searchText.textContent = "활동중";
-// });
-//
-// // "정지" 버튼 클릭 시 모달 닫고 텍스트 변경
-// searchadd.addEventListener("click", () => {
-//     path.removeAttribute("transform");
-//     searchModal.classList.add("hidden");
-//     searchText.textContent = "정지";
-// });
-//
-// // 카테고리 버튼 가져오기
-// const categoryButtons = document.querySelectorAll('.category');
-// function noticeShowCategory() {
-//     categoryButtons.forEach((button) => {
+// 카테고리
+// 카테고리 버튼
+const searchOpen = document.querySelector(".main-wish-sellect-button-add");
+// 카테고리 버튼 속 텍스트
+const searchText = document.querySelector(".main-wish-sellect-button-span-add");
+// 카테고리 선택 모달
+const searchModal = document.querySelector(".admin-message-modal-search-add");
+// 카테고리 모달 속 카테고리 버튼
+const searchReceive = document.querySelector(".admin-message-modal-search-receive-add");
+// 카테고리 모달 속 공지사항 버튼
+const searchSend = document.querySelector(".admin-message-modal-search-send-add");
+// 카테고리 자주묻는질문 버튼
+const searchadd = document.querySelector(".admin-message-modal-search-donotreceive-add");
+// 버튼 이미지
+const path = document.querySelector(".main-comment-info-button-svg");
+
+// 검색 버튼 클릭 시 모달 열기
+searchOpen.addEventListener("click", () => {
+    // 이벤트 전파를 막기 위해 stopPropagation() 호출
+    // event.stopPropagation();
+    path.setAttribute("transform", "rotate(180)");
+    searchModal.classList.remove("hidden");
+});
+
+// 모달 외부를 클릭했을 때 이벤트 처리
+document.addEventListener("click", (e) => {
+    if (!searchOpen.contains(e.target) && !searchModal.contains(e.target)) {
+        // 클릭된 요소가 검색 버튼이 아니고 모달 창에 속하지 않으면 모달을 닫음
+        path.removeAttribute("transform");
+        searchModal.classList.add("hidden");
+    }
+});
+
+// "전체" 버튼 클릭 시 모달 닫고 텍스트 변경
+searchReceive.addEventListener("click", () => {
+    path.removeAttribute("transform");
+    searchModal.classList.add("hidden");
+    searchText.textContent = "전체";
+});
+
+// " 활동중" 버튼 클릭 시 모달 닫고 텍스트 변경
+searchSend.addEventListener("click", () => {
+    path.removeAttribute("transform");
+    searchModal.classList.add("hidden");
+    searchText.textContent = "활동중";
+});
+
+// "정지" 버튼 클릭 시 모달 닫고 텍스트 변경
+searchadd.addEventListener("click", () => {
+    path.removeAttribute("transform");
+    searchModal.classList.add("hidden");
+    searchText.textContent = "정지";
+});
+
+// 카테고리 버튼 가져오기
+const categoryButtons = document.querySelectorAll('.category');
+function noticeShowCategory() {
+    categoryButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            console.log(button.value)
+            category = button.value;
+            adminCommentService.getCategory(page, category, CreateService.showList).then((text) => {
+                commentData.innerHTML = text;
+            })
+            adminCommentService.getCategory(page, category, CreateService.showPaging).then((text) => {
+                mainUserBottomUl.innerHTML = text;
+            })
+            adminCommentService.getCategory(page, category, CreateService.CountText).then((text) => {
+                totalCount.textContent = text;
+            })
+
+            // searchInput.value ="";
+            // keyword = "";
+        })
+    })
+}
+noticeShowCategory();
+
+
+
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// 검색
+// 검색 타입(모달 열기 버튼)
+const searchType = document.querySelector(".main-comment-info-button")
+// 검색 타입 이름
+const searchTypeText = document.querySelector(".main-comment-info-button-text")
+
+// 검색 타입 모달
+const searchTypeModal = document.querySelector(".admin-comment-modal-search")
+// 검색 타입 모달 속 작성자 버튼
+const searchTypePButton = document.querySelector(".admin-comment-modal-search-send")
+// 검색 타입 모달 속 위시리스트 버튼
+const searchTypeWButton = document.querySelector(".admin-comment-modal-search-receive")
+
+// 입력창
+const searchInput = document.querySelector(".main-comment-info-input")
+
+// 버튼 클릭 시 모달 활성화
+searchType.addEventListener('click', () => {
+    searchTypeModal.classList.remove("hidden")
+})
+
+// 모달 외부를 클릭했을 때 이벤트 처리
+document.addEventListener("click", (e) => {
+    if (!searchType.contains(e.target) && !searchTypeModal.contains(e.target)) {
+        searchTypeModal.classList.add("hidden");
+    }
+});
+
+// "작성자" 버튼 클릭 시 모달 닫고 텍스트 변경
+searchTypePButton.addEventListener("click", (button) => {
+    searchTypeModal.classList.add("hidden");
+    searchTypeText.textContent = "작성자";
+    type = button.value;
+});
+
+// " 활동중" 버튼 클릭 시 모달 닫고 텍스트 변경
+searchTypeWButton.addEventListener("click", (button) => {
+    searchTypeModal.classList.add("hidden");
+    searchTypeText.textContent = "게시글";
+    type = button.value;
+});
+
+
+//     searchTypeWButton.forEach((button) => {
 //         button.addEventListener("click", () => {
-//             category = button.value;
-//             adminCommentService.getCategory(page, category, CreateService.showList).then((text) => {
-//                 commentData.innerHTML = text;
-//             })
-//             adminCommentService.getCategory(page, category, CreateService.showPaging).then((text) => {
-//                 mainUserBottomUl.innerHTML = text;
-//             })
-//             adminCommentService.getCategory(page, category, CreateService.CountText).then((text) => {
-//                 totalCount.textContent = text;
-//             })
-//
-//             searchInput.value ="";
-//             keyword = "";
-//         })
+//         type = button.value;
 //     })
-// }
-// noticeShowCategory();
-//
-//
-//
-//
-//
-// // ---------------------------------------------------------------------------------------------------------------------
-// // 검색
-// // 검색 타입(모달 열기 버튼)
-// const searchType = document.querySelector(".main-message-info-button-add")
-// // 검색 타입 이름
-// const seartchTypeText = document.querySelector(".main-message-info-button-text-add")
-//
-// // 검색 타입 모달
-// const searchTypeModal = document.querySelector(".admin-message-modal-search-add")
-// // 검색 타입 모달 속 작성자 버튼
-// const searchTypePButton = document.querySelector(".admin-message-modal-search-send-add")
-// // 검색 타입 모달 속 위시리스트 버튼
-// const searchTypeWButton = document.querySelector(".admin-message-modal-search-receive-add")
-//
-// // 입력창
-// const searchInput = document.querySelector(".main-user-info-input")
-//
-// // 버튼 클릭 시 모달 활성화
-// searchType.addEventListener('click', () => {
-//     searchTypeModal.classList.remove("hidden")
 // })
-//
-// // 모달 외부를 클릭했을 때 이벤트 처리
-// document.addEventListener("click", (e) => {
-//     if (!searchType.contains(e.target) && !searchTypeModal.contains(e.target)) {
-//         searchTypeModal.classList.add("hidden");
-//     }
-// });
-//
-// // "작성자" 버튼 클릭 시 모달 닫고 텍스트 변경
-// searchTypePButton.addEventListener("click", (button) => {
-//     searchTypeModal.classList.add("hidden");
-//     seartchTypeText.textContent = "작성자";
-//     type = button.value;
-// });
-//
-// // " 활동중" 버튼 클릭 시 모달 닫고 텍스트 변경
-// searchTypeWButton.addEventListener("click", (button) => {
-//     searchTypeModal.classList.add("hidden");
-//     seartchTypeText.textContent = "게시글";
-//     type = button.value;
-// });
-//
-//
-// //     searchTypeWButton.forEach((button) => {
-// //         button.addEventListener("click", () => {
-// //         type = button.value;
-// //     })
-// // })
-// searchInput.addEventListener('keyup', (e) => {
-//     if (e.keyCode === 13) {
-//         const typeValue = document.querySelector(".main-message-info-button-text-add")
-//         if (typeValue.innerHTML === '작성자') {
-//             type = 'w'
-//         } else if (typeValue.innerHTML === '게시글') {
-//             type = 'p'
-//         }
-//
-//         keyword = e.target.value
-//
-//         adminCommentService.search(page, category, type, keyword, CreateService.showList).then((text) => {
-//             commentData.innerHTML = text;
-//         })
-//         adminCommentService.search(page, category, type, keyword, CreateService.showPaging).then((text) => {
-//             mainUserBottomUl.innerHTML = text;
-//         })
-//         adminCommentService.search(page, category, type, keyword, CreateService.CountText).then((text) => {
-//             totalCount.textContent = text;
-//         })
-//     }
-// });
-//
-//
-// // // ---------------------------------------------------------------------------------------------------------------------
+searchInput.addEventListener('keyup', (e) => {
+    if (e.keyCode === 13) {
+        const typeValue = document.querySelector(".main-comment-info-button-text")
+        if (typeValue.innerHTML === '작성자') {
+            type = 'w'
+        } else if (typeValue.innerHTML === '게시글') {
+            type = 'p'
+        }
+
+        keyword = e.target.value
+
+        adminCommentService.search(page, category, type, keyword, CreateService.showList).then((text) => {
+            commentData.innerHTML = text;
+        })
+        adminCommentService.search(page, category, type, keyword, CreateService.showPaging).then((text) => {
+            mainUserBottomUl.innerHTML = text;
+        })
+        adminCommentService.search(page, category, type, keyword, CreateService.CountText).then((text) => {
+            totalCount.textContent = text;
+        })
+    }
+});
+
+
+// ---------------------------------------------------------------------------------------------------------------------

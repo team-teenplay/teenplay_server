@@ -1,15 +1,15 @@
 // 공지사항 관리자 서비스 생성
 const adminNoticeService = (() => {
-    // const write = async (notice) => {
-    //     const response= await fetch("/admin/notice/", {
-    //         method: "POST",
-    //         headers: {
-    //             'Content-Type': 'application/json;charset=utf-8',
-    //             'X-CSRFToken': csrf_token
-    //         },
-    //         body: JSON.stringify(notice)
-    //     });
-    // }
+    const write = async (notice) => {
+        const response= await fetch(`/admin/notice/write/`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'X-CSRFToken': csrf_token
+            },
+            body: JSON.stringify(notice)
+        });
+    }
 
     const getPagination = async (page, callback) => {
         const response = await fetch(`/admin/notices/${page}/`);
@@ -72,5 +72,5 @@ const adminNoticeService = (() => {
         return pagination;
     }
 
-    return {getPagination:getPagination, getCategory: getCategory, remove: remove, showDetail:showDetail, search:search}
+    return {write:write, getPagination:getPagination, getCategory: getCategory, remove: remove, showDetail:showDetail, search:search}
 })();

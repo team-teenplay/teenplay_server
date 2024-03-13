@@ -38,7 +38,7 @@ const adminCommentService = (() => {
 
     // 검색하기
     const search = async (page, category, type, keyword, callback) => {
-        const response = await fetch(`/admin/comments/${page}/${page}?category=${category}&type=${type}&keyword=${keyword}`)
+        const response = await fetch(`/admin/comments/${page}?category=${category}&type=${type}&keyword=${keyword}`)
         const pagination = await response.json();
 
         if (callback){

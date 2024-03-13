@@ -1652,6 +1652,16 @@ margin-left: 16px;}
     border-color: #F2F4F5;
     background-color: #F2F4F5;
 }
+.main-festival-add-top-create-button.disabled {
+    border-color: #F2F4F5;
+    background-color: #F2F4F5;
+    cursor: default;
+}
+
+.main-festival-add-top-create-button.disabled:hover {
+    border-color: #F2F4F5;
+    background-color: #F2F4F5;
+}
 
     
 .main-user-number{
