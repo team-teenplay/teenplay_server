@@ -5,14 +5,15 @@ from django.utils import timezone
 from django.views import View
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from activity.models import ActivityReply
+from datetime import datetime
+from activity.models import ActivityReply, Activity, ActivityMember
 from alarm.models import Alarm
-from club.models import ClubPostReply, ClubMember
+from club.models import ClubPostReply, ClubMember, Club, ClubNotice
 from friend.models import Friend
 from letter.models import Letter, ReceivedLetter, SentLetter
 from member.models import Member, MemberFavoriteCategory, MemberProfile, MemberDeleteReason
 from member.serializers import MemberSerializer
+from notice.models import Notice
 from pay.models import Pay
 from teenplay_server.category import Category
 from wishlist.models import WishlistReply
@@ -57,7 +58,10 @@ class MemberJoinWebView(View):
         request.session['member'] = member
         return redirect('/')
 
+
 from django.http import HttpResponse
+
+
 # 자체작업 합의 후 push해야합니다.
 class MypageInfoWebView(View):
     def get(self, request):
@@ -80,12 +84,14 @@ class MypageInfoWebView(View):
 
             categories = Category.objects.all()
 
-            return render(request, 'mypage/web/my-info-web.html', { 'member': member,'categories':categories, 'member_files': member_file, 'member_category':member_category })
+            return render(request, 'mypage/web/my-info-web.html',
+                          {'member': member, 'categories': categories, 'member_files': member_file,
+                           'member_category': member_category})
 
     @transaction.atomic
     def post(self, request):
         # 세션에서 member의 값을 가져옴
-        member_data = request.session.get('member','member_files')
+        member_data = request.session.get('member', 'member_files')
         file = request.FILES
 
         if member_data:
@@ -139,14 +145,10 @@ class MypageInfoWebView(View):
                     # 존재하지 않으면 새로운 레코드 생성
                     MemberFavoriteCategory.objects.create(member_id=member.id, category_id=category_id, status=1)
 
-
-            member.save(update_fields=['member_nickname', 'member_phone', 'member_gender', 'member_marketing_agree','member_privacy_agree', 'member_birth'])
-
-
+            member.save(update_fields=['member_nickname', 'member_phone', 'member_gender', 'member_marketing_agree',
+                                       'member_privacy_agree', 'member_birth'])
 
             member_file = MemberProfile.objects.filter(member_id=member.id)
-
-
 
             for key in file:
                 MemberProfile.objects.filter(member_id=member.id).update(status=0)
@@ -169,11 +171,9 @@ class MypageInfoWebView(View):
                 request.session['member_files'] = member_files
 
             category_session = MemberFavoriteCategory.objects.filter(member_id=member.id)
-            category_session = list(category_session.values('status','category_id'))
+            category_session = list(category_session.values('status', 'category_id'))
             if len(category_session) != 0:
                 request.session['member_category'] = category_session
-
-
 
             return redirect('member:mypage-info')
         else:
@@ -181,23 +181,21 @@ class MypageInfoWebView(View):
             return HttpResponse("Session data for member is missing.", status=400)
 
 
-
-
 class MypageDeleteWebView(View):
-    def get(self,request):
+    def get(self, request):
         member_id = request.session.get('member')
         if member_id is None:
             return redirect('member:login')
         else:
             member = request.session.get('member')
-            return render(request,'mypage/web/withdrawal-web.html', {'member': member})
+            return render(request, 'mypage/web/withdrawal-web.html', {'member': member})
 
     @transaction.atomic
-    def post(self,request):
+    def post(self, request):
         member_data = request.session.get('member')
         text = request.POST.get("reason-text")
         number = request.POST.get("select_bum")
-        MemberDeleteReason.objects.create(delete_text=text,delete_reason=number)
+        MemberDeleteReason.objects.create(delete_text=text, delete_reason=number)
         member_id = member_data['id']
         member = Member.objects.get(id=member_id)
         member.status = 0
@@ -205,8 +203,9 @@ class MypageDeleteWebView(View):
         request.session.clear()
         return redirect('/')
 
+
 class MypageLetterWebView(View):
-    def get(self,request):
+    def get(self, request):
         member = request.session.get('member')
         latest_letter = Letter.objects.latest('id')  # 또는 필요한 기준으로 필터링
         return render(request, 'mypage/web/my-letter-web.html', {"member": member, 'letter_id': latest_letter.id})
@@ -214,7 +213,7 @@ class MypageLetterWebView(View):
 
 class MypageWriteAPIWebView(APIView):
     @transaction.atomic
-    def post(self,request):
+    def post(self, request):
         data = request.data
 
         receiver_email = data['receiver_id'].split("(")[1][:-1]
@@ -232,7 +231,8 @@ class MypageWriteAPIWebView(APIView):
 
         # SentLetter 모델 생성
         SentLetter.objects.create(letter_id=letter.id)
-        Alarm.objects.create(target_id=letter.id, alarm_type=4, sender_id=letter.sender_id, receiver_id= letter.receiver_id)
+        Alarm.objects.create(target_id=letter.id, alarm_type=4, sender_id=letter.sender_id,
+                             receiver_id=letter.receiver_id)
 
         return Response("good")
 
@@ -246,22 +246,24 @@ class MypageListAPIWebView(APIView):
         limit = page * row_count
 
         # 전체 데이터 수를 세는 쿼리
-        total_count = Letter.objects.filter(Q(sender_id=member_id,status=1) | Q(receiver_id=member_id,status=1)).count()
+        total_count = Letter.objects.filter(
+            Q(sender_id=member_id, status=1) | Q(receiver_id=member_id, status=1)).count()
 
         # 전체 페이지 수 계산
         total_pages = (total_count + row_count - 1) // row_count
 
         # 페이지 범위에 해당하는 데이터 조회
-        replies = Letter.objects.filter(Q(sender_id=member_id,status=1) | Q(receiver_id=member_id,status=1)) \
-            .values('letter_content', 'created_date', 'sender__member_nickname', 'receiver__member_nickname','id')[offset:limit]
-
-        sender = Letter.objects.filter(sender_id=member_id, status=1)  \
+        replies = Letter.objects.filter(Q(sender_id=member_id, status=1) | Q(receiver_id=member_id, status=1)) \
                       .values('letter_content', 'created_date', 'sender__member_nickname', 'receiver__member_nickname',
                               'id')[offset:limit]
+
+        sender = Letter.objects.filter(sender_id=member_id, status=1) \
+                     .values('letter_content', 'created_date', 'sender__member_nickname', 'receiver__member_nickname',
+                             'id')[offset:limit]
 
         receiver = Letter.objects.filter(receiver_id=member_id, status=1) \
-                      .values('letter_content', 'created_date', 'sender__member_nickname', 'receiver__member_nickname',
-                              'id')[offset:limit]
+                       .values('letter_content', 'created_date', 'sender__member_nickname', 'receiver__member_nickname',
+                               'id')[offset:limit]
 
         # 응답에 전체 페이지 수와 데이터 추가
         response_data = {
@@ -270,24 +272,33 @@ class MypageListAPIWebView(APIView):
 
         }
         if status_letter == 'sender':
-            response_data['replies'] =  Letter.objects.filter(sender_id=member_id, status=1)  \
-                      .values('letter_content', 'created_date', 'sender__member_nickname', 'receiver__member_nickname',
-                              'id')[offset:limit]
+            response_data['replies'] = Letter.objects.filter(sender_id=member_id, status=1) \
+                                           .values('letter_content', 'created_date', 'sender__member_nickname',
+                                                   'receiver__member_nickname',
+                                                   'id')[offset:limit]
 
-            response_data['total_pages'] = (Letter.objects.filter(sender_id=member_id, status=1).count() + row_count - 1)  //row_count
+            response_data['total_pages'] = (Letter.objects.filter(sender_id=member_id,
+                                                                  status=1).count() + row_count - 1) // row_count
         elif status_letter == 'receiver':
             response_data['replies'] = Letter.objects.filter(receiver_id=member_id, status=1) \
-                .values('letter_content', 'created_date', 'sender__member_nickname', 'receiver__member_nickname',
-                        'id')[offset:limit]
-            response_data['total_pages'] = (Letter.objects.filter(receiver_id=member_id, status=1).count() + row_count - 1)  //row_count
+                                           .values('letter_content', 'created_date', 'sender__member_nickname',
+                                                   'receiver__member_nickname',
+                                                   'id')[offset:limit]
+            response_data['total_pages'] = (Letter.objects.filter(receiver_id=member_id,
+                                                                  status=1).count() + row_count - 1) // row_count
 
         else:
-            response_data['replies'] = Letter.objects.filter(Q(sender_id=member_id,status=1) | Q(receiver_id=member_id,status=1)) \
-            .values('letter_content', 'created_date', 'sender__member_nickname', 'receiver__member_nickname','id')[offset:limit]
+            response_data['replies'] = Letter.objects.filter(
+                Q(sender_id=member_id, status=1) | Q(receiver_id=member_id, status=1)) \
+                                           .values('letter_content', 'created_date', 'sender__member_nickname',
+                                                   'receiver__member_nickname', 'id')[offset:limit]
 
-            response_data['total_pages'] = (Letter.objects.filter(Q(sender_id=member_id,status=1) | Q(receiver_id=member_id,status=1)).count() + row_count - 1)  //row_count
+            response_data['total_pages'] = (Letter.objects.filter(
+                Q(sender_id=member_id, status=1) | Q(receiver_id=member_id,
+                                                     status=1)).count() + row_count - 1) // row_count
 
         return Response(response_data)
+
 
 class MypageDeleteAPIWebView(APIView):
     @transaction.atomic
@@ -325,8 +336,6 @@ class MypageCheckAPIWebViewMa(APIView):
         return Response(data)
 
 
-
-
 class MypageAlramView(View):
     @transaction.atomic
     def get(self, request):
@@ -340,30 +349,31 @@ class MypageAlramAPIView(APIView):
         offset = (page - 1) * row_count
         limit = page * row_count
 
-        alram = Alarm.objects.filter(receiver_id=member_id, status =1).values('id','alarm_type','receiver_id','created_date')[offset:limit]
-
+        alram = Alarm.objects.filter(receiver_id=member_id, status=1).values('id', 'alarm_type', 'receiver_id',
+                                                                             'created_date')[offset:limit]
 
         return Response(alram)
+
 
 class MypageAlramDeleteAPIView(APIView):
     @transaction.atomic
     def delete(self, request, alram_id):
-        Alarm.objects.filter(id= alram_id).update(status = 0)
+        Alarm.objects.filter(id=alram_id).update(status=0)
         print(Alarm)
-
 
         return Response('good')
 
+
 class MypageTeenchinview(View):
     def get(self, request):
-        return  render(request, 'mypage/web/my-teenchin-web.html')
+        return render(request, 'mypage/web/my-teenchin-web.html')
+
 
 class MypageTeenchinAPIview(APIView):
     def get(self, request, member_id, page):
         row_count = 2
         offset = (page - 1) * row_count
         limit = page * row_count
-
 
         teenchin = Friend.objects.filter(receiver_id=member_id).values('id', 'is_friend')[offset:limit]
 
@@ -377,6 +387,7 @@ class MemberAlarmCountAPI(APIView):
 
         return Response(alarm_count)
 
+
 class MypageTeenchinAPIview(APIView):
     def get(self, request, member_id, page):
         status_letter = request.GET.get('status_teenchin')
@@ -386,58 +397,105 @@ class MypageTeenchinAPIview(APIView):
         offset = (page - 1) * row_count
         limit = page * row_count
 
-
-        teenchin = Friend.objects.filter(Q(sender_id=member_id, is_friend= 1) | Q(receiver_id=member_id, is_friend= 1)| Q(sender_id=member_id, is_friend= -1)| Q(receiver_id=member_id, is_friend= -1))\
-                       .values('id', 'is_friend','sender_id','receiver_id','sender__member_nickname','receiver__member_nickname',)[offset:limit]
+        teenchin = Friend.objects.filter(
+            Q(sender_id=member_id, is_friend=1) | Q(receiver_id=member_id, is_friend=1) | Q(sender_id=member_id,
+                                                                                            is_friend=-1) | Q(
+                receiver_id=member_id, is_friend=-1)) \
+                       .values('id', 'is_friend', 'sender_id', 'receiver_id', 'sender__member_nickname',
+                               'receiver__member_nickname', )[offset:limit]
 
         if status_letter == 'case-a/':
-            teenchin = Friend.objects.filter(Q(sender_id=member_id,is_friend= 1) | Q(receiver_id=member_id,is_friend=1)).values('id', 'is_friend','sender_id','receiver_id','sender__member_nickname','receiver__member_nickname',)[offset:limit]
+            teenchin = Friend.objects.filter(
+                Q(sender_id=member_id, is_friend=1) | Q(receiver_id=member_id, is_friend=1)).values('id', 'is_friend',
+                                                                                                    'sender_id',
+                                                                                                    'receiver_id',
+                                                                                                    'sender__member_nickname',
+                                                                                                    'receiver__member_nickname', )[
+                       offset:limit]
             if search_text:
-                teenchin = Friend.objects.filter(Q(receiver_id=member_id,is_friend= 1,sender__member_nickname__icontains=search_text) | Q(receiver_id=member_id,is_friend= 1,sender__member_email__icontains=search_text) | Q(sender_id=member_id,is_friend= 1,receiver__member_nickname__icontains=search_text) | Q(sender_id=member_id,is_friend= 1,receiver__member_email__icontains=search_text)).values('id', 'is_friend','sender_id','receiver_id','sender__member_nickname','receiver__member_nickname',)[offset:limit]
+                teenchin = Friend.objects.filter(
+                    Q(receiver_id=member_id, is_friend=1, sender__member_nickname__icontains=search_text) | Q(
+                        receiver_id=member_id, is_friend=1, sender__member_email__icontains=search_text) | Q(
+                        sender_id=member_id, is_friend=1, receiver__member_nickname__icontains=search_text) | Q(
+                        sender_id=member_id, is_friend=1, receiver__member_email__icontains=search_text)).values('id',
+                                                                                                                 'is_friend',
+                                                                                                                 'sender_id',
+                                                                                                                 'receiver_id',
+                                                                                                                 'sender__member_nickname',
+                                                                                                                 'receiver__member_nickname', )[
+                           offset:limit]
 
         elif status_letter == 'case-b/':
-            teenchin = Friend.objects.filter(Q(sender_id=member_id, is_friend= -1)).values('id', 'is_friend','sender_id','receiver_id','sender__member_nickname','receiver__member_nickname',)[offset:limit]
+            teenchin = Friend.objects.filter(Q(sender_id=member_id, is_friend=-1)).values('id', 'is_friend',
+                                                                                          'sender_id', 'receiver_id',
+                                                                                          'sender__member_nickname',
+                                                                                          'receiver__member_nickname', )[
+                       offset:limit]
             if search_text:
-                teenchin = Friend.objects.filter(Q(sender_id=member_id, is_friend=-1,receiver__member_nickname__icontains=search_text) | Q(sender_id=member_id, is_friend=-1,receiver__member_email__icontains=search_text)).values('id', 'is_friend',
-                                                                                              'sender_id',
-                                                                                              'receiver_id',
-                                                                                              'sender__member_nickname',
-                                                                                              'receiver__member_nickname', )[offset:limit]
+                teenchin = Friend.objects.filter(
+                    Q(sender_id=member_id, is_friend=-1, receiver__member_nickname__icontains=search_text) | Q(
+                        sender_id=member_id, is_friend=-1, receiver__member_email__icontains=search_text)).values('id',
+                                                                                                                  'is_friend',
+                                                                                                                  'sender_id',
+                                                                                                                  'receiver_id',
+                                                                                                                  'sender__member_nickname',
+                                                                                                                  'receiver__member_nickname', )[
+                           offset:limit]
 
         elif status_letter == 'case-c/':
-            teenchin = Friend.objects.filter(Q(receiver_id=member_id,is_friend= -1)).values('id', 'is_friend','sender_id','receiver_id','sender__member_nickname','receiver__member_nickname',)[offset:limit]
+            teenchin = Friend.objects.filter(Q(receiver_id=member_id, is_friend=-1)).values('id', 'is_friend',
+                                                                                            'sender_id', 'receiver_id',
+                                                                                            'sender__member_nickname',
+                                                                                            'receiver__member_nickname', )[
+                       offset:limit]
             if search_text:
-                teenchin = Friend.objects.filter(Q(receiver_id=member_id, is_friend=-1, sender__member_nickname__icontains=search_text) | Q(receiver_id=member_id, is_friend=-1, sender__member_email__icontains=search_text)).values('id', 'is_friend',
-                                                                                                'sender_id',
-                                                                                                'receiver_id',
-                                                                                                'sender__member_nickname',
-                                                                                                'receiver__member_nickname', )[
+                teenchin = Friend.objects.filter(
+                    Q(receiver_id=member_id, is_friend=-1, sender__member_nickname__icontains=search_text) | Q(
+                        receiver_id=member_id, is_friend=-1, sender__member_email__icontains=search_text)).values('id',
+                                                                                                                  'is_friend',
+                                                                                                                  'sender_id',
+                                                                                                                  'receiver_id',
+                                                                                                                  'sender__member_nickname',
+                                                                                                                  'receiver__member_nickname', )[
                            offset:limit]
 
         else:
             teenchin = Friend.objects.filter(
-                Q(sender_id=member_id, is_friend=1) | Q(receiver_id=member_id, is_friend=1) | Q(sender_id=member_id,is_friend=-1) | Q(receiver_id=member_id, is_friend=-1)) \
-                           .values('id', 'is_friend', 'sender_id', 'receiver_id', 'sender__member_nickname','receiver__member_nickname', )[offset:limit]
+                Q(sender_id=member_id, is_friend=1) | Q(receiver_id=member_id, is_friend=1) | Q(sender_id=member_id,
+                                                                                                is_friend=-1) | Q(
+                    receiver_id=member_id, is_friend=-1)) \
+                           .values('id', 'is_friend', 'sender_id', 'receiver_id', 'sender__member_nickname',
+                                   'receiver__member_nickname', )[offset:limit]
             if search_text:
                 teenchin = Friend.objects.filter(
-                Q(sender_id=member_id, is_friend=1, receiver__member_nickname__icontains=search_text) | Q(sender_id=member_id, is_friend=1, receiver__member_email__icontains=search_text) | Q(receiver_id=member_id, is_friend=1, sender__member_email__icontains=search_text) |Q(receiver_id=member_id, is_friend=1, sender__member_nickname__icontains=search_text) | Q(sender_id=member_id,is_friend=-1, receiver__member_email__icontains=search_text) | Q(sender_id=member_id,is_friend=-1, receiver__member_nickname__icontains=search_text) | Q(receiver_id=member_id, is_friend=-1 ,sender__member_email__icontains=search_text) | Q(receiver_id=member_id, is_friend=-1 ,sender__member_nickname__icontains=search_text)) \
-                           .values('id', 'is_friend', 'sender_id', 'receiver_id', 'sender__member_nickname','receiver__member_nickname', )[offset:limit]
-
+                    Q(sender_id=member_id, is_friend=1, receiver__member_nickname__icontains=search_text) | Q(
+                        sender_id=member_id, is_friend=1, receiver__member_email__icontains=search_text) | Q(
+                        receiver_id=member_id, is_friend=1, sender__member_email__icontains=search_text) | Q(
+                        receiver_id=member_id, is_friend=1, sender__member_nickname__icontains=search_text) | Q(
+                        sender_id=member_id, is_friend=-1, receiver__member_email__icontains=search_text) | Q(
+                        sender_id=member_id, is_friend=-1, receiver__member_nickname__icontains=search_text) | Q(
+                        receiver_id=member_id, is_friend=-1, sender__member_email__icontains=search_text) | Q(
+                        receiver_id=member_id, is_friend=-1, sender__member_nickname__icontains=search_text)) \
+                               .values('id', 'is_friend', 'sender_id', 'receiver_id', 'sender__member_nickname',
+                                       'receiver__member_nickname', )[offset:limit]
 
         return Response(teenchin)
+
+
 class MypageTeenchindeleteview(APIView):
     @transaction.atomic
     def delete(self, request, friend_id):
         print(friend_id)
-        Friend.objects.filter(id= friend_id).update(is_friend = 0)
+        Friend.objects.filter(id=friend_id).update(is_friend=0)
 
         return Response('good')
 
     @transaction.atomic
     def patch(self, request, friend_id):
-        Friend.objects.filter(id= friend_id).update(is_friend = 1)
+        Friend.objects.filter(id=friend_id).update(is_friend=1)
 
         return Response('good')
+
 
 class MypageTeenchinLetterAPIview(APIView):
     @transaction.atomic
@@ -454,13 +512,16 @@ class MypageTeenchinLetterAPIview(APIView):
 
         # SentLetter 모델 생성
         SentLetter.objects.create(letter_id=letter.id)
-        Alarm.objects.create(target_id=letter.id, alarm_type=4, sender_id=letter.sender_id, receiver_id= letter.receiver_id)
+        Alarm.objects.create(target_id=letter.id, alarm_type=4, sender_id=letter.sender_id,
+                             receiver_id=letter.receiver_id)
 
         return Response("good")
 
+
 class MapagePaymentView(View):
     def get(self, request):
-        return  render(request, 'mypage/web/my-payment-web.html')
+        return render(request, 'mypage/web/my-payment-web.html')
+
 
 class MypagePayListAPIVIEW(APIView):
 
@@ -469,9 +530,13 @@ class MypagePayListAPIVIEW(APIView):
         offset = (page - 1) * row_count
         limit = page * row_count
 
-        pay = Pay.objects.filter(member_id=member_id, status=1).values('id', 'created_date','member__club__club_name','member__club__club_profile_path','member__club__club_intro','activity__activity_title')[offset:limit]
+        pay = Pay.objects.filter(member_id=member_id, status=1).values('id', 'created_date', 'member__club__club_name',
+                                                                       'member__club__club_profile_path',
+                                                                       'member__club__club_intro',
+                                                                       'activity__activity_title')[offset:limit]
 
         return Response(pay)
+
 
 class MypagePayDeleteAPIVIEW(APIView):
     @transaction.atomic
@@ -480,8 +545,9 @@ class MypagePayDeleteAPIVIEW(APIView):
 
         return Response('good')
 
+
 class MypageReplyView(View):
-    def get(self,request):
+    def get(self, request):
         return render(request, 'mypage/web/my-reply-web.html')
 
 
@@ -493,7 +559,6 @@ class MypageReplyAPIVIEW(APIView):
         limit = page * row_count
         print(status_reply)
 
-
         total_count = 0
 
         total_count += WishlistReply.objects.filter(member_id=member_id, status=1).count()
@@ -504,9 +569,15 @@ class MypageReplyAPIVIEW(APIView):
         total_pages = (total_count + row_count - 1) // row_count
         reply = []
 
-        reply += WishlistReply.objects.filter(member_id=member_id, status=1).values('id','reply_content','created_date','wishlist_id','wishlist__wishlist_content')
-        reply += ActivityReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content','created_date','activity_id', 'activity__activity_title')
-        reply += ClubPostReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content','created_date','club_post_id','club_post__post_title')
+        reply += WishlistReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content',
+                                                                                    'created_date', 'wishlist_id',
+                                                                                    'wishlist__wishlist_content')
+        reply += ActivityReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content',
+                                                                                    'created_date', 'activity_id',
+                                                                                    'activity__activity_title')
+        reply += ClubPostReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content',
+                                                                                    'created_date', 'club_post_id',
+                                                                                    'club_post__post_title')
 
         response_data = {
             'total_pages': total_pages,
@@ -515,17 +586,35 @@ class MypageReplyAPIVIEW(APIView):
         }
 
         if status_reply == 'wish':
-            response_data['reply'] = WishlistReply.objects.filter(member_id=member_id, status=1).values('id','reply_content','created_date','wishlist_id','wishlist__wishlist_content')[offset:limit]
-            response_data['total_pages'] = (WishlistReply.objects.filter(member_id=member_id, status=1).count() + row_count - 1)  //row_count
+            response_data['reply'] = WishlistReply.objects.filter(member_id=member_id, status=1).values('id',
+                                                                                                        'reply_content',
+                                                                                                        'created_date',
+                                                                                                        'wishlist_id',
+                                                                                                        'wishlist__wishlist_content')[
+                                     offset:limit]
+            response_data['total_pages'] = (WishlistReply.objects.filter(member_id=member_id,
+                                                                         status=1).count() + row_count - 1) // row_count
             print(response_data['total_pages'])
 
         elif status_reply == 'post':
-            response_data['reply'] = ClubPostReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content','created_date','club_post_id','club_post__post_title')[offset:limit]
-            response_data['total_pages'] = (ClubPostReply.objects.filter(member_id=member_id, status=1).count()+ row_count - 1)  //row_count
+            response_data['reply'] = ClubPostReply.objects.filter(member_id=member_id, status=1).values('id',
+                                                                                                        'reply_content',
+                                                                                                        'created_date',
+                                                                                                        'club_post_id',
+                                                                                                        'club_post__post_title')[
+                                     offset:limit]
+            response_data['total_pages'] = (ClubPostReply.objects.filter(member_id=member_id,
+                                                                         status=1).count() + row_count - 1) // row_count
 
         elif status_reply == 'ac':
-            response_data['reply'] = ActivityReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content','created_date','activity_id', 'activity__activity_title')[offset:limit]
-            response_data['total_pages'] = (ActivityReply.objects.filter(member_id=member_id, status=1).count()+ row_count - 1)  //row_count
+            response_data['reply'] = ActivityReply.objects.filter(member_id=member_id, status=1).values('id',
+                                                                                                        'reply_content',
+                                                                                                        'created_date',
+                                                                                                        'activity_id',
+                                                                                                        'activity__activity_title')[
+                                     offset:limit]
+            response_data['total_pages'] = (ActivityReply.objects.filter(member_id=member_id,
+                                                                         status=1).count() + row_count - 1) // row_count
 
         else:
 
@@ -558,6 +647,7 @@ class MypageReplyAPIVIEW(APIView):
             }
 
         return Response(response_data)
+
 
 class MypageReplyDeleteAPIVIEW(APIView):
     @transaction.atomic
@@ -779,3 +869,211 @@ class ClubAlarmManageAPI(APIView):
         club_member.save(update_fields=['alarm_status', 'updated_date'])
 
         return Response("success")
+
+
+class MypageClubMainView(View):
+    def get(self, request):
+        member = request.session.get('member')
+
+        club = Club.enabled_objects.get(member_id=member['id'])
+        club_member_count = ClubMember.enabled_objects.filter(club_id=club.id).count()
+
+        club_notice_queryset = ClubNotice.objects.filter(club_id=club.id)
+        club_notice_count = club_notice_queryset.count()
+        # club_notices = club_notice_queryset.values('id', 'notice_title', 'notice_content', 'status')
+
+        waiting_member_count = ClubMember.objects.filter(club_id=club.id, status=-1).count()
+
+        activity_queryset = Activity.objects.filter(club_id=club.id, recruit_end__lt=timezone.now(), status=1)
+        activity_count = activity_queryset.count()
+
+        activity_end_queryset = Activity.objects.filter(club_id=club.id, recruit_end__gt=timezone.now(), status=1)
+        activity_end_count = activity_end_queryset.count()
+
+        insite = {
+            'club_member_count': club_member_count,
+            'club_notice_count': club_notice_count,
+            'activity_count': activity_count,
+            'waiting_member_count': waiting_member_count,
+            'activity_end_count': activity_end_count
+        }
+
+        activities_queryset = Activity.enabled_objects.filter(club_id=club.id, activity_end__gt=timezone.now(),
+                                                              status=1)
+        activities_count = activities_queryset.count()
+
+        notices = Notice.objects.filter(notice_type=0).values('id', 'notice_title', 'created_date')[:4]
+        for notice in notices:
+            notice['created_date'] = notice['created_date'].strftime("%Y.%m.%d")
+
+        club_notices = ClubNotice.objects.filter(club_id=club.id, status=1).values('id', 'notice_title',
+                                                                                   'created_date')[:4]
+        for club_notice in club_notices:
+            club_notice['created_date'] = club_notice['created_date'].strftime("%Y.%m.%d")
+
+        context = {
+            'insite': insite,
+            'activities_count': activities_count,
+            'notices': notices,
+            'club_notices': club_notices
+        }
+        return render(request, 'mypage/web/management-club-web.html', context)
+
+
+class MypageActivityListAPI(APIView):
+    def post(self, request):
+        member = request.session.get('member')
+        sort = request.data.get('sort', '최신 개설순')
+        page = request.data.get('get', 1)
+
+        row_count = 4
+        # offset = (page - 1) * row_count
+        # limit = page * row_count
+
+        weekday_translation = {
+            'Mon': '월',
+            'Tue': '화',
+            'Wed': '수',
+            'Thu': '목',
+            'Fri': '금',
+            'Sat': '토',
+            'Sun': '일'
+        }
+        sort_field = '-created_date'
+        if sort == '최신 개설순':
+            sort_field = '-created_date'
+        elif sort == '활동 일시순':
+            sort_field = '-activity_start'
+        elif sort == '인기순':
+            pass
+
+        club = Club.enabled_objects.get(member_id=member['id'])
+        activities_queryset = Activity.enabled_objects.filter(club_id=club.id, activity_end__gt=timezone.now(),
+                                                              status=1)
+        activities = activities_queryset.values('id', 'activity_title', 'activity_start', 'created_date').order_by(
+            sort_field)
+        for activity in activities:
+            activity_start = activity['activity_start']
+            create_date = activity['created_date']
+            activity['activity_start'] = activity_start.strftime("%m월 %d일") + '(' + weekday_translation[
+                activity_start.strftime('%a')] + ')' + activity_start.strftime(" %H:%M")
+            activity['created_date'] = create_date.strftime("%m월 %d일") + '(' + weekday_translation[
+                create_date.strftime('%a')] + ')' + create_date.strftime(" %H:%M")
+        return Response(activities)
+
+
+class MypageMemberView(View):
+    def get(self, request):
+        return render(request, 'mypage/web/management-club-member-web.html')
+
+
+class MypageMemberFilerAPI(APIView):
+    def post(self, request):
+        member = request.session.get('member')
+        filter = request.data.get('filter', '전체 상태')
+        search = request.data.get('search', '')
+        club = Club.enabled_objects.get(member_id=member['id'])
+
+        print(filter, search)
+        filter_field = Q(club_id=club.id)
+        if search:
+            filter_field &= Q(member__member_email__contains=search) | Q(member__member_nickname__contains=search)
+        if filter == '가입대기':
+            filter_field &= Q(status=-1)
+        elif filter == '가입중':
+            filter_field &= Q(status=1)
+
+        club_members_queryset = ClubMember.objects.filter(filter_field).exclude(status=0)
+        club_members = club_members_queryset.values('id', 'member__member_nickname', 'member__member_email',
+                                                    'member__member_gender',
+                                                    'member__member_address', 'member__created_date', 'status',
+                                                    'member')
+        club_members_count = club_members_queryset.count()
+
+        for club_member in club_members:
+            club_member['member__created_date'] = club_member['member__created_date'].strftime("%Y-%m-%d")
+            member_favorite_categories = MemberFavoriteCategory.objects.filter(member_id=club_member['member']).values(
+                'category__category_name')
+            club_member['member_favorite_categories'] = list(member_favorite_categories)
+            club_member['category_count'] = len(club_member['member_favorite_categories']) - 1
+
+            activities = ActivityMember.objects.filter(member_id=club_member['member']).values(
+                'activity__activity_title')
+            club_member['activities'] = list(activities)
+        owner_data = member
+        print(owner_data)
+        data = {
+            'clubMembersCount': club_members_count,
+            'ownerData': owner_data,
+            'clubMembers': club_members,
+        }
+        return Response(data)
+
+
+class MypageMemberStatusAPI(APIView):
+    def delete(self, request):
+        member = request.session.get('member')
+        club = Club.enabled_objects.get(member_id=member['id'])
+        status_update_member = request.data.get('member_id')
+        ClubMember.objects.filter(club_id=club.id, id=status_update_member).update(status=0)
+
+        return Response('ok')
+
+    def patch(self, request):
+        member = request.session.get('member')
+        club = Club.enabled_objects.get(member_id=member['id'])
+        status_update_member = request.data.get('member_id')
+        ClubMember.objects.filter(club_id=club.id, id=status_update_member).update(status=1)
+
+        return Response('ok')
+
+
+class MypageNoticeView(View):
+    def get(self, request):
+        member = request.session.get('member')
+        club = Club.enabled_objects.get(member_id=member['id'])
+        club_notices = ClubNotice.objects.filter(club_id=club.id, status=1).values('id', 'notice_title',
+                                                                                   'notice_content', 'created_date')
+        for club_notice in club_notices:
+            club_notice['created_date'] = club_notice['created_date'].strftime("%Y.%m.%d")
+
+        context = {'clubNotices': club_notices}
+
+        return render(request, 'mypage/web/management-club-notice-web.html', context)
+
+
+class MypageNoticeAPI(APIView):
+    def delete(self, request):
+        del_list = request.data['del_list']
+        member = request.session.get('member')
+        club = Club.enabled_objects.get(member_id=member['id'])
+        for del_item in del_list:
+            ClubNotice.objects.filter(id=del_item, club_id=club.id, status=1).update(status=0)
+
+        return Response('ok')
+
+
+class MypageNoticeCreateView(View):
+    def get(self, request):
+        return render(request, 'mypage/web/management-club-notice-write-web.html')
+
+    def post(self, request):
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        member = request.session.get('member')
+        club = Club.enabled_objects.get(member_id=member['id'])
+
+        data = {
+            'club': club,
+            'notice_title': title,
+            'notice_content': content
+        }
+
+        ClubNotice.objects.create(**data)
+
+        return redirect('/member/mypage-notice/')
+
+
+class MypageSettingView(View):
+    def get(self, request):
+        return render(request, 'mypage/web/management-club-setting-web.html')

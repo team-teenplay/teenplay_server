@@ -5,7 +5,8 @@ from member.views import MemberLoginWebView, MemberJoinWebView, MypageInfoWebVie
     MypageAlramView, MypageAlramAPIView, MypageAlramDeleteAPIView, MypageTeenchinview, MypageTeenchinAPIview, \
     MemberAlarmCountAPI, MypageTeenchindeleteview, MypageTeenchinLetterAPIview, MapagePaymentView, MypagePayListAPIVIEW, \
     MypagePayDeleteAPIVIEW, MypageReplyView, MypageReplyAPIVIEW, MypageReplyDeleteAPIVIEW, TeenChinAPI, \
-    ClubAlarmManageAPI
+    ClubAlarmManageAPI, MypageClubMainView, MypageActivityListAPI, MypageMemberView, MypageNoticeView, MypageNoticeAPI, \
+    MypageNoticeCreateView, MypageSettingView, MypageMemberFilerAPI, MypageMemberStatusAPI
 
 app_name = 'member'
 
@@ -18,9 +19,9 @@ urlpatterns = [
     path('mypage-apiletter/', MypageWriteAPIWebView.as_view(), name='mypage-apiletter'),
     path('mypage-letter/<int:member_id>/<int:page>/', MypageListAPIWebView.as_view(), name='mypage-apilist'),
     path('mypage-letter/<int:letter_id>/', MypageDeleteAPIWebView.as_view(), name='mypage-apidelete'),
-    path('mypage-letterapi/' , MypageCheckAPIWebViewMa.as_view(), name='mypage-apicheck'),
+    path('mypage-letterapi/', MypageCheckAPIWebViewMa.as_view(), name='mypage-apicheck'),
     path('mypage-alram/', MypageAlramView.as_view(), name='mypage-alram'),
-    path('mypage-alram/<int:member_id>/<int:page>/',MypageAlramAPIView.as_view(), name='mypage-apialram'),
+    path('mypage-alram/<int:member_id>/<int:page>/', MypageAlramAPIView.as_view(), name='mypage-apialram'),
     path('mypage-alram/<int:alram_id>/', MypageAlramDeleteAPIView.as_view(), name='mypage-apideletealram'),
     path('mypage-teenchin/', MypageTeenchinview.as_view(), name='mypage-teenchin'),
     path('mypage-teenchin/<int:member_id>/<int:page>/', MypageTeenchinAPIview.as_view(), name='mypage-apiteenchin'),
@@ -35,6 +36,14 @@ urlpatterns = [
     path('mypage-reply/<int:member_id>/<int:page>/', MypageReplyAPIVIEW.as_view(), name="mypage-apireply"),
     path('mypage-reply/<str:reply_id>/', MypageReplyDeleteAPIVIEW.as_view(), name="mypage-deletereply"),
     path('teenchin/api/', TeenChinAPI.as_view(), name="teenchin-api"),
-    path('club-alarm/api/', ClubAlarmManageAPI.as_view(), name="club-alarm-manage-api")
+    path('club-alarm/api/', ClubAlarmManageAPI.as_view(), name="club-alarm-manage-api"),
+    path('mypage-club/', MypageClubMainView.as_view(), name="mypage-club"),
+    path('mypage-activity-list/api/', MypageActivityListAPI.as_view(), name="mypage-activity-list-api"),
+    path('mypage-member/', MypageMemberView.as_view(), name="mypage-member"),
+    path('mypage-member-filter/api/', MypageMemberFilerAPI.as_view(), name="mypage-member-filter-api"),
+    path('mypage-member-status/api/', MypageMemberStatusAPI.as_view(), name="mypage-member-status-api"),
+    path('mypage-notice/', MypageNoticeView.as_view(), name="mypage-notice"),
+    path('mypage-notice/api/', MypageNoticeAPI.as_view(), name="mypage-notice-api"),
+    path('mypage-notice-write/', MypageNoticeCreateView.as_view(), name="mypage-create"),
+    path('mypage-setting/', MypageSettingView.as_view(), name="mypage-setting"),
 ]
-
