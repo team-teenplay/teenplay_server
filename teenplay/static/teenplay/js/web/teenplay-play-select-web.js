@@ -16,7 +16,8 @@ let likeBtns = document.querySelectorAll(".play-like-btn");
 let emptyHeart = document.querySelectorAll(".play-like-icon.empty");
 let fullHeart = document.querySelectorAll(".play-like-icon.full");
 
-const showList = (teenplayList) => {
+
+const addList = (teenplayList) => {
     if('id' in teenplayList){
         if(teenplayList.member_like){
             let text = `
@@ -51,7 +52,7 @@ const showList = (teenplayList) => {
                                 </div>
                                 <div class="play-like-info-wrap">
                                     <div class="play-like-wrap">
-                                        <button class="play-like-btn" value="${teenplayList.member_like}">
+                                        <button class="play-like-btn" value="${teenplayList.member_like}" name="${teenplayList.id}">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:none">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                                             </svg>
@@ -152,7 +153,7 @@ const showList = (teenplayList) => {
                                 </div>
                                 <div class="play-like-info-wrap">
                                     <div class="play-like-wrap">
-                                        <button class="play-like-btn" value="${teenplayList.id}">
+                                        <button class="play-like-btn" value="${teenplayList.member_like}" name="${teenplayList.id}">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:block">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                                             </svg>
@@ -252,37 +253,6 @@ slideContainer.addEventListener('click', (e)=>{
     }
 })
 
-// 일시정지, 재생 관련 버튼
-// false일 때 클릭 시 재생, true일 때 클릭 시 일시정지
-// globalThis.flags = new Array(videos.length);
-//
-// videos.forEach((video, i) => {
-//     video.addEventListener("click", (e) => {
-//         if (!globalThis.flags[i]) {
-//             globalThis.flags[i] = true;
-//             pauseIcons[i].style.display = "none";
-//             playIcons[i].style.display = "block";
-//             e.target.pause();
-//         } else {
-//             globalThis.flags[i] = false;
-//             pauseIcons[i].style.display = "block";
-//             playIcons[i].style.display = "none";
-//             e.target.play();
-//         }
-//     });
-// });
-
-
-// 재생 중이 아닌 영상은 일시정지로 시작
-// videoWraps.forEach((videoWrap, i) => {
-//     if (!videoWrap.classList.contains("playing")) {
-//         videos[i].autoplay = false;
-//     } else {
-//         videos[i].autoplay = true;
-//     }
-// });
-
-
 // 동적요소 추가 시 음소거 관련 기능
 slideContainer.addEventListener('click', (e)=> {
     if(e.target.classList.contains('mute') || e.target.closest('.mute')){
@@ -313,6 +283,247 @@ slideContainer.addEventListener('click', (e)=> {
 
     }
 })
+
+
+// 스크롤로 이전/다음 틴플레이 이동
+
+function slidePrev(idx) {
+    slideContainer.style.transition = `all 0.5s ease-in`;
+    slideContainer.style.transform = `translateY(-${window.innerHeight * idx}px)`;
+    videoWraps[idx + 1].classList.remove("playing");
+    videoWraps[idx].classList.add("playing");
+}
+function slidePrevNext(idx) {
+    slideContainer.style.transition = `all 0.5s ease-in`;
+    // slideContainer.style.transform = `translateY(${window.innerHeight}px)`;
+    slideContainer.style.transform = `translateY(${0}px)`;
+    videoWraps[idx+1].classList.remove("playing");
+    videoWraps[idx].classList.add("playing");
+}
+
+function slideNext(idx) {
+    slideContainer.style.transition = `all 0.5s ease-in`;
+    slideContainer.style.transform = `translateY(-${window.innerHeight * idx}px)`;
+    videoWraps[idx - 1].classList.remove("playing");
+    videoWraps[idx].classList.add("playing");
+}
+
+// 스크롤 이벤트 제한
+function manageScroll(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    return;
+}
+
+function updateVideoWraps(){
+    videoWraps = document.querySelectorAll(".play-each")
+    pauseIcons = document.querySelectorAll(".pause");
+    playIcons = document.querySelectorAll(".restart");
+    videos = document.querySelectorAll(".play-video");
+    videoInfos = document.querySelectorAll(".play-info-wrap");
+    controlButtons = document.querySelectorAll(".play-control-wrap");
+    progressBars = document.querySelectorAll(".progress-bar-now");
+    muteIcons = document.querySelectorAll(".mute");
+    unmuteIcons = document.querySelectorAll(".unmute");
+    likeBtns = document.querySelectorAll(".play-like-btn");
+    emptyHeart = document.querySelectorAll(".play-like-icon.empty");
+    fullHeart = document.querySelectorAll(".play-like-icon.full");
+    likeInfoWrap = document.querySelector('.play-like-info-wrap')
+
+    for (let i = 0; i < videoWraps.length; i++) {
+        if (videoWraps[i].classList.contains("playing")) {
+            idx = i;
+            break;
+        }
+    }
+    videoWraps.forEach((videoWrap, i) => {
+        if (!videoWrap.classList.contains("playing")) {
+            videos[i].autoplay = false;
+        } else {
+            videos[i].autoplay = true;
+        }
+    });
+
+    videos.forEach((video, i) => {
+        video.addEventListener("timeupdate", (e) => {
+            let percent = (e.target.currentTime / e.target.duration) * 100;
+            progressBars[i].style.width = `${percent}%`;
+        });
+    });
+}
+
+const addHeightFunction = async () => {
+    let currentHeight = parseInt(window.getComputedStyle(slideContainer).height);
+    // 현재 뷰포트의 높이를 가져오기
+    let viewportHeight = window.innerHeight;
+    // 기존 높이에 674px (953px)를 더한 후 이를 vh 단위로 변환
+    let newHeightInVh = ((currentHeight + 953) / viewportHeight) * 100;
+    //  let newHeightInVh = window.innerHeight
+    // 새로운 높이를 설정
+    slideContainer.style.height = newHeightInVh + "vh";
+    // slideContainer.style.height += newHeightInVh;
+}
+
+
+
+// 글자 Text 추가 함수 (아래로 내리기)
+const addTextFunction = async ()=>{
+    const delayText = await teenplayClubService.getList(clubId, page, teenplayClickId,addList)
+    addHeightFunction()
+    if(delayText){
+        slideContainer.innerHTML += delayText
+        updateVideoWraps()
+        defaultCheck.add(page)
+    }
+}
+
+// 글자 Text 추가 함수 (위로 올리기)
+const downTextFunction = async () => {
+    const downDelayText = await teenplayClubService.getList(clubId, page, teenplayClickId,addList)
+    await addHeightFunction()
+    if(downDelayText){
+        const playEach = document.querySelector('.play-each.playing')
+        document.querySelector('.play-each.playing').insertAdjacentHTML('beforebegin', downDelayText)
+        updateVideoWraps()
+        defaultCheck.add(page)
+
+        const newElementHeight = playEach.previousElementSibling.offsetHeight;
+
+        slideContainer.style.transition = 'none'
+        slideContainer.style.transform = `translateY(-${newElementHeight}px)`
+
+        setTimeout(() => {
+            slideContainer.style.transition = 'all 0.5s ease-in'
+            slideContainer.style.transform = `translateY(${0}px)`
+            videoWraps[idx+1].classList.remove("playing");
+            videoWraps[0].classList.add("playing");
+        },50)
+
+        // idx--;
+        // videos[idx].pause();
+        // globalThis.flags[idx] = true;
+        // pauseIcons[idx].style.display = "none";
+        // playIcons[idx].style.display = "block";
+        // videos[idx].play();
+        // globalThis.flags[idx] = false;
+        // pauseIcons[idx].style.display = "block";
+        // playIcons[idx].style.display = "none";
+    }
+}
+
+// 틴플레이 휠 이동에 따른 액션
+
+let idx = 0;
+let check = true;
+let defaultPage = page
+let defaultMaxCount = maxCount
+let defaultCheck = new Set()
+
+
+slideWrap.addEventListener("wheel", async (e) => {
+    const closestPlayEach = e.target.closest('.play-each');
+    if (closestPlayEach) {
+        // '.play-each' 내부에서 이벤트가 발생
+        const closestPlayItem = closestPlayEach.closest('.play-item');
+        // 이제 'closestPlayItem'을 사용하여 필요한 작업을 수행
+    }
+
+    manageScroll(e);
+    if (!check) return;
+    check = false;
+
+    if(e.deltaY >0){
+        page = page + 1
+        if(!defaultCheck.has(page) && page > defaultPage){
+            if(page <= defaultMaxCount){
+                await addTextFunction()
+            }
+        }
+        setTimeout(() => {
+            check = true;
+        }, 800);
+        if (idx == videoWraps.length - 1) {
+            return;
+        }
+        slideNext(idx + 1);
+        videos[idx].pause();
+        globalThis.flags[idx] = true;
+        pauseIcons[idx].style.display = "none";
+        playIcons[idx].style.display = "block";
+        idx++;
+        videos[idx].play();
+        globalThis.flags[idx] = false;
+        pauseIcons[idx].style.display = "block";
+        playIcons[idx].style.display = "none";
+    } else {
+        page = page - 1
+        if (!defaultCheck.has(page) && page < defaultPage){
+            if(page >= 1){
+                await downTextFunction()
+                // await slidePrevNext(idx);
+                // videos[idx].pause();
+                // globalThis.flags[idx] = true;
+                // pauseIcons[idx].style.display = "none";
+                // playIcons[idx].style.display = "block";
+                // idx--;
+                // videos[idx].play();
+                // globalThis.flags[idx] = false;
+                // pauseIcons[idx].style.display = "block";
+                // playIcons[idx].style.display = "none";
+            }
+        }else{
+            slidePrev(idx - 1);
+        }
+        setTimeout(() => {
+            check = true;
+        }, 800);
+        if (idx == 0) {
+            return;
+        }
+        // slidePrev(idx - 1);
+        videos[idx].pause();
+        globalThis.flags[idx] = true;
+        pauseIcons[idx].style.display = "none";
+        playIcons[idx].style.display = "block";
+        idx--;
+        videos[idx].play();
+        globalThis.flags[idx] = false;
+        pauseIcons[idx].style.display = "block";
+        playIcons[idx].style.display = "none";
+    }
+});
+
+
+// 좋아요 아이콘 클릭 시 반영
+slideContainer.addEventListener('click', async (e)=> {
+    const button = e.target.closest('.play-like-btn')
+
+    if(button){
+        if(memberSessionId == 0){
+            window.location.href = '/member/login/'
+            return;
+        }
+        let emptyHeartIcon = button.querySelector('.play-like-icon.empty')
+        let fullHeartIcon = button.querySelector(".play-like-icon.full")
+        let displayStyle = window.getComputedStyle(emptyHeartIcon).display
+        emptyHeartIcon.style.display = displayStyle === 'none' ? 'block':'none';
+        fullHeartIcon.style.display = displayStyle === 'none'? 'none': 'block';
+        let buttonName = button.name
+        let teenplayId = buttonName;
+
+        const videoLike = await teenplayClubService.likeTeenplay(teenplayId, memberSessionId, displayStyle)
+        const likeCountContainer = button.closest('.play-like-info-wrap').querySelector('.play-like-count')
+        if(likeCountContainer){
+            likeCountContainer.innerText = videoLike.totalLikeCount
+        }
+    }
+})
+
+
+
+
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>초기 작성값
 
 // 음소거 관련 버튼
 // muteIcons.forEach((mute) => {
@@ -351,180 +562,34 @@ slideContainer.addEventListener('click', (e)=> {
 //     });
 // });
 
-// 스크롤로 이전/다음 틴플레이 이동
 
-function slidePrev(idx) {
-    slideContainer.style.transition = `all 0.5s ease-in`;
-    slideContainer.style.transform = `translateY(-${window.innerHeight * idx}px)`;
-    videoWraps[idx + 1].classList.remove("playing");
-    videoWraps[idx].classList.add("playing");
-}
-
-function slideNext(idx) {
-    slideContainer.style.transition = `all 0.5s ease-in`;
-    slideContainer.style.transform = `translateY(-${window.innerHeight * idx}px)`;
-    videoWraps[idx - 1].classList.remove("playing");
-    videoWraps[idx].classList.add("playing");
-}
-
-
-
-// 스크롤 이벤트 제한
-function manageScroll(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    return;
-}
+// 일시정지, 재생 관련 버튼
+// false일 때 클릭 시 재생, true일 때 클릭 시 일시정지
+// globalThis.flags = new Array(videos.length);
+//
+// videos.forEach((video, i) => {
+//     video.addEventListener("click", (e) => {
+//         if (!globalThis.flags[i]) {
+//             globalThis.flags[i] = true;
+//             pauseIcons[i].style.display = "none";
+//             playIcons[i].style.display = "block";
+//             e.target.pause();
+//         } else {
+//             globalThis.flags[i] = false;
+//             pauseIcons[i].style.display = "block";
+//             playIcons[i].style.display = "none";
+//             e.target.play();
+//         }
+//     });
+// });
 
 
-// 틴플레이 휠 이동에 따른 액션
-
-let idx = 0;
-let check = true;
-let page = 1
-slideWrap.addEventListener("wheel", (e) => {
-    manageScroll(e);
-    if (!check) return;
-    check = false;
-
-    if(e.deltaY >0){
-        console.log('down')
-        // 데이터가 있고 내 화면에 있는지 확인할 것 (확인 후 더해야 함)
-        teenplayClubService.getList(clubId, ++page, teenplayClickId,showList).then((text) => {
-            if(text && page >=1 ){
-                slideContainer.innerHTML += text
-                console.log(page)
-                let currentHeight = parseInt(window.getComputedStyle(slideContainer).height);
-                // 현재 뷰포트의 높이를 가져오기
-                let viewportHeight = window.innerHeight;
-                // 기존 높이에 674px (953px)를 더한 후 이를 vh 단위로 변환
-                let newHeightInVh = ((currentHeight + 953) / viewportHeight) * 100;
-                // 새로운 높이를 설정
-                slideContainer.style.height = newHeightInVh + "vh";
-                updateVideoWraps()
-            }
-        })
-        setTimeout(() => {
-            check = true;
-        }, 800);
-        if (idx == videoWraps.length - 1) {
-            return;
-        }
-        slideNext(idx + 1);
-        videos[idx].pause();
-        globalThis.flags[idx] = true;
-        pauseIcons[idx].style.display = "none";
-        playIcons[idx].style.display = "block";
-        idx++;
-        videos[idx].play();
-        globalThis.flags[idx] = false;
-        pauseIcons[idx].style.display = "block";
-        playIcons[idx].style.display = "none";
-    } else {
-        console.log('up')
-        page--
-        if(page < 1){
-            // const currentPlayingTag = document.querySelector('.play-item');
-            const currentPlayingTag = document.querySelector('.play-each.playing');
-            teenplayClubService.getList(clubId, page, teenplayClickId, showList).then((text)=> {
-                if(text){
-                    // currentPlayingTag.insertAdjacentHTML('afterbegin', text)
-                    currentPlayingTag.insertAdjacentHTML('beforebegin', text)
-                    let currentHeight = parseInt(window.getComputedStyle(slideContainer).height);
-                    // 현재 뷰포트의 높이를 가져오기
-                    let viewportHeight = window.innerHeight;
-                    // 기존 높이에 674px (953px)를 더한 후 이를 vh 단위로 변환
-                    let newHeightInVh = ((currentHeight + 953) / viewportHeight) * 100;
-                    // 새로운 높이를 설정
-                    slideContainer.style.height = newHeightInVh + "vh";
-                    updateVideoWraps()
-                }
-
-            })
-        }
-        // page--
-        setTimeout(() => {
-            check = true;
-        }, 800);
-        if (idx == 0) {
-            return;
-        }
-
-        slidePrev(idx - 1);
-        videos[idx].pause();
-        globalThis.flags[idx] = true;
-        pauseIcons[idx].style.display = "none";
-        playIcons[idx].style.display = "block";
-        idx--;
-        videos[idx].play();
-        globalThis.flags[idx] = false;
-        pauseIcons[idx].style.display = "block";
-        playIcons[idx].style.display = "none";
-    }
-
-    function updateVideoWraps(){
-        videoWraps = document.querySelectorAll(".play-each")
-        pauseIcons = document.querySelectorAll(".pause");
-        playIcons = document.querySelectorAll(".restart");
-        videos = document.querySelectorAll(".play-video");
-        videoInfos = document.querySelectorAll(".play-info-wrap");
-        controlButtons = document.querySelectorAll(".play-control-wrap");
-        progressBars = document.querySelectorAll(".progress-bar-now");
-        muteIcons = document.querySelectorAll(".mute");
-        unmuteIcons = document.querySelectorAll(".unmute");
-        likeBtns = document.querySelectorAll(".play-like-btn");
-        emptyHeart = document.querySelectorAll(".play-like-icon.empty");
-        fullHeart = document.querySelectorAll(".play-like-icon.full");
-        likeInfoWrap = document.querySelector('.play-like-info-wrap')
-
-        for (let i = 0; i < videoWraps.length; i++) {
-            if (videoWraps[i].classList.contains("playing")) {
-                idx = i;
-                break;
-            }
-        }
-        videoWraps.forEach((videoWrap, i) => {
-            if (!videoWrap.classList.contains("playing")) {
-                videos[i].autoplay = false;
-            } else {
-                videos[i].autoplay = true;
-            }
-        });
-
-        videos.forEach((video, i) => {
-            video.addEventListener("timeupdate", (e) => {
-                let percent = (e.target.currentTime / e.target.duration) * 100;
-                progressBars[i].style.width = `${percent}%`;
-            });
-        });
-    }
-});
-
-
-// 좋아요 아이콘 클릭 시 반영
-slideContainer.addEventListener('click', async (e)=> {
-    const button = e.target.closest('.play-like-btn')
-
-    if(button){
-        if(memberSessionId == 0){
-            window.location.href = '/member/login/'
-            return;
-        }
-        let emptyHeartIcon = button.querySelector('.play-like-icon.empty')
-        let fullHeartIcon = button.querySelector(".play-like-icon.full")
-        let displayStyle = window.getComputedStyle(emptyHeartIcon).display
-        emptyHeartIcon.style.display = displayStyle === 'none' ? 'block':'none';
-        fullHeartIcon.style.display = displayStyle === 'none'? 'none': 'block';
-
-        let teenplayId = button.value;
-
-        const videoLike = await teenplayClubService.likeTeenplay(teenplayId, memberSessionId, displayStyle)
-        const likeCountContainer = button.closest('.play-like-info-wrap').querySelector('.play-like-count')
-        if(likeCountContainer){
-            likeCountContainer.innerText = videoLike.totalLikeCount
-        }
-    }
-})
-
-
+// 재생 중이 아닌 영상은 일시정지로 시작
+// videoWraps.forEach((videoWrap, i) => {
+//     if (!videoWrap.classList.contains("playing")) {
+//         videos[i].autoplay = false;
+//     } else {
+//         videos[i].autoplay = true;
+//     }
+// });
 
