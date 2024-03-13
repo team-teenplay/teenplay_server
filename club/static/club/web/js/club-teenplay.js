@@ -3,6 +3,7 @@ const teenplayViewList = document.querySelector('.club-teenplay-wrap')
 const teenplayMoreButtonWrap = document.querySelector('.tp-show-more-btn-wrap')
 const teenplayWrap= document.querySelector('.club-teenplay-contents-box')
 const teenplayAddButton = document.querySelector('.tp-show-more-btn')
+const resetTeenplayForm = document.getElementById('teenplay-modal-reset-form')
 
 
 // 시간 변환 함수
@@ -287,18 +288,6 @@ finalSaveButton.addEventListener("click", async () => {
             tpModalCloseBtn.click();
             clubDetailService.getTeenplayList(clubId, page).then((teenplayInfo) => {
                 teenplayWrap.innerHTML = ''
-                // 파일 업로드 초기화
-                fileInput.value = "";
-                afterUploadModal.classList.remove("appear");
-                afterUploadModal.classList.add("disappear");
-                setTimeout(() => {
-                    afterUploadModal.classList.add("hidden");
-                    beforeUploadModal.classList.remove("hidden");
-                    beforeUploadModal.classList.remove("disappear");
-                    beforeUploadModal.classList.add("appear");
-                }, 501);
-                fileSizeInfo.innerText = "";
-                fileNameInfo.innerText = "";
                 // 틴플레이 화면 초기화
                 let page = 1
                 let teenplayFirstInfo = teenplayInfo.teenplay_list
@@ -328,4 +317,58 @@ finalSaveButton.addEventListener("click", async () => {
 });
 
 
+// 틴플레이 업로드 리셋 함수
+function teenplayResetFunction() {
+    resetTeenplayForm.reset()
+    tpUploadModal.style.display = "block";
+    thumbnailInput.value = "";
+    uploadedThumbnailInfo.classList.remove("appear");
+    uploadedThumbnailInfo.classList.add("disappear");
+    setTimeout(() => {
+        uploadedThumbnailInfo.classList.add("hidden");
+        thumbnailUploadBox.classList.remove("hidden");
+        thumbnailUploadBox.classList.remove("disappear");
+        thumbnailUploadBox.classList.add("appear");
+    }, 501);
+    thumbnailSizeInfo.innerText = "";
+    thumbnailNameInfo.innerText = "";
 
+    fileInput.value = "";
+    afterUploadModal.classList.remove("appear");
+    afterUploadModal.classList.add("disappear");
+    setTimeout(() => {
+        afterUploadModal.classList.add("hidden");
+        beforeUploadModal.classList.remove("hidden");
+        beforeUploadModal.classList.remove("disappear");
+        beforeUploadModal.classList.add("appear");
+    }, 501);
+    fileSizeInfo.innerText = "";
+    fileNameInfo.innerText = "";
+
+    if (!finalSaveButton.classList.contains("disabled")) {
+        finalSaveButton.classList.add("disabled");
+    }
+
+    if (teenPlayTextInput.value.length >= 10 && thumbnailInput.files.length) {
+        finalSaveButton.classList.remove("disabled");
+    } else {
+        if (!finalSaveButton.classList.contains("disabled")) {
+            finalSaveButton.classList.add("disabled");
+        }
+    }
+
+    if (teenPlayTextInput.value.length >= 10) {
+        finalSaveButton.classList.remove("disabled");
+    } else {
+        if (!finalSaveButton.classList.contains("disabled")) {
+            finalSaveButton.classList.add("disabled");
+        }
+    }
+}
+
+const tpUploadBefore = document.getElementsByName('teenplay-upload-before')
+const tpUploadAfter = document.getElementsByName('teenplay-upload-after')
+tpUploadBtn.addEventListener('click', () =>{
+    console.log(10202)
+    teenplayResetFunction()
+})
