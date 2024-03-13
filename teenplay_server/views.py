@@ -2,6 +2,8 @@ import math
 
 from django.db import transaction
 from django.db.models import Q, Count, F
+from django.db.models.functions import Concat
+from django.forms import CharField
 from django.shortcuts import render, redirect
 from django.views import View
 from rest_framework.pagination import PageNumberPagination
@@ -167,22 +169,33 @@ class AdminWishlistView(View):
 class AdminWishlistAPI(APIView):
     def get(self, request, page):
         order = request.GET.get('order', 'recent')
-        category = request.GET.get('category')
-        keyword = request.GET.get('keyword')
+        category = request.GET.get('category', '')
+        type = request.GET.get('type', '')
+        keyword = request.GET.get('keyword', '')
 
         row_count = 10
 
         offset = (page - 1) * row_count
         limit = page * row_count
 
+        condition = Q(member__status=1, status=1)
+
         if category:
-            total = Wishlist.objects.filter(member__status=1, status=1, is_private=category).all().count()
+            if category == '1':
+                condition &= Q(is_private=1)
 
-        elif keyword:
-            total = Wishlist.objects.filter(member__status=1, status=1, member_nickname__contains=keyword).all().count()
+            elif category == '0':
+                condition &= Q(is_private=0)
 
-        else:
-            total = Wishlist.objects.filter(member__status=1, status=1, ).all().count()
+        if type:
+            if keyword:
+                if type == 'p':
+                    condition &= Q(member__member_nickname__contains=keyword)
+
+                elif type == 'w':
+                    condition &= Q(wishlist_content__contains=keyword)
+
+        total = Wishlist.objects.filter(condition).all().count()
 
         page_count = 5
 
@@ -217,14 +230,7 @@ class AdminWishlistAPI(APIView):
             'category__category_name'
         ]
 
-        if category:
-            wishlist = Wishlist.objects.filter(member__status=1, status=1, is_private=category).values(*columns).order_by(ordering)
-
-        elif keyword:
-            wishlist = Wishlist.objects.filter(member__status=1, status=1, member_nickname__contains=keyword).values(*columns).order_by(ordering)
-
-        else:
-            wishlist = Wishlist.objects.filter(member__status=1, status=1).values(*columns).order_by(ordering)
+        wishlist = Wishlist.objects.filter(condition).values(*columns).order_by(ordering)
 
         wishlist_like = wishlist.values('member__id').annotate(wishlist_like_count=Count('wishlistlike'))
         wishlist_reply = wishlist.values('member__id').annotate(wishlist_reply_count=Count('wishlistreply'))
@@ -342,7 +348,6 @@ class AdminNoticeUpdateAPI(APIView):
     def patch(self, request, notice_id):
         status = 0
         updated_date = timezone.now()
-        print('왜 안돼')
 
         notice = Notice.objects.get(id=notice_id)
         notice.status = status
@@ -366,7 +371,6 @@ class AdminNoticeWriteView(View):
             'notice_content': data['notice_content'],
             'notice_type': data['selection']
         }
-        print(data)
 
         Notice.objects.create(**data)
         return redirect('/admin/notice/')
@@ -376,6 +380,113 @@ class AdminNoticeWriteView(View):
 class AdminCommentView(View):
     def get(self, request):
         return render(request, 'admin/web/comment-web.html')
+
+
+# 관리자 댓글 데이터
+class AdminCommentAPI(APIView):
+    def get(self, request, page):
+        order = request.GET.get('order', 'recent')
+        category = request.GET.get('category', '')
+        type = request.GET.get('type', '')
+        keyword = request.GET.get('keyword', '')
+
+        row_count = 10
+
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        condition = Q(status=1) | Q(status=-1)
+
+        if category:
+            condition &= Q(status=category)
+
+        if type:
+            if keyword:
+                # 작성자
+                if type == 'w':
+                    condition &= Q(member_nickname__contains=keyword)
+
+                # 포스트
+                elif type == 'p':
+                    condition &= Q(activity__activity_title__contains=keyword) & Q(wishlist__wishlist_content__contains=keyword) & Q(club_post__post_title__contains=keyword)
+
+        total = Member.objects.filter(condition).all().count()
+
+        page_count = 5
+
+        end_page = math.ceil(page / page_count) * page_count
+        start_page = end_page - page_count + 1
+        real_end = math.ceil(total / row_count)
+        end_page = real_end if end_page > real_end else end_page
+
+        if end_page == 0:
+            end_page = 1
+
+        context = {
+            'total': total,
+            'order': order,
+            'start_page': start_page,
+            'end_page': end_page,
+            'real_end': real_end,
+            'page_count': page_count,
+        }
+
+        ordering = '-id'
+        if order == 'popular':
+            ordering = '-post_read_count'
+
+        columns = [
+            'id',
+            'member_nickname',
+            'status'
+        ]
+
+        # member = Member.objects.filter(condition).values(*columns).order_by(ordering)
+        #
+        # post_title = member.values('id') \
+        #     .annotate(activity_title=F('activityreply__activity__activity_title'),
+        #               wishlist_content=F('wishlist__wishlist_content'),
+        #               post_title=F('clubpostreply__club_post__post_title'))
+        # print(post_title)
+        #
+        # post_reply = member.values('id') \
+        #     .annotate(activity_reply=F('activityreply__reply_content'),
+        #               wishlist_reply=F('wishlistreply__reply_content'), post_reply=F('clubpostreply__reply_content'))
+        #
+        # post_created = member.values('id') \
+        #     .annotate(activity_created=F('activityreply__created_date'),
+        #               wishlist_created=F('wishlistreply__created_date'), post_created=F('clubpostreply__created_date'))
+        #
+        # for i in range(len(list(member))):
+        #     member[i]['post_title'] = post_title[i]['post_title']
+        #     member[i]['post_reply'] = post_reply[i]['post_reply']
+        #     member[i]['post_created'] = post_created[i]['post_created']
+
+        members = Member.objects.filter(Q(status=1) | Q(status=-1)).values('id', 'member_nickname', 'status').order_by(
+            '-id')
+
+        results = list(members.values('id', 'member_nickname', 'status') \
+                       .annotate(activity_title=F('activityreply__activity__activity_title'),
+                                 activity_reply=F('activityreply__reply_content'),
+                                 activity_reply_created=F('activityreply__created_date')).filter(
+            activity_title__isnull=False))
+
+        wishlists = members.values('id', 'member_nickname', 'status') \
+            .annotate(wishlist_title=F('wishlistreply__wishlist__wishlist_content'),
+                      wishlist_reply=F('wishlistreply__reply_content'),
+                      wishlist_reply_created=F('wishlistreply__created_date')).filter(wishlist_title__isnull=False)
+
+        club_posts = members.values('id', 'member_nickname', 'status') \
+            .annotate(club_post_title=F('clubpostreply__club_post__post_title'),
+                      club_post_reply=F('clubpostreply__reply_content'),
+                      club_post_reply_created=F('clubpostreply__created_date')).filter(club_post_title__isnull=False)
+
+        for wishlist in wishlists:
+            results.append(wishlist)
+
+        context['member'] = list(member[offset:limit])
+
+        return Response(context)
 
 # ----------------------------------------------------------------------------------------------------------------------
 

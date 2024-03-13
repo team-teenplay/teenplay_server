@@ -5,7 +5,6 @@ let keyword = ""
 const CreateService = (() => {
     const showList = (pagination) => {
         let text = ``;
-        console.log(pagination)
         pagination.members.forEach((page) => {
             text += `
                 <li class="main-user-list" data-id="${page.id}">
@@ -429,6 +428,7 @@ function noticeShowCategory() {
             })
 
             searchInput.value ="";
+            keyword = "";
         })
     })
 }

@@ -7,7 +7,7 @@ const CreateService = (() => {
     // 공지사항 목록 가져오기
     const showList = (pagination) => {
         let text = ``;
-        console.log(pagination.notices)
+        console.log(pagination)
         pagination.notices.forEach((page) => {
             text += `
                 <li class="main-user-list" data-id="${page.id}">
@@ -437,6 +437,7 @@ function noticeShowCategory() {
             })
 
             searchInput.value ="";
+            keyword = "";
         })
     })
 }
@@ -455,7 +456,6 @@ const searchInput = document.querySelector(".main-user-info-input")
 searchInput.addEventListener('keyup', (e) => {
     if (e.keyCode === 13) {
         keyword = e.target.value
-        console.log(keyword)
         adminNoticeService.search(page, category, keyword, CreateService.showList).then((text) => {
             noticeData.innerHTML = text;
         })

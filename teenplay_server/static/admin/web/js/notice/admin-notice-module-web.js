@@ -34,12 +34,9 @@ const adminNoticeService = (() => {
 
     // 공지사항 삭제
     const remove = async (targetId) => {
-        console.log('서경서경')
         const notice_id = targetId.targetId
-        console.log(notice_id)
-        console.log('머리터짐!')
 
-        await fetch(`/admin/notice/delete/${notice_id}/`, {
+        await fetch(`/admin/notices/delete/${notice_id}/`, {
             method: 'patch',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
@@ -51,8 +48,8 @@ const adminNoticeService = (() => {
 
     // 검색하기
     const search = async (page, category, keyword, callback) => {
-        console.log(category)
-        const response = await fetch(`/admin/users/${page}/?category=${category}&keyword=${keyword}`)
+
+        const response = await fetch(`/admin/notices/${page}/?category=${category}&keyword=${keyword}`)
         const pagination = await response.json();
 
         if (callback){

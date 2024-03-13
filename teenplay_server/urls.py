@@ -23,7 +23,9 @@ from main.views import MainView, FooterNoticeLatestAPI
 from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroductionView, CompanyNoticeListAPI, \
     AdminMessageView, AdminTeenplayView, AdminPromoteView, AdminActivityView, AdminWishlistView, AdminMeetingView, \
     AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView, AdminUserUpdateAPI, \
-    AdminNoticePaginationAPI, AdminWishlistAPI, AdminWishlistUpdateAPI, AdminNoticeUpdateAPI, AdminUserAPI
+    AdminNoticePaginationAPI, AdminWishlistAPI, AdminWishlistUpdateAPI, AdminNoticeUpdateAPI, AdminUserAPI, \
+    AdminCommentAPI
+
 
 # urls에 음수 값 넣기 가능!
 class IntConverter:
@@ -70,7 +72,7 @@ urlpatterns = [
     # 관리자 - 게시글 위시리스트 관리
     path('admin/wishlist/', AdminWishlistView.as_view(), name='admin-wishlist'),
     path('admin/wishlists/<int:page>/', AdminWishlistAPI.as_view(), name='admin-wishlist-api'),
-    path('admin/notice/delete/<int:wishlist_id>/', AdminWishlistUpdateAPI.as_view(), name='admin-wishlist-api'),
+    path('admin/wishlists/delete/<int:wishlist_id>/', AdminWishlistUpdateAPI.as_view(), name='admin-wishlist-api'),
     # 관리자 - 전체 모임 관리
     path('admin/meeting/', AdminMeetingView.as_view(), name='admin-meeting'),
     # 관리자 - 축제 관리
@@ -78,13 +80,13 @@ urlpatterns = [
     path('admin/festival/write/<int:page>/', AdminFestivalWrite.as_view(), name='admin-festival-write'),
     # 관리자 - 공지사항 관리
     path('admin/notice/', AdminNoticeView.as_view(), name='admin-notice'),
-    # path('admin/notice/<int:page>/', AdminNoticeAPI.as_view(), name='admin-notice-api'),
     path('admin/notices/<int:page>/', AdminNoticePaginationAPI.as_view(), name='admin-notice-page-api'),
-    path('admin/notice/delete/<int:notice_id>/', AdminNoticeUpdateAPI.as_view(), name='admin-notice-delete-api'),
+    path('admin/notices/delete/<int:notice_id>/', AdminNoticeUpdateAPI.as_view(), name='admin-notice-delete-api'),
     path('admin/notice/write/', AdminNoticeWriteView.as_view(), name='admin-notice-write'),
     # 관리자 - 댓글 관리
     path('admin/comment/', AdminCommentView.as_view(), name='admin-comment'),
-    path('admin/wishlists/<int:page>/', AdminCommentView.as_view(), name='admin-comment'),
+    path('admin/comments/<int:page>/', AdminCommentAPI.as_view(), name='admin-comment-api'),
+    path('admin/comments/delete/<int:comment_id>/', AdminCommentView.as_view(), name='admin-comment'),
     # 여기까지~
     path('terms/', include('terms.urls-web')),
     path('app/terms/', include('terms.urls-app')),
