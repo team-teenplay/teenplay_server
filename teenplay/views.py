@@ -118,20 +118,17 @@ def get_teenplay_data(clubId, page, teenplayClickId, member_id):
     # # 선택한 틴플레이 아이디가 있으면 해당 filter 를 통해 해당 id 의 Rownum을 알아내서 page 변수를 저장합니다.
     # # 전달받은 페이지 번호가 있으면 row_number을 page로 해서 해당 비디오만 필터링하고, page가 없는경우(최초) videos에 row_number를 page로 저장하여 전달합니다.
 
-
     if not page:
         for obj in videos:
             if obj.id == teenplayClickId:
                 page = obj.row_number
-                print(page)
-                break;
     else:
         for obj in videos:
             if obj.id == page:
                 row_number = page
-                break;
 
     teenplay_ids = TeenPlay.enable_objects.filter(club_id=clubId).order_by('-id').values_list('id', flat=True)
+    max_count = teenplay_ids.count()
 
     currrent_user_like = TeenPlayLike.objects.filter(member_id=member_id, teenplay_id=teenplay_ids[page-1], status=1)
 
@@ -144,7 +141,9 @@ def get_teenplay_data(clubId, page, teenplayClickId, member_id):
             values('club_id', 'club_name', 'club_intro', 'club_profile_path', 'id', 'video_path', 'teenplay_like',
                    'member_like', 'tp_all_count')[0]
     select_teenplay['page'] = page
+    select_teenplay['max_count'] = max_count
     return select_teenplay
+
 
 
 # APIView
@@ -227,7 +226,7 @@ class TeenplayClubView(View):
 class TeenPlayClubLikeAPIView(APIView):
     @transaction.atomic
     def get(self, request, teenplayId, memberSessionId, displayStyle):
-
+        print(1)
         data = {
             'member_id': memberSessionId,
             'teenplay_id': teenplayId
