@@ -1,11 +1,12 @@
-from django.db.models import F, Q
+from django.db import transaction
+from django.db.models import F, Q, Count, Exists
 from django.shortcuts import render
 from django.utils import timezone
 from django.views import View
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from wishlist.models import Wishlist, WishlistReply, WishlistTag
+from wishlist.models import Wishlist, WishlistReply, WishlistTag, WishListLike
 
 
 class WishListView(View):
@@ -36,20 +37,31 @@ class WishListWriteAPI(APIView):
 # 위시리스트 리스트 보여주기
 class WishListAPI(APIView):
     def get(self, request, page):
+        # id 검사
+        if 'member' in request.session and 'id' in request.session['member']:
+            id = request.session['member']['id']
+        else:
+            if 'member' in request.session:
+                id = request.session['member'].get('id', None)
+            else:
+                id = None
+
+        # 위시리스트
         # 페이지당 3개의 게시물 보여주기
         row_count = 3
         offset = (page - 1) * row_count
         limit = page * row_count
-        category = request.GET.get('category', '')
-        keyword = request.GET.get('keyword', '')
+
+        category = request.GET.get('category', '100')
+        keyword = request.GET.get('keyword', '없음')
 
         condition = Q()
-        if category:
+        if category != '100':
             condition &= Q(category_id=category)
-        if keyword:
+        if keyword != '없음':
             condition &= Q(wishlisttag__tag_name__contains=keyword)
 
-        print(condition)
+        # print(condition)
 
         columns = [
             'wishlist_content',
@@ -57,24 +69,35 @@ class WishListAPI(APIView):
             'member_name',
             'category_name',
             'created_date',
-            'id'
+            'id',
+            'member_email',
+            'member_path',
+            'like_on',
+            'like_total',
+            'reply_total'
         ]
 
-        # if category:
-        #     wishlists = Wishlist.enabled_objects.filter(category_id = category)\
-        #                     .annotate(member_name=F("member__member_nickname"),category_name=F("category__category_name"))\
-        #                     .values(*columns)[offset:limit]
-        # elif condition:
-        #     wishlists = Wishlist.enabled_objects.filter(condition)\
-        #                     .annotate(member_name=F("member__member_nickname"),category_name=F("category__category_name"))\
-        #                     .values(*columns)[offset:limit]
-        # else:
-        #     wishlists = Wishlist.enabled_objects.annotate(member_name=F("member__member_nickname"),category_name=F("category__category_name")).values(*columns)[offset:limit]
+        wishlists = Wishlist.enabled_objects.filter(condition).annotate(
+            member_name=F("member__member_nickname"),
+            category_name=F("category__category_name"),
+            member_email=F('member__member_email'),
+            member_path=F('member__memberprofile__profile_path'),
+            like_on=Count('wishlistlike__id', filter=Q(wishlistlike__status=1) & Q(wishlistlike__member_id=id)),
+            like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1)),
+            reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1))
 
-        wishlists = Wishlist.enabled_objects.filter(condition).annotate(member_name=F("member__member_nickname"),category_name=F("category__category_name")).values(*columns)[offset:limit]
+        ).values(*columns).order_by('-created_date')[offset:limit]
 
+        # wishlists = Wishlist.enabled_objects.filter(condition).annotate(
+        #     member_name=F("member__member_nickname"),
+        #     category_name=F("category__category_name"),
+        #     member_email=F('member__member_email'),
+        #     member_path=F('member__memberprofile__profile_path'),
+        #     like_count=Count('wishlistlike__id', filter=Q(wishlistlike__status=1))
+        # ).values(*columns)[offset:limit]
+
+        # 태그
         wishlist_ids = [item['id'] for item in wishlists]
-
         tag_info_by_wishlist = {}
 
         for wishlist_id in wishlist_ids:
@@ -147,10 +170,12 @@ class ReplyListAPI(APIView):
             'member_name',
             'reply_content',
             'created_date',
-            'id'
+            'member_email',
+            'id',
+            'member_path'
         ]
 
-        replies = WishlistReply.enabled_objects.filter(wishlist_id=wishlist_id).annotate(member_name=F("member__member_nickname")).values(*columns)
+        replies = WishlistReply.enabled_objects.filter(wishlist_id=wishlist_id).annotate(member_name=F("member__member_nickname"),member_email=F('member__member_email'), member_path=F('member__memberprofile__profile_path')).values(*columns)
 
         return Response(replies)
 
@@ -178,3 +203,33 @@ class ReplyActionAPI(APIView):
         reply.save(update_fields=['reply_content', 'updated_date'])
 
         return Response('success')
+
+
+class WishlistLikeAPIView(APIView):
+    @transaction.atomic
+    def get(self, request, wishlist_id, memberId, displayStyle):
+
+        data = {
+            'member_id': memberId,
+            'wishlist_id': wishlist_id
+        }
+
+        likeData, checked = WishListLike.objects.get_or_create(**data)
+        if checked:
+            totalLikeCount = WishListLike.objects.filter(status=1, wishlist_id=wishlist_id).count()
+        else:
+            if displayStyle== 'none':
+                WishListLike.objects.filter(status=0, wishlist_id=wishlist_id, member_id=memberId).update(status=1, updated_date=timezone.now())
+                totalLikeCount = WishListLike.objects.filter(status=1, wishlist_id=wishlist_id).count()
+            else:
+                WishListLike.objects.filter(status=1, wishlist_id=wishlist_id, member_id=memberId).update(status=0, updated_date=timezone.now())
+                totalLikeCount = WishListLike.objects.filter(status=1, wishlist_id=wishlist_id).count()
+
+        context = {
+            'wishlist_id': wishlist_id,
+            'member_id': memberId,
+            'display_style': displayStyle,
+            'totalLikeCount': totalLikeCount
+        }
+
+        return Response(context)

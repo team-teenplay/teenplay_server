@@ -804,7 +804,7 @@ button, input, optgroup, select, textarea {
 
 .club-teenplay-contents-boxes {
     touch-action: pan-y;
-    min-height: calc(100vh - 120px);
+    /*min-height: calc(100vh - 120px);*/
     width: 1284px;
     display: flex;
     flex-direction: row;

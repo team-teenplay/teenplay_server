@@ -1,3 +1,5 @@
+const activityForm = document.querySelector("form[name=activity-create]")
+
 //datepicker
 $(function () {
     $(".datepicker").datepicker();
@@ -63,6 +65,8 @@ jQuery(document).on("focus", ".timepicker", function () {
 });
 
 // 텍스트 에디터
+let fileNames = [];
+
 $(document).ready(function () {
     //썸머노트에 값넣기 (차후 값을 넣었을 때 저장하기 위한 코드)
     // $(".presentation-size").summernote("code", "입력된 텍스트를 넣으세요");
@@ -75,6 +79,36 @@ $(document).ready(function () {
         maxHeight: null, // set maximum height of editor
         focus: false,
         lang: "ko-KR", // 기본 메뉴언어 US->KR로 변경
+        callbacks: {
+            onImageUpload: function (files) {
+                let fileImages = document.querySelectorAll("div.note-editor img");
+                if (fileImages) {
+                    if (fileImages.length === 2) {
+                        alert('2개 이하의 이미지만 첨부할 수 있습니다.');
+                        return;
+                    }
+                }
+                const [file] = files;
+                if (file.size >= 1024 * 1024 * 5) {
+                    alert('5MB 이하의 이미지만 첨부할 수 있습니다.');
+                    return;
+                }
+                fileNames.push(file.name);
+                let fileInput = document.createElement("input");
+                fileInput.setAttribute("type", "file");
+                fileInput.setAttribute("style", "display: none;");
+                fileInput.setAttribute("name", "files");
+                let dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+                let reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.addEventListener("load", (e) => {
+                    $(".presentation-size").summernote("insertImage", e.target.result);
+                })
+                activityForm.appendChild(fileInput);
+            },
+        }
     });
 
     // //저장버튼 클릭( 행사 게시 클릭 시 조건부로 만들어서 저장할 것)
@@ -160,6 +194,10 @@ clickOpenButton.addEventListener("click", (e) => {
     let timeBoxAllArray = [...document.querySelectorAll(".date-box")];
 
     if (activityTitle.value != "" && selectBox.value != "disabled" && dateBoxAllArray.every((date) => date.value != "") && timeBoxAllArray.every((time) => time.value != "")) {
+        let fileImages = document.querySelectorAll("div.note-editor img");
+        fileImages.forEach((img, i) => {
+            img.src = `${fileNames[i]}`;
+        })
         pay();
     } else {
         window.scrollTo({
@@ -383,31 +421,37 @@ const pay = () => {
     }).confirm(function (data) {
         BootPay.transactionConfirm(data);
     }).done(function (data) {
-        payAndCreate(createActivity);
+        console.log(data);
+        console.log(data.receipt_id);
+        payAndCreate(data.receipt_id, createActivity);
     })
 };
 
-const payAndCreate = async (callback) => {
+const payAndCreate = async (receiptId, callback) => {
     const memberId = document.getElementById("member-id").value;
     if (memberId){
         const response = await fetch(`/pay/create/api/?memberId=${memberId}`)
         const pay = await response.json();
         if (pay === null) return;
-        console.log('결제 성공')
-        console.log(pay);
         if (callback) {
-            callback(pay);
+            callback(pay, receiptId);
         }
     }
 }
 
-const createActivity = async (pay) => {
-    const activityForm = document.querySelector("form[name=activity-create]")
+
+const createActivity = async (pay, receiptId) => {
     let payInput = document.createElement("input")
     payInput.setAttribute("type", "hidden");
     payInput.setAttribute("name", "pay-id");
     payInput.setAttribute("value", pay.pay.id)
     activityForm.appendChild(payInput);
+
+    let receiptIdInput = document.createElement("input");
+    receiptIdInput.setAttribute("type", "hidden");
+    receiptIdInput.setAttribute("name", "receipt-id");
+    receiptIdInput.setAttribute("value", receiptId);
+    activityForm.appendChild(receiptIdInput);
 
     let summernoteContent = $('.presentation-size').summernote('code');
     let activityContent = document.createElement("input")

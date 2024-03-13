@@ -1,19 +1,19 @@
-// 전체선택 클릭 시 발생하는 이벤트
-// 전체선택이라는 div를 가져온다
+const memberInfoDetails = document.querySelector('.member-info-details');
+
+memberInfoDetails.addEventListener('change', (e) => {
+    if (e.target.matches('input[type=checkbox]')) {
+        // 체크박스가 변경된 경우에만 실행되는 로직
+        insertCheckedMemberCount();
+    }
+});
+
 const checkedAllCategory = document.querySelector(".checked-all-category");
-// 체크박스 전체를 가져온다
 const inputCheckboxes = document.querySelectorAll("input[type=checkbox]");
 
 checkedAllCategory.addEventListener("click", () => {
-    // 체크된 체크박스들을 가져온다
-    let inputCheckedboxes = document.querySelectorAll("input[type=checkbox]:checked");
-
-    // 반복문을 통해 각 버튼에 속성을 바꾼다.
     for (const inputCheckbox of inputCheckboxes) {
-        // 체크된 것의 개수와 전체 개수가 같다면
-        if (inputCheckedboxes.length == inputCheckboxes.length) {
+        if (inputCheckbox.checked === true) {
             inputCheckbox.checked = false;
-            // 체크된 것의 개수와 전체 개수가 같지 않다면
         } else {
             inputCheckbox.checked = true;
         }
@@ -21,14 +21,6 @@ checkedAllCategory.addEventListener("click", () => {
     insertCheckedMemberCount();
 });
 
-// input[type=checkbox]에 변화가 있을 경우 감지하고 insertCheckedMemberCount 함수를 실행해주는 이벤트
-inputCheckboxes.forEach((inputCheckbox) => {
-    inputCheckbox.addEventListener("change", () => {
-        insertCheckedMemberCount();
-    });
-});
-
-// 체크된 개수를 선택된 구성원 수에 넣어주는 함수
 const insertCheckedMemberCount = () => {
     const checkedMemberCount = document.querySelector(".checked-member-count");
     let inputCheckedboxes = document.querySelectorAll("input[type=checkbox]:checked");
@@ -36,7 +28,6 @@ const insertCheckedMemberCount = () => {
     checkedMemberCount.innerText = `${inputCheckedboxes.length}명`;
 };
 
-// 쪽지 보내기 클릭 시 작성 모달 여는 이벤트
 const sendModalWrap = document.querySelector(".send-modal-wrap");
 const sendToCheckedMember = document.querySelector(".send-to-checked-member");
 const noneModalWrap = document.querySelector(".none-modal-wrap");
@@ -52,7 +43,8 @@ sendToCheckedMember.addEventListener("click", () => {
 
     for (let inputCheckedbox of inputCheckedboxes) {
         let email = inputCheckedbox.closest(".member-info-list").querySelector(".email");
-        sendModalWrap.querySelector(".send-receiver-email").innerHTML += `<span class="email-span">${email.innerText}</span>`;
+        let name = inputCheckedbox.closest(".member-info-list").querySelector(".name");
+        sendModalWrap.querySelector(".send-receiver-email").innerHTML += `<span class="email-span">${name.innerText}(${email.innerText})</span>`;
     }
     sendModalWrap.querySelector(".send-modal-container").style.animation = "popUp 0.5s";
     sendModalWrap.style.display = "block";
@@ -121,101 +113,226 @@ const kickOutModalContainer = kickOutModalWrap.querySelector(".kick-out-modal-co
 let target;
 let targetName;
 const statusAddEvent = () => {
-    let memberStatusJoinBtns = document.querySelectorAll(".member-status-join-btn");
+    const memberInfoDetails = document.querySelector(".member-info-details");
 
-    memberStatusJoinBtns.forEach((memberStatusJoinBtn) => {
-        memberStatusJoinBtn.addEventListener("click", (e) => {
+    memberInfoDetails.addEventListener("click", (e) => {
+        if (e.target.closest('.member-status-join-btn')) {
             target = e.target.closest(".member-info-list");
             targetName = target.querySelector(".member-name").innerText;
-
             kickOutModalContainer.style.animation = "popUp 0.5s";
             kickOutModalContainer.querySelector(".kick-out-modal-title").innerText = `${targetName}님을 퇴출하시겠습니까?`;
             kickOutModalWrap.style.display = "block";
-        });
+            const secondClass = e.target.closest('.member-info-list').classList[1]
+            if (secondClass) {
+                memberEmissionStatusUpdate(secondClass);
+            }
+        }
+
     });
 };
 
 statusAddEvent();
 
-// 퇴출 모달 내 버튼 클릭 시 발생하는 이벤트
-const kickOutModalContainerBtns = kickOutModalWrap.querySelectorAll("button");
-const kickOutCheckModalContainer = kickOutModalWrap.querySelector(".kick-out-check-modal-container");
+const memberEmissionStatusUpdate = (memberId) => {
+    // 퇴출 모달 내 버튼 클릭 시 발생하는 이벤트
+    const kickOutModalContainerBtns = kickOutModalWrap.querySelectorAll("button");
+    const kickOutCheckModalContainer = kickOutModalWrap.querySelector(".kick-out-check-modal-container");
 
-kickOutModalContainerBtns.forEach((kickOutModalContainerBtn) => {
-    kickOutModalContainerBtn.addEventListener("click", (e) => {
-        kickOutModalContainer.style.animation = "popDown 0.5s";
-        if (e.target.className == "kick-out-btn") {
-            // 데이터가 없어 임시 방편으로 사용
-            target.remove();
+    kickOutModalContainerBtns.forEach((kickOutModalContainerBtn) => {
+        kickOutModalContainerBtn.addEventListener("click", async (e) => {
+            kickOutModalContainer.style.animation = "popDown 0.5s";
+            if (e.target.className == "kick-out-btn") {
+                // 데이터가 없어 임시 방편으로 사용
+                if (memberId) {
+                    const response = await mypageMemberStatusService.del(memberId)
+                    if (response === 'ok') {
+                        target.remove();
+                    }
+                }
 
-            setTimeout(() => {
-                kickOutModalContainer.style.display = "none";
-                kickOutCheckModalContainer.querySelector(".modal-header-title").innerText = `${targetName}님을 퇴출했습니다.`;
-                kickOutCheckModalContainer.style.animation = "popUp 0.5s";
-                kickOutCheckModalContainer.style.display = "flex";
-            }, 450);
-        } else if (e.target.className == "kick-out-modal-cancle-btn") {
-            setTimeout(() => {
-                kickOutModalWrap.style.display = "none";
-            }, 450);
-        } else {
-            kickOutCheckModalContainer.style.animation = "popDown 0.5s";
-            setTimeout(() => {
-                kickOutCheckModalContainer.style.removeProperty("animation");
-                kickOutCheckModalContainer.style.display = "none";
-                kickOutModalContainer.style.display = "flex";
-                kickOutModalWrap.style.display = "none";
-            }, 450);
-        }
+
+                setTimeout(() => {
+                    kickOutModalContainer.style.display = "none";
+                    kickOutCheckModalContainer.querySelector(".modal-header-title").innerText = `${targetName}님을 퇴출했습니다.`;
+                    kickOutCheckModalContainer.style.animation = "popUp 0.5s";
+                    kickOutCheckModalContainer.style.display = "flex";
+                }, 450);
+            } else if (e.target.className == "kick-out-modal-cancle-btn") {
+                setTimeout(() => {
+                    kickOutModalWrap.style.display = "none";
+                }, 450);
+            } else {
+                kickOutCheckModalContainer.style.animation = "popDown 0.5s";
+                setTimeout(() => {
+                    kickOutCheckModalContainer.style.removeProperty("animation");
+                    kickOutCheckModalContainer.style.display = "none";
+                    kickOutModalContainer.style.display = "flex";
+                    kickOutModalWrap.style.display = "none";
+                }, 450);
+            }
+        });
     });
-});
+}
 
 // 가입대기 클릭 시 퇴출 확인 모달 나타나는 이벤트
 const joinModalWrap = document.querySelector(".join-modal-wrap");
 const joinModalContainer = joinModalWrap.querySelector(".join-modal-container");
-const memberStatusStandBtns = document.querySelectorAll(".member-status-stand-btn");
+const statusUpdateModal = () => {
+    const memberStatusStandBtns = document.querySelectorAll(".member-status-stand-btn");
 
-memberStatusStandBtns.forEach((memberStatusStandBtn) => {
-    memberStatusStandBtn.addEventListener("click", (e) => {
-        target = e.target.closest(".member-info-list");
-        targetName = target.querySelector(".member-name").innerText;
+    memberStatusStandBtns.forEach((memberStatusStandBtn) => {
+        memberStatusStandBtn.addEventListener("click", (e) => {
+            target = e.target.closest(".member-info-list");
+            targetName = target.querySelector(".member-name").innerText;
 
-        joinModalContainer.style.animation = "popUp 0.5s";
-        joinModalContainer.querySelector(".join-modal-title").innerText = `${targetName}님의 가입을 승인하시겠습니까?`;
-        joinModalWrap.style.display = "block";
+            joinModalContainer.style.animation = "popUp 0.5s";
+            joinModalContainer.querySelector(".join-modal-title").innerText = `${targetName}님의 가입을 승인하시겠습니까?`;
+            joinModalWrap.style.display = "block";
+            const secondClass = e.target.closest('.member-info-list').classList[1]
+            if (secondClass) {
+                memberStatusJoinUpdate(secondClass);
+            }
+        });
     });
-});
+}
+
 
 // 가입 모달 내 버튼 클릭 시 발생하는 이벤트
-const joinModalContainerBtns = joinModalWrap.querySelectorAll("button");
-const joinCheckModalContainer = joinModalWrap.querySelector(".join-check-modal-container");
 
-joinModalContainerBtns.forEach((joinModalContainerBtn) => {
-    joinModalContainerBtn.addEventListener("click", (e) => {
-        joinModalContainer.style.animation = "popDown 0.5s";
-        if (e.target.className == "join-btn") {
-            // 데이터가 없어 임시 방편으로 사용
-            target.querySelector(".member-status").innerHTML = `<div class="member-status-join-btn">가입중</div>`;
-            statusAddEvent();
+const memberStatusJoinUpdate = (memberId) => {
+    const joinModalContainerBtns = joinModalWrap.querySelectorAll("button");
+    const joinCheckModalContainer = joinModalWrap.querySelector(".join-check-modal-container");
+    joinModalContainerBtns.forEach((joinModalContainerBtn) => {
+        joinModalContainerBtn.addEventListener("click", async (e) => {
+            joinModalContainer.style.animation = "popDown 0.5s";
+            if (e.target.className == "join-btn") {
+                // 데이터가 없어 임시 방편으로 사용
+                if (memberId) {
+                    const response = await mypageMemberStatusService.patch(memberId)
+                    if (response === 'ok') {
+                        target.querySelector(".member-status").innerHTML = `<div class="member-status-join-btn">가입중</div>`;
+                    }
+                }
+                statusAddEvent();
 
-            setTimeout(() => {
-                joinModalContainer.style.display = "none";
-                joinCheckModalContainer.querySelector(".modal-header-title").innerText = `${targetName}님의 가입을 승인했습니다.`;
-                joinCheckModalContainer.style.animation = "popUp 0.5s";
-                joinCheckModalContainer.style.display = "flex";
-            }, 450);
-        } else if (e.target.className == "join-modal-cancle-btn") {
-            setTimeout(() => {
-                joinModalWrap.style.display = "none";
-            }, 450);
-        } else {
-            joinCheckModalContainer.style.animation = "popDown 0.5s";
-            setTimeout(() => {
-                joinCheckModalContainer.style.removeProperty("animation");
-                joinCheckModalContainer.style.display = "none";
-                joinModalContainer.style.display = "flex";
-                joinModalWrap.style.display = "none";
-            }, 450);
-        }
+                setTimeout(() => {
+                    joinModalContainer.style.display = "none";
+                    joinCheckModalContainer.querySelector(".modal-header-title").innerText = `${targetName}님의 가입을 승인했습니다.`;
+                    joinCheckModalContainer.style.animation = "popUp 0.5s";
+                    joinCheckModalContainer.style.display = "flex";
+                }, 450);
+            } else if (e.target.className == "join-modal-cancle-btn") {
+                setTimeout(() => {
+                    joinModalWrap.style.display = "none";
+                }, 450);
+            } else {
+                joinCheckModalContainer.style.animation = "popDown 0.5s";
+                setTimeout(() => {
+                    joinCheckModalContainer.style.removeProperty("animation");
+                    joinCheckModalContainer.style.display = "none";
+                    joinModalContainer.style.display = "flex";
+                    joinModalWrap.style.display = "none";
+                }, 450);
+            }
+        });
     });
-});
+}
+
+
+const createList = (filterList) => {
+    let memberHTML = ``
+    if (!filterList) return
+    filterList.clubMembers.forEach((member) => {
+        let statusHTML = '';
+        if (member.status === 1) {
+            statusHTML = `<div class="member-status"><div class="member-status-join-btn">가입중</div></div>`;
+        } else if (member.status === -1) {
+            statusHTML = `<div class="member-status"><div class="member-status-stand-btn">가입대기</div></div>`;
+        } else {
+            statusHTML = '';
+        }
+        memberHTML += `
+            <div class="member-info-list ${member.id}">
+                <div class="member-select-wrap">
+                    <div>
+                        <div class="member-select-container">
+                            <div class="member-select-box">
+                                <input type="checkbox" name="" id="member-checkbox"
+                                       true-value="true" false-value="false"/>
+                                <label class="member-checkbox-label" for="member-checkbox"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="member-name name">${member.member__member_nickname}</div>
+                <div class="member-email">
+                    <div class="email">${member.member__member_email}</div>
+                </div>
+                <div class="member-age-gender">
+                    <div class="age">29</div>
+                    <div class="gender">
+                    ${member.member__member_gender === 1 ? '남자' : member.member__member_gender === 2 ? '여자' : member.member__member_gender === 0 && '선택 안함'}
+                    </div>
+                </div>
+                <div class="member-interest-area">${member.member__member_address}</div>
+                <div class="member-interest-filed">
+                    ${member.member_favorite_categories[0].category__category_name}${member.category_count === 0 ? '' : '외 ' + member.category_count + '개'}
+                </div>
+                ${statusHTML}
+                <div class="member-join-date">
+                    <div class="date">${member.member__created_date}</div>
+                </div>
+                <div class="member-activity">
+                    <span>${member.activities[0].activity__activity_title}${member.activities.length === 0 ? '' : '외 ' + member.activities.length + '개'}</span>
+                </div>
+            </div>
+        `
+    })
+    memberInfoDetails.innerHTML = memberHTML
+    statusUpdateModal();
+    memberStatusJoinUpdate();
+    memberEmissionStatusUpdate();
+}
+
+const memberListHandler = async (filter = '전체 상태', search) => {
+    const filterList = await mypageMemberService.list(filter, search)
+    createList(filterList)
+}
+memberListHandler()
+
+const memberStatusBox = document.querySelector('.member-status-box')
+const memberSearchInput = document.querySelector('.member-search-input')
+
+// keyup 이벤트 및 change 이벤트에 대한 단일 핸들러 함수 등록
+memberSearchInput.addEventListener('keyup', handleFilterEvent);
+memberStatusBox.addEventListener('change', handleFilterEvent);
+const search = {};
+const filter = {};
+
+// 핸들러 함수 정의
+function handleFilterEvent(e) {
+
+
+    if (e.target === memberSearchInput) {
+        search.search = e.target.value;
+    } else if (e.target === memberStatusBox) {
+        filter.filter = e.target.value;
+    }
+
+    filterModule({...search, ...filter});
+}
+
+// filterModule 함수 정의
+function filterModule(data) {
+    let searchValue;
+    let filterValue;
+
+    if (data.search) {
+        searchValue = data.search;
+    }
+    if (data.filter) {
+        filterValue = data.filter;
+    }
+
+    memberListHandler(filterValue, searchValue);
+}

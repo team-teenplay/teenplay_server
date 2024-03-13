@@ -39,7 +39,7 @@
                                     <!-- 메인 화면 상단 카테고리 -->
                                     <div class="top-categroy-container">
                                         <div class="top-categroy-items">
-                                            <button class="top-categroy-item all" id="item-all" name="" type="button">전체</button>
+                                            <button class="top-categroy-item all" id="item-all" name="100" type="button">전체</button>
                                         </div>
                                         <div class="top-categroy-items">
                                             <button class="top-categroy-item" id="item-culture" name="2" type="button">문화·예술</button>
@@ -112,7 +112,7 @@
                                             <div class="extra-wrap">
                                                 <div class="extra-divison">
                                                     <!-- 위시리스트 추가하기 부분 -->
-                                                    <div class="extra-create-container">
+                                                    <div class="extra-create-container" {% if not request.session.member %} style="display: none;" {% endif %}>
                                                         <button class="extra-create-button">
                                                             <svg class="extra-create-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                                                                 <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z"></path>
@@ -290,30 +290,22 @@
         <div class="profile hidden">
             <div class="modal-full-wrap" role="dialog" aria-modal="true" data-headlessui-state="open" aria-labelledby="headlessui-dialog-title-42" aria-describedby="headlessui-description-43">
                 <div class="modal-screen"></div>
-                <div class="modal-divison">
+                <div class="modal-divison teenchin-modal">
                     <!-- 틴친 프로필 정보 부분 -->
-                    <div class="teenchin-box" data-headlessui-state="open">
+                    <div class="teenchin-box post-update-wrap" data-headlessui-state="open">
                         <div class="teenchin-items">
                             <!-- 틴친 프로필 사진 부분 -->
-                            <!-- 틴친 상세프로필 이동 주소 필요 -->
-                            <a href="">
-                                <div class="profile-img-contents">
-                                    <div class="profile-img-box">
-                                        <!-- 프로필 사진이 있을 경우 이미지 사진 출력 -->
-                                        <!-- <img class="profile-img" src="/staticfiles/images/teenplay_logo/logo1.png"> -->
-                                        <!-- 프로필 기본 이미지 -->
-                                        <svg class="profile-defalut-img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd"></path>
-                                        </svg>
-                                    </div>
-                                    <!-- 틴친 프로필 이미지 여백 부분 -->
-                                    <div class="profile-img-gap"></div>
+                            <div class="profile-img-contents">
+                                <div class="profile-img-box">
+                                    <img class="profile-default-img" src="" alt="프로필사진">
                                 </div>
-                                <!-- 틴친 프로필 이름 부분 -->
-                                <div class="profile-info-contents">
-                                    <div class="profile-name">핏자</div>
-                                </div>
-                            </a>
+                                <!-- 틴친 프로필 이미지 여백 부분 -->
+                                <div class="profile-img-gap"></div>
+                            </div>
+                            <!-- 틴친 프로필 이름 부분 -->
+                            <div class="profile-info-contents">
+                                <div class="profile-name"></div>
+                            </div>
                             <!-- 틴친 프로필 버튼 부분 -->
                             <div class="teenchin-btn-container">
                                 <div class="teenchin-btn-box">
@@ -365,26 +357,26 @@
                         <div class="send-modal-box">
                             <div>
                                 <h2 class="modal-header-box">
-                                    <div class="send-modal-title">쪽지 보내기</div>
+                                    <div class="send- modal-title">쪽지 보내기</div>
                                 </h2>
                             </div>
                             <div class="sender-receiver-box">
                                 <div class="sender-box">
                                     <div class="sender-title">보낸 사람</div>
                                     <!-- 회원의 이름과 이메일이 필요 -->
-                                    <div class="send-sender-email" type="text">아무개(example@sample.com)</div>
+                                    <div class="send-sender-email"></div>
                                 </div>
                                 <div class="receiver-box">
                                     <div class="receiver-title">받는 사람</div>
                                     <!-- 형식: 아무개(example@sample.com) -->
                                     <div class="send-receiver-email-box">
-                                        <input class="send-receiver-email" autocomplete="off" type="text" placeholder="example@sample.com" />
+                                        <div class="send-receiver-email"></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="letter-content-area">
                                 <!-- 쪽지 내용 필요 -->
-                                <textarea name="send-content" rows="10" placeholder="쪽지의 내용을 작성해 주세요."></textarea>
+                                <textarea name="send-content" id="letter-content" rows="10" placeholder="쪽지의 내용을 작성해 주세요."></textarea>
                             </div>
                             <div class="modal-btn-box">
                                 <button class="send-close-btn" type="button">닫기</button>
@@ -395,21 +387,42 @@
                 </div>
             </div>
         </div>
+        <input type="hidden" name="member-id" value="{{ request.session.member.id }}">
+        <input type="hidden" name="member-name" value="{{ request.session.member.member_nickname }}">
+        <input type="hidden" name="member-email" value="{{ request.session.member.member_email }}">
 {% endblock %}
 {% block js %}
         <script>
         const categoryButton = document.querySelectorAll(".top-categroy-item")
         const csrf_token = '{{ csrf_token }}';
-        const memberId = '{{ request.session.member.id }}';
-        const memberName = '{{ request.session.member.member_nickname }}';
+        // 로그인 했는지 안 했는지 검사
+        const member = `{{ request.session.member }}`;
+        let memberId = 0;
+        let memberName = '';
+        let loginCheck = false;
+        if (member) {
+            loginCheck = true;
+            memberId = '{{ request.session.member.id }}';
+            memberName = '{{ request.session.member.member_nickname }}';
+        }
         // 카테고리 버튼을 눌렀을 때 카테고리에 category_id = name 값 담기
-        let category = ''
+        let category = 100;
         categoryButton.forEach((btn) => {
                 btn.addEventListener("click", () => {
-                    category = btn.name
+                    category = Number(btn.name);
                 })
             }
         )
+        // 키워드 검색시 키워드에 검색값 담기
+        let keyword = '없음';
+        const mySearchInput = document.querySelector(".tag-search-text");
+        mySearchInput.addEventListener("keyup", async (e) => {
+            if (e.keyCode === 13) {
+                // console.log(e.target.value)
+                if (!e.target.value) return;
+                keyword = e.target.value;
+            }
+        });
         
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
