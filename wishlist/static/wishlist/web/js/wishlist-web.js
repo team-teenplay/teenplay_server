@@ -7,7 +7,7 @@ const categoryBtn = document.querySelectorAll(".top-categroy-item")
 // 위시리스트 리스트
 const showList = (data) => {
     let text = ``;
-    data['wishlists'].forEach((wishlist) => {
+    data['wishlists'].forEach((wishlist)=> {
         if(data['wishlists'].length === 0) {
             text = `
                 <!-- 카테고리에  게시글이 없을 때 출력 -->
@@ -49,23 +49,46 @@ const showList = (data) => {
                                 <div class="post-items-wrap">
                                     <div class="post-items-divison-wrap">
                                         <!-- 위시리스트 게시글 좋아요 정보 부분 -->
-                                        <div class="post-like-container">
-                                            <svg class="post-like-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            `
+            // console.log(data['likes'])
+        // for (let i = 0; i < data['wishlists'].length; i++) {}
+            if (wishlist.like_on === 1) {
+                text += `
+                                        <div class="post-like-container ${wishlist.id}">
+                                            <svg class="post-like-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="display:none" >
                                                 <path d="M9.653 16.915l-.005-.003-.019-.01a20.759 20.759 0 01-1.162-.682 22.045 22.045 0 01-2.582-1.9C4.045 12.733 2 10.352 2 7.5a4.5 4.5 0 018-2.828A4.5 4.5 0 0118 7.5c0 2.852-2.044 5.233-3.885 6.82a22.049 22.049 0 01-3.744 2.582l-.019.01-.005.003h-.002a.739.739 0 01-.69.001l-.002-.001z"></path>
                                             </svg>
-                                            <span class="post-like-count">0</span>
+                                            <svg class="post-like-icon liked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="display:block">
+                                                <path d="M9.653 16.915l-.005-.003-.019-.01a20.759 20.759 0 01-1.162-.682 22.045 22.045 0 01-2.582-1.9C4.045 12.733 2 10.352 2 7.5a4.5 4.5 0 018-2.828A4.5 4.5 0 0118 7.5c0 2.852-2.044 5.233-3.885 6.82a22.049 22.049 0 01-3.744 2.582l-.019.01-.005.003h-.002a.739.739 0 01-.69.001l-.002-.001z"></path>
+                                            </svg>
+                                            <span class="post-like-count">${wishlist.like_total}</span>
                                         </div>
+                                        `
+            } else {
+                text += `
+                                        <div class="post-like-container ${wishlist.id}">
+                                            <svg class="post-like-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="display:block" >
+                                                <path d="M9.653 16.915l-.005-.003-.019-.01a20.759 20.759 0 01-1.162-.682 22.045 22.045 0 01-2.582-1.9C4.045 12.733 2 10.352 2 7.5a4.5 4.5 0 018-2.828A4.5 4.5 0 0118 7.5c0 2.852-2.044 5.233-3.885 6.82a22.049 22.049 0 01-3.744 2.582l-.019.01-.005.003h-.002a.739.739 0 01-.69.001l-.002-.001z"></path>
+                                            </svg>
+                                            <svg class="post-like-icon liked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="display:none">
+                                                <path d="M9.653 16.915l-.005-.003-.019-.01a20.759 20.759 0 01-1.162-.682 22.045 22.045 0 01-2.582-1.9C4.045 12.733 2 10.352 2 7.5a4.5 4.5 0 018-2.828A4.5 4.5 0 0118 7.5c0 2.852-2.044 5.233-3.885 6.82a22.049 22.049 0 01-3.744 2.582l-.019.01-.005.003h-.002a.739.739 0 01-.69.001l-.002-.001z"></path>
+                                            </svg>
+                                            <span class="post-like-count">${wishlist.like_count}</span>
+                                        </div>
+                                        `
+            }
+                text += `                        
                                         <!-- 위시리스트 게시글 댓글 정보 부분 -->
                                         <div class="post-comment-container">
                                             <svg class="post-comment-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                                                 <path fill-rule="evenodd" d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97z" clip-rule="evenodd"></path>
                                             </svg>
-                                            <span class="post-comment-count">0</span>
+                                            <span class="post-comment-count">${wishlist.reply_total}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div>
-            `
+                `
             if(wishlist.member_id === Number(memberId)) {
                 text += `
                                     <!-- 위시리스트 게시글 메뉴 부분 -->
@@ -131,7 +154,7 @@ const showList = (data) => {
 }
 
 // 위시리스트 보여주기 실행
-wishlistService.getList(page, category, showList).then((text) => {
+wishlistService.getList(page, category, keyword, showList).then((text) => {
     div.innerHTML = text;
     addMoreButton()
     addClickEventWishlistProfile()
@@ -149,7 +172,7 @@ categoryBtn.forEach((button) => {
         button.classList.add("all");
 
         // 카테고리에 해당하는 위시리스트 추가
-        wishlistService.getList(page, category, showList).then((text) => {
+        wishlistService.getList(page, category, keyword, showList).then((text) => {
             div.innerHTML = text;
             mySearchInput.value ="";
             addClickEventWishlistProfile()
@@ -159,8 +182,9 @@ categoryBtn.forEach((button) => {
 });
 
 // 더보기 버튼 검사하기
-const addMoreButton = () => {
-    wishlistService.getList(page + 1, category).then((data) => {
+const addMoreButton = async () => {
+    await wishlistService.getList(page+1, category, keyword).then((data) => {
+        // console.log(data['wishlists'].length)
         if (data['wishlists'].length !== 0) {
             addButton.style.display = "block";
             // console.log("더보기 버튼 나와라")
@@ -173,7 +197,7 @@ const addMoreButton = () => {
 
 // 더보기 버튼 누르면 위시리스트 추가로 나오기
 moreButton.addEventListener("click", (e) => {
-    wishlistService.getList(++page, category, showList).then((text) => {
+    wishlistService.getList(++page, category,keyword, showList).then((text) => {
         div.innerHTML += text;
         addMoreButton()
         addClickEventWishlistProfile()
@@ -207,6 +231,7 @@ div.addEventListener("click", async (e) => {
 const replyshowList = (replies) => {
     console.log(replies.length)
     let text = ``;
+    if (loginCheck) {
         text = `
                             <!-- 위시리스트 댓글 추가 부분 -->
                             <div class="comment-input-box-all-wrap">
@@ -227,6 +252,7 @@ const replyshowList = (replies) => {
                             <!-- 위시리스트 댓글 개수 정보 부분 -->
                             <div class="comment-count-wrap">댓글 ${replies.length}</div>
              `
+    }
     replies.forEach((reply) => {
             text += `
                         <!-- 위시리스트 전체 댓글 부분 -->
@@ -359,25 +385,25 @@ modalCreateClose.addEventListener("click", () => {
 modalCreateFinish.addEventListener("click", async () => {
     const wishlistContent = document.getElementById("wishlist-content")
     const isPrivate = document.getElementById("is-private")
-    const category = document.getElementById("category").value;
+    const wishlistCategory = document.getElementById("category");
     const tagElements = document.querySelectorAll('.create-tag-list span');
     const tagNames = Array.from(tagElements).map(span => span.textContent.trim());
     await wishlistService.write({
         is_private: isPrivate.value,
         wishlist_content: wishlistContent.value,
-        category_id: category,
+        category_id: wishlistCategory.value,
         tag_name: tagNames
     });
 
     wishlistContent.value = "";
     isPrivate.value = "1";
-    category.value = "100";
+    wishlistCategory.value = "100";
     tagElements.innerHTML = "";
 
-    const text = await wishlistService.getList(page, category, showList);
+    const text = await wishlistService.getList(page, category,keyword, showList);
     div.innerHTML = text;
     addClickEventWishlistProfile()
-    addMoreButton()
+    await addMoreButton()
 
     modalCreateInput.classList.add("hidden");
 });
@@ -553,16 +579,15 @@ div.addEventListener("click", async (e) => {
         console.log(wishlistId)
         await wishlistService.wishlistRemove(wishlistId);
         page = 1
-        const text = await wishlistService.getList(page, category, showList);
+        const text = await wishlistService.getList(page, category,keyword, showList);
         div.innerHTML = text;
         addClickEventWishlistProfile()
-        addMoreButton()
+        await addMoreButton();
     }
 })
 
 //댓글 등록 버튼 클릭 시 작성 완료
 div.addEventListener("click", async (e) => {
-
     if (e.target.id === 'comment-upload-button') {
         // console.log(e.target)
         const replyBtn = document.getElementById("comment-upload-button")
@@ -578,10 +603,11 @@ div.addEventListener("click", async (e) => {
 
             replyContent.value = "";
 
-            wishlistService.replygetList(wishlistId, replyshowList).then((replies) => {
+            await wishlistService.replygetList(wishlistId, replyshowList).then((replies) => {
                 comment.innerHTML = replies;
-                addClickEventReplyProfile()
-                addMoreButton()
+            }).then(async () => {
+                await addClickEventReplyProfile();
+                await addMoreButton();
             })
         })
     }
@@ -643,8 +669,9 @@ div.addEventListener("click", async (e) => {
         // page = 1
         wishlistService.replygetList(wishlistId, replyshowList).then((replies) => {
             comment.innerHTML = replies;
-            addClickEventReplyProfile()
-            addMoreButton()
+        }).then(async () => {
+            await addClickEventReplyProfile();
+            await addMoreButton();
         })
     }
 })
@@ -688,24 +715,44 @@ function timeForToday(datetime) {
 }
 
 
-// 태그 검색시 검색결과 보여주기
-const mySearchInput = document.querySelector(".tag-search-text");
+// 태그 검색시 검색 결과 보여주기
 mySearchInput.addEventListener("keyup", async (e) => {
-    if (e.keyCode === 13){
-        // console.log(e.target.value)
+    if (e.keyCode === 13) {
         console.log("들어옴")
-        if (!e.target.value) return;
-        let keyword = e.target.value;
-        let page = 1;
-        const response = await fetch(`/wishlist/list/${page}/?keyword=${keyword}&category=${category}`);
-        const wishlists = await response.json();
-        // console.log(wishlists);
-        const text = await showList(wishlists);
-        div.innerHTML = text;
-        addClickEventReplyProfile()
-        addMoreButton()
+        wishlistService.getList(page, category, keyword, showList).then((text) => {
+            div.innerHTML = text;
+            addClickEventWishlistProfile()
+            addMoreButton()
+        });
     }
 })
+
+// 좋아요 아이콘 클릭 시 반영하기
+div.addEventListener('click', async (e)=> {
+    const button = e.target.closest('.post-like-container')
+
+    if(button){
+        if(memberId == 0){
+            window.location.href = '/member/login/'
+            return;
+        }
+        let emptyHeartIcon = button.querySelector('.post-like-icon')
+        let fullHeartIcon = button.querySelector(".post-like-icon.liked")
+        let displayStyle = window.getComputedStyle(emptyHeartIcon).display
+        emptyHeartIcon.style.display = displayStyle === 'none' ? 'block':'none';
+        fullHeartIcon.style.display = displayStyle === 'none'? 'none': 'block';
+
+        let wishlistId = button.classList[1]
+        console.log(wishlistId)
+
+        const postLike = await wishlistService.likeWishlist(wishlistId, memberId, displayStyle)
+        const likeCountContainer = button.closest('.post-items-wrap').querySelector('.post-like-count')
+        if(likeCountContainer){
+            likeCountContainer.innerText = postLike.totalLikeCount
+        }
+    }
+})
+
 
 //프로필 사진 눌렀을 때 틴친, 쪽지 모달 시작
 const sendLetterBoxBtn = document.querySelector(".send-letter-btn");
@@ -768,10 +815,11 @@ let opponentTeenchinId = 0;
 
 // 틴친 클릭 시 프로필 모달 나오기
 const showMemberProfileModal = async (wishlistId) => {
+    if (!loginCheck) return;
     opponentTeenchinId = document.querySelector(`.wishlist-writer-id${wishlistId}`).value;
     // console.log(opponentTeenchinId)
     // console.log(loginId)
-    if (profileModal.classList.contains("hidden") && (Number(opponentTeenchinId) !== loginId)) {
+    if (profileModal.classList.contains("hidden") && (opponentTeenchinId !== memberId)) {
         // console.log("실행")
         profileModal.classList.remove("hidden")
         const memberProfileImage = document.querySelector(`.profile-image${wishlistId}`);

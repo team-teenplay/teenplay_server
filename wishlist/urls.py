@@ -1,7 +1,7 @@
 from django.urls import path
 
 from wishlist.views import WishListView, WishListAPI, WishListWriteAPI, ReplyWriteAPI, ReplyListAPI, WishListActionAPI, \
-    ReplyActionAPI
+    ReplyActionAPI, WishlistLikeAPIView
 
 app_name = 'wishlist'
 
@@ -13,4 +13,5 @@ urlpatterns = [
     path('reply/list/', ReplyListAPI.as_view(), name='apply-list'),
     path('<int:wishlist_id>/', WishListActionAPI.as_view()),
     path('reply/<int:reply_id>/', ReplyActionAPI.as_view()),
+    path('select/like/api/<int:wishlist_id>/<int:memberId>/<str:displayStyle>/', WishlistLikeAPIView.as_view())
 ]

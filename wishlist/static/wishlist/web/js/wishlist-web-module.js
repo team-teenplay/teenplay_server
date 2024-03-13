@@ -10,8 +10,8 @@ const wishlistService = (() => {
         });
     }
 
-    const getList = async (page, category, callback) => {
-        const response = await fetch(`/wishlist/list/${page}/?category=${category}`);
+    const getList = async (page, category, keyword, callback) => {
+        const response = await fetch(`/wishlist/list/${page}/?keyword=${keyword}&category=${category}`);
         const data = await response.json();
         if (callback) {
             return callback(data);
@@ -76,8 +76,17 @@ const wishlistService = (() => {
         });
     }
 
+    const likeWishlist = async (wishlistId, memberId, displayStyle, callback) => {
+        const wishlistLikeResponse = await fetch(`/wishlist/select/like/api/${wishlistId}/${memberId}/${displayStyle}/`);
+        const postlike = await wishlistLikeResponse.json();
+        if (callback) {
+            return callback(postlike);
+        }
+        return(postlike)
+    };
 
-    return { write: write, getList: getList, replyWrite:replyWrite, replygetList:replygetList, wishlistRemove:wishlistRemove, wishlistUpdate:wishlistUpdate, replyRemove:replyRemove, replyUpdate:replyUpdate }
+
+    return { write: write, getList: getList, replyWrite:replyWrite, replygetList:replygetList, wishlistRemove:wishlistRemove, wishlistUpdate:wishlistUpdate, replyRemove:replyRemove, replyUpdate:replyUpdate, likeWishlist:likeWishlist }
 })();
 
 const activityLetterService = (() => {

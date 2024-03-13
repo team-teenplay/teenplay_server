@@ -39,7 +39,7 @@
                                     <!-- 메인 화면 상단 카테고리 -->
                                     <div class="top-categroy-container">
                                         <div class="top-categroy-items">
-                                            <button class="top-categroy-item all" id="item-all" name="" type="button">전체</button>
+                                            <button class="top-categroy-item all" id="item-all" name="100" type="button">전체</button>
                                         </div>
                                         <div class="top-categroy-items">
                                             <button class="top-categroy-item" id="item-culture" name="2" type="button">문화·예술</button>
@@ -112,7 +112,7 @@
                                             <div class="extra-wrap">
                                                 <div class="extra-divison">
                                                     <!-- 위시리스트 추가하기 부분 -->
-                                                    <div class="extra-create-container">
+                                                    <div class="extra-create-container" {% if not request.session.member %} style="display: none;" {% endif %}>
                                                         <button class="extra-create-button">
                                                             <svg class="extra-create-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                                                                 <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z"></path>
@@ -395,17 +395,34 @@
         <script>
         const categoryButton = document.querySelectorAll(".top-categroy-item")
         const csrf_token = '{{ csrf_token }}';
-        const memberId = '{{ request.session.member.id }}';
-        const loginId = {{ request.session.member.id }};
-        const memberName = '{{ request.session.member.member_nickname }}';
+        // 로그인 했는지 안 했는지 검사
+        const member = `{{ request.session.member }}`;
+        let memberId = 0;
+        let memberName = '';
+        let loginCheck = false;
+        if (member) {
+            loginCheck = true;
+            memberId = '{{ request.session.member.id }}';
+            memberName = '{{ request.session.member.member_nickname }}';
+        }
         // 카테고리 버튼을 눌렀을 때 카테고리에 category_id = name 값 담기
-        let category = ''
+        let category = 100;
         categoryButton.forEach((btn) => {
                 btn.addEventListener("click", () => {
-                    category = btn.name
+                    category = Number(btn.name);
                 })
             }
         )
+        // 키워드 검색시 키워드에 검색값 담기
+        let keyword = '없음';
+        const mySearchInput = document.querySelector(".tag-search-text");
+        mySearchInput.addEventListener("keyup", async (e) => {
+            if (e.keyCode === 13) {
+                // console.log(e.target.value)
+                if (!e.target.value) return;
+                keyword = e.target.value;
+            }
+        });
         
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
