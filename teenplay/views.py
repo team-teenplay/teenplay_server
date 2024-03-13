@@ -68,7 +68,8 @@ class TeenplayMainListAPIView(APIView):
                 id = None
 
         teenplay_list = []
-        for number in range(3):
+        random_count = {'random_count': 10}
+        for number in range(random_count['random_count']):
             like_count = {}
 
             radiant_teenplay = randint(1, teenplay_count)
@@ -76,10 +77,11 @@ class TeenplayMainListAPIView(APIView):
                 likes=Count('teenplaylike__status', filter=Q(teenplaylike__status=1))).values('id', 'video_path','club__club_name','club__club_intro','club__club_profile_path','club_id', 'likes')
             member_like = TeenPlayLike.objects.filter(member_id=id, teenplay_id=radiant_teenplay, status=1).exists()
             like_count['like_check'] = member_like
-            teenplay_like = {**like_count, **teenplay[0]}
+            teenplay_like = {**like_count, **teenplay[0],**random_count}
             teenplay_list.append(teenplay_like)
 
         context = teenplay_list
+        print(teenplay_list)
         return Response(context)
 
 class TeenPlayLikeAPIView(APIView):
