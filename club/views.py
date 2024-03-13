@@ -375,12 +375,24 @@ class ClubPrPostListView(View):
         category = request.GET.get('category', '')
         order = request.GET.get('order', '최신순')
         page = request.GET.get('page', 1)
-        print(order)
+        print(page)
         context = {
             'keyword': keyword,
             'category': category,
             'order': order,
             'page': page
+        }
+
+        return render(request, 'club/web/club-pr-posts-web.html', context)
+
+    def post(self, request):
+        datas = request.POST
+        print(datas)
+        context = {
+            'keyword': datas.get('keyword', ''),
+            'category': datas.get('category', ''),
+            'order': datas.get('order', '최신순'),
+            'page': datas.get('page', 1)
         }
 
         return render(request, 'club/web/club-pr-posts-web.html', context)
@@ -393,7 +405,7 @@ class ClubPrPostListAPI(APIView):
         keyword = data.get('keyword', '')
         page = int(data.get('page', 1))
         category = data.get('category', '')
-        ordering = data.get('ordering', '최신순')
+        ordering = data.get('order', '최신순')
         ordering = '-id' if ordering == '최신순' else '-view_count'
 
         row_count = 6
