@@ -371,6 +371,28 @@ pageNumberBox.addEventListener("click", (e) => {
 
 
 
+// ---------------------------------------------------------------------------------------------------------------------
+// 검색
+// 입력창
+const searchInput = document.querySelector(".main-user-info-input")
+
+// 전체보기 서치
+searchInput.addEventListener('keyup', (e) => {
+    if (e.keyCode === 13) {
+        let keyword = e.target.value
+        adminNoticeService.search(page, keyword, CreateService.showList).then((text) => {
+            userData.innerHTML = text;
+        })
+        adminNoticeService.search(page, keyword, CreateService.showPaging).then((text) => {
+            mainUserBottomUl.innerHTML = text;
+        })
+        adminNoticeService.search(page, keyword, CreateService.CountText).then((text) => {
+            mainUserTotalNumber.textContent = text;
+        })
+    }
+});
+
+
 
 // // 페이지 번호 클릭 시 페이지 이동 불가 이벤트 발생
 // pageNumberButtons.addEventListener("click", (e) => {

@@ -31,346 +31,56 @@
             </section>
             <!-- 배너-내용 경계선 -->
             <div class="pr-border"></div>
+            <!-- 검색창 -->
+            <div class="pr-post-search-wrap">
+                <div class="search-total-container">
+                    <span class="search-total-count"></span>
+                    개의 모임 홍보글이 검색되었습니다.
+                </div>
+                <div class="pr-post-search-container">
+                    <select name="category" class="pr-post-category-box">
+                        <option value="">전체</option>
+                        <option value="취미">취미</option>
+                        <option value="문화·예술">문화·예술</option>
+                        <option value="운동·액티비티">운동·액티비티</option>
+                        <option value="푸드·드링크">푸드·드링크</option>
+                        <option value="여행·동행">여행·동행</option>
+                        <option value="성장·자기개발">성장·자기개발</option>
+                        <option value="동네·또래">동네·또래</option>
+                        <option value="연애·소개팅">연애·소개팅</option>
+                        <option value="재테크">재테크</option>
+                        <option value="외국어">외국어</option>
+                        <option value="스터디">스터디</option>
+                        <option value="지역축제">지역축제</option>
+                        <option value="기타">기타</option>
+                    </select>
+                    <div class="pr-post-search-box">
+                        <button class="pr-post-search-button">
+                            <svg class="pr-post-search-button-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"></path>
+                            </svg>
+                        </button>
+                        <input class="pr-post-search-input" name="keyword" type="text" placeholder="모임 또는 제목을 검색하세요">
+                    </div>
+                </div>
+            </div>
+            <!-- 정렬순 -->
+            <div class="ordering-wrap">
+                <button class="new-ordering" type="button">
+                    <span>최신순</span>
+                </button>
+                <button class="hits-ordering" type="button">
+                    <span>조회순</span>
+                </button>
+            </div>
             <!-- 내용 -->
             <div class="pr-content-wrap">
                 <div class="pr-content-container">
                     <!-- 아래 div가 게시물마다 반복 -->
-                    <div class="pr-content-boxes">
-                        <!-- 모임 홍보글 이미지 -->
-                        <a href="" class="pr-content-img-wrap" target="_self">
-                            <img src="{% static 'club/web/images/club-pr-posts/pr-posts-example-img.png' %}" class="pr-content-img" />
-                        </a>
-                        <div class="pr-content-text-wrap">
-                            <div class="pr-content-text-container">
-                                <div class="pr-content-text-top-wrap">
-                                    <!-- 카테고리 -->
-                                    <div class="pr-content-field">관광/여행</div>
-                                    <!-- 모임 이름 -->
-                                    <div class="pr-content-text-name">틴플레이어스</div>
-                                </div>
-                                <!-- 홍보글 제목 -->
-                                <div class="pr-content-text-title-wrap">
-                                    <a href="" class="pr-content-text-title-link">
-                                        <p class="pr-content-text-title">[모집중] TeenPlayers :: 전국 여행모임 - 함께 추억을 쌓으러 떠날 틴친분들을 모집합니다!😁</p>
-                                    </a>
-                                </div>
-                                <!-- 홍보글 내용 -->
-                                <div class="pr-content-text-content-wrap">
-                                    <p class="pr-content-text-content">
-                                        틴플레이어스와 함께하실 틴친들을 모집합니다~!
-                                        <br />
-                                        외모, 나이 따지지 않습니다! 오로지 여행에 대한 열정! 하나만으로 뭉쳐서 즐겁게 여행하실 분들과 함께해요~
-                                        <br />
-                                        <br />
-                                        매주 주말 전국 방방곡곡으로 여행을 떠납니다!
-                                    </p>
-                                </div>
-                                <!-- 구성원, 댓글 개수, 작성시간, 조회수 -->
-                                <div class="pr-content-info-wrap">
-                                    <div class="pr-content-info-left-wrap">
-                                        <span class="pr-content-info-left-title"> 구성원 </span>
-                                        <span class="pr-content-info-left-count"> 30명 </span>
-                                    </div>
-                                    <div class="pr-content-info-right-wrap">
-                                        <span class="pr-content-info-right-replies"> 댓글 12 </span>
-                                        <span class="pr-content-info-border">|</span>
-                                        <span class="pr-content-info-right-date">5분 전</span>
-                                        <span class="pr-content-info-border">|</span>
-                                        <span class="pr-content-info-right-views">조회 1,024</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 2 -->
-                    <div class="pr-content-boxes">
-                        <!-- 모임 홍보글 이미지 -->
-                        <a href="" class="pr-content-img-wrap" target="_self">
-                            <img src="{% static 'club/web/images/club-pr-posts/pr-posts-example-img.png' %}" class="pr-content-img" />
-                        </a>
-                        <div class="pr-content-text-wrap">
-                            <div class="pr-content-text-container">
-                                <div class="pr-content-text-top-wrap">
-                                    <!-- 카테고리 -->
-                                    <div class="pr-content-field">관광/여행</div>
-                                    <!-- 모임 이름 -->
-                                    <div class="pr-content-text-name">틴플레이어스</div>
-                                </div>
-                                <!-- 홍보글 제목 -->
-                                <div class="pr-content-text-title-wrap">
-                                    <a href="" class="pr-content-text-title-link">
-                                        <p class="pr-content-text-title">[모집중] TeenPlayers :: 전국 여행모임 - 함께 추억을 쌓으러 떠날 틴친분들을 모집합니다!😁</p>
-                                    </a>
-                                </div>
-                                <!-- 홍보글 내용 -->
-                                <div class="pr-content-text-content-wrap">
-                                    <p class="pr-content-text-content">
-                                        틴플레이어스와 함께하실 틴친들을 모집합니다~!
-                                        <br />
-                                        외모, 나이 따지지 않습니다! 오로지 여행에 대한 열정! 하나만으로 뭉쳐서 즐겁게 여행하실 분들과 함께해요~
-                                        <br />
-                                        <br />
-                                        매주 주말 전국 방방곡곡으로 여행을 떠납니다!
-                                    </p>
-                                </div>
-                                <!-- 구성원, 댓글 개수, 작성시간, 조회수 -->
-                                <div class="pr-content-info-wrap">
-                                    <div class="pr-content-info-left-wrap">
-                                        <span class="pr-content-info-left-title"> 구성원 </span>
-                                        <span class="pr-content-info-left-count"> 30명 </span>
-                                    </div>
-                                    <div class="pr-content-info-right-wrap">
-                                        <span class="pr-content-info-right-replies"> 댓글 12 </span>
-                                        <span class="pr-content-info-border">|</span>
-                                        <span class="pr-content-info-right-date">5분 전</span>
-                                        <span class="pr-content-info-border">|</span>
-                                        <span class="pr-content-info-right-views">조회 1,024</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 3 -->
-                    <div class="pr-content-boxes">
-                        <!-- 모임 홍보글 이미지 -->
-                        <a href="" class="pr-content-img-wrap" target="_self">
-                            <img src="{% static 'club/web/images/club-pr-posts/pr-posts-example-img.png' %}" class="pr-content-img" />
-                        </a>
-                        <div class="pr-content-text-wrap">
-                            <div class="pr-content-text-container">
-                                <div class="pr-content-text-top-wrap">
-                                    <!-- 카테고리 -->
-                                    <div class="pr-content-field">관광/여행</div>
-                                    <!-- 모임 이름 -->
-                                    <div class="pr-content-text-name">틴플레이어스</div>
-                                </div>
-                                <!-- 홍보글 제목 -->
-                                <div class="pr-content-text-title-wrap">
-                                    <a href="" class="pr-content-text-title-link">
-                                        <p class="pr-content-text-title">[모집중] TeenPlayers :: 전국 여행모임 - 함께 추억을 쌓으러 떠날 틴친분들을 모집합니다!😁</p>
-                                    </a>
-                                </div>
-                                <!-- 홍보글 내용 -->
-                                <div class="pr-content-text-content-wrap">
-                                    <p class="pr-content-text-content">
-                                        틴플레이어스와 함께하실 틴친들을 모집합니다~!
-                                        <br />
-                                        외모, 나이 따지지 않습니다! 오로지 여행에 대한 열정! 하나만으로 뭉쳐서 즐겁게 여행하실 분들과 함께해요~
-                                        <br />
-                                        <br />
-                                        매주 주말 전국 방방곡곡으로 여행을 떠납니다!
-                                    </p>
-                                </div>
-                                <!-- 구성원, 댓글 개수, 작성시간, 조회수 -->
-                                <div class="pr-content-info-wrap">
-                                    <div class="pr-content-info-left-wrap">
-                                        <span class="pr-content-info-left-title"> 구성원 </span>
-                                        <span class="pr-content-info-left-count"> 30명 </span>
-                                    </div>
-                                    <div class="pr-content-info-right-wrap">
-                                        <span class="pr-content-info-right-replies"> 댓글 12 </span>
-                                        <span class="pr-content-info-border">|</span>
-                                        <span class="pr-content-info-right-date">5분 전</span>
-                                        <span class="pr-content-info-border">|</span>
-                                        <span class="pr-content-info-right-views">조회 1,024</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 4 -->
-                    <div class="pr-content-boxes">
-                        <!-- 모임 홍보글 이미지 -->
-                        <a href="" class="pr-content-img-wrap" target="_self">
-                            <img src="{% static 'club/web/images/club-pr-posts/pr-posts-example-img.png' %}" class="pr-content-img" />
-                        </a>
-                        <div class="pr-content-text-wrap">
-                            <div class="pr-content-text-container">
-                                <div class="pr-content-text-top-wrap">
-                                    <!-- 카테고리 -->
-                                    <div class="pr-content-field">관광/여행</div>
-                                    <!-- 모임 이름 -->
-                                    <div class="pr-content-text-name">틴플레이어스</div>
-                                </div>
-                                <!-- 홍보글 제목 -->
-                                <div class="pr-content-text-title-wrap">
-                                    <a href="" class="pr-content-text-title-link">
-                                        <p class="pr-content-text-title">[모집중] TeenPlayers :: 전국 여행모임 - 함께 추억을 쌓으러 떠날 틴친분들을 모집합니다!😁</p>
-                                    </a>
-                                </div>
-                                <!-- 홍보글 내용 -->
-                                <div class="pr-content-text-content-wrap">
-                                    <p class="pr-content-text-content">
-                                        틴플레이어스와 함께하실 틴친들을 모집합니다~!
-                                        <br />
-                                        외모, 나이 따지지 않습니다! 오로지 여행에 대한 열정! 하나만으로 뭉쳐서 즐겁게 여행하실 분들과 함께해요~
-                                        <br />
-                                        <br />
-                                        매주 주말 전국 방방곡곡으로 여행을 떠납니다!
-                                    </p>
-                                </div>
-                                <!-- 구성원, 댓글 개수, 작성시간, 조회수 -->
-                                <div class="pr-content-info-wrap">
-                                    <div class="pr-content-info-left-wrap">
-                                        <span class="pr-content-info-left-title"> 구성원 </span>
-                                        <span class="pr-content-info-left-count"> 30명 </span>
-                                    </div>
-                                    <div class="pr-content-info-right-wrap">
-                                        <span class="pr-content-info-right-replies"> 댓글 12 </span>
-                                        <span class="pr-content-info-border">|</span>
-                                        <span class="pr-content-info-right-date">5분 전</span>
-                                        <span class="pr-content-info-border">|</span>
-                                        <span class="pr-content-info-right-views">조회 1,024</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 5 -->
-                    <div class="pr-content-boxes">
-                        <!-- 모임 홍보글 이미지 -->
-                        <a href="" class="pr-content-img-wrap" target="_self">
-                            <img src="{% static 'club/web/images/club-pr-posts/pr-posts-example-img.png' %}" class="pr-content-img" />
-                        </a>
-                        <div class="pr-content-text-wrap">
-                            <div class="pr-content-text-container">
-                                <div class="pr-content-text-top-wrap">
-                                    <!-- 카테고리 -->
-                                    <div class="pr-content-field">관광/여행</div>
-                                    <!-- 모임 이름 -->
-                                    <div class="pr-content-text-name">틴플레이어스</div>
-                                </div>
-                                <!-- 홍보글 제목 -->
-                                <div class="pr-content-text-title-wrap">
-                                    <a href="" class="pr-content-text-title-link">
-                                        <p class="pr-content-text-title">[모집중] TeenPlayers :: 전국 여행모임 - 함께 추억을 쌓으러 떠날 틴친분들을 모집합니다!😁</p>
-                                    </a>
-                                </div>
-                                <!-- 홍보글 내용 -->
-                                <div class="pr-content-text-content-wrap">
-                                    <p class="pr-content-text-content">
-                                        틴플레이어스와 함께하실 틴친들을 모집합니다~!
-                                        <br />
-                                        외모, 나이 따지지 않습니다! 오로지 여행에 대한 열정! 하나만으로 뭉쳐서 즐겁게 여행하실 분들과 함께해요~
-                                        <br />
-                                        <br />
-                                        매주 주말 전국 방방곡곡으로 여행을 떠납니다!
-                                    </p>
-                                </div>
-                                <!-- 구성원, 댓글 개수, 작성시간, 조회수 -->
-                                <div class="pr-content-info-wrap">
-                                    <div class="pr-content-info-left-wrap">
-                                        <span class="pr-content-info-left-title"> 구성원 </span>
-                                        <span class="pr-content-info-left-count"> 30명 </span>
-                                    </div>
-                                    <div class="pr-content-info-right-wrap">
-                                        <span class="pr-content-info-right-replies"> 댓글 12 </span>
-                                        <span class="pr-content-info-border">|</span>
-                                        <span class="pr-content-info-right-date">5분 전</span>
-                                        <span class="pr-content-info-border">|</span>
-                                        <span class="pr-content-info-right-views">조회 1,024</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 6 -->
-                    <div class="pr-content-boxes">
-                        <!-- 모임 홍보글 이미지 -->
-                        <a href="" class="pr-content-img-wrap" target="_self">
-                            <img src="{% static 'club/web/images/club-pr-posts/pr-posts-example-img.png' %}" class="pr-content-img" />
-                        </a>
-                        <div class="pr-content-text-wrap">
-                            <div class="pr-content-text-container">
-                                <div class="pr-content-text-top-wrap">
-                                    <!-- 카테고리 -->
-                                    <div class="pr-content-field">관광/여행</div>
-                                    <!-- 모임 이름 -->
-                                    <div class="pr-content-text-name">틴플레이어스</div>
-                                </div>
-                                <!-- 홍보글 제목 -->
-                                <div class="pr-content-text-title-wrap">
-                                    <a href="" class="pr-content-text-title-link">
-                                        <p class="pr-content-text-title">[모집중] TeenPlayers :: 전국 여행모임 - 함께 추억을 쌓으러 떠날 틴친분들을 모집합니다!😁</p>
-                                    </a>
-                                </div>
-                                <!-- 홍보글 내용 -->
-                                <div class="pr-content-text-content-wrap">
-                                    <p class="pr-content-text-content">
-                                        틴플레이어스와 함께하실 틴친들을 모집합니다~!
-                                        <br />
-                                        외모, 나이 따지지 않습니다! 오로지 여행에 대한 열정! 하나만으로 뭉쳐서 즐겁게 여행하실 분들과 함께해요~
-                                        <br />
-                                        <br />
-                                        매주 주말 전국 방방곡곡으로 여행을 떠납니다!
-                                    </p>
-                                </div>
-                                <!-- 구성원, 댓글 개수, 작성시간, 조회수 -->
-                                <div class="pr-content-info-wrap">
-                                    <div class="pr-content-info-left-wrap">
-                                        <span class="pr-content-info-left-title"> 구성원 </span>
-                                        <span class="pr-content-info-left-count"> 30명 </span>
-                                    </div>
-                                    <div class="pr-content-info-right-wrap">
-                                        <span class="pr-content-info-right-replies"> 댓글 12 </span>
-                                        <span class="pr-content-info-border">|</span>
-                                        <span class="pr-content-info-right-date">5분 전</span>
-                                        <span class="pr-content-info-border">|</span>
-                                        <span class="pr-content-info-right-views">조회 1,024</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <!-- 페이지네이션 -->
                 <div class="pr-pagination-wrap">
-                    <div class="pr-pagination">
-                        <!-- 1페이지일 때 이전버튼 비활성화(disabled 클래스 추가) -->
-                        <button class="pr-pagination-prev disabled">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="pr-pagination-prev-icon" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                            </svg>
-                        </button>
-                        <div class="pr-pagination-page-wrap">
-                            <!-- 현재 페이지일 때 active 클래스 추가 -->
-                            <button class="pr-pagination-page active">
-                                <div class="pr-pagination-page-number">1</div>
-                            </button>
-                            <button class="pr-pagination-page">
-                                <div class="pr-pagination-page-number">2</div>
-                            </button>
-                            <button class="pr-pagination-page">
-                                <div class="pr-pagination-page-number">3</div>
-                            </button>
-                            <button class="pr-pagination-page">
-                                <div class="pr-pagination-page-number">4</div>
-                            </button>
-                            <button class="pr-pagination-page">
-                                <div class="pr-pagination-page-number">5</div>
-                            </button>
-                        </div>
-                        <button class="pr-pagination-next">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="pr-pagination-next-icon" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                <!-- 작성버튼 -->
-                <div class="extra-all-wrap">
-                    <div class="extra-wrap">
-                        <div class="extra-divison">
-                            <!-- 홍보글 작성으로 이동 부분 -->
-                            <div class="extra-create-container">
-                                <button class="extra-create-button">
-                                    <svg class="extra-create-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="pr-pagination"></div>
                 </div>
             </div>
         </div>
@@ -378,5 +88,13 @@
 {% endblock %}
 
 {% block js %}
+    <script>
+        const csrf_token = `{{ csrf_token }}`;
+        let page = {{ page }};
+        let category = `{{ category }}`;
+        let order = `{{ order }}`;
+        let keyword = `{{ keyword }}`;
+    </script>
+    <script src="{% static 'club/web/js/club-pr-post-list-module.js' %}"></script>
     <script src="{% static 'club/web/js/club-pr-posts-web.js' %}"></script>
 {% endblock %}

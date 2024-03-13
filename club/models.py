@@ -106,7 +106,7 @@ class ClubPost(Period):
         gap = math.floor(gap / 31)
 
         if gap < 12:
-            return "${gap}개월 전"
+            return f"{gap}개월 전"
 
         gap = math.floor(gap / 12)
         return f"{gap}년 전"

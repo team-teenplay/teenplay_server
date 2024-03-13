@@ -1236,7 +1236,9 @@ color: #9ca3af;
 }
 .div-size{
     width: 55px;
-
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .main-wish-sellect-button-span{
@@ -1439,14 +1441,13 @@ margin-left: 16px;}
     font-weight: inherit;
     line-height: inherit;
     margin: 0;
-  }
+}
 
-  .main-comment-info-button-svg{
+.main-comment-info-button-svg{
     flex-shrink: 0;
     width: 10px;
     height: 10px;
     margin-left: 4px;
-
+    display: block;
     vertical-align: middle;
-
   }
