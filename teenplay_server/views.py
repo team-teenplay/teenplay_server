@@ -10,15 +10,15 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from activity.models import Activity
-from club.models import Club, ClubPost
+from activity.models import Activity, ActivityReply
+from club.models import Club, ClubPost, ClubPostReply
 from member.models import AdminAccount, Member
 from member.serializers import AdminAccountSerializer
 from notice.models import Notice
 
 from django.utils import timezone
 
-from wishlist.models import Wishlist
+from wishlist.models import Wishlist, WishlistReply
 
 
 # 관리자 로그인 페이지 이동
@@ -293,6 +293,7 @@ class AdminNoticePaginationAPI(APIView):
         order = request.GET.get('order', 'recent')
         category = request.GET.get('category', '')
         keyword = request.GET.get('keyword', '')
+        targetId = request.GET.get('targetId', '')
 
         row_count = 10
 
@@ -305,6 +306,9 @@ class AdminNoticePaginationAPI(APIView):
 
         if keyword:
             condition &= Q(notice_title__contains=keyword)
+
+        if targetId:
+            condition &= Q(id=targetId)
 
         total = Notice.objects.filter(condition).all().count()
 
@@ -418,51 +422,58 @@ class AdminCommentAPI(APIView):
         columns = [
             'member_name',
             'title',
-            'created_date',
+            'created',
             'reply',
             'member_status',
             'reply_id',
-            'member_id'
+            'reply_member_id',
+            'reply_status',
+            'reply_updated_date'
         ]
 
-        activities = Activity.objects \
+        activities = Activity.enabled_objects \
             .annotate(
-            member_name=F('activityreply__member__member_nickname'),
-            title=F('activityreply__activity__activity_title'),
-            created=F('activityreply__created_date'),
-            reply=F('activityreply__reply_content'),
-            member_status=F('activityreply__member__status'),
-            reply_id=F('activityreply__id'),
-            member_id=F('activityreply__member__id')
-        ) \
+                member_name=F('activityreply__member__member_nickname'),
+                title=F('activityreply__activity__activity_title'),
+                created=F('activityreply__created_date'),
+                reply=F('activityreply__reply_content'),
+                member_status=F('activityreply__member__status'),
+                reply_id=F('activityreply__id'),
+                reply_member_id=F('activityreply__member__id'),
+                reply_status=F('activityreply__status'),
+                reply_updated_date=F('activityreply__updated_date'),
+            ) \
             .values(*columns).filter(member_name__isnull=False)
 
-        wishes = Wishlist.objects \
+        wishes = Wishlist.enabled_objects \
             .annotate(
-            member_name=F('wishlistreply__member__member_nickname'),
-            title=F('wishlistreply__wishlist__wishlist_content'),
-            created=F('wishlistreply__created_date'),
-            reply=F('wishlistreply__reply_content'),
-            member_status=F('wishlistreply__member__status'),
-            reply_id=F('wishlistreply__id'),
-            member_id=F('activityreply__member__id')
-        ) \
+                member_name=F('wishlistreply__member__member_nickname'),
+                title=F('wishlist_content'),
+                created=F('wishlistreply__created_date'),
+                reply=F('wishlistreply__reply_content'),
+                member_status=F('wishlistreply__member__status'),
+                reply_id=F('wishlistreply__id'),
+                reply_member_id=F('wishlistreply__member__id'),
+                reply_status=F('wishlistreply__status'),
+                reply_updated_date=F('wishlistreply__updated_date')
+            ) \
             .values(*columns).filter(member_name__isnull=False)
 
-        club_posts = ClubPost.objects \
+        club_posts = ClubPost.enabled_objects \
             .annotate(
-            member_name=F('clubpostreply__member__member_nickname'),
-            title=F('clubpostreply__club_post__post_title'),
-            created=F('clubpostreply__created_date'),
-            reply=F('clubpostreply__reply_content'),
-            member_status=F('clubpostreply__member__status'),
-            reply_id=F('clubpostreply__id'),
-            member_id=F('activityreply__member__id')
-        ) \
+                member_name=F('clubpostreply__member__member_nickname'),
+                title=F('clubpostreply__club_post__post_title'),
+                created=F('clubpostreply__created_date'),
+                reply=F('clubpostreply__reply_content'),
+                member_status=F('clubpostreply__member__status'),
+                reply_id=F('clubpostreply__id'),
+                reply_member_id=F('clubpostreply__member__id'),
+                reply_status=F('clubpostreply__status'),
+                reply_updated_date=F('clubpostreply__updated_date')
+            ) \
             .values(*columns).filter(member_name__isnull=False)
 
         total = activities.union(wishes).union(club_posts).count()
-
 
         page_count = 5
 
@@ -487,7 +498,7 @@ class AdminCommentAPI(APIView):
         if order == 'popular':
             ordering = '-post_read_count'
 
-        comment = activities.union(wishes).union(club_posts).order_by('-created_date')
+        comment = activities.union(wishes).union(club_posts).order_by('-created')
 
         context['comment'] = list(comment[offset:limit])
 
@@ -496,26 +507,114 @@ class AdminCommentAPI(APIView):
 
 class AdminCommentDeleteAPI(APIView):
     # 게시글 삭제
-    def delete(self, request, comment_id):
+    @transaction.atomic
+    def delete(self, request):
         reply_id = request.GET.get('reply_id', '')
-        member_id = request.GET.get('member_id', '')
-        crated_date = request.GET.get('crated_date', '')
+        reply_member_id = request.GET.get('reply_member_id', '')
+        created_date = request.GET.get('created_date', '')
+        print('들어옴/?!')
 
-        status = 0
-        updated_date = timezone.now()
+        columns = [
+            'member_name',
+            'title',
+            'created',
+            'reply',
+            'member_status',
+            'reply_id',
+            'reply_member_id',
+            'reply_status',
+            'reply_updated_date'
+        ]
 
+        activities = Activity.enabled_objects \
+            .annotate(
+            member_name=F('activityreply__member__member_nickname'),
+            title=F('activityreply__activity__activity_title'),
+            created=F('activityreply__created_date'),
+            reply=F('activityreply__reply_content'),
+            member_status=F('activityreply__member__status'),
+            reply_id=F('activityreply__id'),
+            reply_member_id=F('activityreply__member__id'),
+            reply_status=F('activityreply__status'),
+            reply_updated_date = F('activityreply__updated_date')
+        ) \
+            .values(*columns).filter(member_name__isnull=False)
 
+        wishes = Wishlist.enabled_objects \
+            .annotate(
+            member_name=F('wishlistreply__member__member_nickname'),
+            title=F('wishlist_content'),
+            created=F('wishlistreply__created_date'),
+            reply=F('wishlistreply__reply_content'),
+            member_status=F('wishlistreply__member__status'),
+            reply_id=F('wishlistreply__id'),
+            reply_member_id=F('wishlistreply__member__id'),
+            reply_status=F('wishlistreply__status'),
+            reply_updated_date=F('wishlistreply__updated_date')
+        ) \
+            .values(*columns).filter(member_name__isnull=False)
 
-        # comment = activities.union(wishes).union(club_posts).filter(id=comment_id)
-        # comment.status = status
-        # comment.updated_date = updated_date
-        # comment.save(update_fields=['status', 'updated_date'])
+        club_posts = ClubPost.enabled_objects \
+            .annotate(
+            member_name=F('clubpostreply__member__member_nickname'),
+            title=F('clubpostreply__club_post__post_title'),
+            created=F('clubpostreply__created_date'),
+            reply=F('clubpostreply__reply_content'),
+            member_status=F('clubpostreply__member__status'),
+            reply_id=F('clubpostreply__id'),
+            reply_member_id=F('clubpostreply__member__id'),
+            reply_status=F('clubpostreply__status'),
+            reply_updated_date=F('clubpostreply__updated_date')
+        ) \
+            .values(*columns).filter(member_name__isnull=False)
+
+        activity = activities.filter(reply_id=reply_id, reply_member_id=reply_member_id, created=created_date)
+        wishlist = wishes.filter(reply_id=reply_id, reply_member_id=reply_member_id, created=created_date)
+        club_post = club_posts.filter(reply_id=reply_id, reply_member_id=reply_member_id, created=created_date)
+
+        comment = activity.union(wishlist).union(club_post)
+        comment = list(comment)[0]
+
+        wishlist_replies = list(WishlistReply.objects\
+            .filter(id=comment['reply_id'],
+                    member_id=comment['reply_member_id'],
+                    created_date=comment['created']))
+
+        activity_replies = list(ActivityReply.objects\
+            .filter(id=comment['reply_id'],
+                    member_id=comment['reply_member_id'],
+                    created_date=comment['created']))
+
+        club_post_replies = list(ClubPostReply.objects\
+            .filter(id=comment['reply_id'],
+                    member_id=comment['reply_member_id'],
+                    created_date=comment['created']))
+
+        if wishlist_replies:
+            for wishlist_reply in wishlist_replies:
+                wishlist_reply.status = 0
+                wishlist_reply.updated_date = timezone.now()
+                wishlist_reply.save(update_fields=['status', 'updated_date'])
+
+        elif activity_replies:
+            for activity_reply in activity_replies:
+                activity_reply.status = 0
+                activity_reply.updated_date = timezone.now()
+                activity_reply.save(update_fields=['status', 'updated_date'])
+
+        elif club_post_replies:
+            for club_post_reply in club_post_replies:
+                club_post_reply.status = 0
+                club_post_reply.updated_date = timezone.now()
+                club_post_reply.save(update_fields=['status', 'updated_date'])
 
         return Response('success')
 
+
+
+
+
 # ----------------------------------------------------------------------------------------------------------------------
-
-
 # 회사 소개 페이지 이동
 class CompanyIntroductionView(View):
     def get(self, request):

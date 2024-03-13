@@ -10,9 +10,9 @@ const CreateService = (() => {
         let text = ``;
         pagination.comment.forEach((page) => {
             text += `
-                <li class="main-user-list" data-id="${page.reply_id}">
+                <li class="main-user-list" data-id="${page.reply_id}" data-member="${page.reply_member_id}" data-date="${page.created}">
                     <div class="main-user-list-check">
-                        <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-id="${page.reply_id}" data-member="${page.member_id}" data-date="${page.created_date}"/>
+                        <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-id="${page.reply_id}"/>
                     </div>
                     <div class="main-comment-list-status">${page.member_name}</div>
             `;
@@ -26,7 +26,7 @@ const CreateService = (() => {
                 `;
             }
             text += `
-                    <div class="main-comment-list-date">${page.created_date.slice(0, 10)}</div>
+                    <div class="main-comment-list-date">${page.created.slice(0, 10)}</div>
             `;
             if (page.reply.length <= 20) {
                 text += `
@@ -157,7 +157,6 @@ const CreateService = (() => {
 
     // 댓글 개수 표기 텍스트
     const CountText = (pagination) => {
-        console.log(pagination)
         let text = ``;
         text += pagination.total
 
@@ -300,7 +299,6 @@ commentData.addEventListener('click', (e) => {
             })
 
             modalDeleteOpenButtons.forEach((deleteButton) => {
-                console.log(deleteButton)
                 if (checkedItems.length > 0) {
                     deleteButton.classList.remove("disabled");
                     checkedCount = checkedItems.length
@@ -459,9 +457,12 @@ modalDeleteButtons.forEach((button) => {
             // 체크된 checkbox와 가장 가까운 li 요소를 찾고 data-id 값을 가져오기
             const replyId = checkbox.closest("li").getAttribute("data-id");
             const memberId = checkbox.closest("li").getAttribute("data-member");
-            const cratedDate = checkbox.closest("li").getAttribute("data-date");
+            const createdDate = checkbox.closest("li").getAttribute("data-date");
+            console.log(replyId)
+            console.log(memberId)
+            console.log(createdDate)
             // data-id 속성 값이 같은 li 요소를 가져오기
-            await adminCommentService.remove({ replyId: replyId, memberId: memberId, cratedDate: cratedDate });
+            await adminCommentService.remove(replyId, memberId, createdDate);
         }
 
         // 모달 닫기

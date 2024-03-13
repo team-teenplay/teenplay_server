@@ -21,18 +21,18 @@ const adminCommentService = (() => {
     }
 
     // 댓글 삭제
-    const remove = async (replyId, memberId, cratedDate) => {
-        const reply_id = replyId.replyId
-        const member_id = memberId.memberId
-        const crated_date = cratedDate.cratedDate
+    const remove = async (replyId, memberId, createdDate) => {
+        const reply_id = replyId
+        const reply_member_id = memberId
+        const created_date = createdDate
 
-        await fetch(`/admin/comments/delete/?reply_id=${reply_id}&member_id=${member_id}&crated_date=${crated_date}`, {
+        await fetch(`/admin/comments/delete/?reply_id=${reply_id}&reply_member_id=${reply_member_id}&created_date=${created_date}`, {
             method: 'delete',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
                 'X-CSRFToken': csrf_token
             },
-            body: JSON.stringify({'reply_id': reply_id, 'member_id': member_id, 'crated_date': crated_date})
+            body: JSON.stringify({'reply_id': reply_id, 'reply_member_id': reply_member_id, 'created_date': created_date})
         });
     }
 
