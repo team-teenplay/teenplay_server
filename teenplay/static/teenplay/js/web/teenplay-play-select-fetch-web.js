@@ -1,13 +1,4 @@
 const teenplayClubService = (() => {
-    // const getList = async (clubId, page, teenplayClickId, callback) => {
-    //     const response = await fetch(`/teenplay/club/select/api/${clubId}/${page}/${teenplayClickId}/`);
-    //     const teenplayList = await response.json();
-    //     if (callback){
-    //         return callback(teenplayList)
-    //     }
-    //     return teenplayList
-    // }
-
     const getList = async (clubId, page, teenplayClickId, callback) => {
         let url = `/teenplay/club/select/api/${clubId}/`
 
@@ -16,6 +7,7 @@ const teenplayClubService = (() => {
         }
 
         url+= `${teenplayClickId}`
+
         const response = await fetch(url);
         const teenplayList = await response.json();
         if(callback){

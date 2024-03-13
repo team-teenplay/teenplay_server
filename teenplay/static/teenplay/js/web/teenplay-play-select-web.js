@@ -16,10 +16,6 @@ let likeBtns = document.querySelectorAll(".play-like-btn");
 let emptyHeart = document.querySelectorAll(".play-like-icon.empty");
 let fullHeart = document.querySelectorAll(".play-like-icon.full");
 
-// console.log(clubId, page, teenplayClickId)
-// teenplayClubService.getList(clubId, page, teenplayClickId).then((teenplayInfo) => {
-//     // console.log(teenplayInfo)
-// })
 
 const addList = (teenplayList) => {
     if('id' in teenplayList){
@@ -56,7 +52,7 @@ const addList = (teenplayList) => {
                                 </div>
                                 <div class="play-like-info-wrap">
                                     <div class="play-like-wrap">
-                                        <button class="play-like-btn" value="${teenplayList.member_like}">
+                                        <button class="play-like-btn" value="${teenplayList.member_like}" name="${teenplayList.id}">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:none">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                                             </svg>
@@ -157,7 +153,7 @@ const addList = (teenplayList) => {
                                 </div>
                                 <div class="play-like-info-wrap">
                                     <div class="play-like-wrap">
-                                        <button class="play-like-btn" value="${teenplayList.id}">
+                                        <button class="play-like-btn" value="${teenplayList.member_like}" name="${teenplayList.id}">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:block">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                                             </svg>
@@ -257,37 +253,6 @@ slideContainer.addEventListener('click', (e)=>{
     }
 })
 
-// 일시정지, 재생 관련 버튼
-// false일 때 클릭 시 재생, true일 때 클릭 시 일시정지
-// globalThis.flags = new Array(videos.length);
-//
-// videos.forEach((video, i) => {
-//     video.addEventListener("click", (e) => {
-//         if (!globalThis.flags[i]) {
-//             globalThis.flags[i] = true;
-//             pauseIcons[i].style.display = "none";
-//             playIcons[i].style.display = "block";
-//             e.target.pause();
-//         } else {
-//             globalThis.flags[i] = false;
-//             pauseIcons[i].style.display = "block";
-//             playIcons[i].style.display = "none";
-//             e.target.play();
-//         }
-//     });
-// });
-
-
-// 재생 중이 아닌 영상은 일시정지로 시작
-// videoWraps.forEach((videoWrap, i) => {
-//     if (!videoWrap.classList.contains("playing")) {
-//         videos[i].autoplay = false;
-//     } else {
-//         videos[i].autoplay = true;
-//     }
-// });
-
-
 // 동적요소 추가 시 음소거 관련 기능
 slideContainer.addEventListener('click', (e)=> {
     if(e.target.classList.contains('mute') || e.target.closest('.mute')){
@@ -319,42 +284,6 @@ slideContainer.addEventListener('click', (e)=> {
     }
 })
 
-// 음소거 관련 버튼
-// muteIcons.forEach((mute) => {
-//     mute.addEventListener("click", () => {
-//         muteIcons.forEach((mute) => {
-//             mute.style.display = "none";
-//         });
-//         videos.forEach((video) => {
-//             video.muted = true;
-//         });
-//         unmuteIcons.forEach((unmute) => {
-//             unmute.style.display = "block";
-//         });
-//     });
-// });
-//
-// unmuteIcons.forEach((unmute) => {
-//     unmute.addEventListener("click", (e) => {
-//         unmuteIcons.forEach((unmute) => {
-//             unmute.style.display = "none";
-//         });
-//         videos.forEach((video) => {
-//             video.muted = false;
-//         });
-//         muteIcons.forEach((mute) => {
-//             mute.style.display = "block";
-//         });
-//     });
-// });
-
-// 진행도 1초마다 증가
-// videos.forEach((video, i) => {
-//     video.addEventListener("timeupdate", (e) => {
-//         let percent = (e.target.currentTime / e.target.duration) * 100;
-//         progressBars[i].style.width = `${percent}%`;
-//     });
-// });
 
 // 스크롤로 이전/다음 틴플레이 이동
 
@@ -364,6 +293,13 @@ function slidePrev(idx) {
     videoWraps[idx + 1].classList.remove("playing");
     videoWraps[idx].classList.add("playing");
 }
+function slidePrevNext(idx) {
+    slideContainer.style.transition = `all 0.5s ease-in`;
+    // slideContainer.style.transform = `translateY(${window.innerHeight}px)`;
+    slideContainer.style.transform = `translateY(${0}px)`;
+    videoWraps[idx+1].classList.remove("playing");
+    videoWraps[idx].classList.add("playing");
+}
 
 function slideNext(idx) {
     slideContainer.style.transition = `all 0.5s ease-in`;
@@ -371,8 +307,6 @@ function slideNext(idx) {
     videoWraps[idx - 1].classList.remove("playing");
     videoWraps[idx].classList.add("playing");
 }
-
-
 
 // 스크롤 이벤트 제한
 function manageScroll(e) {
@@ -418,52 +352,93 @@ function updateVideoWraps(){
     });
 }
 
+const addHeightFunction = async () => {
+    let currentHeight = parseInt(window.getComputedStyle(slideContainer).height);
+    // 현재 뷰포트의 높이를 가져오기
+    let viewportHeight = window.innerHeight;
+    // 기존 높이에 674px (953px)를 더한 후 이를 vh 단위로 변환
+    let newHeightInVh = ((currentHeight + 953) / viewportHeight) * 100;
+    //  let newHeightInVh = window.innerHeight
+    // 새로운 높이를 설정
+    slideContainer.style.height = newHeightInVh + "vh";
+    // slideContainer.style.height += newHeightInVh;
+}
+
+
 
 // 글자 Text 추가 함수 (아래로 내리기)
 const addTextFunction = async ()=>{
     const delayText = await teenplayClubService.getList(clubId, page, teenplayClickId,addList)
-    defaultCheck.add(page)
-    slideContainer.innerHTML += delayText
-    updateVideoWraps()
+    addHeightFunction()
+    if(delayText){
+        slideContainer.innerHTML += delayText
+        updateVideoWraps()
+        defaultCheck.add(page)
+    }
 }
 
+// 글자 Text 추가 함수 (위로 올리기)
 const downTextFunction = async () => {
     const downDelayText = await teenplayClubService.getList(clubId, page, teenplayClickId,addList)
-    defaultCheck.add(page)
-    document.querySelector('.play-each.playing').insertAdjacentHTML('beforebegin', downDelayText)
-    updateVideoWraps()
+    await addHeightFunction()
+    if(downDelayText){
+        const playEach = document.querySelector('.play-each.playing')
+        document.querySelector('.play-each.playing').insertAdjacentHTML('beforebegin', downDelayText)
+        updateVideoWraps()
+        defaultCheck.add(page)
+
+        const newElementHeight = playEach.previousElementSibling.offsetHeight;
+
+        slideContainer.style.transition = 'none'
+        slideContainer.style.transform = `translateY(-${newElementHeight}px)`
+
+        setTimeout(() => {
+            slideContainer.style.transition = 'all 0.5s ease-in'
+            slideContainer.style.transform = `translateY(${0}px)`
+            videoWraps[idx+1].classList.remove("playing");
+            videoWraps[0].classList.add("playing");
+        },50)
+
+        // idx--;
+        // videos[idx].pause();
+        // globalThis.flags[idx] = true;
+        // pauseIcons[idx].style.display = "none";
+        // playIcons[idx].style.display = "block";
+        // videos[idx].play();
+        // globalThis.flags[idx] = false;
+        // pauseIcons[idx].style.display = "block";
+        // playIcons[idx].style.display = "none";
+    }
 }
 
 // 틴플레이 휠 이동에 따른 액션
 
 let idx = 0;
 let check = true;
+let defaultPage = page
+let defaultMaxCount = maxCount
 let defaultCheck = new Set()
+
 
 slideWrap.addEventListener("wheel", async (e) => {
     const closestPlayEach = e.target.closest('.play-each');
     if (closestPlayEach) {
-        // '.play-each' 내부에서 이벤트가 발생했습니다.
+        // '.play-each' 내부에서 이벤트가 발생
         const closestPlayItem = closestPlayEach.closest('.play-item');
-        // 이제 'closestPlayItem'을 사용하여 필요한 작업을 수행합니다.
+        // 이제 'closestPlayItem'을 사용하여 필요한 작업을 수행
     }
-
 
     manageScroll(e);
     if (!check) return;
     check = false;
 
     if(e.deltaY >0){
-
-        console.log('down print')
         page = page + 1
-        console.log(page)
-        if(!defaultCheck.has(page)){
-            await addTextFunction()
+        if(!defaultCheck.has(page) && page > defaultPage){
+            if(page <= defaultMaxCount){
+                await addTextFunction()
+            }
         }
-
-
-
         setTimeout(() => {
             check = true;
         }, 800);
@@ -481,20 +456,31 @@ slideWrap.addEventListener("wheel", async (e) => {
         pauseIcons[idx].style.display = "block";
         playIcons[idx].style.display = "none";
     } else {
-        console.log('up print')
         page = page - 1
-        console.log(page)
-        if (!defaultCheck.has(page)){
-            await downTextFunction
+        if (!defaultCheck.has(page) && page < defaultPage){
+            if(page >= 1){
+                await downTextFunction()
+                // await slidePrevNext(idx);
+                // videos[idx].pause();
+                // globalThis.flags[idx] = true;
+                // pauseIcons[idx].style.display = "none";
+                // playIcons[idx].style.display = "block";
+                // idx--;
+                // videos[idx].play();
+                // globalThis.flags[idx] = false;
+                // pauseIcons[idx].style.display = "block";
+                // playIcons[idx].style.display = "none";
+            }
+        }else{
+            slidePrev(idx - 1);
         }
-
         setTimeout(() => {
             check = true;
         }, 800);
         if (idx == 0) {
             return;
         }
-        slidePrev(idx - 1);
+        // slidePrev(idx - 1);
         videos[idx].pause();
         globalThis.flags[idx] = true;
         pauseIcons[idx].style.display = "none";
@@ -505,7 +491,6 @@ slideWrap.addEventListener("wheel", async (e) => {
         pauseIcons[idx].style.display = "block";
         playIcons[idx].style.display = "none";
     }
-
 });
 
 
@@ -523,8 +508,8 @@ slideContainer.addEventListener('click', async (e)=> {
         let displayStyle = window.getComputedStyle(emptyHeartIcon).display
         emptyHeartIcon.style.display = displayStyle === 'none' ? 'block':'none';
         fullHeartIcon.style.display = displayStyle === 'none'? 'none': 'block';
-
-        let teenplayId = button.value;
+        let buttonName = button.name
+        let teenplayId = buttonName;
 
         const videoLike = await teenplayClubService.likeTeenplay(teenplayId, memberSessionId, displayStyle)
         const likeCountContainer = button.closest('.play-like-info-wrap').querySelector('.play-like-count')
@@ -535,4 +520,76 @@ slideContainer.addEventListener('click', async (e)=> {
 })
 
 
+
+
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>초기 작성값
+
+// 음소거 관련 버튼
+// muteIcons.forEach((mute) => {
+//     mute.addEventListener("click", () => {
+//         muteIcons.forEach((mute) => {
+//             mute.style.display = "none";
+//         });
+//         videos.forEach((video) => {
+//             video.muted = true;
+//         });
+//         unmuteIcons.forEach((unmute) => {
+//             unmute.style.display = "block";
+//         });
+//     });
+// });
+//
+// unmuteIcons.forEach((unmute) => {
+//     unmute.addEventListener("click", (e) => {
+//         unmuteIcons.forEach((unmute) => {
+//             unmute.style.display = "none";
+//         });
+//         videos.forEach((video) => {
+//             video.muted = false;
+//         });
+//         muteIcons.forEach((mute) => {
+//             mute.style.display = "block";
+//         });
+//     });
+// });
+
+// 진행도 1초마다 증가
+// videos.forEach((video, i) => {
+//     video.addEventListener("timeupdate", (e) => {
+//         let percent = (e.target.currentTime / e.target.duration) * 100;
+//         progressBars[i].style.width = `${percent}%`;
+//     });
+// });
+
+
+// 일시정지, 재생 관련 버튼
+// false일 때 클릭 시 재생, true일 때 클릭 시 일시정지
+// globalThis.flags = new Array(videos.length);
+//
+// videos.forEach((video, i) => {
+//     video.addEventListener("click", (e) => {
+//         if (!globalThis.flags[i]) {
+//             globalThis.flags[i] = true;
+//             pauseIcons[i].style.display = "none";
+//             playIcons[i].style.display = "block";
+//             e.target.pause();
+//         } else {
+//             globalThis.flags[i] = false;
+//             pauseIcons[i].style.display = "block";
+//             playIcons[i].style.display = "none";
+//             e.target.play();
+//         }
+//     });
+// });
+
+
+// 재생 중이 아닌 영상은 일시정지로 시작
+// videoWraps.forEach((videoWrap, i) => {
+//     if (!videoWrap.classList.contains("playing")) {
+//         videos[i].autoplay = false;
+//     } else {
+//         videos[i].autoplay = true;
+//     }
+// });
 
