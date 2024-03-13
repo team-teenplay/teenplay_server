@@ -1,10 +1,10 @@
 let page = 1
-
+let category = ""
+let keyword = ""
 
 const CreateService = (() => {
     const showList = (pagination) => {
         let text = ``;
-        console.log(pagination)
         pagination.members.forEach((page) => {
             text += `
                 <li class="main-user-list" data-id="${page.id}">
@@ -12,7 +12,7 @@ const CreateService = (() => {
                         <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-user-id="${page.id}">
                     </div>
                     <div class="main-user-list-name">${page.member_nickname}</div>
-                    <div class="main-user-list-status">${page.created_date}</div>
+                    <div class="main-user-list-status">${page.created_date.slice(0, 10)}</div>
                     <div class="main-user-list-date">${page.club_count}</div>
                     <div class="main-user-list-pay">${page.club_action_count}</div>
                     <div class="main-user-list-paycount">${page.activity_count}</div>
@@ -163,7 +163,7 @@ function allShowList() {
 }
 allShowList();
 
-// 페이지 번호 들어가는 곳
+// 페이지 번호 태그
 const mainUserBottomUl = document.querySelector(".main-user-bottom-ul")
 
 // 페이지 번호 보여주기(전체 데이터)
@@ -174,12 +174,13 @@ function allShowPaging() {
 }
 allShowPaging();
 
-const mainUserTotalNumber = document.querySelector(".main-user-total-number")
+// 개수 표기 태그
+const totalCount = document.querySelector(".main-user-total-number")
 
 // 공지사항 개수 표기 (전체 데이터)
 function CountShowText() {
     adminUserService.getPagination(page, CreateService.CountText).then((text) => {
-        mainUserTotalNumber.textContent = text;
+        totalCount.textContent = text;
     })
 }
 CountShowText();
@@ -246,8 +247,9 @@ mainUserBottomUl.addEventListener("click", (e) => {
 
 // ---------------------------------------------------------------------------------------------------------------------
 // 체크박스
-// 삭제하기 버튼
 const modalDeleteOpenButtons = document.querySelectorAll(".member-user-list-button");
+// 전체 선택 버튼
+const statusName = document.querySelector(".main-user-status-name");
 
 userData.addEventListener('click', (e) => {
     // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
@@ -255,6 +257,7 @@ userData.addEventListener('click', (e) => {
     const checkboxes = e.target.closest(".main-user-list")?.querySelectorAll(".main-comment-list-checkbox");
 
     checkboxes.forEach((checkbox) => {
+        // console.log(checkbox)
         checkbox.addEventListener('change', () => {
             const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
 
@@ -268,27 +271,10 @@ userData.addEventListener('click', (e) => {
                     deleteButton.classList.add("disabled");
                 }
             })
-            mainUserTotalNumber.textContent = checkedCount;
+            totalCount.textContent = checkedCount;
         });
     })
 })
-
-// 전체 선택 버튼
-const statusName = document.querySelector(".main-user-status-name");
-
-statusName.addEventListener('click', (e) => {
-    let allChecked = statusName.checked;
-
-    const checkboxes = e.target.closest(".main-user-list")?.querySelectorAll(".main-comment-list-checkbox");
-
-    checkboxes.forEach((checkbox) => {
-        checkbox.checked = allChecked;
-        // deleteButton.classList.remove("disabled");
-    })
-})
-
-
-
 
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -309,7 +295,7 @@ modalDeleteOpenButtons.forEach((button) => {
         const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
 
         // 타겟의 아이디 값 가져오기
-        const targetId = event.currentTarget.getAttribute("data-target");
+        const targetId = event.currentTarget.getAttribute("data-id");
         currentTargetLi = document.querySelector(`li[data-number="${targetId}"]`
         );
 
@@ -352,7 +338,6 @@ modalDeleteButtons.forEach((button) => {
         for (const checkbox of checkedItems) {
             // 체크된 checkbox와 가장 가까운 li 요소를 찾고 data-id 값을 가져오기
             const targetId = checkbox.closest("li").getAttribute("data-id");
-
             // data-id 속성 값이 같은 li 요소를 가져오기
             await adminUserService.remove({ targetId: targetId });
         }
@@ -371,8 +356,7 @@ modalDeleteButtons.forEach((button) => {
 
 
 // ---------------------------------------------------------------------------------------------------------------------
-let categories = " ";
-
+// 카테고리
 // 카테고리 버튼
 const searchOpen = document.querySelector(".main-wish-sellect-button");
 // 카테고리 버튼 속 텍스트
@@ -429,27 +413,48 @@ searchadd.addEventListener("click", () => {
 // 카테고리 버튼 가져오기
 const categoryButtons = document.querySelectorAll('.category');
 function noticeShowCategory() {
-    categoryButtons.forEach( (button) => {
-        let categories = button.value;
-
+    categoryButtons.forEach((button) => {
         button.addEventListener("click", () => {
-            console.log(categories)
-            adminUserService.getCategory(page, categories, CreateService.showList).then((text) => {
+            category = button.value;
+            console.log(category)
+            adminUserService.getCategory(page, category, CreateService.showList).then((text) => {
                 userData.innerHTML = text;
             })
-            adminUserService.getCategory(page, categories, CreateService.showPaging).then((text) => {
+            adminUserService.getCategory(page, category, CreateService.showPaging).then((text) => {
                 mainUserBottomUl.innerHTML = text;
             })
-            adminUserService.getCategory(page, categories, CreateService.CountText).then((text) => {
-                mainUserTotalNumber.textContent = text;
+            adminUserService.getCategory(page, category, CreateService.CountText).then((text) => {
+                totalCount.textContent = text;
             })
+
+            searchInput.value ="";
+            keyword = "";
         })
     })
 }
 noticeShowCategory();
 
-searchReceive.addEventListener("click", () => {
-    allShowList();
-    allShowPaging();
-    CountShowText();
-})
+
+
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// 검색
+// 입력창
+const searchInput = document.querySelector(".main-user-info-input")
+
+// 전체보기 서치
+searchInput.addEventListener('keyup', (e) => {
+    if (e.keyCode === 13) {
+        keyword = e.target.value
+        adminUserService.search(page, category, keyword, CreateService.showList).then((text) => {
+            userData.innerHTML = text;
+        })
+        adminUserService.search(page, category, keyword, CreateService.showPaging).then((text) => {
+            mainUserBottomUl.innerHTML = text;
+        })
+        adminUserService.search(page, category, keyword, CreateService.CountText).then((text) => {
+            totalCount.textContent = text;
+        })
+    }
+});

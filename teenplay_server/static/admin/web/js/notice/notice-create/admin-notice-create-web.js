@@ -1,3 +1,5 @@
+
+
 // 게시글 추가하기
 // 작성하기 버튼
 const topCreateButton = document.querySelector(".main-festival-add-top-create-button")
