@@ -57,7 +57,7 @@ const showList = async (reply) =>{
         if (reply.activity_id){
         text += `<tr class="reply-details">
                     <td class="reply-title">
-                        <a href="">${reply.activity__activity_title}</a>
+                        <a href="http://127.0.0.1:10000/activity/detail/?id=${reply.activity_id}">${reply.activity__activity_title}</a>
                     </td>
                     <td class="reply-content">${reply.reply_content}</td>
                     <td class="reply-category">활동 게시글</td>

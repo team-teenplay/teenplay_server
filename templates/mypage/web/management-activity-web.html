@@ -15,14 +15,14 @@
                 <div class="sud-header-container">
                     <div class="sud-header-box">
                         <!-- 활동 개요 페이지 주소 필요 -->
-                        <a class="sud-header-category select-category" href="">활동 개요</a>
+                        <a class="sud-header-category select-category" href="http://127.0.0.1:10000/member/activity/?activity_id={{ activity.id }}">활동 개요</a>
                         <!-- 참가자 페이지 주소 필요 -->
-                        <a class="sud-header-category" href="">참가자</a>
+                        <a class="sud-header-category" href="http://127.0.0.1:10000/member/activity-member/?activity_id={{ activity.id }}">참가자</a>
                         <!-- 활동 수정 페이지 주소 필요 -->
-                        <a class="sud-header-category" href="">활동 수정</a>
+                        <a class="sud-header-category" href="http://127.0.0.1:10000/member/activity-edit/?activity_id={{ activity.id }}">활동 수정</a>
                     </div>
                     <!-- 활동 상세페이지 주소 필요 -->
-                    <a class="activity-detail-link" href="" target="_blank">
+                    <a class="activity-detail-link" href="http://127.0.0.1:10000/activity/detail/?id={{ activity.id }}" target="_blank">
                         <span>활동 페이지 바로가기</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="move-svg" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
@@ -40,11 +40,11 @@
                                 <div>
                                     <div class="activity-prfile">
                                         <!-- 모임 프로필 사진 주소 필요 -->
-                                        <!-- <img class="activity-prfile-img" src="https://eventusstorage.blob.core.windows.net/evs/UploadedFiles/sgd/TopLogoImage/51badb764bb04d4980703d43aa4cb160.png" /> -->
+                                        <img class="activity-prfile-img" src="/upload/{{ activity.thumbnail_path }}/" />
                                     </div>
                                 </div>
                                 <div class="activity-name-box">
-                                    <span class="activity-name">활동 제목이 필요합니다</span>
+                                    <span class="activity-name">{{ activity.activity_title }}</span>
                                 </div>
                             </div>
                         </div>
@@ -59,12 +59,12 @@
                                         <div class="member-info-items">
                                             <div>
                                                 <!-- 참가자 페이지 주소 필요 -->
-                                                <a class="member-list-link" href="">참가자 ></a>
+                                                <a class="member-list-link" href="http://127.0.0.1:10000/member/activity-member/?activity_id={{ activity.id }}">참가자 ></a>
                                             </div>
                                             <div>
                                                 <div>
                                                     <!-- 활동 가입 인원 필요 -->
-                                                    <span class="member-count">1</span>
+                                                    <span class="member-count">{{ total_count }}</span>
                                                     명
                                                 </div>
                                             </div>
@@ -77,7 +77,7 @@
                                         <div class="activity-notice-brief-items">
                                             <a class="activity-notice-brief-link">참여대기</a>
                                             <div>
-                                                <span class="activity-notice-count">0</span>
+                                                <span class="activity-notice-count">{{ wait_count }}</span>
                                                 명
                                             </div>
                                         </div>
@@ -90,7 +90,7 @@
                                             <a class="activity-recruiting-link">참여중</a>
                                             <div>
                                                 <div>
-                                                    <span class="activity-recruiting-count">0</span>
+                                                    <span class="activity-recruiting-count">{{ active_count }}</span>
                                                     명
                                                 </div>
                                             </div>
@@ -103,7 +103,7 @@
                                 <div>
                                     <!-- 나의 활동이 있을 경우 -->
                                     <div class="activities-list-title-box">
-                                        <div class="activities-list-title">나의 활동(<span>3</span>)</div>
+                                        <div class="activities-list-title">나의 활동(<span>{{ my_activity }}</span>)</div>
                                         <div>
                                             <div>
                                                 <div class="sorting-box">
@@ -116,12 +116,12 @@
                                                         </span>
                                                     </button>
                                                     <ul class="sorting-list-ul">
-                                                        <li class="sorting-target">
+                                                        <a class="sorting-target tab" id="sorting-target"  name="" >
                                                             <span>최신순</span>
-                                                        </li>
-                                                        <li class="sorting-target">
+                                                        </a>
+                                                        <a class="sorting-target tab" name="old">
                                                             <span>오래된 순</span>
-                                                        </li>
+                                                        </a>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -134,106 +134,10 @@
                                                 <div class="activity-activities-name">활동명</div>
                                                 <div class="activity-activities-hits">간단 소개</div>
                                                 <div class="activity-activities-categorys">분야/유형</div>
-                                                <div class="activity-activities-place">장소</div>
+                                                <div class="activity-activities-place"></div>
                                                 <div class="activity-activities-open-date">활동기한</div>
                                             </div>
                                             <div class="activity-activities-contents">
-                                                <div>
-                                                    <div class="top-line"></div>
-                                                    <div class="activity-activity-content">
-                                                        <!-- 활동명 (활동 페이지로 이동 링크)-->
-                                                        <div class="activity-activity-name">
-                                                            <a class="activity-activity-link" href="">(무료 세미나) 300% 능력 향상! 야! 너두 할 수 있어! 장고스쿨!</a>
-                                                        </div>
-                                                        <!-- 간단소개 -->
-                                                        <div class="activity-activity-hits">어서오세요 장고나라에! 영원히 빠져나갈 수 없습니다!</div>
-                                                        <!-- 분야/유형 카테고리 -->
-                                                        <div class="activity-activity-categorys">IT/프로그래밍</div>
-                                                        <!-- 온라인/ 오프라인 경우 지역(구)표시 -->
-                                                        <div class="activity-activity-place">온라인</div>
-                                                        <div class="activity-activity-open-date">02월 28일(수) 20:00 ~ 02월 28일(토) 21:00</div>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div class="top-line"></div>
-                                                    <div class="activity-activity-content">
-                                                        <!-- 활동명 (활동 페이지로 이동 링크)-->
-                                                        <div class="activity-activity-name">
-                                                            <a class="activity-activity-link" href="">(선착순 모집)동석쌤과 함께하는 파이썬교실</a>
-                                                        </div>
-                                                        <!-- 간단소개 -->
-                                                        <div class="activity-activity-hits">사람이라면 누구나 다 배울 수 있어요!</div>
-                                                        <!-- 분야/유형 카테고리 -->
-                                                        <div class="activity-activity-categorys">IT/프로그래밍</div>
-                                                        <!-- 온라인/ 오프라인 경우 지역(구)표시 -->
-                                                        <div class="activity-activity-place">강남구</div>
-                                                        <div class="activity-activity-open-date">02월 28일(수) 20:00 ~ 02월 28일(토) 21:00</div>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div class="top-line"></div>
-                                                    <div class="activity-activity-content">
-                                                        <!-- 활동명 (활동 페이지로 이동 링크)-->
-                                                        <div class="activity-activity-name">
-                                                            <a class="activity-activity-link" href="">(무료 세미나) 300% 능력 향상! 야! 너두 할 수 있어! 장고스쿨!</a>
-                                                        </div>
-                                                        <!-- 간단소개 -->
-                                                        <div class="activity-activity-hits">어서오세요 장고나라에! 영원히 빠져나갈 수 없습니다!</div>
-                                                        <!-- 분야/유형 카테고리 -->
-                                                        <div class="activity-activity-categorys">IT/프로그래밍</div>
-                                                        <!-- 온라인/ 오프라인 경우 지역(구)표시 -->
-                                                        <div class="activity-activity-place">강남구</div>
-                                                        <div class="activity-activity-open-date">02월 28일(수) 20:00 ~ 02월 28일(토) 21:00</div>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div class="top-line"></div>
-                                                    <div class="activity-activity-content">
-                                                        <!-- 활동명 (활동 페이지로 이동 링크)-->
-                                                        <div class="activity-activity-name">
-                                                            <a class="activity-activity-link" href="">(무료 세미나) 300% 능력 향상! 야! 너두 할 수 있어! 장고스쿨!</a>
-                                                        </div>
-                                                        <!-- 간단소개 -->
-                                                        <div class="activity-activity-hits">어서오세요 장고나라에! 영원히 빠져나갈 수 없습니다!</div>
-                                                        <!-- 분야/유형 카테고리 -->
-                                                        <div class="activity-activity-categorys">IT/프로그래밍</div>
-                                                        <!-- 온라인/ 오프라인 경우 지역(구)표시 -->
-                                                        <div class="activity-activity-place">용산구</div>
-                                                        <div class="activity-activity-open-date">02월 28일(수) 20:00 ~ 02월 28일(토) 21:00</div>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div class="top-line"></div>
-                                                    <div class="activity-activity-content">
-                                                        <!-- 활동명 (활동 페이지로 이동 링크)-->
-                                                        <div class="activity-activity-name">
-                                                            <a class="activity-activity-link" href="">(무료 세미나) 300% 능력 향상! 야! 너두 할 수 있어! 장고스쿨!</a>
-                                                        </div>
-                                                        <!-- 간단소개 -->
-                                                        <div class="activity-activity-hits">어서오세요 장고나라에! 영원히 빠져나갈 수 없습니다!</div>
-                                                        <!-- 분야/유형 카테고리 -->
-                                                        <div class="activity-activity-categorys">IT/프로그래밍</div>
-                                                        <!-- 온라인/ 오프라인 경우 지역(구)표시 -->
-                                                        <div class="activity-activity-place">온라인</div>
-                                                        <div class="activity-activity-open-date">02월 28일(수) 20:00 ~ 02월 28일(토) 21:00</div>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div class="top-line"></div>
-                                                    <div class="activity-activity-content">
-                                                        <!-- 활동명 (활동 페이지로 이동 링크)-->
-                                                        <div class="activity-activity-name">
-                                                            <a class="activity-activity-link" href="">(무료 세미나) 300% 능력 향상! 야! 너두 할 수 있어! 장고스쿨!</a>
-                                                        </div>
-                                                        <!-- 간단소개 -->
-                                                        <div class="activity-activity-hits">어서오세요 장고나라에! 영원히 빠져나갈 수 없습니다!</div>
-                                                        <!-- 분야/유형 카테고리 -->
-                                                        <div class="activity-activity-categorys">IT/프로그래밍</div>
-                                                        <!-- 온라인/ 오프라인 경우 지역(구)표시 -->
-                                                        <div class="activity-activity-place">관악구</div>
-                                                        <div class="activity-activity-open-date">02월 28일(수) 20:00 ~ 02월 28일(토) 21:00</div>
-                                                    </div>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -241,20 +145,14 @@
                                     <div class="pagination-wrap">
                                         <div class="pagination-container">
                                             <div class="pagination-box">
-                                                <button class="prev-btn disabled" type="button">
+                                                <button class="next-btn" type="button" id="leftButton">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="left-svg" viewBox="0 0 20 20" fill="currentColor">
                                                         <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                                     </svg>
                                                 </button>
-                                                <div class="pagination-number-box">
-                                                    <button class="page-number-btn seleced-page-number-btn" type="button">
-                                                        <div class="page-number">1</div>
-                                                    </button>
-                                                    <button class="page-number-btn" type="button">
-                                                        <div class="page-number">2</div>
-                                                    </button>
+                                                <div class="pagination-number-box" id="pageButtons">
                                                 </div>
-                                                <button class="next-btn" type="button">
+                                                <button class="next-btn" type="button" id="rightButton">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="right-svg" viewBox="0 0 20 20" fill="currentColor">
                                                         <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                                                     </svg>
@@ -263,14 +161,7 @@
                                         </div>
                                     </div>
                                     <!-- 활동이 없을 경우 -->
-                                    <div class="none-actinities-box">
-                                        <div>
-                                            <div>작성된 댓글이 없습니다.</div>
-                                            <!-- <div class="new-activity-btn-box"> -->
-                                            <!-- <button class="new-activity-btn" type="button">활동 개설</button> -->
-                                            <!-- </div> -->
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -294,50 +185,25 @@
                                                 </div>
                                                 <!-- 최신순으로 사이트 공지사항 4개만 -->
                                                 <div>
+                                                    {% if tennplay_notices|length == 0 %}
+                                                    <div class="feed-item">
+                                                        <span>등록된 공지/안내가 없습니다.</span>
+                                                    </div>
+                                                    {% else %}
+                                                    {% for tennplay_notices in tennplay_notices %}
                                                     <div>
                                                         <div class="division-line"></div>
                                                         <div class="teenplay-notice-info">
                                                             <div class="teenplay-notice-kind">공지</div>
                                                             <div class="teenplay-notice-title">
                                                                 <!-- 공지사항 주소 필요 -->
-                                                                <a class="teenplay-notice-link" href="">[긴급] 일부 계정 이메일 수신 불가 안내 - 개선 완료</a>
+                                                                <a class="teenplay-notice-link" href="">{{ tennplay_notices.notice_title }}</a>
                                                             </div>
-                                                            <div class="teenplay-notice-date">2024.02.06</div>
+                                                            <div class="teenplay-notice-date">{{ tennplay_notices.updated_date|date:"Y.m.d" }}</div>
                                                         </div>
                                                     </div>
-                                                    <div>
-                                                        <div class="division-line"></div>
-                                                        <div class="teenplay-notice-info">
-                                                            <div class="teenplay-notice-kind">공지</div>
-                                                            <div class="teenplay-notice-title">
-                                                                <!-- 공지사항 주소 필요 -->
-                                                                <a class="teenplay-notice-link" href="">[긴급] 일부 계정 이메일 수신 불가 안내 - 개선 완료</a>
-                                                            </div>
-                                                            <div class="teenplay-notice-date">2024.02.06</div>
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="division-line"></div>
-                                                        <div class="teenplay-notice-info">
-                                                            <div class="teenplay-notice-kind">공지</div>
-                                                            <div class="teenplay-notice-title">
-                                                                <!-- 공지사항 주소 필요 -->
-                                                                <a class="teenplay-notice-link" href="">[긴급] 일부 계정 이메일 수신 불가 안내 - 개선 완료</a>
-                                                            </div>
-                                                            <div class="teenplay-notice-date">2024.02.06</div>
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="division-line"></div>
-                                                        <div class="teenplay-notice-info">
-                                                            <div class="teenplay-notice-kind">공지</div>
-                                                            <div class="teenplay-notice-title">
-                                                                <!-- 공지사항 주소 필요 -->
-                                                                <a class="teenplay-notice-link" href="">[긴급] 일부 계정 이메일 수신 불가 안내 - 개선 완료</a>
-                                                            </div>
-                                                            <div class="teenplay-notice-date">2024.02.06</div>
-                                                        </div>
-                                                    </div>
+                                                    {% endfor %}
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         </div>
@@ -354,51 +220,26 @@
                                                 </div>
                                                 <!-- 최신순으로 사이트 공지사항 4개만 -->
                                                 <div>
+                                                {% if club_notices|length == 0 %}
+                                                <div class="feed-item">
+                                                    <span>등록된 공지/안내가 없습니다.</span>
+                                                </div>
+                                                {% else %}
+                                                {% for club_notice in club_notices %}
                                                     <div>
                                                         <div class="division-line"></div>
                                                         <div class="activity-notice-info">
                                                             <div class="activity-notice-kind">공지</div>
                                                             <div class="activity-notice-title">
                                                                 <!-- 공지사항 주소 필요 -->
-                                                                <a class="activity-notice-link" href="">[긴급] 일부 계정 이메일 수신 불가 안내 - 개선 완료</a>
+                                                                <a class="activity-notice-link" href="">{{ club_notice.notice_content }}</a>
                                                             </div>
-                                                            <div class="activity-notice-date">2024.02.06</div>
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="division-line"></div>
-                                                        <div class="activity-notice-info">
-                                                            <div class="activity-notice-kind">공지</div>
-                                                            <div class="activity-notice-title">
-                                                                <!-- 공지사항 주소 필요 -->
-                                                                <a class="activity-notice-link" href="">[긴급] 일부 계정 이메일 수신 불가 안내 - 개선 완료</a>
-                                                            </div>
-                                                            <div class="activity-notice-date">2024.02.06</div>
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="division-line"></div>
-                                                        <div class="activity-notice-info">
-                                                            <div class="activity-notice-kind">공지</div>
-                                                            <div class="activity-notice-title">
-                                                                <!-- 공지사항 주소 필요 -->
-                                                                <a class="activity-notice-link" href="">[긴급] 일부 계정 이메일 수신 불가 안내 - 개선 완료</a>
-                                                            </div>
-                                                            <div class="activity-notice-date">2024.02.06</div>
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="division-line"></div>
-                                                        <div class="activity-notice-info">
-                                                            <div class="activity-notice-kind">공지</div>
-                                                            <div class="activity-notice-title">
-                                                                <!-- 공지사항 주소 필요 -->
-                                                                <a class="activity-notice-link" href="">[긴급] 일부 계정 이메일 수신 불가 안내 - 개선 완료</a>
-                                                            </div>
-                                                            <div class="activity-notice-date">2024.02.06</div>
+                                                            <div class="activity-notice-date">{{ club_notice.updated_date|date:"Y.m.d"  }}</div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {% endfor %}
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
@@ -413,5 +254,31 @@
 {% endblock %}
 
 {% block js %}
+    <script>
+        const member_id = '{{ request.session.member.id }}'
+        const csrf_Token = `{{ csrf_token }}`;
+
+    const selectbut = document.querySelectorAll(".tab")
+    let status_list = '전체'
+    selectbut.forEach((btn)=> {
+        btn.addEventListener("click", async (e) => {
+            status_list = btn.name
+            console.log(status_list)
+
+            const text =  await activityService.getList(member_id, currentPage, status_list, showList);
+            inner.innerHTML = text;
+            await activityService.getList(member_id, 1, status_list, async (reply, total_pages) => {
+            maxPage = total_pages;
+            page = 1
+            currentPage = 1
+            updatePageButtons();
+
+            })
+        })
+    })
+
+
+    </script>
+    <script src="{% static 'member/web/js/management-activity-module-web.js' %}"></script>
     <script src="{% static 'member/web/js/management-activity-web.js' %}"></script>
 {% endblock %}

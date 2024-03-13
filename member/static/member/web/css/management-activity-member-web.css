@@ -635,6 +635,19 @@ input[type=checkbox]:hover {
     display: flex;
 }
 
+.member-status-join-btnaa {
+    --tw-text-opacity: 1;
+    color: #178263;
+    font-size: .8125rem;
+    padding-top: 0.375rem;
+    padding-bottom: 0.375rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    background-color: #edfff8;
+    border-radius: 9999px;
+    cursor: pointer;
+}
+
 .member-status-join-btn {
     --tw-text-opacity: 1;
     color: #178263;
@@ -963,4 +976,36 @@ textarea[name="send-content"]::-webkit-scrollbar {
     cursor: default;
     background-color: #9F0D08;
     border-color: rgb(225 228 230/var(--tw-border-opacity));
+}
+
+.member-status-category{
+    padding-left: 16px;
+}
+
+.member-secession-category{
+    padding-left: 78px;
+}
+
+.member-join-date-category{
+    padding-left: 34px;
+
+}
+
+.member-secessions{
+    padding-left: 74px;
+}
+
+.member-join-date{
+    padding-left: 32px;
+}
+
+.focus-page {
+    --tw-space-x-reverse: 0;
+    margin-right: calc(9px*var(--tw-space-x-reverse));
+    margin-left: calc(9px*(1 - var(--tw-space-x-reverse)));
+    --tw-text-opacity: 1;
+    color: rgb(248 250 251/var(--tw-text-opacity));
+    --tw-bg-opacity: 1;
+    background-color: #ce201b;
+    pointer-events: none;
 }
