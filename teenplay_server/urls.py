@@ -24,7 +24,7 @@ from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroduc
     AdminMessageView, AdminTeenplayView, AdminPromoteView, AdminActivityView, AdminWishlistView, AdminMeetingView, \
     AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView, AdminUserUpdateAPI, \
     AdminNoticePaginationAPI, AdminWishlistAPI, AdminWishlistUpdateAPI, AdminNoticeUpdateAPI, AdminUserAPI, \
-    AdminCommentAPI
+    AdminCommentAPI, AdminCommentDeleteAPI
 
 
 # urls에 음수 값 넣기 가능!
@@ -86,7 +86,7 @@ urlpatterns = [
     # 관리자 - 댓글 관리
     path('admin/comment/', AdminCommentView.as_view(), name='admin-comment'),
     path('admin/comments/<int:page>/', AdminCommentAPI.as_view(), name='admin-comment-api'),
-    path('admin/comments/delete/<int:comment_id>/', AdminCommentView.as_view(), name='admin-comment'),
+    path('admin/comments/delete/', AdminCommentDeleteAPI.as_view(), name='admin-comment-delete'),
     # 여기까지~
     path('terms/', include('terms.urls-web')),
     path('app/terms/', include('terms.urls-app')),

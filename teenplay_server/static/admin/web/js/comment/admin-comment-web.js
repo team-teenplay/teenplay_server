@@ -10,25 +10,45 @@ const CreateService = (() => {
         let text = ``;
         pagination.comment.forEach((page) => {
             text += `
-                <li class="main-user-list">
+                <li class="main-user-list" data-id="${page.reply_id}">
                     <div class="main-user-list-check">
-                        <input type="checkbox" class="main-comment-list-checkbox" id="checkbox">
+                        <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-id="${page.reply_id}" data-member="${page.member_id}" data-date="${page.created_date}"/>
                     </div>
                     <div class="main-comment-list-status">${page.member_name}</div>
+            `;
+            if (page.title.length <= 20 ) {
+                text += `
                     <div class="main-comment-list-paycount">${page.title}</div>
-                    <div class="main-comment-list-date">${page.created_date}</div>
+                `;
+            } else if (page.title.length >= 20 ) {
+                text += `
+                    <div class="main-comment-list-paycount">${page.title.slice(0, 20)}...</div>
+                `;
+            }
+            text += `
+                    <div class="main-comment-list-date">${page.created_date.slice(0, 10)}</div>
+            `;
+            if (page.reply.length <= 20) {
+                text += `
                     <div class="main-comment-list-check">
                         <span class="main-comment-list-input" type="text" readonly>${page.reply}</span>
                     </div>
-            `;
+                `
+            } else if (page.reply.length >= 20) {
+                text += `
+                    <div class="main-comment-list-check">
+                        <span class="main-comment-list-input" type="text" readonly>${page.reply.slice(0, 20)}...</span>
+                    </div>
+                `
+            }
             if (page.member_status === 1) {
                 text += `
-                    <div class="main-comment-list-stop">활동중</div>
+                    <div class="main-comment-list-stop" data-user-status="${page.member_status}">활동중</div>
                 </li>
             `;
             } else if (page.member_status === -1) {
                 text += `
-                    <div class="main-comment-list-stop">정지</div>
+                    <div class="main-comment-list-stop" data-user-status="${page.member_status}">정지</div>
                 </li>
             `;
             }
@@ -157,7 +177,7 @@ const commentData = document.querySelector(".comment-data")
 
 // 공지사항 목록 보여주기
 function allShowList() {
-    admincommentService.getPagination(page, CreateService.showList).then((text) => {
+    adminCommentService.getPagination(page, CreateService.showList).then((text) => {
         commentData.innerHTML = text;
     })
 }
@@ -168,7 +188,7 @@ const mainUserBottomUl = document.querySelector(".main-user-bottom-ul")
 
 // 페이지 번호 보여주기
 function allShowPaging() {
-    admincommentService.getPagination(page, CreateService.showPaging).then((text) => {
+    adminCommentService.getPagination(page, CreateService.showPaging).then((text) => {
         mainUserBottomUl.innerHTML = text;
     })
 }
@@ -179,7 +199,7 @@ const totalCount = document.getElementById("total-count");
 
 // 공지사항 개수 표기
 function CountShowText() {
-    admincommentService.getPagination(page, CreateService.CountText).then((text) => {
+    adminCommentService.getPagination(page, CreateService.CountText).then((text) => {
         totalCount.textContent = text;
     })
 }
@@ -251,7 +271,10 @@ mainUserBottomUl.addEventListener("click", (e) => {
 
 // ---------------------------------------------------------------------------------------------------------------------
 // 체크박스
-const modalDeleteOpenButtons = document.querySelectorAll(".member-user-list-button");
+// 상태변경 버튼
+const modalUpdateOpenButtons = document.querySelectorAll(".member-user-list-button");
+// 삭제하기 버튼
+const modalDeleteOpenButtons = document.querySelectorAll(".member-user-list-delete-button");
 // 전체 선택 버튼
 const statusName = document.querySelector(".main-user-status-name");
 
@@ -267,7 +290,17 @@ commentData.addEventListener('click', (e) => {
 
             let checkedCount = 0;
 
+            modalUpdateOpenButtons.forEach((updateButton) => {
+                if (checkedItems.length > 0) {
+                    updateButton.classList.remove("disabled");
+                    checkedCount = checkedItems.length
+                } else if (checkedItems.length === 0) {
+                    updateButton.classList.add("disabled");
+                }
+            })
+
             modalDeleteOpenButtons.forEach((deleteButton) => {
+                console.log(deleteButton)
                 if (checkedItems.length > 0) {
                     deleteButton.classList.remove("disabled");
                     checkedCount = checkedItems.length
@@ -275,6 +308,7 @@ commentData.addEventListener('click', (e) => {
                     deleteButton.classList.add("disabled");
                 }
             })
+
             totalCount.textContent = checkedCount;
         });
     })
@@ -283,86 +317,167 @@ commentData.addEventListener('click', (e) => {
 
 
 
+// ---------------------------------------------------------------------------------------------------------------------
+// 상태 변경 모달
+// 모달 속 취소 버튼
+const modalUpdateCloseButtons = document.querySelectorAll(".admin-user-modal-left-button");
+// 모달 속 삭제 버튼
+const modalUpdateButtons = document.querySelectorAll(".admin-user-modal-right-button");
 
-// // ---------------------------------------------------------------------------------------------------------------------
-// // 모달 속 취소 버튼
-// const modalDeleteCloseButtons = document.querySelectorAll(".admin-user-modal-left-button");
-// // 모달 속 삭제 버튼
-// const modalDeleteButtons = document.querySelectorAll(".admin-user-modal-right-button");
-//
-// // 상태변경
-// const deletemodal = document.getElementById("admin-user-modal");
-// const deletemodalBack = document.getElementById("admin-user-modal-backdrop");
-//
-// let currentTargetLi;
-//
-// // 삭제하기 버튼 클릭 시 이벤트 발생
-// modalDeleteOpenButtons.forEach((button) => {
-//     button.addEventListener("click", (event) => {
-//         const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
-//
-//         // 타겟의 아이디 값 가져오기
-//         const targetId = event.currentTarget.getAttribute("data-id");
-//         currentTargetLi = document.querySelector(`li[data-number="${targetId}"]`
-//         );
-//
-//         // 모달 열기
-//         if (checkedItems.length > 0) {
-//             deletemodal.classList.remove("hidden");
-//             deletemodalBack.classList.remove("hidden");
-//         }
-//     });
-// });
-//
-// // 삭제 모달 속 닫기 버튼 클릭 시 이벤트 발생
-// modalDeleteCloseButtons.forEach((button) => {
-//     button.addEventListener("click", () => {
-//         // 삭제 모달 비활성화
-//         deletemodal.classList.add("hidden");
-//         deletemodalBack.classList.add("hidden");
-//     });
-// });
-//
+// 상태 변경 모달
+const updateModal = document.getElementById("admin-user-modal");
+const updateModalBack = document.getElementById("admin-user-modal-backdrop");
+
+let currentTargetLi;
+
+// 삭제하기 버튼 클릭 시 이벤트 발생
+modalUpdateOpenButtons.forEach((button) => {
+    button.addEventListener("click", (event) => {
+        const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
+
+        // 타겟의 아이디 값 가져오기
+        const targetId = event.currentTarget.getAttribute("data-member");
+        currentTargetLi = document.querySelector(`li[data-number="${targetId}"]`
+        );
+
+        // 모달 열기
+        if (checkedItems.length > 0) {
+            updateModal.classList.remove("hidden");
+            updateModalBack.classList.remove("hidden");
+        }
+    });
+});
+
+// 삭제 모달 속 닫기 버튼 클릭 시 이벤트 발생
+modalUpdateCloseButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+        // 삭제 모달 비활성화
+        updateModal.classList.add("hidden");
+        updateModalBack.classList.add("hidden");
+    });
+});
+
 // // 모달 외부를 클릭했을 때 이벤트 처리
 // document.addEventListener("click", (e) => {
-//     modalDeleteOpenButtons.forEach((button) => {
+//     modalUpdateOpenButtons.forEach((button) => {
 //         if (!button.contains(e.target) && !deletemodal.contains(e.target)) {
 //             // 클릭된 요소가 검색 버튼이 아니고 모달 창에 속하지 않으면 모달을 닫음
 //             deletemodal.classList.add("hidden");
-//             deletemodalBack.classList.add("hidden");
+//             updateModalBack.classList.add("hidden");
 //         }
 //     });
 // });
-//
-// // 삭제 모달 속 삭제 버튼 클릭 시 이벤트 발생
-// modalDeleteButtons.forEach((button) => {
-//     //
-//     button.addEventListener("click", async () => {
-//         // 체크된 체크 박스 가져오기
-//         const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
-//
-//         // 체크된 체크 박스 반복하여 하나씩 checkbox에 담기
-//         for (const checkbox of checkedItems) {
-//             // 체크된 checkbox와 가장 가까운 li 요소를 찾고 data-id 값을 가져오기
-//             const targetId = checkbox.closest("li").getAttribute("data-id");
-//             // data-id 속성 값이 같은 li 요소를 가져오기
-//             await adminWishlistService.remove({ targetId: targetId });
+
+// 상태변경 모달 속 삭제 버튼 클릭 시 이벤트 발생
+modalUpdateButtons.forEach((button) => {
+    //
+    button.addEventListener("click", async () => {
+        // 체크된 체크 박스 가져오기
+        const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
+
+        // 체크된 체크 박스 반복하여 하나씩 checkbox에 담기
+        for (const checkbox of checkedItems) {
+            // 체크된 checkbox와 가장 가까운 li 요소를 찾고 data-id 값을 가져오기
+            const targetId = checkbox.closest("li").getAttribute("data-member");
+            // data-id 속성 값이 같은 li 요소를 가져오기
+            await adminUserService.remove({ targetId: targetId });
+        }
+
+        // 모달 닫기
+        updateModal.classList.add("hidden");
+        updateModalBack.classList.add("hidden");
+        allShowList();
+        allShowPaging();
+        CountShowText();
+    });
+});
+
+
+
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// 댓글 삭제 모달
+// 모달 속 취소 버튼
+const modalDeleteCloseButtons = document.querySelectorAll(".admin-user-modal-left-delete-button");
+// 모달 속 삭제 버튼
+const modalDeleteButtons = document.querySelectorAll(".admin-user-modal-right-delete-button");
+
+// 댓글 삭제 모달
+const deletemodal = document.getElementById("admin-user-modal-delete");
+const deletemodalBack = document.getElementById("admin-user-modal-backdrop");
+
+let deleteTargetLi;
+
+// 삭제하기 버튼 클릭 시 이벤트 발생
+modalDeleteOpenButtons.forEach((button) => {
+    button.addEventListener("click", (event) => {
+        const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
+
+        // 타겟의 아이디 값 가져오기
+        const replyId = event.currentTarget.getAttribute("data-id");
+        deleteTargetLi = document.querySelector(`li[data-number="${replyId}"]`
+        );
+
+        // 모달 열기
+        if (checkedItems.length > 0) {
+            deletemodal.classList.remove("hidden");
+            deletemodalBack.classList.remove("hidden");
+        }
+    });
+});
+
+// 삭제 모달 속 닫기 버튼 클릭 시 이벤트 발생
+modalDeleteCloseButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+        // 삭제 모달 비활성화
+        deletemodal.classList.add("hidden");
+        deletemodalBack.classList.add("hidden");
+    });
+});
+
+// // 모달 외부를 클릭했을 때 이벤트 처리
+// document.addEventListener("click", (e) => {
+//     modalUpdateOpenButtons.forEach((button) => {
+//         if (!button.contains(e.target) && !deletemodal.contains(e.target)) {
+//             // 클릭된 요소가 검색 버튼이 아니고 모달 창에 속하지 않으면 모달을 닫음
+//             deletemodal.classList.add("hidden");
+//             updateModalBack.classList.add("hidden");
 //         }
-//
-//         // 모달 닫기
-//         deletemodal.classList.add("hidden");
-//         deletemodalBack.classList.add("hidden");
-//         allShowList();
-//         allShowPaging();
-//         CountShowText();
 //     });
 // });
-//
-//
-//
-//
-//
-// // ---------------------------------------------------------------------------------------------------------------------
+
+// 삭제 모달 속 삭제 버튼 클릭 시 이벤트 발생
+modalDeleteButtons.forEach((button) => {
+    //
+    button.addEventListener("click", async () => {
+        // 체크된 체크 박스 가져오기
+        const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
+
+        // 체크된 체크 박스 반복하여 하나씩 checkbox에 담기
+        for (const checkbox of checkedItems) {
+            // 체크된 checkbox와 가장 가까운 li 요소를 찾고 data-id 값을 가져오기
+            const replyId = checkbox.closest("li").getAttribute("data-id");
+            const memberId = checkbox.closest("li").getAttribute("data-member");
+            const cratedDate = checkbox.closest("li").getAttribute("data-date");
+            // data-id 속성 값이 같은 li 요소를 가져오기
+            await adminCommentService.remove({ replyId: replyId, memberId: memberId, cratedDate: cratedDate });
+        }
+
+        // 모달 닫기
+        deletemodal.classList.add("hidden");
+        deletemodalBack.classList.add("hidden");
+        allShowList();
+        allShowPaging();
+        CountShowText();
+    });
+});
+
+
+
+
+
+// ---------------------------------------------------------------------------------------------------------------------
 // // 카테고리
 // // 카테고리 버튼
 // const searchOpen = document.querySelector(".main-wish-sellect-button");
@@ -423,13 +538,13 @@ commentData.addEventListener('click', (e) => {
 //     categoryButtons.forEach((button) => {
 //         button.addEventListener("click", () => {
 //             category = button.value;
-//             admincommentService.getCategory(page, category, CreateService.showList).then((text) => {
+//             adminCommentService.getCategory(page, category, CreateService.showList).then((text) => {
 //                 commentData.innerHTML = text;
 //             })
-//             admincommentService.getCategory(page, category, CreateService.showPaging).then((text) => {
+//             adminCommentService.getCategory(page, category, CreateService.showPaging).then((text) => {
 //                 mainUserBottomUl.innerHTML = text;
 //             })
-//             admincommentService.getCategory(page, category, CreateService.CountText).then((text) => {
+//             adminCommentService.getCategory(page, category, CreateService.CountText).then((text) => {
 //                 totalCount.textContent = text;
 //             })
 //
@@ -504,13 +619,13 @@ commentData.addEventListener('click', (e) => {
 //
 //         keyword = e.target.value
 //
-//         admincommentService.search(page, category, type, keyword, CreateService.showList).then((text) => {
+//         adminCommentService.search(page, category, type, keyword, CreateService.showList).then((text) => {
 //             commentData.innerHTML = text;
 //         })
-//         admincommentService.search(page, category, type, keyword, CreateService.showPaging).then((text) => {
+//         adminCommentService.search(page, category, type, keyword, CreateService.showPaging).then((text) => {
 //             mainUserBottomUl.innerHTML = text;
 //         })
-//         admincommentService.search(page, category, type, keyword, CreateService.CountText).then((text) => {
+//         adminCommentService.search(page, category, type, keyword, CreateService.CountText).then((text) => {
 //             totalCount.textContent = text;
 //         })
 //     }

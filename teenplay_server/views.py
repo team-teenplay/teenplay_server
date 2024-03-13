@@ -420,7 +420,9 @@ class AdminCommentAPI(APIView):
             'title',
             'created_date',
             'reply',
-            'member_status'
+            'member_status',
+            'reply_id',
+            'member_id'
         ]
 
         activities = Activity.objects \
@@ -429,9 +431,11 @@ class AdminCommentAPI(APIView):
             title=F('activityreply__activity__activity_title'),
             created=F('activityreply__created_date'),
             reply=F('activityreply__reply_content'),
-            member_status=F('activityreply__member__status')
+            member_status=F('activityreply__member__status'),
+            reply_id=F('activityreply__id'),
+            member_id=F('activityreply__member__id')
         ) \
-            .values(*columns)
+            .values(*columns).filter(member_name__isnull=False)
 
         wishes = Wishlist.objects \
             .annotate(
@@ -439,9 +443,11 @@ class AdminCommentAPI(APIView):
             title=F('wishlistreply__wishlist__wishlist_content'),
             created=F('wishlistreply__created_date'),
             reply=F('wishlistreply__reply_content'),
-            member_status=F('wishlistreply__member__status')
+            member_status=F('wishlistreply__member__status'),
+            reply_id=F('wishlistreply__id'),
+            member_id=F('activityreply__member__id')
         ) \
-            .values(*columns)
+            .values(*columns).filter(member_name__isnull=False)
 
         club_posts = ClubPost.objects \
             .annotate(
@@ -449,14 +455,14 @@ class AdminCommentAPI(APIView):
             title=F('clubpostreply__club_post__post_title'),
             created=F('clubpostreply__created_date'),
             reply=F('clubpostreply__reply_content'),
-            member_status=F('clubpostreply__member__status')
+            member_status=F('clubpostreply__member__status'),
+            reply_id=F('clubpostreply__id'),
+            member_id=F('activityreply__member__id')
         ) \
-            .values(*columns)
+            .values(*columns).filter(member_name__isnull=False)
 
         total = activities.union(wishes).union(club_posts).count()
 
-        # total = Member.objects.filter(condition).all().count()
-        # total = activities.union(wishes).union(club_posts).order_by('-created_date')
 
         page_count = 5
 
@@ -481,13 +487,31 @@ class AdminCommentAPI(APIView):
         if order == 'popular':
             ordering = '-post_read_count'
 
-        comment = activities.union(wishes).union(club_posts)
-        # comment = activities.union(wishes).union(club_posts).order_by('-created_date')
-        print(comment)
+        comment = activities.union(wishes).union(club_posts).order_by('-created_date')
 
         context['comment'] = list(comment[offset:limit])
 
         return Response(context)
+
+
+class AdminCommentDeleteAPI(APIView):
+    # 게시글 삭제
+    def delete(self, request, comment_id):
+        reply_id = request.GET.get('reply_id', '')
+        member_id = request.GET.get('member_id', '')
+        crated_date = request.GET.get('crated_date', '')
+
+        status = 0
+        updated_date = timezone.now()
+
+
+
+        # comment = activities.union(wishes).union(club_posts).filter(id=comment_id)
+        # comment.status = status
+        # comment.updated_date = updated_date
+        # comment.save(update_fields=['status', 'updated_date'])
+
+        return Response('success')
 
 # ----------------------------------------------------------------------------------------------------------------------
 
