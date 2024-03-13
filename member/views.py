@@ -6,7 +6,7 @@ from django.views import View
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from activity.models import ActivityReply
+from activity.models import ActivityReply, Activity, ActivityLike
 from alarm.models import Alarm
 from club.models import ClubPostReply, ClubMember
 from friend.models import Friend
@@ -811,3 +811,53 @@ class ClubAlarmManageAPI(APIView):
         club_member.save(update_fields=['alarm_status', 'updated_date'])
 
         return Response("success")
+
+class MypageActivityVIEW(View):
+    def get(self, request):
+        return render(request, 'mypage/web/my-activity-web.html')
+
+class MypageActivityAPIVIEW(APIView):
+    @transaction.atomic
+    def get(self,request, member_id,page):
+        status_like = request.GET.get('status_like')
+        print(status_like)
+        row_count = 10
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+
+        activity_data = Activity.objects.filter(Q(club__member_id=member_id) |Q(activitymember__member_id=member_id)).values('id', 'created_date', 'activity_title', 'thumbnail_path', 'activity_address_location','activitymember__status', 'club__member_id', 'activity_end')
+        for activity in activity_data:
+            activity_id = activity.get('id')
+            activity_like = ActivityLike.enabled_objects.filter(activity_id=activity_id ,member_id=member_id)
+            activity['is_like'] = activity_like.exists()
+
+
+
+        if status_like == 'like':
+            activity_data = ActivityLike.objects.filter(member_id=member_id, status=1).values('id','status','activity__thumbnail_path','activity__activity_end' ,'activity__activity_title','activity_id')
+        else:
+            activity_data = Activity.objects.filter(
+                Q(club__member_id=member_id) | Q(activitymember__member_id=member_id)).values('id', 'created_date',
+                                                                                              'activity_title',
+                                                                                              'thumbnail_path',
+                                                                                              'activity_address_location',
+                                                                                              'activitymember__status',
+                                                                            'club__member_id',
+                                                                                              'activity_end')
+            for activity in activity_data:
+                activity_id = activity.get('id')
+                activity_like = ActivityLike.enabled_objects.filter(activity_id=activity_id, member_id=member_id)
+                activity['status'] = activity_like.exists()
+
+
+        return Response(activity_data[offset:limit])
+
+class MypageActivityLikeAPIVIEW(APIView):
+    @transaction.atomic
+    def patch(self, request, activity_id):
+        like, created = ActivityLike.objects.get_or_create(activity_id=activity_id, member_id=request.session['member']['id'])
+        # 반전시키기
+        like.status = 1 - like.status
+        like.save()
+        return Response('good')
