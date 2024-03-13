@@ -144,7 +144,7 @@ const showList = async (activity_data) =>{
         text += `<div class="activity-wrap">
                     <div class="activity-box">
                       <div class="activity-img-box">
-                        <a href="#" class="activity-img-link">
+                        <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.id}" class="activity-img-link">
                           <!-- 종료된 활동은 이미지와 제목이 회색이라 클래스명이 다름 -->
                           <!-- <img class="passivity-img" /> -->
                           <img
@@ -221,7 +221,7 @@ const showList = async (activity_data) =>{
                 `<div class="activity-wrap">
                     <div class="activity-box">
                       <div class="activity-img-box">
-                        <a href="#" class="activity-img-link">
+                        <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.activity_id}" class="activity-img-link">
                           <img
                             src="/upload/${activity_data.thumbnail_path}"
                             alt="ces올인원 패키지"
@@ -295,7 +295,7 @@ const showList = async (activity_data) =>{
             <div class="activity-wrap">
                 <div class="activity-box">
                   <div class="activity-img-box">
-                    <a href="#" class="activity-img-link">
+                    <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.activity_id}" class="activity-img-link">
                       <img
                         src="https://eventusstorage.blob.core.windows.net/evs/Image/moducampus/76630/ProjectInfo/Cover/57ce84d6a0c34972ad8dd11d35becc54.png"
                         alt="ces올인원 패키지"
@@ -368,7 +368,7 @@ const showList = async (activity_data) =>{
             <div class="activity-wrap">
                 <div class="activity-box">
                   <div class="activity-img-box">
-                    <a href="#" class="activity-img-link">
+                    <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.id}" class="activity-img-link">
                       <img
                         src="/upload/${activity_data.thumbnail_path}"
                         alt="ces올인원 패키지"
@@ -440,7 +440,7 @@ const showList = async (activity_data) =>{
             text += `<div class="activity-wrap">
                         <div class="activity-box">
                           <div class="activity-img-box">
-                            <a href="#" class="activity-img-link">
+                            <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.activity_id}" class="activity-img-link">
                               <img
                                 src="/upload/${activity_data.activity__thumbnail_path}"
                                 alt="ces올인원 패키지"
