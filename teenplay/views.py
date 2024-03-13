@@ -81,7 +81,6 @@ class TeenplayMainListAPIView(APIView):
             teenplay_list.append(teenplay_like)
 
         context = teenplay_list
-        print(teenplay_list)
         return Response(context)
 
 class TeenPlayLikeAPIView(APIView):
@@ -228,7 +227,6 @@ class TeenplayClubView(View):
 class TeenPlayClubLikeAPIView(APIView):
     @transaction.atomic
     def get(self, request, teenplayId, memberSessionId, displayStyle):
-        print(1)
         data = {
             'member_id': memberSessionId,
             'teenplay_id': teenplayId
@@ -253,49 +251,6 @@ class TeenPlayClubLikeAPIView(APIView):
         }
 
         return Response(context)
-
-
-
-
-# 수정 이전 코드
-# class TeenplayClubAPIView(APIView):
-    # def get(self, request, clubId, page, teenplayClickId):
-    #     offset = 0
-    #     limit = 1
-    #     page = page-1
-    #
-    #     club_teenplay_conut =TeenPlay.enable_objects.filter(club_id=clubId).count()
-    #     club_teenplay_id_all = list(TeenPlay.enable_objects.filter(club_id=clubId).values('id').order_by('-id'))
-    #
-    #     # teenplay id의 인덱스 요소 찾기
-    #     index_of_target = next((index for index, item in enumerate(club_teenplay_id_all) if item['id'] == teenplayClickId), None)
-    #     if index_of_target is not None:
-    #         real_index = index_of_target + page
-    #     else:
-    #         real_index = None
-    #
-    #     if real_index is not None and 0 <= real_index < club_teenplay_conut:
-    #         currrent_user_like = TeenPlayLike.objects.filter(member_id=request.session['member']['id'],
-    #                                                   teenplay_id=club_teenplay_id_all[real_index].get('id'), status=1)
-    #
-    #         currnet_teenplay_all_count = TeenPlayLike.objects.filter(status=1, teenplay_id=club_teenplay_id_all[real_index].get('id'))
-    #
-    #         select_teenplay = TeenPlay.enable_objects.filter(club_id=clubId, id=club_teenplay_id_all[real_index].get('id')).annotate(club_name=F('club__club_name')). \
-    #                               annotate(club_intro=F('club__club_intro')).annotate(
-    #             club_profile_path=F('club__club_profile_path')). \
-    #                               annotate(teenplay_like=Count('teenplaylike__status', filter=Q(teenplaylike__status=1))).\
-    #                               annotate(member_like=Exists(currrent_user_like)).annotate(tp_all_count=Count('teenplaylike__status', filter=Q(teenplaylike__status=1))).\
-    #                               values('club_id', 'club_name', 'club_intro', 'club_profile_path', 'id', 'video_path','teenplay_like','member_like','tp_all_count')[offset:limit][0]
-    #     else:
-    #         return Response({'error': 'Invalid'})
-    #     if select_teenplay:
-    #         context = select_teenplay
-    #     else:
-    #         context = {}
-    #     return Response(context)
-
-
-
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
