@@ -986,7 +986,7 @@ thumbnailInput.addEventListener("change", (e) => {
     }
 });
 
-// 틴플레이 최초 업로드 함수
+// 틴플레이 클럽 버튼 클릭 시 최초 업로드 함수
 function loadTeenplayList(clubId, page){
     clubDetailService.getTeenplayList(clubId, page).then((teenplayInfo) => {
         let teenplayFirstInfo =teenplayInfo.teenplay_list

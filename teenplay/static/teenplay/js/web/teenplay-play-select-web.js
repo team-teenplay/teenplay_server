@@ -353,17 +353,26 @@ function updateVideoWraps(){
     });
 }
 
+// 영상 생성 시 높이 증가
 const addHeightFunction = async () => {
     let currentHeight = parseInt(window.getComputedStyle(slideContainer).height);
     // 현재 뷰포트의 높이를 가져오기
     let viewportHeight = window.innerHeight;
     // 기존 높이에 674px (953px)를 더한 후 이를 vh 단위로 변환
     let newHeightInVh = ((currentHeight + 953) / viewportHeight) * 100;
-    //  let newHeightInVh = window.innerHeight
     // 새로운 높이를 설정
     slideContainer.style.height = newHeightInVh + "vh";
-    // slideContainer.style.height += newHeightInVh;
 }
+
+
+// 진행도 1초마다 증가
+videos.forEach((video, i) => {
+    video.addEventListener("timeupdate", (e) => {
+        let percent = (e.target.currentTime / e.target.duration) * 100;
+        progressBars[i].style.width = `${percent}%`;
+    });
+});
+
 
 
 
@@ -400,15 +409,6 @@ const downTextFunction = async () => {
             videoWraps[0].classList.add("playing");
         },50)
 
-        // idx--;
-        // videos[idx].pause();
-        // globalThis.flags[idx] = true;
-        // pauseIcons[idx].style.display = "none";
-        // playIcons[idx].style.display = "block";
-        // videos[idx].play();
-        // globalThis.flags[idx] = false;
-        // pauseIcons[idx].style.display = "block";
-        // playIcons[idx].style.display = "none";
     }
 }
 
@@ -424,9 +424,7 @@ let defaultCheck = new Set()
 slideWrap.addEventListener("wheel", async (e) => {
     const closestPlayEach = e.target.closest('.play-each');
     if (closestPlayEach) {
-        // '.play-each' 내부에서 이벤트가 발생
         const closestPlayItem = closestPlayEach.closest('.play-item');
-        // 이제 'closestPlayItem'을 사용하여 필요한 작업을 수행
     }
 
     manageScroll(e);
@@ -461,16 +459,6 @@ slideWrap.addEventListener("wheel", async (e) => {
         if (!defaultCheck.has(page) && page < defaultPage){
             if(page >= 1){
                 await downTextFunction()
-                // await slidePrevNext(idx);
-                // videos[idx].pause();
-                // globalThis.flags[idx] = true;
-                // pauseIcons[idx].style.display = "none";
-                // playIcons[idx].style.display = "block";
-                // idx--;
-                // videos[idx].play();
-                // globalThis.flags[idx] = false;
-                // pauseIcons[idx].style.display = "block";
-                // playIcons[idx].style.display = "none";
             }
         }else{
             slidePrev(idx - 1);
@@ -519,78 +507,4 @@ slideContainer.addEventListener('click', async (e)=> {
         }
     }
 })
-
-
-
-
-
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>초기 작성값
-
-// 음소거 관련 버튼
-// muteIcons.forEach((mute) => {
-//     mute.addEventListener("click", () => {
-//         muteIcons.forEach((mute) => {
-//             mute.style.display = "none";
-//         });
-//         videos.forEach((video) => {
-//             video.muted = true;
-//         });
-//         unmuteIcons.forEach((unmute) => {
-//             unmute.style.display = "block";
-//         });
-//     });
-// });
-//
-// unmuteIcons.forEach((unmute) => {
-//     unmute.addEventListener("click", (e) => {
-//         unmuteIcons.forEach((unmute) => {
-//             unmute.style.display = "none";
-//         });
-//         videos.forEach((video) => {
-//             video.muted = false;
-//         });
-//         muteIcons.forEach((mute) => {
-//             mute.style.display = "block";
-//         });
-//     });
-// });
-
-// 진행도 1초마다 증가
-// videos.forEach((video, i) => {
-//     video.addEventListener("timeupdate", (e) => {
-//         let percent = (e.target.currentTime / e.target.duration) * 100;
-//         progressBars[i].style.width = `${percent}%`;
-//     });
-// });
-
-
-// 일시정지, 재생 관련 버튼
-// false일 때 클릭 시 재생, true일 때 클릭 시 일시정지
-// globalThis.flags = new Array(videos.length);
-//
-// videos.forEach((video, i) => {
-//     video.addEventListener("click", (e) => {
-//         if (!globalThis.flags[i]) {
-//             globalThis.flags[i] = true;
-//             pauseIcons[i].style.display = "none";
-//             playIcons[i].style.display = "block";
-//             e.target.pause();
-//         } else {
-//             globalThis.flags[i] = false;
-//             pauseIcons[i].style.display = "block";
-//             playIcons[i].style.display = "none";
-//             e.target.play();
-//         }
-//     });
-// });
-
-
-// 재생 중이 아닌 영상은 일시정지로 시작
-// videoWraps.forEach((videoWrap, i) => {
-//     if (!videoWrap.classList.contains("playing")) {
-//         videos[i].autoplay = false;
-//     } else {
-//         videos[i].autoplay = true;
-//     }
-// });
 
