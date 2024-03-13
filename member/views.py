@@ -629,9 +629,11 @@ class TeenChinAPI(APIView):
         receive_friend = Friend.objects.filter(sender_id=teenchin_id, receiver_id=member_id, is_friend=0)
         if receive_friend.exists():
             receive_friend = receive_friend.first()
+            receive_friend.sender_id = member_id
+            receive_friend.receiver_id = teenchin_id
             receive_friend.is_friend = -1
             receive_friend.updated_date = timezone.now()
-            receive_friend.save(update_fields=['is_friend', 'updated_date'])
+            receive_friend.save(update_fields=['is_friend', 'updated_date', 'sender_id', 'receiver_id'])
             # 알람 추가
             alarm_data = {
                 'target_id': member_id,
