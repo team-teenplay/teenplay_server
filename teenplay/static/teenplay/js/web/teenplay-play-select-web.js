@@ -19,6 +19,7 @@ let fullHeart = document.querySelectorAll(".play-like-icon.full");
 
 const addList = (teenplayList) => {
     if('id' in teenplayList){
+        console.log(teenplayList)
         if(teenplayList.member_like){
             let text = `
             <div class="play-each ${teenplayList.id}">
@@ -36,7 +37,7 @@ const addList = (teenplayList) => {
                         <div class="play-info-container">
                             <!-- 작성자(모임) 정보 -->
                             <div class="play-writer-wrap">
-                                <a href="" class="play-writer-image-wrap">
+                                <a href="/club/detail/?id=${teenplayList.club_id}&view=teenplay" class="play-writer-image-wrap">
                                     <div class="play-writer-image-container">
                                         <!-- 모임 프사 -->
                                         <img src="/upload/${teenplayList.club_profile_path}" class="play-writer-image" />
@@ -46,7 +47,7 @@ const addList = (teenplayList) => {
                                     <div class="play-writer-boxes">
                                         <div class="play-writer-box">
                                             <!-- 모임 이름 -->
-                                            <a href="" class="play-writer-name">${teenplayList.club_name}</a>
+                                            <a href="/club/detail/?id=${teenplayList.club_id}&view=teenplay" class="play-writer-name">${teenplayList.club_name}</a>
                                         </div>
                                     </div>
                                 </div>
