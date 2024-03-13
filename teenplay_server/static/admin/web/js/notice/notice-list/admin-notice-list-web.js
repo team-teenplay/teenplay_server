@@ -6,6 +6,7 @@ let keyword = ""
 const CreateService = (() => {
     // 공지사항 목록 가져오기
     const showList = (pagination) => {
+        console.log(pagination.notices)
         let text = ``;
         console.log(pagination)
         pagination.notices.forEach((page) => {

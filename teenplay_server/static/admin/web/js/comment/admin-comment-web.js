@@ -8,29 +8,27 @@ const CreateService = (() => {
     // 게시글 텍스트
     const showList = (pagination) => {
         let text = ``;
-        console.log(pagination)
         pagination.comment.forEach((page) => {
-            console.log(page)
             text += `
-                <li class="main-user-list" data-id="${page.id}">
+                <li class="main-user-list">
                     <div class="main-user-list-check">
-                        <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-user-id="${page.id}">
+                        <input type="checkbox" class="main-comment-list-checkbox" id="checkbox">
                     </div>
-                    <div class="main-comment-list-status">${page.member__member_nickname}</div>
-                    <div class="main-comment-list-paycount">${page.post_title}</div>
-                    <div class="main-comment-list-date">${page.post_created}</div>
+                    <div class="main-comment-list-status">${page.member_name}</div>
+                    <div class="main-comment-list-paycount">${page.title}</div>
+                    <div class="main-comment-list-date">${page.created_date}</div>
                     <div class="main-comment-list-check">
-                        <span class="main-comment-list-input" type="text" readonly>${page.post_reply}</span>
+                        <span class="main-comment-list-input" type="text" readonly>${page.reply}</span>
                     </div>
             `;
-            if (page.status === 1) {
+            if (page.member_status === 1) {
                 text += `
-                    <div data-id="${page.id}" class="main-comment-list-stop">활동중</div>
+                    <div class="main-comment-list-stop">활동중</div>
                 </li>
             `;
-            } else if (page.status === -1) {
+            } else if (page.member_status === -1) {
                 text += `
-                    <div data-id="${page.id}" class="main-comment-list-stop">정지</div>
+                    <div class="main-comment-list-stop">정지</div>
                 </li>
             `;
             }
@@ -251,41 +249,41 @@ mainUserBottomUl.addEventListener("click", (e) => {
 
 
 
-// // ---------------------------------------------------------------------------------------------------------------------
-// // 체크박스
-// const modalDeleteOpenButtons = document.querySelectorAll(".member-user-list-button");
-// // 전체 선택 버튼
-// const statusName = document.querySelector(".main-user-status-name");
-//
-// commentData.addEventListener('click', (e) => {
-//     // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
-//     // main-user-list가 있으면 옵셔널 체이닝(?.)을 사용하여 프로퍼티에 접근해 main-comment-list-checkbox를 찾기
-//     const checkboxes = e.target.closest(".main-user-list")?.querySelectorAll(".main-comment-list-checkbox");
-//
-//     checkboxes.forEach((checkbox) => {
-//         // console.log(checkbox)
-//         checkbox.addEventListener('change', () => {
-//             const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
-//
-//             let checkedCount = 0;
-//
-//             modalDeleteOpenButtons.forEach((deleteButton) => {
-//                 if (checkedItems.length > 0) {
-//                     deleteButton.classList.remove("disabled");
-//                     checkedCount = checkedItems.length
-//                 } else if (checkedItems.length === 0) {
-//                     deleteButton.classList.add("disabled");
-//                 }
-//             })
-//             totalCount.textContent = checkedCount;
-//         });
-//     })
-// })
-//
-//
-//
-//
-//
+// ---------------------------------------------------------------------------------------------------------------------
+// 체크박스
+const modalDeleteOpenButtons = document.querySelectorAll(".member-user-list-button");
+// 전체 선택 버튼
+const statusName = document.querySelector(".main-user-status-name");
+
+commentData.addEventListener('click', (e) => {
+    // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
+    // main-user-list가 있으면 옵셔널 체이닝(?.)을 사용하여 프로퍼티에 접근해 main-comment-list-checkbox를 찾기
+    const checkboxes = e.target.closest(".main-user-list")?.querySelectorAll(".main-comment-list-checkbox");
+
+    checkboxes.forEach((checkbox) => {
+        // console.log(checkbox)
+        checkbox.addEventListener('change', () => {
+            const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
+
+            let checkedCount = 0;
+
+            modalDeleteOpenButtons.forEach((deleteButton) => {
+                if (checkedItems.length > 0) {
+                    deleteButton.classList.remove("disabled");
+                    checkedCount = checkedItems.length
+                } else if (checkedItems.length === 0) {
+                    deleteButton.classList.add("disabled");
+                }
+            })
+            totalCount.textContent = checkedCount;
+        });
+    })
+})
+
+
+
+
+
 // // ---------------------------------------------------------------------------------------------------------------------
 // // 모달 속 취소 버튼
 // const modalDeleteCloseButtons = document.querySelectorAll(".admin-user-modal-left-button");

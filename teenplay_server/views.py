@@ -173,6 +173,7 @@ class AdminWishlistAPI(APIView):
         category = request.GET.get('category', '')
         type = request.GET.get('type', '')
         keyword = request.GET.get('keyword', '')
+        targetId = request.GET.get('targetId', '')
 
         row_count = 10
 
@@ -195,6 +196,9 @@ class AdminWishlistAPI(APIView):
 
                 elif type == 'w':
                     condition &= Q(wishlist_content__contains=keyword)
+
+        if targetId:
+            condition &= Q(id=targetId)
 
         total = Wishlist.objects.filter(condition).all().count()
 
@@ -450,12 +454,6 @@ class AdminCommentAPI(APIView):
             .values(*columns)
 
         total = activities.union(wishes).union(club_posts).count()
-        showtotal = activities.union(wishes).union(club_posts)
-        print('====================================================')
-        print(total)
-        print('====================================================')
-        print(showtotal)
-        print('====================================================')
 
         # total = Member.objects.filter(condition).all().count()
         # total = activities.union(wishes).union(club_posts).order_by('-created_date')
@@ -483,48 +481,8 @@ class AdminCommentAPI(APIView):
         if order == 'popular':
             ordering = '-post_read_count'
 
-        # columns = [
-        #     'member_name',
-        #     'title',
-        #     'created_date',
-        #     'reply',
-        #     'member_status'
-        # ]
-        #
-        # activities = Activity.objects \
-        #     .annotate(
-        #     member_name=F('activityreply__member__member_nickname'),
-        #     title=F('activityreply__activity__activity_title'),
-        #     created=F('activityreply__created_date'),
-        #     reply=F('activityreply__reply_content'),
-        #     member_status=F('activityreply__member__status')
-        # ) \
-        #     .values(*columns)
-        #
-        # wishes = Wishlist.objects \
-        #     .annotate(
-        #     member_name=F('wishlistreply__member__member_nickname'),
-        #     title=F('wishlistreply__wishlist__wishlist_content'),
-        #     created=F('wishlistreply__created_date'),
-        #     reply=F('wishlistreply__reply_content'),
-        #     member_status=F('wishlistreply__member__status')
-        # ) \
-        #     .values(*columns)
-        #
-        # club_posts = ClubPost.objects \
-        #     .annotate(
-        #     member_name=F('clubpostreply__member__member_nickname'),
-        #     title=F('clubpostreply__club_post__post_title'),
-        #     created=F('clubpostreply__created_date'),
-        #     reply=F('clubpostreply__reply_content'),
-        #     member_status=F('clubpostreply__member__status')
-        # ) \
-        #     .values(*columns)
-        #
+        comment = activities.union(wishes).union(club_posts)
         # comment = activities.union(wishes).union(club_posts).order_by('-created_date')
-
-        comment = activities.union(wishes).union(club_posts).order_by('-created_date')
-
         print(comment)
 
         context['comment'] = list(comment[offset:limit])

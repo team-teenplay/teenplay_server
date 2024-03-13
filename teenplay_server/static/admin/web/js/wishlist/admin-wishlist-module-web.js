@@ -23,6 +23,20 @@ const adminWishlistService = (() => {
     }
 
 
+    // 상세보기 가져오기
+    const showDetail = async (page, targetId, callback) => {
+        console.log(targetId)
+
+        const response = await fetch(`/admin/wishlists/${page}?targetId=${targetId}`);
+        const pagination = await response.json();
+
+        if (callback){
+            return callback(pagination);
+        }
+        return pagination;
+    }
+
+
     // 위시리스트 삭제
     const remove = async (targetId) => {
         const wishlist_id = targetId.targetId
@@ -49,5 +63,5 @@ const adminWishlistService = (() => {
         return pagination;
     }
 
-    return { getPagination: getPagination, getCategory: getCategory, remove: remove, search:search }
+    return { getPagination: getPagination, getCategory: getCategory, remove: remove, search:search, showDetail:showDetail }
 })();

@@ -147,6 +147,7 @@ const CreateService = (() => {
     const showDetail = (pagination) => {
         let text = ``;
         pagination.wishlist.forEach((page) => {
+            console.log(page)
             text += `
                 <div id="admin-post-modal" class="admin-post-modal hidden">
                     <h4 class="admin-post-modal-title">위시리스트 상세보기</h4>
@@ -572,89 +573,65 @@ searchInput.addEventListener('keyup', (e) => {
 // 상세 보기
 // 상세 추가 태그
 const detailBox = document.querySelector(".detail-box")
-let detailTargetLi;
 
-
-// wishlistData.addEventListener('click', (e) => {
-//     console.log(wishlistData)
-//     const showDetailButtons = e.target.closest(".main-user-list-detail")?.querySelectorAll(".member-user-list-detail-button");
-//     // 닫기 버튼
-//     const detailModelCloseButton = document.querySelector(".admin-user-modal-left-detail-button")
-//
-//     showDetailButtons.forEach((showDetailButton) => {
-//         showDetailButton.addEventListener('click', (e) => {
-//
-//             // 타겟의 아이디 값 가져오기
-//             const targetId = event.currentTarget.getAttribute("data-id");
-//             detailTargetLi = document.querySelector(`li[data-number="${targetId}"]`);
-//
-//             // 모달창
-//             const detailModel = document.querySelector(".admin-post-modal");
-//             const detailModelBack = document.querySelector(".admin-user-modal-backdrop");
-//
-//             detailModel.classList.remove("hidden");
-//             detailModelBack.classList.remove("hidden");
-//         });
-//     });
-//
-//     detailModelCloseButton.addEventListener('click', () => {
-//         // 모달창
-//         const detailModel = document.querySelector(".admin-post-modal");
-//         const detailModelBack = document.querySelector(".admin-user-modal-backdrop");
-//
-//         detailModel.classList.add("hidden")
-//         detailModelBack.classList.add("hidden")
-//     });
-// });
-//
-//
-//
-// function wishLishShowDetail() {
-//     adminWishlistService.getPagination(page, wishlistCreateService.showDetail).then((text) => {
-//         console.log("작동중")
-//         detailBox.innerHTML = text;
-//     })
-// }
-// wishLishShowDetail();
-
-
-
-wishlistData.addEventListener('click', async (e) => {
+wishlistData.addEventListener('click', (e) => {
     // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
     // main-user-list가 있으면 옵셔널 체이닝(?.)을 사용하여 프로퍼티에 접근해 main-comment-list-checkbox를 찾기
     const showDetailButtons = e.target.closest(".main-user-list-detail")?.querySelectorAll(".member-user-list-detail-button");
 
-    await showDetailButtons.forEach((showDetailButton) => {
-        // console.log(checkbox)
-        showDetailButton.addEventListener('click', async() => {
-            const targetID = showDetailButton.getAttribute("data-id");
+    console.log(showDetailButtons)
+    showDetailButtons.forEach((showDetailButton) => {
+        showDetailButton.addEventListener('click', async () => {
+            console.log(showDetailButton)
+            let targetID = showDetailButton.getAttribute("data-id");
             console.log(targetID)
 
+            await adminWishlistService.showDetail(page, targetID, CreateService.showDetail).then((text) => {
+                console.log("작동중")
+                detailBox.innerHTML = text;
+            })
 
+            // 모달창
+            const detailModel = document.querySelector(".admin-post-modal");
+            const detailModelBack = document.querySelector(".detail-box-backdrop");
+
+            await detailModel.classList.remove("hidden");
+            await detailModelBack.classList.remove("hidden");
         });
     })
 })
 
+detailBox.addEventListener('click', (e) => {
+    // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
+    // main-user-list가 있으면 옵셔널 체이닝(?.)을 사용하여 프로퍼티에 접근해 main-comment-list-checkbox를 찾기
+    // 모달 닫기 버튼
+    const detailModelCloseButtons = e.target.closest(".admin-user-modal-button")?.querySelectorAll(".admin-user-modal-left-detail-button");
 
-modalDeleteButtons.forEach((button) => {
-    //
-    button.addEventListener("click", async () => {
-        // 체크된 체크 박스 가져오기
-        const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
+    detailModelCloseButtons.forEach((detailModelCloseButton) => {
+        detailModelCloseButton.addEventListener('click', async () => {
 
-        // 체크된 체크 박스 반복하여 하나씩 checkbox에 담기
-        for (const checkbox of checkedItems) {
-            // 체크된 checkbox와 가장 가까운 li 요소를 찾고 data-id 값을 가져오기
-            const targetId = checkbox.closest("li").getAttribute("data-id");
-            // data-id 속성 값이 같은 li 요소를 가져오기
-            await adminWishlistService.remove({ targetId: targetId });
-        }
+            // 모달창
+            const detailModel = document.querySelector(".admin-post-modal");
+            const detailModelBack = document.querySelector(".detail-box-backdrop");
 
-        // 모달 닫기
-        deletemodal.classList.add("hidden");
-        deletemodalBack.classList.add("hidden");
-        allShowList();
-        allShowPaging();
-        CountShowText();
-    });
-});
+            await detailModel.classList.add("hidden")
+            await detailModelBack.classList.add("hidden")
+        });
+    })
+})
+
+// // 모달창
+// const detailModel = document.querySelector(".admin-post-modal");
+// const detailModelBack = document.querySelector(".detail-box-backdrop");
+//
+// const showDetailButtons = document.querySelectorAll(".member-user-list-detail-button")
+// // 모달 외부를 클릭했을 때 이벤트 처리
+// document.addEventListener("click", (e) => {
+//     showDetailButtons.forEach((button) => {
+//         if (!button.contains(e.target) && !detailModel.contains(e.target)) {
+//             // 클릭된 요소가 검색 버튼이 아니고 모달 창에 속하지 않으면 모달을 닫음
+//             detailModel.classList.add("hidden");
+//             detailModelBack.classList.add("hidden");
+//         }
+//     });
+// });
