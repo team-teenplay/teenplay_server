@@ -1,8 +1,9 @@
+import math
 import os.path
 
 from django.db import transaction, models
 from django.db.models import Count, F, Q, OuterRef, Subquery, Count
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Concat
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views import View
@@ -317,9 +318,6 @@ class ClubPrPostReplyAPI(APIView):
             'replies': replies[offset:limit],
             'replies_count': replies_count
         }
-        print(replies_count)
-        print(replies)
-        print(replies[offset:limit])
 
         return Response(replies_info)
 
@@ -375,9 +373,9 @@ class ClubPrPostListView(View):
     def get(self, request):
         keyword = request.GET.get('keyword', '')
         category = request.GET.get('category', '')
-        order = request.GET.get('order', 'recent')
+        order = request.GET.get('order', '최신순')
         page = request.GET.get('page', 1)
-
+        print(order)
         context = {
             'keyword': keyword,
             'category': category,
@@ -386,6 +384,57 @@ class ClubPrPostListView(View):
         }
 
         return render(request, 'club/web/club-pr-posts-web.html', context)
+
+
+class ClubPrPostListAPI(APIView):
+    def post(self, request):
+        data = request.data
+
+        keyword = data.get('keyword', '')
+        page = int(data.get('page', 1))
+        category = data.get('category', '')
+        ordering = data.get('ordering', '최신순')
+        ordering = '-id' if ordering == '최신순' else '-view_count'
+
+        row_count = 6
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        condition = Q()
+        condition &= Q(post_title__icontains=keyword) | Q(club__club_name__icontains=keyword)
+        condition &= Q(category__category_name__icontains=category)
+
+        total_count = ClubPost.enabled_objects.filter(condition).count()
+
+        page_count = 5
+        end_page = math.ceil(page / page_count) * page_count
+        start_page = end_page - page_count + 1
+        real_end = math.ceil(total_count / row_count)
+        end_page = real_end if end_page > real_end else end_page
+
+        if end_page == 0:
+            end_page = 1
+
+        page_info = {
+            'totalCount': total_count,
+            'startPage': start_page,
+            'endPage': end_page,
+            'page': page,
+            'realEnd': real_end,
+            'pageCount': page_count,
+        }
+
+        club_posts = list(ClubPost.enabled_objects.filter(condition).values().order_by(ordering)[offset:limit])
+
+        for club_post in club_posts:
+            club_post['category_name'] = Category.objects.filter(id=club_post['category_id']).first().category_name
+            club_post['club_name'] = Club.objects.filter(id=club_post['club_id']).first().club_name
+            club_post['club_member_count'] = ClubMember.enabled_objects.filter(club_id=club_post['club_id']).count()
+            club_post['reply_count'] = ClubPostReply.enabled_objects.filter(club_post_id=club_post['id']).count()
+
+        club_posts.append(page_info)
+
+        return Response(club_posts)
 
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

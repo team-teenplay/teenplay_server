@@ -141,8 +141,9 @@ button {
 }
 
 img, video {
-    max-width: 100%;
-    height: auto;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 button, input, optgroup, select, textarea {
@@ -181,7 +182,6 @@ menu, ol, ul {
 }
 
 .pr-main {
-    padding-top: 80px;
     min-height: 100vh;
 }
 
@@ -295,6 +295,7 @@ menu, ol, ul {
     margin: 0;
     margin-bottom: 0;
     padding-left: 0.75rem;
+    cursor: pointer;
 }
 
 .pr-post-search-box {
@@ -398,6 +399,7 @@ menu, ol, ul {
     overflow: hidden;
     display: block;
     isolation: isolate;
+    height: 221.25px;
 }
 
 .pr-content-img {
