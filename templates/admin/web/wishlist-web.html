@@ -111,9 +111,9 @@
                                                     </button>
                                                     <div>
                                                         <!-- 검색창 모달 -->
-                                                        <ul id="admin-message-modal-search-add" class="hidden">
-                                                            <button class="admin-message-modal-search-send-add">작성자</button>
-                                                            <button class="admin-message-modal-search-receive-add">위시리스트</button>
+                                                        <ul id="admin-message-modal-search-add" class="admin-message-modal-search-add hidden">
+                                                            <button class="admin-message-modal-search-send-add type" value="p">작성자</button>
+                                                            <button class="admin-message-modal-search-receive-add type" value="w">위시리스트</button>
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -151,7 +151,7 @@
                                             </button>
                                             <!-- 공개 비공개 모달창 -->
                                             <ul class="admin-message-modal-search hidden" id="admin-message-modal-search">
-                                                <button class="admin-message-modal-search-receive">전체</button>
+                                                <button class="admin-message-modal-search-receive category" value="">전체</button>
                                                 <button class="admin-message-modal-search-send category" value="1">공개</button>
                                                 <button class="admin-message-modal-search-donotreceive category" value="0">비공개</button>
                                             </ul>
@@ -292,6 +292,8 @@
                 </div>
             </div>
         </div>
+        <!-- 모달 뒷배경 -->
+        <div id="admin-user-modal-backdrop" class="admin-user-modal-backdrop hidden"></div>
         <!-- 수정 모달창 -->
         <div class="detail-box">
 {#            <div id="admin-post-modal" class="admin-post-modal hidden">#}
@@ -338,9 +340,9 @@
 {#                    </div>#}
 {#                </div>#}
 {#            </div>#}
-            <!-- 모달 뒷배경 -->
-            <div id="admin-user-modal-backdrop" class="admin-user-modal-backdrop hidden"></div>
         </div>
+        <!-- 모달 뒷배경 -->
+        <div id="admin-user-modal-backdrop" class="detail-box-backdrop hidden"></div>
     </main>
 {% endblock %}
 {% block js %}

@@ -1716,8 +1716,10 @@ margin-left: 16px;}
     width: 116px;
 }
 .div-size{
-    width: 66px;
-
+    width: 82px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .main-wish-sellect-button-span{
@@ -1919,7 +1921,4 @@ margin-left: 16px;}
     margin-left: 4px;
     display: block;
     vertical-align: middle;
-    position: fixed;
-    top: 181px;
-    right: 503px;
   }

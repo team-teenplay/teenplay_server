@@ -12,12 +12,23 @@ const adminWishlistService = (() => {
 
 
     // 카테고리 검색
-    const getCategory = async (page, categories, callback) => {
-        const category = parseInt(categories)
-
+    const getCategory = async (page, category, callback) => {
         const response = await fetch(`/admin/wishlists/${page}?category=${category}`);
         const pagination = await response.json();
 
+        if (callback){
+            return callback(pagination);
+        }
+        return pagination;
+    }
+
+
+    // 상세보기 가져오기
+    const showDetail = async (page, targetId, callback) => {
+        console.log(targetId)
+
+        const response = await fetch(`/admin/wishlists/${page}?targetId=${targetId}`);
+        const pagination = await response.json();
 
         if (callback){
             return callback(pagination);
@@ -30,7 +41,7 @@ const adminWishlistService = (() => {
     const remove = async (targetId) => {
         const wishlist_id = targetId.targetId
 
-        await fetch(`/admin/notice/delete/${wishlist_id}/`, {
+        await fetch(`/admin/wishlists/delete/${wishlist_id}/`, {
             method: 'patch',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
@@ -38,8 +49,19 @@ const adminWishlistService = (() => {
             },
             body: JSON.stringify({'wishlist_id': wishlist_id})
         });
-
     }
 
-    return { getPagination: getPagination, getCategory: getCategory, remove: remove }
+    // 검색하기
+    const search = async (page, category, type, keyword, callback) => {
+        const response = await fetch(`/admin/wishlists/${page}?category=${category}&type=${type}&keyword=${keyword}`)
+        const pagination = await response.json();
+
+        if (callback){
+            return callback(pagination);
+        }
+
+        return pagination;
+    }
+
+    return { getPagination: getPagination, getCategory: getCategory, remove: remove, search:search, showDetail:showDetail }
 })();

@@ -823,7 +823,7 @@ color: #9ca3af;
     border-color: #f3f3f4;
 }
 
-.main-comment-list-name{
+.main-user-list-check{
     width: 268px;
     justify-content: flex-start;
     align-items: center;
@@ -1633,6 +1633,21 @@ margin-left: 16px;}
 
 .add-color{
     background-color: #CE201B;
+}
+
+.add-text-color{
+    color: #FFFFFF!important;
+}
+
+.toggle-button.disabled {
+    border-color: #F2F4F5;
+    background-color: #F2F4F5;
+    cursor: default;
+}
+
+.toggle-button.disabled:hover {
+    border-color: #F2F4F5;
+    background-color: #F2F4F5;
 }
 
     
