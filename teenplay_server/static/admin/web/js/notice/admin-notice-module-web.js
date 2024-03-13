@@ -11,22 +11,6 @@ const adminNoticeService = (() => {
     //     });
     // }
 
-    // // 공지사항 목록 가져오기
-    // const getList = async (page, callback) => {
-    //     const response = await fetch(`/admin/notice/${page}/`);
-    //     const notices = await response.json();
-    //     console.log(notices)
-    //     if (callback){
-    //         return callback(notices);
-    //     }
-    //     return notices;
-    // }
-
-    // const getPagination = async (callback) => {
-    //     const pagination = {};
-    //     callback(pagination)
-    // }
-
     const getPagination = async (page, callback) => {
         const response = await fetch(`/admin/notices/${page}/`);
         const pagination = await response.json();
@@ -37,12 +21,9 @@ const adminNoticeService = (() => {
         return pagination;
     }
 
-    const getCategory = async (page, categories, callback) => {
-        const category = parseInt(categories)
-
+    const getCategory = async (page, category, callback) => {
         const response = await fetch(`/admin/notices/${page}?category=${category}`);
         const pagination = await response.json();
-
 
         if (callback){
             return callback(pagination);
@@ -54,9 +35,8 @@ const adminNoticeService = (() => {
     // 공지사항 삭제
     const remove = async (targetId) => {
         const notice_id = targetId.targetId
-        console.log(typeof(notice_id))
 
-        await fetch(`/admin/notice/delete/${notice_id}/`, {
+        await fetch(`/admin/notices/delete/${notice_id}/`, {
             method: 'patch',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
@@ -64,9 +44,20 @@ const adminNoticeService = (() => {
             },
             body: JSON.stringify({'notice_id': notice_id})
         });
-        console.log('왜안돼')
-
     }
 
-    return {getPagination:getPagination, getCategory: getCategory, remove: remove}
+    // 검색하기
+    const search = async (page, category, keyword, callback) => {
+
+        const response = await fetch(`/admin/notices/${page}/?category=${category}&keyword=${keyword}`)
+        const pagination = await response.json();
+
+        if (callback){
+            return callback(pagination);
+        }
+
+        return pagination;
+    }
+
+    return {getPagination:getPagination, getCategory: getCategory, remove: remove, search:search}
 })();

@@ -11,13 +11,10 @@ const adminUserService = (() => {
         return pagination;
     }
 
-    // 카테고리 검색
-    const getCategory = async (page, categories, callback) => {
-        const category = parseInt(categories)
-
+    // 카테고리 고르기
+    const getCategory = async (page, category, callback) => {
         const response = await fetch(`/admin/users/${page}?category=${category}`);
         const pagination = await response.json();
-
 
         if (callback){
             return callback(pagination);
@@ -39,5 +36,18 @@ const adminUserService = (() => {
 
     }
 
-    return {getPagination:getPagination, getCategory:getCategory, remove:remove}
+    // 검색하기
+    const search = async (page, category, keyword, callback) => {
+        console.log(category)
+        const response = await fetch(`/admin/users/${page}/?category=${category}&keyword=${keyword}`)
+        const pagination = await response.json();
+
+        if (callback){
+            return callback(pagination);
+        }
+
+        return pagination;
+    }
+
+    return {getPagination:getPagination, getCategory:getCategory, remove:remove, search:search}
 })();

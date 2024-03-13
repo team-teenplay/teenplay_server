@@ -587,7 +587,7 @@ for (let i=5; i < categoryBoxes.length; i++){
 
 hideButton.addEventListener("click", (e) => {
     let closestText = e.target.closest("span");
-    if (closestText.getAttribute("value") == "no-hidden") {
+    if (closestText.getAttribute("value") === "no-hidden") {
         noHide.classList.add("hidden");
         const hiddenCategoryBoxes = document.querySelectorAll(".activity-box.hidden")
         hiddenCategoryBoxes.forEach((box) => {
@@ -618,7 +618,7 @@ pageCount.innerText = `${count + 1}/2`;
 const autoSlide = () => {
     slideContainer.style.transition = "transform 0.4s";
     count++;
-    if (count == 2) {
+    if (count === 2) {
         slideContainer.style.transform = "translate(-" + 100 * (count + 1) + "%)";
         setTimeout(() => {
             slideContainer.style.transition = "transform 0s";

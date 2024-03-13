@@ -1,32 +1,31 @@
-let page = 1;
-
-// 목록 태그
-const noticeBox = document.querySelector(".notice-data")
-// 페이지 번호 박스
-const mainUserBottomUl = document.querySelector(".main-user-bottom-ul")
+let page = 1
+let category = ""
+let keyword = ""
 
 // 목록 서비스
-const createListService = (() => {
+const CreateService = (() => {
     // 공지사항 목록 가져오기
     const showList = (pagination) => {
+        console.log(pagination.notices)
         let text = ``;
-        pagination.pagination.forEach((page) => {
+        console.log(pagination)
+        pagination.notices.forEach((page) => {
             text += `
                 <li class="main-user-list" data-id="${page.id}">
                     <div class="main-comment-list-check">
-                        <input type="checkbox" class="main-comment-list-checkbox" data-id="${page.id}"/>
+                        <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-user-id="${page.id}">
                     </div>
                     <div class="main-user-list-name">${page.notice_title}</div>
-                    <div class="main-user-list-status">${page.created_date}</div>
+                    <div class="main-user-list-status">${page.created_date.slice(0, 10)}</div>
             `;
             if(page.notice_type === 0) {
                 text += `
                     <div class="main-user-list-category" >공지사항</div>
-                `
+            `
             } else if (page.notice_type === 1) {
                 text += `
                     <div class="main-user-list-category" >자주묻는질문</div>
-                `
+            `
             }
             text += `
                 <div class="main-user-list-detail">
@@ -139,32 +138,59 @@ const createListService = (() => {
     }
 
     // 공지사항 개수 표기 텍스트
-    const noticeCountText = (pagination) => {
+    const CountText = (pagination) => {
         let text = ``;
         text += pagination.total
 
         return text;
     }
 
-    return { showList: showList, showPaging: showPaging, noticeCountText: noticeCountText }
-})()
+    return { showList: showList, showPaging: showPaging, CountText: CountText }
+})();
+
+
+
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// 목록 태그
+const noticeData = document.querySelector(".notice-data")
 
 // 공지사항 목록 보여주기
-function noticeShowList() {
-    adminNoticeService.getPagination(page, createListService.showList).then((text) => {
-        noticeBox.innerHTML = text;
+function allShowList() {
+    adminNoticeService.getPagination(page, CreateService.showList).then((text) => {
+        noticeData.innerHTML = text;
     })
 }
-noticeShowList();
+allShowList();
+
+// 페이지 번호 태그
+const mainUserBottomUl = document.querySelector(".main-user-bottom-ul")
 
 // 페이지 번호 보여주기
-function noticeShowPaging() {
-    adminNoticeService.getPagination(page, createListService.showPaging).then((text) => {
+function allShowPaging() {
+    adminNoticeService.getPagination(page, CreateService.showPaging).then((text) => {
         mainUserBottomUl.innerHTML = text;
     })
 }
-noticeShowPaging();
+allShowPaging();
 
+// 개수 표기 태그
+const totalCount = document.querySelector(".main-user-total-number")
+
+// 공지사항 개수 표기
+function CountShowText() {
+    adminNoticeService.getPagination(page, CreateService.CountText).then((text) => {
+        totalCount.textContent = text;
+    })
+}
+CountShowText();
+
+
+
+
+
+// ---------------------------------------------------------------------------------------------------------------------
 // 페이지 네이션
 // 페이지 번호 박스 클릭 시 이벤트 발생
 mainUserBottomUl.addEventListener("click", (e) => {
@@ -196,37 +222,29 @@ mainUserBottomUl.addEventListener("click", (e) => {
         page = e.target.closest(".main-user-bottom").querySelector(".main-user-number").innerText
 
         // 번호에 따른 게시글 목록 가져오기
-        noticeShowList();
+        allShowList();
     // 페이지 이동 다음 버튼 클릭 시
     } else if (e.target.closest(".main-user-bottom-right")) {
         // 페이지 번호 끝(문자열로 가져오기 때문에 정수로 형변환)에서 + 1 (다음 페이지) 해주기
         page = parseInt(endPage[4].innerText) + 1
 
         // 페이지에 따른 목록 보여주기
-        noticeShowList();
+        allShowList();
 
         // 페이지에 따른 페이지 번호 목록 보여주기
-        noticeShowPaging();
+        allShowPaging();
     // 페이지 이동 이전 버튼 클릭 시
     } else if (e.target.closest(".main-user-bottom-left")) {
         // 페이지 번호 끝(문자열로 가져오기 때문에 정수로 형변환)에서 - 1 (이전 페이지) 해주기
         page = parseInt(endPage[0].innerText) - 1
 
         // 페이지에 따른 목록 보여주기
-        noticeShowList();
+        allShowList();
 
         // 페이지에 따른 페이지 번호 목록 보여주기
-        noticeShowPaging();
+        allShowPaging();
     }
 })
-
-// 공지사항 개수 표기
-function noticeCountShowText() {
-    adminNoticeService.getPagination(page, createListService.noticeCountText).then((text) => {
-        totalCount.textContent = text;
-    })
-}
-noticeCountShowText();
 
 
 
@@ -234,15 +252,12 @@ noticeCountShowText();
 
 // ---------------------------------------------------------------------------------------------------------------------
 // 체크박스
-// 게시글 개수
-const totalCount = document.getElementById("total-count");
-// 삭제하기 버튼
 const modalDeleteOpenButtons = document.querySelectorAll(".member-user-list-button");
 // 전체 선택 버튼
 const statusName = document.querySelector(".main-user-status-name");
 
-noticeBox.addEventListener('click', (e) => {
-    // noticeBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
+noticeData.addEventListener('click', (e) => {
+    // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
     // main-user-list가 있으면 옵셔널 체이닝(?.)을 사용하여 프로퍼티에 접근해 main-comment-list-checkbox를 찾기
     const checkboxes = e.target.closest(".main-user-list")?.querySelectorAll(".main-comment-list-checkbox");
 
@@ -276,7 +291,7 @@ const modalDeleteCloseButtons = document.querySelectorAll(".admin-user-modal-lef
 // 모달 속 삭제 버튼
 const modalDeleteButtons = document.querySelectorAll(".admin-user-modal-right-button");
 
-// 삭제 모달
+// 상태변경
 const deletemodal = document.getElementById("admin-user-modal");
 const deletemodalBack = document.getElementById("admin-user-modal-backdrop");
 
@@ -286,9 +301,11 @@ let currentTargetLi;
 modalDeleteOpenButtons.forEach((button) => {
     button.addEventListener("click", (event) => {
         const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
+        console.log(checkedItems)
 
         // 타겟의 아이디 값 가져오기
-        const targetId = event.currentTarget.getAttribute("data-target");
+        const targetId = event.currentTarget.getAttribute("data-id");
+        console.log(targetId)
         currentTargetLi = document.querySelector(`li[data-number="${targetId}"]`
         );
 
@@ -331,7 +348,6 @@ modalDeleteButtons.forEach((button) => {
         for (const checkbox of checkedItems) {
             // 체크된 checkbox와 가장 가까운 li 요소를 찾고 data-id 값을 가져오기
             const targetId = checkbox.closest("li").getAttribute("data-id");
-
             // data-id 속성 값이 같은 li 요소를 가져오기
             await adminNoticeService.remove({ targetId: targetId });
         }
@@ -339,16 +355,18 @@ modalDeleteButtons.forEach((button) => {
         // 모달 닫기
         deletemodal.classList.add("hidden");
         deletemodalBack.classList.add("hidden");
-        noticeShowList();
-        noticeShowPaging();
-        noticeCountShowText();
+        allShowList();
+        allShowPaging();
+        CountShowText();
     });
 });
 
 
 
 
+
 // ---------------------------------------------------------------------------------------------------------------------
+// 카테고리
 // 카테고리 버튼
 const searchOpen = document.querySelector(".main-wish-sellect-button");
 // 카테고리 버튼 속 텍스트
@@ -381,11 +399,11 @@ document.addEventListener("click", (e) => {
     }
 });
 
-// "카테고리" 버튼 클릭 시 모달 닫고 텍스트 변경
+// "전체" 버튼 클릭 시 모달 닫고 텍스트 변경
 searchReceive.addEventListener("click", () => {
     path.removeAttribute("transform");
     searchModal.classList.add("hidden");
-    searchText.textContent = "카테고리";
+    searchText.textContent = "전체";
 });
 
 // "공지사항" 버튼 클릭 시 모달 닫고 텍스트 변경
@@ -402,26 +420,51 @@ searchadd.addEventListener("click", () => {
     searchText.textContent = "자주묻는질문";
 });
 
+// 카테고리 버튼 가져오기
 const categoryButtons = document.querySelectorAll('.category');
-let categories = ''
 function noticeShowCategory() {
-    categoryButtons.forEach( (button) => {
-        let categories = button.value;
-
+    categoryButtons.forEach((button) => {
         button.addEventListener("click", () => {
-            console.log(categories)
-            adminNoticeService.getCategory(page, categories, createListService.showList).then((text) => {
-                noticeBox.innerHTML = text;
+            category = button.value;
+            console.log(category)
+            adminNoticeService.getCategory(page, category, CreateService.showList).then((text) => {
+                noticeData.innerHTML = text;
             })
+            adminNoticeService.getCategory(page, category, CreateService.showPaging).then((text) => {
+                mainUserBottomUl.innerHTML = text;
+            })
+            adminNoticeService.getCategory(page, category, CreateService.CountText).then((text) => {
+                totalCount.textContent = text;
+            })
+
+            searchInput.value ="";
+            keyword = "";
         })
     })
 }
 noticeShowCategory();
 
-searchReceive.addEventListener("click", () => {
-    noticeShowList();
-    noticeShowPaging();
-})
+
+
+
 
 // ---------------------------------------------------------------------------------------------------------------------
-// 게시글 작성
+// 검색
+// 입력창
+const searchInput = document.querySelector(".main-user-info-input")
+
+// 전체보기 서치
+searchInput.addEventListener('keyup', (e) => {
+    if (e.keyCode === 13) {
+        keyword = e.target.value
+        adminNoticeService.search(page, category, keyword, CreateService.showList).then((text) => {
+            noticeData.innerHTML = text;
+        })
+        adminNoticeService.search(page, category, keyword, CreateService.showPaging).then((text) => {
+            mainUserBottomUl.innerHTML = text;
+        })
+        adminNoticeService.search(page, category, keyword, CreateService.CountText).then((text) => {
+            totalCount.textContent = text;
+        })
+    }
+});

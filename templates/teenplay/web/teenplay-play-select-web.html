@@ -18,13 +18,13 @@
                                 <div class="play-item">
                                     <!-- 아래 div가 반복 -->
                                     <!-- 현재 재생중 -->
-                                    <div class="play-each {{ id }} playing">
+                                    <div class="play-each {{ data.id }} playing">
                                         <section class="play-each-wrap">
                                             <div class="play-each-container">
                                                 <div class="video-wrap">
                                                     <!-- 비디오 -->
                                                     <video class="play-video" preload loop autoplay>
-                                                        <source src="/upload/{{ video_path }}" type="video/mp4" />
+                                                        <source src="/upload/{{ data.video_path }}" type="video/mp4" />
                                                     </video>
                                                 </div>
                                             </div>
@@ -33,23 +33,23 @@
                                                 <div class="play-info-container">
                                                     <!-- 작성자(모임) 정보 -->
                                                     <div class="play-writer-wrap">
-                                                        <a href="/club/detail/?id={{ context.club_id }}" class="play-writer-image-wrap">
+                                                        <a href="/club/detail/?id={{ data.club_id }}&view=teenplay" class="play-writer-image-wrap">
                                                             <div class="play-writer-image-container">
                                                                 <!-- 모임 프사 -->
-                                                                <img src="/upload/{{ club_profile_path }}" class="play-writer-image" />
+                                                                <img src="/upload/{{ data.club_profile_path }}" class="play-writer-image" />
                                                             </div>
                                                         </a>
                                                         <div class="play-writer-container">
                                                             <div class="play-writer-boxes">
                                                                 <div class="play-writer-box">
                                                                     <!-- 모임 이름 -->
-                                                                    <a href="/club/detail/?id={{ club_id }}" class="play-writer-name">{{ club_name }}</a>
+                                                                    <a href="/club/detail/?id={{ data.club_id }}&view=teenplay" class="play-writer-name">{{ data.club_name }}</a>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="play-like-info-wrap">
                                                             <div class="play-like-wrap">
-                                                                <button class="play-like-btn" value="{{ id }}">
+                                                                <button class="play-like-btn" value="{{ data.member_like }}" name="{{ data.id }}">
                                                                     {% if like_check %}
                                                                         <svg data-v-e13ecf0e="" xmlns="http://www.w3.org/2000/svg" class="play-like-icon empty" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:none">
                                                                             <path data-v-e13ecf0e="" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
@@ -67,13 +67,13 @@
                                                                     {% endif %}
                                                                 </button>
                                                             </div>
-                                                            <div class="play-like-count">{{ teenplay_like }}</div>
+                                                            <div class="play-like-count">{{ data.teenplay_like }}</div>
                                                         </div>
                                                     </div>
                                                     <!-- 제목(내용) -->
                                                     <h2 class="play-info-title-wrap">
                                                         <div class="play-info-title-container">
-                                                            <span class="play-info-title">{{ club_intro }}</span>
+                                                            <span class="play-info-title">{{ data.club_intro }}</span>
                                                         </div>
                                                     </h2>
                                                 </div>
@@ -143,9 +143,11 @@
 {% endblock %}
 {% block js %}
     <script>
-        memberSessionId = {{ memberSessionId }}
-        clubId = {{ club_id }}
-        teenplayClickId = {{ id }}
+        memberSessionId = {{ member_session.memberSessionId }}
+        clubId = {{ data.club_id }}
+        teenplayClickId = {{ data.id }}
+        page = {{ data.page }}
+        maxCount ={{ data.max_count|safe}}
     </script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="{% static 'teenplay/js/web/teenplay-play-select-fetch-web.js' %}"></script>

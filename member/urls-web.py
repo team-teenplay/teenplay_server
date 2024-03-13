@@ -5,8 +5,12 @@ from member.views import MemberLoginWebView, MemberJoinWebView, MypageInfoWebVie
     MypageAlramView, MypageAlramAPIView, MypageAlramDeleteAPIView, MypageTeenchinview, MypageTeenchinAPIview, \
     MemberAlarmCountAPI, MypageTeenchindeleteview, MypageTeenchinLetterAPIview, MapagePaymentView, MypagePayListAPIVIEW, \
     MypagePayDeleteAPIVIEW, MypageReplyView, MypageReplyAPIVIEW, MypageReplyDeleteAPIVIEW, TeenChinAPI, \
+<<<<<<< HEAD
     ClubAlarmManageAPI, MypageClubMainView, MypageActivityListAPI, MypageMemberView, MypageNoticeView, MypageNoticeAPI, \
     MypageNoticeCreateView, MypageSettingView, MypageMemberFilerAPI, MypageMemberStatusAPI
+=======
+    ClubAlarmManageAPI, MypageActivityLikeAPIVIEW, MypageActivityAPIVIEW, MypageActivityVIEW
+>>>>>>> 6e7c711b521b76ff6d9001ead13b8eeae461d9f8
 
 app_name = 'member'
 
@@ -37,6 +41,7 @@ urlpatterns = [
     path('mypage-reply/<str:reply_id>/', MypageReplyDeleteAPIVIEW.as_view(), name="mypage-deletereply"),
     path('teenchin/api/', TeenChinAPI.as_view(), name="teenchin-api"),
     path('club-alarm/api/', ClubAlarmManageAPI.as_view(), name="club-alarm-manage-api"),
+<<<<<<< HEAD
     path('mypage-club/', MypageClubMainView.as_view(), name="mypage-club"),
     path('mypage-activity-list/api/', MypageActivityListAPI.as_view(), name="mypage-activity-list-api"),
     path('mypage-member/', MypageMemberView.as_view(), name="mypage-member"),
@@ -46,4 +51,9 @@ urlpatterns = [
     path('mypage-notice/api/', MypageNoticeAPI.as_view(), name="mypage-notice-api"),
     path('mypage-notice-write/', MypageNoticeCreateView.as_view(), name="mypage-create"),
     path('mypage-setting/', MypageSettingView.as_view(), name="mypage-setting"),
+=======
+    path('mypage-activity/', MypageActivityVIEW.as_view(), name="mypage-activity"),
+    path('mypage-activity/<int:member_id>/<int:page>/', MypageActivityAPIVIEW.as_view(), name="mypage-apiactivity"),
+    path('mypage-activity/<int:activity_id>/', MypageActivityLikeAPIVIEW.as_view(), name="mypage-apiactivitylike")
+>>>>>>> 6e7c711b521b76ff6d9001ead13b8eeae461d9f8
 ]

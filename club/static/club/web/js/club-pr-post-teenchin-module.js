@@ -13,22 +13,27 @@ const clubPostTeenchinService = (() => {
 
     // 틴친 상태 조회 (GET)
     const getTeenchinStatus = async (teenchinId, callback) => {
+        console.log(teenchinId)
         const response = await fetch(`/member/teenchin/api?teenchin-id=${teenchinId}`);
         const teenchinStatus = await response.json();
         if (callback) {
-            callback(teenchinStatus.teenchinStatus);
+            callback(teenchinStatus);
         }
     }
 
-    // 틴친 취소(PATCH)
-    const cancelApplyTeenchin = async (teenchinId) => {
+    // 틴친 취소 or 수락/거절 (PATCH)
+    const cancelOrAcceptDenyTeenchin = async (teenchinId, isSender, isAccept) => {
         await fetch(`/member/teenchin/api/`, {
             method: "PATCH",
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
                 'X-CSRFToken': csrfToken
             },
-            body: JSON.stringify({teenchinId: teenchinId})
+            body: JSON.stringify({
+                teenchinId: teenchinId,
+                isSender: isSender,
+                isAccept: isAccept,
+            })
         })
     }
 
@@ -47,7 +52,7 @@ const clubPostTeenchinService = (() => {
     return {
         apply: apply,
         getTeenchinStatus: getTeenchinStatus,
-        cancelApplyTeenchin: cancelApplyTeenchin,
+        cancelOrAcceptDenyTeenchin: cancelOrAcceptDenyTeenchin,
         removeTeenchin: removeTeenchin
     }
 })();
