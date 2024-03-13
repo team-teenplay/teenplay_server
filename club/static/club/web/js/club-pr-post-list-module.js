@@ -1,5 +1,5 @@
 const clubPostListService = (() => {
-    const getList = async (page, category, ordering, keyword, callback) => {
+    const getList = async (page, category, order, keyword, callback) => {
         const response = await fetch('/clubs/pr-post-list/api/', {
             method: 'POST',
             headers: {
@@ -9,7 +9,7 @@ const clubPostListService = (() => {
             body: JSON.stringify({
                 page: page,
                 category: category,
-                ordering: ordering,
+                order: order,
                 keyword: keyword
             })
         })

@@ -28,6 +28,8 @@ const sendLetterAddInfo = (replyId) => {
 const teenchinAddButton = document.querySelector(".teenchin-add-btn");
 // 틴친 신청취소 버튼
 const teenchinCancelButton = document.querySelector(".teenchin-request-btn");
+// 틴친 수락/거절 버튼
+const teenchinAcceptButton = document.querySelector(".teenchin-accept-btn");
 // 틴친 끊기 버튼
 const teenchinDeleteButton = document.querySelector(".teenchin-btn");
 
@@ -46,17 +48,29 @@ const helpHideButton = (button) => {
 
 // 이제 위 요소들을 사용하여 틴친 상태에 따라 버튼을 바꿔줄 함수 정의
 const showButtonsByTeenchinStatus = (teenchinStatus) => {
-    if (teenchinStatus === 0) {
+    let status = teenchinStatus.teenchinStatus;
+    let isSender = teenchinStatus.isSender;
+    console.log(status)
+    console.log(isSender)
+    if (status === 0) {
         helpShowButton(teenchinAddButton);
         helpHideButton(teenchinCancelButton);
+        helpHideButton(teenchinAcceptButton)
         helpHideButton(teenchinDeleteButton);
-    } else if (teenchinStatus === 1) {
+    } else if (status === 1) {
         helpShowButton(teenchinDeleteButton);
         helpHideButton(teenchinAddButton);
+        helpHideButton(teenchinAcceptButton)
         helpHideButton(teenchinCancelButton);
-    } else {
+    } else if (isSender) {
         helpShowButton(teenchinCancelButton);
+        helpHideButton(teenchinAcceptButton);
         helpHideButton(teenchinAddButton);
+        helpHideButton(teenchinDeleteButton);
+    } else {
+        helpShowButton(teenchinAcceptButton);
+        helpHideButton(teenchinAddButton);
+        helpHideButton(teenchinCancelButton);
         helpHideButton(teenchinDeleteButton);
     }
 }
@@ -73,7 +87,8 @@ let opponentTeenchinId = 0;
 
 const showMemberProfileModal = async (replyId) => {
     opponentTeenchinId = document.querySelector(`.reply-writer-id${replyId}`).value;
-    if (profileModal.classList.contains("hidden") && (Number(opponentTeenchinId) !== memberId)) {
+    if (memberId === opponentTeenchinId) return;
+    if (profileModal.classList.contains("hidden")) {
         profileModal.classList.remove("hidden")
         const memberProfileImage = document.querySelector(`.profile-image${replyId}`);
         profileModalProfileImage.src = memberProfileImage.src;
@@ -191,6 +206,7 @@ if (teenFriendAdd){
             if (result.value) {
                 await clubPostTeenchinService.apply(opponentTeenchinId);
                 await clubPostTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
+                Swal.fire("틴친 신청을 보냈어요!", "", "success");
             } else if ((result.dismiss = "cancel")) {
                 return;
             }
@@ -212,13 +228,41 @@ if (teenFriendRequest){
             cancelButtonText: "닫기",
         }).then(async (result) => {
             if (result.value) {
-                await clubPostTeenchinService.cancelApplyTeenchin(opponentTeenchinId);
+                await clubPostTeenchinService.cancelOrAcceptDenyTeenchin(opponentTeenchinId, true, false);
                 await clubPostTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
+                Swal.fire("틴친 신청이 취소되었습니다.", "", "success");
             } else if ((result.dismiss = "cancel")) {
                 return;
             }
         });
     });
+}
+
+// 틴친 수락/거절 모달 이벤트
+if (teenchinAcceptButton) {
+    teenchinAcceptButton.addEventListener("click", () => {
+        Swal.fire({
+            title: "신청을 수락할까요?",
+            text: "",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#CE201B",
+            cancelButtonColor: "#E1E1E1",
+            confirmButtonText: "수락",
+            cancelButtonText: "거절",
+        }).then(async (result) => {
+            if (result.value) {
+                await clubPostTeenchinService.cancelOrAcceptDenyTeenchin(opponentTeenchinId, false, true);
+                await clubPostTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
+                Swal.fire("틴친신청을 수락했습니다.", "", "success");
+            } else if ((result.dismiss = "cancel")) {
+                await clubPostTeenchinService.cancelOrAcceptDenyTeenchin(opponentTeenchinId, false, false);
+                await clubPostTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
+                Swal.fire("틴친신청을 거절했습니다.", "", "success");
+                return;
+            }
+        });
+    })
 }
 
 // 틴친 취소 모달 이벤트
@@ -237,8 +281,9 @@ if (teenFriendCancle){
             cancelButtonText: "닫기",
         }).then(async (result) => {
             if (result.value) {
-                await clubPostTeenchinService.apply(opponentTeenchinId);
+                await clubPostTeenchinService.removeTeenchin(opponentTeenchinId);
                 await clubPostTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
+                Swal.fire("틴친 관계가 해제되었어요.", "", "success");
             } else if ((result.dismiss = "cancel")) {
                 return;
             }
@@ -550,6 +595,16 @@ const adminUserModalRightButton = document.querySelector(".admin-user-modal-righ
 const deleteForm = document.querySelector("#delete-form");
 adminUserModalRightButton.addEventListener("click", () => {
     deleteForm.submit();
+})
+
+const prListBtn = document.querySelector(".pr-list-btn")
+const searchForm = document.querySelector("#search-form")
+
+prListBtn.addEventListener("click", (e) => {
+    console.log(e.target)
+    if(e.target.closest(".pr-list-btn")) {
+        searchForm.submit();
+    }
 })
 
 function timeForToday(datetime) {

@@ -15,18 +15,18 @@ const addPaginationEvent = (pageInfo) => {
 
     prPaginationPrev.addEventListener("click", async () => {
         if (pageInfo.currentPage <= 1) return;
-        await clubPostListService.getList(--page, category, ordering, keyword, showList);
+        await clubPostListService.getList(--page, category, order, keyword, showList);
     })
 
     prPaginationNext.addEventListener("click", async () => {
         if (pageInfo.currentPage === pageInfo.realEnd) return;
-        await clubPostListService.getList(++page, category, ordering, keyword, showList);
+        await clubPostListService.getList(++page, category, order, keyword, showList);
     })
 
     prPaginationPages.forEach((btn, i) => {
         btn.addEventListener("click", async () => {
             page = prPaginationPageNumbers[i].innerHTML;
-            await clubPostListService.getList(page, category, ordering, keyword, showList);
+            await clubPostListService.getList(page, category, order, keyword, showList);
         })
     })
 }
@@ -85,7 +85,7 @@ const showList = (clubPostList) => {
                 <!-- 아래 div가 게시물마다 반복 -->
                 <div class="pr-content-boxes">
                     <!-- 모임 홍보글 이미지 -->
-                    <a href="/club/pr-post-detail/?id=${clubPost.id}&page=${page}&category=${category}&ordering=${ordering}&keyword=${keyword}" class="pr-content-img-wrap" target="_self">
+                    <a href="/club/pr-post-detail/?id=${clubPost.id}&page=${page}&category=${category}&order=${order}&keyword=${keyword}" class="pr-content-img-wrap" target="_self">
                         <img src="/upload/${clubPost.image_path}" class="pr-content-img" />
                     </a>
                     <div class="pr-content-text-wrap">
@@ -98,7 +98,7 @@ const showList = (clubPostList) => {
                             </div>
                             <!-- 홍보글 제목 -->
                             <div class="pr-content-text-title-wrap">
-                                <a href="/club/pr-post-detail/?id=${clubPost.id}&page=${page}&category=${category}&ordering=${ordering}&keyword=${keyword}" class="pr-content-text-title-link">
+                                <a href="/club/pr-post-detail/?id=${clubPost.id}&page=${page}&category=${category}&order=${order}&keyword=${keyword}" class="pr-content-text-title-link">
                                     <p class="pr-content-text-title">${clubPost.post_title}</p>
                                 </a>
                             </div>
@@ -135,7 +135,10 @@ const prPostCategoryBox = document.querySelector(".pr-post-category-box")
 
 prPostCategoryBox.addEventListener("change", async (e) => {
     category = e.target.value
-    await clubPostListService.getList(page, category, ordering, keyword, showList)
+    prPostSearchInput.value = ''
+    keyword = ''
+    page = 1
+    await clubPostListService.getList(page, category, order, keyword, showList)
 })
 
 // 검색 창에 enter 키 누를 경우 입력한 value를 keyword로 검색하는 기능
@@ -143,8 +146,9 @@ const prPostSearchInput = document.querySelector(".pr-post-search-input")
 
 prPostSearchInput.addEventListener("keyup", async (e) => {
     if (e.keyCode === 13) {
+        page = 1
         keyword = prPostSearchInput.value
-        await clubPostListService.getList(page, category, ordering, keyword, showList)
+        await clubPostListService.getList(page, category, order, keyword, showList)
     }
 })
 
@@ -158,14 +162,14 @@ orderingBtns.forEach((btn) => {
         if (e.target.closest(".new-ordering")) {
             newOrdering.classList.add("selected-ordering")
             hitsOrdering.classList.remove("selected-ordering")
-            ordering = newOrdering.innerText
-
+            order = newOrdering.innerText
         } else if (e.target.closest(".hits-ordering")) {
             newOrdering.classList.remove("selected-ordering")
             hitsOrdering.classList.add("selected-ordering")
-            ordering = hitsOrdering.innerText
+            order = hitsOrdering.innerText
         }
-        await clubPostListService.getList(page, category, ordering, keyword, showList)
+        page = 1
+        await clubPostListService.getList(page, category, order, keyword, showList)
     })
 })
 
@@ -179,7 +183,7 @@ if (category) {
     prPostCategoryBox.value = category
 }
 
-if (ordering === '최신순') {
+if (order === '최신순') {
     newOrdering.classList.add("selected-ordering")
     hitsOrdering.classList.remove("selected-ordering")
 } else{
@@ -187,7 +191,7 @@ if (ordering === '최신순') {
     hitsOrdering.classList.add("selected-ordering")
 }
 
-clubPostListService.getList(page, category, ordering, keyword, showList)
+clubPostListService.getList(page, category, order, keyword, showList)
 
 
 
