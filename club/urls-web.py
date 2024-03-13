@@ -4,7 +4,7 @@ from django.urls import path, include
 from club.views import ClubIntroView, ClubCreateView, ClubDetailView, ClubAPI, ClubMemberAPI, \
     ClubNoticeAPI, ClubOngoingActivityAPI, ClubFinishedActivityAPI, ClubPrPostWriteView, ClubPrPostDetailView, \
     ClubTeenplayAPIView, ClubTeenplayDeleteAPIView, ClubTeenplayUploadAPIView, ClubPrPostListView, ClubPrPostReplyAPI, \
-    ClubPrPostUpdateView, ClubPrPostDeleteView
+    ClubPrPostUpdateView, ClubPrPostDeleteView, ClubPrPostListAPI
 
 app_name = 'club'
 
@@ -18,6 +18,7 @@ urlpatterns = [
     path('club-finished-activity/api/<int:club_id>/<int:page>/', ClubFinishedActivityAPI.as_view(), name='club-finished-activity-api'),
     path('club-notice/api/<int:club_id>/<int:page>/', ClubNoticeAPI.as_view(), name='club-notice-api'),
     path('pr-post-list/', ClubPrPostListView.as_view(), name='pr-post-list'),
+    path('pr-post-list/api/', ClubPrPostListAPI.as_view(), name='pr-post-list'),
     path('pr-post-detail/', ClubPrPostDetailView.as_view(), name='pr-post-detail'),
     path('pr-post-reply/api/', ClubPrPostReplyAPI.as_view(), name='pr-post-reply'),
     path('pr-post-write/', ClubPrPostWriteView.as_view(), name='pr-post-write'),
@@ -26,5 +27,4 @@ urlpatterns = [
     path('club-teenplay-list/api/<int:club_id>/<int:page>/', ClubTeenplayAPIView.as_view(), name='club-teenplay-list'),
     path('club-teenplay-delete/api/<int:teenplay_id>/', ClubTeenplayDeleteAPIView.as_view(),name='club-teenplay-delete'),
     path('club-teenplay-upload/api/', ClubTeenplayUploadAPIView.as_view(), name='club-teenplay-upload')
-
 ]

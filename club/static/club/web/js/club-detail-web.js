@@ -270,32 +270,6 @@ const showNoticeTap = () => {
 noticeFilterBtn.addEventListener("click", () => {
     page = 1
     showNoticeTap()
-    // activityFilterWrap.style.border = "none";
-    // infoFilterWrap.style.border = "none";
-    // tpFilterWrap.style.border = "none";
-    // if (!activityFilterBtn.classList.contains("off")) {
-    //     activityFilterBtn.classList.add("off");
-    // }
-    // if (!infoFilterBtn.classList.contains("off")) {
-    //     infoFilterBtn.classList.add("off");
-    // }
-    // if (!tpFilterBtn.classList.contains("off")) {
-    //     tpFilterBtn.classList.add("off");
-    // }
-    // if (noticeFilterBtn.classList.contains("off")) {
-    //     noticeFilterBtn.classList.remove("off");
-    // }
-    // noticeFilterWrap.style.borderBottom = "2px solid #CE201B";
-    //
-    // activityContent.style.display = "none";
-    // infoContent.style.display = "none";
-    // noticeContent.style.display = "block";
-    // tpContent.style.display = "none";
-    //
-    // clubDetailService.getCNList(club.id, page, createListService.showNoticeList).then((text) => {
-    //     clubNoticeWrap.innerHTML = text
-    //     showMoreCNListBtnCheck()
-    // })
 });
 
 const showTeenplayTap = () => {
@@ -320,34 +294,13 @@ const showTeenplayTap = () => {
     infoContent.style.display = "none";
     noticeContent.style.display = "none";
     tpContent.style.display = "block";
+
 }
 
 // 틴플레이 클릭 시 fetch 후 목록 뿌리는 이벤트
 tpFilterBtn.addEventListener("click", () => {
     page = 1
     showTeenplayTap()
-    // activityFilterWrap.style.border = "none";
-    // infoFilterWrap.style.border = "none";
-    // noticeFilterWrap.style.border = "none";
-    // if (!activityFilterBtn.classList.contains("off")) {
-    //     activityFilterBtn.classList.add("off");
-    // }
-    // if (!infoFilterBtn.classList.contains("off")) {
-    //     infoFilterBtn.classList.add("off");
-    // }
-    // if (tpFilterBtn.classList.contains("off")) {
-    //     tpFilterBtn.classList.remove("off");
-    // }
-    // if (!noticeFilterBtn.classList.contains("off")) {
-    //     noticeFilterBtn.classList.add("off");
-    // }
-    // tpFilterWrap.style.borderBottom = "2px solid #CE201B";
-    //
-    // activityContent.style.display = "none";
-    // infoContent.style.display = "none";
-    // noticeContent.style.display = "none";
-    // tpContent.style.display = "block";
-
 });
 
 // 전체 모달
@@ -484,7 +437,7 @@ const createListService = (() => {
                 text += `
                     <div class="club-detail-active">
                         <div class="club-detail-img-wrap">
-                            <a href="" class="club-detail-img-link">
+                            <a href="/activity/detail?id=${ongoingActivity.id}" class="club-detail-img-link">
                     `
                 if (ongoingActivity.thumbnail_path) {
                     text += `
@@ -533,7 +486,7 @@ const createListService = (() => {
                                 </div>
                             </div>
                             <div class="event-title-wrap">
-                                <a href="" class="event-title"> ${ongoingActivity.activity_title} </a>
+                                <a href="/activity/detail?id=${ongoingActivity.id}" class="event-title"> ${ongoingActivity.activity_title} </a>
                             </div>
                             <div class="event-detail-wrap">
                                 <div class="event-usercount-wrap">
@@ -571,7 +524,7 @@ const createListService = (() => {
                 text += `
                     <div class="finished-events-boxes">
                         <div class="finished-events-img-wrap">
-                            <a href="" class="finished-events-img-link">
+                            <a href="/activity/detail?id=${finishedActivity.id}" class="finished-events-img-link">
                 `
                 if (finishedActivity.thumbnail_path) {
                     text += `
@@ -621,7 +574,7 @@ const createListService = (() => {
                                 </div>
                             </div>
                             <div class="finished-events-name-wrap">
-                                <a href="" class="finished-events-name"> ${finishedActivity.activity_title} </a>
+                                <a href="/activity/detail?id=${finishedActivity.id}" class="finished-events-name"> ${finishedActivity.activity_title} </a>
                             </div>
                             <div class="finished-events-price-wrap">
                                 <div class="finished-events-count-wrap">
