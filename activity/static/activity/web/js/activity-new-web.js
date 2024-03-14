@@ -80,33 +80,53 @@ $(document).ready(function () {
         focus: false,
         lang: "ko-KR", // 기본 메뉴언어 US->KR로 변경
         callbacks: {
-            onImageUpload: function (files) {
-                let fileImages = document.querySelectorAll("div.note-editor img");
-                if (fileImages) {
-                    if (fileImages.length === 2) {
-                        alert('2개 이하의 이미지만 첨부할 수 있습니다.');
-                        return;
-                    }
-                }
+            onImageUpload: async function (files) {
+                // 개수 제한 안 두고 하겠습니다.
+                // let fileImages = document.querySelectorAll("div.note-editor img");
+                // if (fileImages) {
+                //     if (fileImages.length === 2) {
+                //         alert('2개 이하의 이미지만 첨부할 수 있습니다.');
+                //         return;
+                //     }
+                // }
                 const [file] = files;
                 if (file.size >= 1024 * 1024 * 5) {
                     alert('5MB 이하의 이미지만 첨부할 수 있습니다.');
                     return;
                 }
-                fileNames.push(file.name);
-                let fileInput = document.createElement("input");
-                fileInput.setAttribute("type", "file");
-                fileInput.setAttribute("style", "display: none;");
-                fileInput.setAttribute("name", "files");
-                let dataTransfer = new DataTransfer();
-                dataTransfer.items.add(file);
-                fileInput.files = dataTransfer.files;
-                let reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.addEventListener("load", (e) => {
-                    $(".presentation-size").summernote("insertImage", e.target.result);
-                })
-                activityForm.appendChild(fileInput);
+                // fileNames.push(file.name);
+                // let fileInput = document.createElement("input");
+                // fileInput.setAttribute("type", "file");
+                // fileInput.setAttribute("style", "display: none;");
+                // fileInput.setAttribute("name", "files");
+                // let dataTransfer = new DataTransfer();
+                // dataTransfer.items.add(file);
+                // fileInput.files = dataTransfer.files;
+                // let reader = new FileReader();
+                // reader.readAsDataURL(file);
+                // reader.addEventListener("load", (e) => {
+                //     $(".presentation-size").summernote("insertImage", e.target.result);
+                // })
+                // activityForm.appendChild(fileInput);
+                let formData = new FormData();
+                formData.append('image', file);
+                const response = await fetch(`/activity/images/api/`, {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    }
+                });
+                const data = await response.json();
+                const imageUrl = await data.image_path;
+                const imageId = await data.image_id;
+                $(".presentation-size").summernote('insertImage', imageUrl);
+                let imageIdInput = document.createElement("input");
+                imageIdInput.setAttribute("type", "hidden");
+                imageIdInput.setAttribute("style", "display: none;");
+                imageIdInput.setAttribute("name", "image-id");
+                imageIdInput.setAttribute("value", imageId);
+                activityForm.appendChild(imageIdInput);
             },
         }
     });
