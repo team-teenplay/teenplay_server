@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 
 from activity.models import Activity, ActivityReply
 from club.models import Club, ClubPost, ClubPostReply
+from letter.models import Letter
 from member.models import AdminAccount, Member
 from member.serializers import AdminAccountSerializer
 from notice.models import Notice
@@ -143,10 +144,123 @@ class AdminMessageView(View):
         return render(request, 'admin/web/message-web.html')
 
 
-# 관리자 쪽지 - 데이터 가져오기
+# 관리자 쪽지 - API
 class AdminMessageAPI(APIView):
+    # 데이터 가져오기
     def get(self, request, page):
-        pass
+        order = request.GET.get('order', 'recent')
+        category = request.GET.get('category', '')
+        type = request.GET.get('type', '')
+        keyword = request.GET.get('keyword', '')
+        targetId = request.GET.get('targetId', '')
+
+        row_count = 10
+
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        # 삭제되지 않은 쪽지만 가져오기
+        condition = Q(status=1)
+
+        # 멤버의 상태에 따른 카테고리 조회
+        if category:
+            condition &= Q(member__status=category)
+
+        # 검색 타입에 따른 검색 결과 필터
+        if type:
+            if keyword:
+                # 보낸 사람
+                if type == 's':
+                    condition &= Q(letter__sender_id__contains=keyword)
+
+                # 받은 사람
+                elif type == 'r':
+                    condition &= Q(letter__receiver_id__contains=keyword)
+
+        # 만약, targetID에 값이 있다면,
+        if targetId:
+            # conditions에 필터 추가
+            condition &= Q(id=targetId)
+
+        # total= 쪽지 개수 세기
+        total = Letter.objects.filter(condition).all().count()
+        print(total)
+
+        # 보여질 데이터의 개수
+        page_count = 5
+
+        # 페이징 처리
+        end_page = math.ceil(page / page_count) * page_count
+        start_page = end_page - page_count + 1
+        real_end = math.ceil(total / row_count)
+        end_page = real_end if end_page > real_end else end_page
+
+        if end_page == 0:
+            end_page = 1
+
+        # context에 필드 담기
+        context = {
+            'category': category,
+            'total': total,
+            'order': order,
+            'start_page': start_page,
+            'end_page': end_page,
+            'real_end': real_end,
+            'page_count': page_count,
+        }
+
+        # 정렬(내림차순, 최신순)
+        ordering = '-id'
+        if order == 'popular':
+            ordering = '-post_read_count'
+
+        # colums 설정
+        # 보낸 사람
+        # 	letter__sent_letter__sender
+        #
+        # 받은 사람
+        # 	letter__received_letter__letter
+        #
+        # 보낸 날짜
+        # 	letter__created_date
+        columns = [
+            'id',
+            'sender_id',
+            'receiver_id',
+            'created_date',
+            'status',
+            'letter_content'
+        ]
+
+        # 쪽지 가져오기
+        letter = Letter.objects.filter(condition).values(*columns).order_by(ordering)
+        is_read = letter.annotate(is_read=F('receivedletter__is_read'))
+        read_date = letter.annotate(read_date=F('receivedletter__updated_date'))
+        print(read_date)
+        member_status = letter.annotate(member_status=F('sender_id__member__status'))
+
+        for i in range(len(list(letter))):
+            letter[i]['is_read'] = is_read[i]['is_read']
+            letter[i]['read_date'] = read_date[i]['read_date']
+            letter[i]['member_status'] = member_status[i]['member_status']
+
+        context['letter'] = list(letter[offset:limit])
+
+        return Response(context)
+
+
+    # 회원 상태 변경
+    @transaction.atomic
+    def fetch(self, request, promote_id):
+        status = 0
+        updated_date = timezone.now()
+
+        club_post = ClubPost.objects.get(id=promote_id)
+        club_post.status = status
+        club_post.updated_date = updated_date
+        club_post.save(update_fields=['status', 'updated_date'])
+
+        return Response('success')
 
 
 # 관리자 쪽지 - 상태 변경
@@ -185,8 +299,6 @@ class AdminPromoteAPI(APIView):
         order = request.GET.get('order', 'recent')
         type = request.GET.get('type', '')
         keyword = request.GET.get('keyword', '')
-        print(type)
-        print(keyword)
 
         row_count = 10
 

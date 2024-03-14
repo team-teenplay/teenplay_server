@@ -4,6 +4,7 @@ let keyword = ""
 
 const CreateService = (() => {
     const showList = (pagination) => {
+        console.log(pagination)
         let text = ``;
         pagination.members.forEach((page) => {
             text += `
