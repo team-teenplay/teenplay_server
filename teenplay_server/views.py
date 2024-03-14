@@ -175,7 +175,7 @@ class AdminPromoteAPI(APIView):
 
                 # 제목
                 elif type == 'p':
-                    condition &= Q(activity_title__contains=keyword)
+                    condition &= Q(post_title__contains=keyword)
 
         total = ClubPost.objects.filter(condition).all().count()
 
@@ -202,27 +202,29 @@ class AdminPromoteAPI(APIView):
         if order == 'popular':
             ordering = '-post_read_count'
 
+        print('들어옴!')
+
         columns = [
             'id',
             'post_title',
+            'post_content',
+            'image_path',
             'created_date',
-            'view_count',
         ]
 
+        print('들어옴!')
+
         club_post = ClubPost.objects.filter(condition).values(*columns).order_by(ordering)
-
         club_name = club_post.annotate(club_name=F('club__club_name'))
-        club_reply_count = club_post.annotate(club_reply_count=F(''))
+        club_reply_count = club_post.annotate(club_reply_count=Count('clubpostreply__id'))
+        club_post_category = club_post.annotate(club_post_category=F('category__category_name'))
 
-        activity = Activity.objects.filter(condition).values(*columns).order_by(ordering)
-        activity_writer = activity.annotate(activity_writer=F('club__member__member_nickname'))
-        member_count = activity.annotate(member_count=Count('activitymember__member__id'))
+        for i in range(len(list(club_post))):
+            club_post[i]['club_name'] = club_name[i]['club_name']
+            club_post[i]['club_reply_count'] = club_reply_count[i]['club_reply_count']
+            club_post[i]['club_post_category'] = club_post_category[i]['club_post_category']
 
-        for i in range(len(list(activity))):
-            activity[i]['activity_writer'] = activity_writer[i]['activity_writer']
-            activity[i]['member_count'] = member_count[i]['member_count']
-
-        context['activity'] = list(activity[offset:limit])
+        context['club_post'] = list(club_post[offset:limit])
 
         return Response(context)
 
