@@ -142,7 +142,11 @@ payshow.addEventListener("click", async(e)=>{
         cancleModalWrap.querySelector(".cancle-modal-container").style.animation = "popUp 0.5s";
         cancleModalWrap.style.display = "block";
         cancleCheckBtn.addEventListener("click" , async(e)=>{
-            payService.remove(del)
+            let reason_text = document.getElementById("pay-reason")
+             await payService.check({
+                pay: del ,
+                reason : reason_text.value
+            })
             const text = await payService.getList(member_id, page, showList);
             payshow.innerHTML = text;
             page = 1

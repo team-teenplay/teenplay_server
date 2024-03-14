@@ -25,23 +25,25 @@ const adminPromoteService = (() => {
     }
 
 
-    // 위시리스트 삭제
+    // 게시글 삭제
     const remove = async (targetId) => {
-        const activity_id = targetId.targetId
+        const promote_id = targetId.targetId
 
-        await fetch(`/admin/promotes/delete/${activity_id}/`, {
+        await fetch(`/admin/promotes/delete/${promote_id}/`, {
             method: 'delete',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
                 'X-CSRFToken': csrf_token
             },
-            body: JSON.stringify({'activity_id': activity_id})
+            body: JSON.stringify({'promote_id': promote_id})
         });
     }
 
     // 검색하기
-    const search = async (page, category, type, keyword, callback) => {
-        const response = await fetch(`/admin/promotes/${page}?category=${category}&type=${type}&keyword=${keyword}`)
+    const search = async (page, type, keyword, callback) => {
+        console.log(type)
+        console.log(keyword)
+        const response = await fetch(`/admin/promotes/${page}?type=${type}&keyword=${keyword}`)
         const pagination = await response.json();
 
         if (callback){
