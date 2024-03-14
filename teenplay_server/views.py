@@ -177,7 +177,7 @@ class AdminPromoteAPI(APIView):
                 elif type == 'p':
                     condition &= Q(activity_title__contains=keyword)
 
-        total = Activity.objects.filter(condition).all().count()
+        total = ClubPost.objects.filter(condition).all().count()
 
         page_count = 5
 
