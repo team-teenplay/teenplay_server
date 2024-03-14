@@ -42,7 +42,7 @@ const adminWishlistService = (() => {
         const wishlist_id = targetId.targetId
 
         await fetch(`/admin/wishlists/delete/${wishlist_id}/`, {
-            method: 'patch',
+            method: 'delete',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
                 'X-CSRFToken': csrf_token
