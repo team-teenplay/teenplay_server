@@ -128,7 +128,7 @@ class ActivityCreateWebView(View):
 
         except:
             # 오류 시 결제 취소하기
-            receipt_id = request.POST.get('receipt-id')
+            receipt_id = pay.receipt_id
             bootpay = BootpayBackend('65e44626e57a7e001be37370',
                                      'NQmDRBsgOfziMiNXUEKrJGQ+YhXZncneSVG/auKihFA=')
 
@@ -136,7 +136,7 @@ class ActivityCreateWebView(View):
 
             if 'error_code' not in token:
                 response = bootpay.cancel_payment(receipt_id=receipt_id,
-                                                  cancel_price=20000,
+                                                  cancel_price=pay.price,
                                                   cancel_username='관리자', cancel_message='취소됨')
 
             pay.status = 0

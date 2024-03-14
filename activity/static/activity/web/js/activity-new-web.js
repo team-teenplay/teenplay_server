@@ -194,10 +194,6 @@ clickOpenButton.addEventListener("click", (e) => {
     let timeBoxAllArray = [...document.querySelectorAll(".date-box")];
 
     if (activityTitle.value != "" && selectBox.value != "disabled" && dateBoxAllArray.every((date) => date.value != "") && timeBoxAllArray.every((time) => time.value != "")) {
-        let fileImages = document.querySelectorAll("div.note-editor img");
-        fileImages.forEach((img, i) => {
-            img.src = `${fileNames[i]}`;
-        })
         pay();
     } else {
         window.scrollTo({
@@ -430,28 +426,22 @@ const pay = () => {
 const payAndCreate = async (receiptId, callback) => {
     const memberId = document.getElementById("member-id").value;
     if (memberId){
-        const response = await fetch(`/pay/create/api/?memberId=${memberId}`)
+        const response = await fetch(`/pay/create/api/?memberId=${memberId}&receiptId=${receiptId}`)
         const pay = await response.json();
         if (pay === null) return;
         if (callback) {
-            callback(pay, receiptId);
+            callback(pay);
         }
     }
 }
 
 
-const createActivity = async (pay, receiptId) => {
+const createActivity = async (pay) => {
     let payInput = document.createElement("input")
     payInput.setAttribute("type", "hidden");
     payInput.setAttribute("name", "pay-id");
     payInput.setAttribute("value", pay.pay.id)
     activityForm.appendChild(payInput);
-
-    let receiptIdInput = document.createElement("input");
-    receiptIdInput.setAttribute("type", "hidden");
-    receiptIdInput.setAttribute("name", "receipt-id");
-    receiptIdInput.setAttribute("value", receiptId);
-    activityForm.appendChild(receiptIdInput);
 
     let summernoteContent = $('.presentation-size').summernote('code');
     let activityContent = document.createElement("input")
