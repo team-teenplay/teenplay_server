@@ -205,12 +205,13 @@ html {
 }
 
 .people-svg {
-    overflow: hidden;
-    color: #5c3fbf!important;
-    height: 20px;
-    margin-top: 2px;
+overflow: hidden;
+    color: #5c3fbf !important;
+    height: 36px;
     vertical-align: middle;
-    width: 20px;
+    width: 36px;
+    border-radius: 50%;
+    margin-bottom: 0px;
 }
 
 .menu-modal-wrap {
