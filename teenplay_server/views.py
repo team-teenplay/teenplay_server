@@ -211,7 +211,8 @@ class AdminPromoteAPI(APIView):
 
         club_post = ClubPost.objects.filter(condition).values(*columns).order_by(ordering)
 
-        club_name = club_post.annotate()
+        club_name = club_post.annotate(club_name=F('club__club_name'))
+        club_reply_count = club_post.annotate(club_reply_count=F(''))
 
         activity = Activity.objects.filter(condition).values(*columns).order_by(ordering)
         activity_writer = activity.annotate(activity_writer=F('club__member__member_nickname'))
