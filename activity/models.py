@@ -41,7 +41,7 @@ class Activity(Period):
 
 
 class ActivityImage(Period):
-    activity = models.ForeignKey(Activity, null=False, blank=False, on_delete=models.PROTECT)
+    activity = models.ForeignKey(Activity, null=True, blank=True, on_delete=models.PROTECT)
     image_path = models.ImageField(null=False, blank=False, upload_to='activity/%Y/%m/%d')
 
     # 0: 삭제
