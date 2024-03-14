@@ -72,3 +72,19 @@ const mypageMemberStatusService = (() => {
     }
     return {del: del, patch: patch}
 })()
+
+const mypageSendLetterService = (() => {
+    const post = async (letter) => {
+        console.log(letter)
+        const response = await fetch(`/member/mypage-send-letter/api/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'X-CSRFToken': csrf_token
+            },
+            body: JSON.stringify({'letter': letter})
+        });
+        return await response.json();
+    }
+    return {post: post}
+})()

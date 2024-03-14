@@ -68,6 +68,22 @@ textarea.addEventListener("input", (e) => {
     sendCheckBtn.disabled = !e.target.value.trim();
 });
 
+sendCheckBtn.addEventListener('click', async () => {
+    const sender = document.querySelector('.send-sender-email').innerText
+    const content = document.querySelector('textarea').value
+    const receiverElements = document.querySelectorAll('.email-span')
+    let receivers = []
+    receiverElements.forEach((element)=>{
+        receivers.push(element.innerText)
+    })
+    const letter = {
+        'sender': sender,
+        'receivers': receivers,
+        'content': content
+    }
+    await mypageSendLetterService.post(letter)
+})
+
 // 쪽지 보내기 모달 버튼 클릭 시 발생하는 이벤트
 const sendModalBtns = document.querySelectorAll(".send-modal-container button");
 
@@ -264,7 +280,7 @@ const createList = (filterList) => {
                         </div>
                     </div>
                 </div>
-                <div class="member-name name">${member.member__member_nickname}</div>
+                <div class="member-name"><div class="name">${member.member__member_nickname}</div></div>
                 <div class="member-email">
                     <div class="email">${member.member__member_email}</div>
                 </div>
@@ -274,16 +290,16 @@ const createList = (filterList) => {
                     ${member.member__member_gender === 1 ? '남자' : member.member__member_gender === 2 ? '여자' : member.member__member_gender === 0 && '선택 안함'}
                     </div>
                 </div>
-                <div class="member-interest-area">${member.member__member_address}</div>
+                <div class="member-interest-area"><div class="address">${member.member__member_address}</div></div>
                 <div class="member-interest-filed">
-                    ${member.member_favorite_categories[0].category__category_name}${member.category_count === 0 ? '' : '외 ' + member.category_count + '개'}
+                    <div class="category">${member.member_favorite_categories[0].category__category_name}${member.category_count === 0 ? '' : '외 ' + member.category_count + '개'}</div>
                 </div>
                 ${statusHTML}
                 <div class="member-join-date">
                     <div class="date">${member.member__created_date}</div>
                 </div>
                 <div class="member-activity">
-                    <span>${member.activities[0].activity__activity_title}${member.activities.length === 0 ? '' : '외 ' + member.activities.length + '개'}</span>
+                    <div>${member.activities[0].activity__activity_title}${member.activities.length === 0 ? '' : '외 ' + member.activities.length + '개'}</div>
                 </div>
             </div>
         `
@@ -311,8 +327,6 @@ const filter = {};
 
 // 핸들러 함수 정의
 function handleFilterEvent(e) {
-
-
     if (e.target === memberSearchInput) {
         search.search = e.target.value;
     } else if (e.target === memberStatusBox) {
@@ -336,3 +350,5 @@ function filterModule(data) {
 
     memberListHandler(filterValue, searchValue);
 }
+
+

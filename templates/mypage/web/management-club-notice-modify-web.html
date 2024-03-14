@@ -34,7 +34,8 @@
                 </div>
             </div>
             <!-- 공지사항 작성하는 공간 -->
-            <form class="notice-write-form" name="notice-write">
+            <form class="notice-write-form" name="notice-write" method="post" action="/member/mypage-notice-modify/?id={{ clubNotice.id }}">
+                     {% csrf_token %}
                 <div class="notice-write-msg-wrap">
                     <div class="notice-write-msg-container">
                         <div class="notice-write-msg-boxes">
@@ -57,10 +58,10 @@
                     </div>
                     <div class="notice-write-title-wrap">
                         <div class=""></div>
-                        <input type="text" name="title" class="notice-write-title" required placeholder="제목을 입력하세요" value="[공지] [긴급] 틴플레이어스 모임 공지 테스트" />
+                        <input type="text" name="title" class="notice-write-title" required placeholder="제목을 입력하세요" value="{{ clubNotice.notice_title }}" />
                     </div>
                     <div class="notice-write-content-wrap">
-                        <textarea name="content" rows="10" class="notice-write-content" required placeholder="구성원들에게 어떤 내용을 알리고 싶나요?">안녕하세요, 틴플레이어스(TEEN_PLAYERS)입니다. 저희 모임에 참여하고 계신 틴친 여러분께 긴급하게 전달드릴 사항이 있어, 이렇게 공지사항을 작성합니다. 참고로 테스트 공지사항입니다. 감사합니다.</textarea>
+                        <textarea name="content" rows="10" class="notice-write-content" required placeholder="구성원들에게 어떤 내용을 알리고 싶나요?">{{ clubNotice.notice_content }}</textarea>
                     </div>
                 </div>
             </form>

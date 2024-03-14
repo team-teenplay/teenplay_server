@@ -6,8 +6,9 @@ from member.views import MemberLoginWebView, MemberJoinWebView, MypageInfoWebVie
     MemberAlarmCountAPI, MypageTeenchindeleteview, MypageTeenchinLetterAPIview, MapagePaymentView, MypagePayListAPIVIEW, \
     MypagePayDeleteAPIVIEW, MypageReplyView, MypageReplyAPIVIEW, MypageReplyDeleteAPIVIEW, TeenChinAPI, \
     MypageClubMainView, MypageActivityListAPI, MypageMemberView, MypageNoticeView, MypageNoticeAPI, \
-    MypageNoticeCreateView, MypageSettingView, MypageMemberFilerAPI, MypageMemberStatusAPI,\
-    ClubAlarmManageAPI, MypageActivityLikeAPIVIEW, MypageActivityAPIVIEW, MypageActivityVIEW
+    MypageNoticeCreateView, MypageSettingView, MypageMemberFilerAPI, MypageMemberStatusAPI, \
+    ClubAlarmManageAPI, MypageActivityLikeAPIVIEW, MypageActivityAPIVIEW, MypageActivityVIEW, MypageSendLetterAPI, \
+    MypageNoticeModifyView, MypageClubDelteView
 
 app_name = 'member'
 
@@ -39,6 +40,7 @@ urlpatterns = [
     path('teenchin/api/', TeenChinAPI.as_view(), name="teenchin-api"),
     path('club-alarm/api/', ClubAlarmManageAPI.as_view(), name="club-alarm-manage-api"),
     path('mypage-club/', MypageClubMainView.as_view(), name="mypage-club"),
+    path('mypage-club-delete/', MypageClubDelteView.as_view(), name="mypage-club-delete"),
     path('mypage-activity-list/api/', MypageActivityListAPI.as_view(), name="mypage-activity-list-api"),
     path('mypage-member/', MypageMemberView.as_view(), name="mypage-member"),
     path('mypage-member-filter/api/', MypageMemberFilerAPI.as_view(), name="mypage-member-filter-api"),
@@ -46,6 +48,8 @@ urlpatterns = [
     path('mypage-notice/', MypageNoticeView.as_view(), name="mypage-notice"),
     path('mypage-notice/api/', MypageNoticeAPI.as_view(), name="mypage-notice-api"),
     path('mypage-notice-write/', MypageNoticeCreateView.as_view(), name="mypage-create"),
+    path('mypage-notice-modify/', MypageNoticeModifyView.as_view(), name="mypage-modify"),
+    path('mypage-send-letter/api/', MypageSendLetterAPI.as_view(), name="mypage-send-letter-api"),
     path('mypage-setting/', MypageSettingView.as_view(), name="mypage-setting"),
     path('mypage-activity/', MypageActivityVIEW.as_view(), name="mypage-activity"),
     path('mypage-activity/<int:member_id>/<int:page>/', MypageActivityAPIVIEW.as_view(), name="mypage-apiactivity"),

@@ -18,6 +18,7 @@ clubProfileUploadBtn.addEventListener("click", () => {
 });
 
 // 모임 프로필 업로드 시 이미지 확장자가 아니라면 오류 모달 표시
+
 clubProfileInput.addEventListener("change", (e) => {
     if (e.target.value) {
         let fileName = e.target.files[0].name;

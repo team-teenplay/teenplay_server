@@ -760,7 +760,7 @@ class TeenChinAPI(APIView):
         teenchin_id = request.data.get('teenchinId')
         is_sender = request.data.get('isSender')
         is_accept = request.data.get('isAccept')
-        
+
         # is_sender > True -> 신청 취소만 가능 (is_accept는 관계없음)
         # is_sender > False -> is_accept가 True면 수락, False면 거절
 
@@ -954,6 +954,11 @@ class MypageClubMainView(View):
         return render(request, 'mypage/web/management-club-web.html', context)
 
 
+class MypageClubDelteView(View):
+    def get(self, request):
+        return render(request, 'mypage/web/management-club-delete-web.html')
+
+
 class MypageActivityListAPI(APIView):
     def post(self, request):
         member = request.session.get('member')
@@ -1008,7 +1013,6 @@ class MypageMemberFilerAPI(APIView):
         search = request.data.get('search', '')
         club = Club.enabled_objects.get(member_id=member['id'])
 
-        print(filter, search)
         filter_field = Q(club_id=club.id)
         if search:
             filter_field &= Q(member__member_email__contains=search) | Q(member__member_nickname__contains=search)
@@ -1035,7 +1039,6 @@ class MypageMemberFilerAPI(APIView):
                 'activity__activity_title')
             club_member['activities'] = list(activities)
         owner_data = member
-        print(owner_data)
         data = {
             'clubMembersCount': club_members_count,
             'ownerData': owner_data,
@@ -1104,37 +1107,106 @@ class MypageNoticeCreateView(View):
         }
 
         ClubNotice.objects.create(**data)
-
+        # 상세페이지 주소로 이동하게 해야함
         return redirect('/member/mypage-notice/')
+
+
+class MypageNoticeModifyView(View):
+    def get(self, request):
+        club_notice_id = request.GET.get('id')
+        club_notice = ClubNotice.objects.filter(id=club_notice_id).values('id', 'club_id', 'notice_title',
+                                                                          'notice_content').first()
+
+        context = {
+            'clubNotice': club_notice
+        }
+        return render(request, 'mypage/web/management-club-notice-modify-web.html', context)
+
+    def post(self, request):
+        club_notice_id = request.GET.get('id')
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        member = request.session.get('member')
+        club = Club.enabled_objects.get(member_id=member['id'])
+
+        print(club_notice_id)
+        club_notice = ClubNotice.objects.filter(id=club_notice_id).first()
+        print(club_notice)
+        if club_notice:
+            club_notice.notice_title = title
+            club_notice.notice_content = content
+            club_notice.save()
+
+            # 상세페이지 주소로 이동하게 해야함
+        return redirect('/member/mypage-notice/')
+
+
+class MypageSendLetterAPI(APIView):
+    def post(self, request):
+        letter = request.data.get('letter')
+
+        for receiver in letter['receivers']:
+            receiver_start_index = receiver.find('(') + 1
+            receiver_end_index = receiver.find(')')
+            receiver_email = receiver[receiver_start_index:receiver_end_index]
+
+            receiver = Member.objects.get(member_email=receiver_email)
+
+            sender_start_index = letter['sender'].find('(') + 1
+            sender_end_index = letter['sender'].find(')')
+            sender_email = letter['sender'][sender_start_index:sender_end_index]
+
+            sender = Member.objects.get(member_email=sender_email)
+
+            data = {
+                'sender': sender,
+                'receiver': receiver,
+                'letter_content': letter['content']
+            }
+
+            Letter.objects.create(**data)
+
+        return Response('ok')
 
 
 class MypageSettingView(View):
     def get(self, request):
         return render(request, 'mypage/web/management-club-setting-web.html')
+
+
 class MypageActivityVIEW(View):
     def get(self, request):
         return render(request, 'mypage/web/my-activity-web.html')
 
+
 class MypageActivityAPIVIEW(APIView):
     @transaction.atomic
-    def get(self,request, member_id,page):
+    def get(self, request, member_id, page):
         status_like = request.GET.get('status_like')
         print(status_like)
         row_count = 10
         offset = (page - 1) * row_count
         limit = page * row_count
 
-
-        activity_data = Activity.objects.filter(Q(club__member_id=member_id) |Q(activitymember__member_id=member_id)).values('id', 'created_date', 'activity_title', 'thumbnail_path', 'activity_address_location','activitymember__status', 'club__member_id', 'activity_end')
+        activity_data = Activity.objects.filter(
+            Q(club__member_id=member_id) | Q(activitymember__member_id=member_id)).values('id', 'created_date',
+                                                                                          'activity_title',
+                                                                                          'thumbnail_path',
+                                                                                          'activity_address_location',
+                                                                                          'activitymember__status',
+                                                                                          'club__member_id',
+                                                                                          'activity_end')
         for activity in activity_data:
             activity_id = activity.get('id')
-            activity_like = ActivityLike.enabled_objects.filter(activity_id=activity_id ,member_id=member_id)
+            activity_like = ActivityLike.enabled_objects.filter(activity_id=activity_id, member_id=member_id)
             activity['is_like'] = activity_like.exists()
 
-
-
         if status_like == 'like':
-            activity_data = ActivityLike.objects.filter(member_id=member_id, status=1).values('id','status','activity__thumbnail_path','activity__activity_end' ,'activity__activity_title','activity_id')
+            activity_data = ActivityLike.objects.filter(member_id=member_id, status=1).values('id', 'status',
+                                                                                              'activity__thumbnail_path',
+                                                                                              'activity__activity_end',
+                                                                                              'activity__activity_title',
+                                                                                              'activity_id')
         else:
             activity_data = Activity.objects.filter(
                 Q(club__member_id=member_id) | Q(activitymember__member_id=member_id)).values('id', 'created_date',
@@ -1142,20 +1214,21 @@ class MypageActivityAPIVIEW(APIView):
                                                                                               'thumbnail_path',
                                                                                               'activity_address_location',
                                                                                               'activitymember__status',
-                                                                            'club__member_id',
+                                                                                              'club__member_id',
                                                                                               'activity_end')
             for activity in activity_data:
                 activity_id = activity.get('id')
                 activity_like = ActivityLike.enabled_objects.filter(activity_id=activity_id, member_id=member_id)
                 activity['status'] = activity_like.exists()
 
-
         return Response(activity_data[offset:limit])
+
 
 class MypageActivityLikeAPIVIEW(APIView):
     @transaction.atomic
     def patch(self, request, activity_id):
-        like, created = ActivityLike.objects.get_or_create(activity_id=activity_id, member_id=request.session['member']['id'])
+        like, created = ActivityLike.objects.get_or_create(activity_id=activity_id,
+                                                           member_id=request.session['member']['id'])
         # 반전시키기
         like.status = 1 - like.status
         like.save()
