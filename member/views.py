@@ -1,3 +1,4 @@
+from bootpay_backend import BootpayBackend
 from django.db import transaction
 from django.db.models import F, Q
 from django.shortcuts import render, redirect
@@ -7,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from activity.models import ActivityReply, Activity, ActivityLike, ActivityMember
+from activity.views import make_datetime
 from alarm.models import Alarm
 from club.models import ClubPostReply, ClubMember, Club, ClubNotice
 from friend.models import Friend
@@ -14,7 +16,7 @@ from letter.models import Letter, ReceivedLetter, SentLetter
 from member.models import Member, MemberFavoriteCategory, MemberProfile, MemberDeleteReason
 from member.serializers import MemberSerializer
 from notice.models import Notice
-from pay.models import Pay
+from pay.models import Pay, PayCancel
 from teenplay_server.category import Category
 from wishlist.models import WishlistReply
 
@@ -539,8 +541,22 @@ class MypagePayListAPIVIEW(APIView):
 
 class MypagePayDeleteAPIVIEW(APIView):
     @transaction.atomic
-    def delete(self, request, pay_id):
-        Pay.objects.filter(id=pay_id).update(status=0)
+    def post(self, request):
+        pay_reason = request.data
+        reason = pay_reason['reason']
+        pay_id = pay_reason['pay']
+        pay = Pay.objects.filter(id=pay_id).update(status=0)
+        receipt_id = pay.receipt_id
+        bootpay = BootpayBackend('65e44626e57a7e001be37370',
+                                 'NQmDRBsgOfziMiNXUEKrJGQ+YhXZncneSVG/auKihFA=')
+        token = bootpay.get_access_token()
+        if 'error_code' not in token:
+            bootpay.cancel_payment(receipt_id=receipt_id,
+                                   cancel_price=pay.price,
+                                   cancel_username='관리자', cancel_message='취소됨')
+
+        PayCancel.objects.create(pay_cancel_reason=reason)
+
 
         return Response('good')
 
@@ -1458,12 +1474,55 @@ class ActivityEditView(View):
         activity_id = request.GET.get('activity_id')
         activity = Activity.objects.filter(id=activity_id).first()
         member_id = request.session['member']['id']
-        member = Member.objects.filter(id = member_id)
-
+        member = Member.objects.filter(id = member_id).first()
+        categories = Category.objects.filter(status=True)
 
 
         context = { 'activity':activity,
-            'member':member
+            'member':member,
+            'categories' :categories,
         }
 
         return render(request, 'mypage/web/management-activity-edit-web.html', context)
+
+    @transaction.atomic
+    def post(self, request):
+        data = request.POST
+        activity = Activity.objects.get(id=data.get('activity-id'))
+        print('------')
+        print(activity.activity_title)
+        print('------')
+        a = data.get('activity-title')
+        recruit_start = make_datetime(data.get('recruit-start-date').replace(" ", ""),data.get('recruit-start-time'))
+        recruit_end = make_datetime(data.get('recruit-end-date').replace(" ", ""),data.get('recruit-end-time'))
+        category = Category.objects.get(id=data.get('category'))
+        thumbnail = request.FILES.get('thumbnail-path')
+        banner = request.FILES.get('banner-path')
+        activity_start = make_datetime(data.get('activity-start-date').replace(" ", ""), data.get('activity-start-time'))
+        activity_end = make_datetime(data.get('activity-end-date').replace(" ", ""), data.get('activity-end-time'))
+
+
+
+        activity.activity_title = a
+        activity.activity_content = data.get('activity-content')
+        activity.recruit_start = recruit_start
+        activity.recruit_end = recruit_end
+        activity.category = category
+        activity.activity_intro = data.get('activity-intro')
+        if thumbnail is not None:
+            activity.thumbnail_path = thumbnail
+        if banner is not None:
+            activity.banner_path = banner
+        activity.activity_address_location = data.get('activity-address-location')
+        activity.activity_address_detail = data.get('activity-address-detail')
+
+        activity.activity_start = activity_start
+        activity.activity_end = activity_end
+
+        activity.save()
+
+
+
+        return redirect(f'/member/activity-edit?activity_id={activity.id}')
+
+

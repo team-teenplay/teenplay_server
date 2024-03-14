@@ -1,3 +1,14 @@
+const activityForm = document.querySelector("form[name=activity-create]")
+const updateButton = document.getElementById("last")
+updateButton.addEventListener("click", async ()=>{
+    let summernoteContent = $('.presentation-size').summernote('code');
+    let activityContent = document.createElement("input")
+    activityContent.setAttribute("type", "hidden");
+    activityContent.setAttribute("name", "activity-content")
+    activityContent.setAttribute("value", JSON.stringify(summernoteContent))
+    activityForm.appendChild(activityContent)
+    await activityForm.submit()
+})
 //datepicker
 $(function () {
     $(".datepicker").datepicker();
@@ -56,13 +67,15 @@ jQuery(document).on("focus", ".timepicker", function () {
     var input = jQuery(this);
     // input 요소의 위치와 값을 로그에 출력
     var clickX = jQuery(input).offset().left;
-    var clickY = jQuery(input).offset().top + jQuery(input).outerHeight() - 70;
+    var clickY = jQuery(input).offset().top + jQuery(input).outerHeight();
     setTimeout(function () {
         jQuery(".ui-timepicker-container").css({ left: clickX + "px", top: clickY });
     }, 0);
 });
 
 // 텍스트 에디터
+let fileNames = [];
+
 $(document).ready(function () {
     //썸머노트에 값넣기 (차후 값을 넣었을 때 저장하기 위한 코드)
     // $(".presentation-size").summernote("code", "입력된 텍스트를 넣으세요");
@@ -73,14 +86,64 @@ $(document).ready(function () {
         height: 400, // set editor height
         minHeight: null, // set minimum height of editor
         maxHeight: null, // set maximum height of editor
-        focus: true,
+        focus: false,
         lang: "ko-KR", // 기본 메뉴언어 US->KR로 변경
+        callbacks: {
+            onImageUpload: async function (files) {
+                // 개수 제한 안 두고 하겠습니다.
+                // let fileImages = document.querySelectorAll("div.note-editor img");
+                // if (fileImages) {
+                //     if (fileImages.length === 2) {
+                //         alert('2개 이하의 이미지만 첨부할 수 있습니다.');
+                //         return;
+                //     }
+                // }
+                const [file] = files;
+                if (file.size >= 1024 * 1024 * 5) {
+                    alert('5MB 이하의 이미지만 첨부할 수 있습니다.');
+                    return;
+                }
+                // fileNames.push(file.name);
+                // let fileInput = document.createElement("input");
+                // fileInput.setAttribute("type", "file");
+                // fileInput.setAttribute("style", "display: none;");
+                // fileInput.setAttribute("name", "files");
+                // let dataTransfer = new DataTransfer();
+                // dataTransfer.items.add(file);
+                // fileInput.files = dataTransfer.files;
+                // let reader = new FileReader();
+                // reader.readAsDataURL(file);
+                // reader.addEventListener("load", (e) => {
+                //     $(".presentation-size").summernote("insertImage", e.target.result);
+                // })
+                // activityForm.appendChild(fileInput);
+                let formData = new FormData();
+                formData.append('image', file);
+                const response = await fetch(`/activity/images/api/`, {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    }
+                });
+                const data = await response.json();
+                const imageUrl = await data.image_path;
+                const imageId = await data.image_id;
+                $(".presentation-size").summernote('insertImage', imageUrl);
+                let imageIdInput = document.createElement("input");
+                imageIdInput.setAttribute("type", "hidden");
+                imageIdInput.setAttribute("style", "display: none;");
+                imageIdInput.setAttribute("name", "image-id");
+                imageIdInput.setAttribute("value", imageId);
+                activityForm.appendChild(imageIdInput);
+            },
+        }
     });
-
-    //저장버튼 클릭( 행사 게시 클릭 시 조건부로 만들어서 저장할 것)
-    $(document).on("click", "#saveBtn", function () {
-        saveContent();
-    });
+    $(".presentation-size").summernote('code', activityContent);
+    // //저장버튼 클릭( 행사 게시 클릭 시 조건부로 만들어서 저장할 것)
+    // $(document).on("click", "#saveBtn", function () {
+    //     saveContent();
+    // });
 });
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  위에까지는 jquery 가져오기
@@ -110,9 +173,10 @@ let selectBox = document.querySelector(".subject-category");
 let errorMessagesBoxAddress = document.querySelector(".error-message-box-address");
 let errorMessagesBoxLocation = document.querySelector(".error-message-box-location");
 
-let locationMapTitleInputText = document.querySelector(".location-map-title-input-text");
+// let locationMapTitleInputText = document.querySelector(".location-map-title-input-text");
 let locationNameInputText = document.querySelector(".location-name-input-text");
 let locationContentInputText = document.querySelector(".location-content-input-text");
+
 
 // 결제하기 버튼을 클릭했을 때 입력되지 않은 경고 문구 값 나오기
 clickOpenButton.addEventListener("click", (e) => {
@@ -140,32 +204,26 @@ clickOpenButton.addEventListener("click", (e) => {
         }
     });
 
-    if (locationSelect.value === "place" && locationMapTitleInputText.value === "" && locationNameInputText.value === "") {
-        errorMessagesBoxAddress.style.display = "block";
-        errorMessagesBoxLocation.style.display = "block";
-        locationMapTitleInputText.classList.add("border-color");
-        locationNameInputText.classList.add("border-color");
-    } else if (locationMapTitleInputText.value != "" && locationNameInputText.value === "") {
-        errorMessagesBoxLocation.style.display = "block";
-        locationNameInputText.classList.add("border-color");
-    }
+    // if (locationSelect.value === "place" && locationMapTitleInputText.value === "" && locationNameInputText.value === "") {
+    //     errorMessagesBoxAddress.style.display = "block";
+    //     errorMessagesBoxLocation.style.display = "block";
+    //     locationMapTitleInputText.classList.add("border-color");
+    //     locationNameInputText.classList.add("border-color");
+    // } else if (locationMapTitleInputText.value != "" && locationNameInputText.value === "") {
+    //     errorMessagesBoxLocation.style.display = "block";
+    //     locationNameInputText.classList.add("border-color");
+    // }
 
-    if (locationSelect.value === "direct" && locationNameInputText.value === "") {
-        errorMessagesBoxLocation.style.display = "block";
-        locationNameInputText.classList.add("border-color");
-    }
+    // if (locationSelect.value === "direct" && locationNameInputText.value === "") {
+    //     errorMessagesBoxLocation.style.display = "block";
+    //     locationNameInputText.classList.add("border-color");
+    // }
 
     let dateBoxAllArray = [...document.querySelectorAll(".date-box")];
     let timeBoxAllArray = [...document.querySelectorAll(".date-box")];
 
     if (activityTitle.value != "" && selectBox.value != "disabled" && dateBoxAllArray.every((date) => date.value != "") && timeBoxAllArray.every((time) => time.value != "")) {
-        if (locationSelect.value === "place" && locationMapTitleInputText.value != "" && locationNameInputText.value != "") {
-            pay();
-        } else if (locationSelect.value === "direct" && locationNameInputText.value === "") {
-            pay();
-        } else {
-            pay();
-        }
+        pay();
     } else {
         window.scrollTo({
             top: 0,
@@ -208,10 +266,6 @@ activityTitle.addEventListener("keyup", () => {
 });
 
 // 장소 입력 시 경고창 해제
-locationMapTitleInputText.addEventListener("keyup", () => {
-    errorMessagesBoxAddress.style.display = "none";
-    locationMapTitleInputText.classList.remove("border-color");
-});
 locationNameInputText.addEventListener("keyup", () => {
     errorMessagesBoxLocation.style.display = "none";
     locationNameInputText.classList.remove("border-color");
@@ -219,30 +273,30 @@ locationNameInputText.addEventListener("keyup", () => {
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// 장소 선택에 따른 지도/ 장소 input 보여주기
-let locationSelect = document.querySelector(".location-select-default");
-let locationMap = document.querySelector(".activity-map-col");
-let locationMapInput = document.querySelector(".input-location-map-title-col");
-let locationText = document.querySelector(".input-location-name-col");
-let locationTextDetail = document.querySelector(".input-location-content-col");
-locationSelect.addEventListener("change", () => {
-    if (locationSelect.value == "place") {
-        locationMapInput.style.display = "block";
-        locationMap.style.display = "block";
-        locationText.style.display = "block";
-        locationTextDetail.style.display = "block";
-    } else if (locationSelect.value == "direct") {
-        locationMapInput.style.display = "none";
-        locationMap.style.display = "none";
-        locationText.style.display = "block";
-        locationTextDetail.style.display = "block";
-    } else {
-        locationMapInput.style.display = "none";
-        locationMap.style.display = "none";
-        locationText.style.display = "none";
-        locationTextDetail.style.display = "none";
-    }
-});
+// // 장소 선택에 따른 지도/ 장소 input 보여주기
+// let locationSelect = document.querySelector(".location-select-default");
+// let locationMap = document.querySelector(".activity-map-col");
+// let locationMapInput = document.querySelector(".input-location-map-title-col");
+// let locationText = document.querySelector(".input-location-name-col");
+// let locationTextDetail = document.querySelector(".input-location-content-col");
+// locationSelect.addEventListener("change", () => {
+//     if (locationSelect.value == "place") {
+//         locationMapInput.style.display = "block";
+//         locationMap.style.display = "block";
+//         locationText.style.display = "block";
+//         locationTextDetail.style.display = "block";
+//     } else if (locationSelect.value == "direct") {
+//         locationMapInput.style.display = "none";
+//         locationMap.style.display = "none";
+//         locationText.style.display = "block";
+//         locationTextDetail.style.display = "block";
+//     } else {
+//         locationMapInput.style.display = "none";
+//         locationMap.style.display = "none";
+//         locationText.style.display = "none";
+//         locationTextDetail.style.display = "none";
+//     }
+// });
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -363,35 +417,16 @@ cancelExpand.addEventListener("click", (e) => {
     inputExpand.value = "";
 });
 
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// 부트 페이 연동
-const pay = async () => {
-    const response = await Bootpay.requestPayment({
-        application_id: "59a4d323396fa607cbe75de4",
-        price: 1000,
-        order_name: "테스트결제",
-        order_id: "TEST_ORDER_ID",
-        pg: "다날",
-        method: "카드",
-        tax_free: 0,
-        user: {
-            id: "회원아이디",
-            username: "회원이름",
-            phone: "01000000000",
-            email: "test@test.com",
-        },
-        items: [
-            {
-                id: "item_id",
-                name: "테스트아이템",
-                qty: 1,
-                price: 1000,
-            },
-        ],
-        extra: {
-            open_type: "iframe",
-            card_quota: "0,2,3",
-            escrow: false,
-        },
-    });
-};
+if(activityimgge){
+        cancel.style.display = "block";
+        fileBoxAdd.style.display = "none";
+        fileBoxAddSize.style.display = "none";
+}
+
+
+if(activitybaanerimg){
+     cancelExpand.style.display = "block";
+     fileBoxAddExpand.style.display = "none";
+     fileBoxAddSizeExpand.style.display = "none";
+
+}
