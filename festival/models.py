@@ -21,7 +21,7 @@ class Festival(Period):
     # 0: 삭제, 1: 게시중
     status = models.BooleanField(default=1, null=False, blank=False)
 
-    object = models.Manager()
+    objects = models.Manager()
     enabled_objects = FestivalManager()
 
     class Meta:

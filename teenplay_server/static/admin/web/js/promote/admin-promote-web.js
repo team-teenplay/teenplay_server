@@ -136,57 +136,7 @@ const CreateService = (() => {
         return text;
     }
 
-    //
-    const showDetail = (pagination) => {
-        let text = ``;
-        pagination.club_post.forEach((page) => {
-            text += `
-            <div id="admin-post-modal" class="admin-post-modal hidden">
-                <h4 class="admin-post-modal-title">홍보글 상세보기</h4>
-                <div class="admin-post-modal-warp">
-                    <!-- 여기서부터 안에 들어가는거 하나씩 / 각각 빈 div하나 만들고 안에서 생성 -->
-                    <div class="titleqq">
-                        <p class="admin-post-modal-title-name">제목</p>
-                        <label class="admin-post-modal-title-label">
-                            <input oninput="updateButtonStatus()" type="text" class="admin-post-modal-title-input" readonly value="${page.post_title}" />
-                        </label>
-                    </div>
-                    <div>
-                        <p class="admin-post-modal-content-name">내용</p>
-                        <label class="admin-post-modal-content-label">
-                            <textarea oninput="updateButtonStatus()" class="admin-post-modal-content-input" readonly>${page.post_content}</textarea>
-                        </label>
-                    </div>
-                    <div>
-                        <p class="admin-post-modal-thumbnail-name">이미지</p>
-                        <div class="admin-post-modal-thumbnail-warp">
-                            <div class="admin-post-modal-thumbnail-container">
-                                <img id="main-post-photo-img" class="admin-post-modal-thumbnail-img" src="/upload/${page.image_path}" alt="${page.image_path}" />
-                            </div>
-                        </div>
-                        <!-- 여기아래에 안내문 적어주기 -->
-                    </div>
-                    <div>
-                        <p class="admin-post-modal-place-name">카테고리</p>
-                        <label class="admin-post-modal-place-label">
-                            <input oninput="updateButtonStatus()" type="text" class="admin-post-modal-title-input" readonly value="${page.club_post_category}" />
-                        </label>
-                    </div>
-                </div>
-                <!-- 버튼 아래 있는것들 -->
-                <div class="admin-user-modal-button">
-                    <div class="admin-user-modal-left">
-                        <button class="admin-user-modal-left-detail-button" id="modalCloseButton">닫기</button>
-                    </div>
-                </div>
-            </div>
-            `
-    })
-        return text;
-    }
-
-    return {showList: showList, showPaging: showPaging, CountText: CountText, showDetail:showDetail}
-
+    return {showList: showList, showPaging: showPaging, CountText: CountText}
 })();
 
 
