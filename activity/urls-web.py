@@ -17,5 +17,5 @@ urlpatterns = [
     path('lists/api/', ActivityListAPI.as_view(), name='activity-lists-api'),
     path('categories/api/', ActivityCategoryAPI.as_view(), name='activity-categories-api'),
     path('join/', ActivityJoinWebView.as_view(), name='activity-join-web'),
-    path('images/api/', ActivityImageUploadAPI.as_view(), name='activity-image-api')
+    path('images/api/', ActivityImageUploadAPI.as_view(), name='activity-image-api'),
 ]
