@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.views import View
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from random import randint
+from random import randint, choice
 
 from club.models import Club
 from member.models import Member
@@ -34,11 +34,16 @@ class TeenplayMainListWebView(View):
 
     def main_random_list(self, id):
         teenplay_count = TeenPlay.enable_objects.all().count()
+        teenplay_id_value = list(TeenPlay.enable_objects.values('id'))
+        teenplay_id_list = []
+        for teenplay_id_dict in teenplay_id_value:
+            teenplay_id_list.append(teenplay_id_dict['id'])
+
         teenplay_list = []
         for number in range(5):
             like_count = {}
 
-            radiant_teenplay = randint(1, teenplay_count)
+            radiant_teenplay = choice(teenplay_id_list)
             teenplay = TeenPlay.objects.filter(id=radiant_teenplay, status=1).annotate(
                 likes=Count('teenplaylike__status', filter=Q(teenplaylike__status=1))).values('id', 'video_path',
                                                                                               'club__id',
@@ -67,12 +72,18 @@ class TeenplayMainListAPIView(APIView):
             else:
                 id = None
 
+        teenplay_id_value = list(TeenPlay.enable_objects.values('id'))
+        teenplay_id_list = []
+        for teenplay_id_dict in teenplay_id_value:
+            teenplay_id_list.append(teenplay_id_dict['id'])
+
+
         teenplay_list = []
         random_count = {'random_count': 10}
         for number in range(random_count['random_count']):
             like_count = {}
 
-            radiant_teenplay = randint(1, teenplay_count)
+            radiant_teenplay = choice(teenplay_id_list)
             teenplay = TeenPlay.objects.filter(id=radiant_teenplay, status=1).annotate(
                 likes=Count('teenplaylike__status', filter=Q(teenplaylike__status=1))).values('id', 'video_path','club__club_name','club__club_intro','club__club_profile_path','club_id', 'likes')
             member_like = TeenPlayLike.objects.filter(member_id=id, teenplay_id=radiant_teenplay, status=1).exists()
