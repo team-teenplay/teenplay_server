@@ -2,7 +2,7 @@
 const tabListBtn = document.querySelector(".tab-list-btn");
 const tabList = document.querySelector(".tab-list");
 const teenchinshow = document.querySelector(".teenchin-list")
-let page =1
+let page = 1
 const cansleButton = document.querySelector(".teenchin-more-btn")
 
 

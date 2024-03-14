@@ -349,8 +349,7 @@ class MypageAlramAPIView(APIView):
         offset = (page - 1) * row_count
         limit = page * row_count
 
-        alram = Alarm.objects.filter(receiver_id=member_id, status=1).values('id', 'alarm_type', 'receiver_id',
-                                                                             'created_date')[offset:limit]
+        alram = Alarm.objects.filter(receiver_id=member_id, status =1).values('id','alarm_type','receiver_id','created_date').order_by('-created_date')[offset:limit]
 
         return Response(alram)
 
@@ -578,7 +577,7 @@ class MypageReplyAPIVIEW(APIView):
         reply += ClubPostReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content',
                                                                                     'created_date', 'club_post_id',
                                                                                     'club_post__post_title')
-
+        reply.sort(key=lambda x: x['created_date'], reverse=True)
         response_data = {
             'total_pages': total_pages,
             'reply': reply[offset:limit],
@@ -639,7 +638,7 @@ class MypageReplyAPIVIEW(APIView):
             reply += ClubPostReply.objects.filter(member_id=member_id, status=1).values('id', 'reply_content',
                                                                                         'created_date', 'club_post_id',
                                                                                         'club_post__post_title')
-
+            reply.sort(key=lambda x: x['created_date'], reverse=True)
             response_data = {
                 'total_pages': total_pages,
                 'reply': reply[offset:limit],
@@ -1160,3 +1159,311 @@ class MypageActivityLikeAPIVIEW(APIView):
         like.status = 1 - like.status
         like.save()
         return Response('good')
+
+class ActivityManagentView(View):
+    def get(self, request):
+        activity_id = request.GET.get('activity_id')
+        activity = Activity.objects.filter(id=activity_id).first()
+        member_id = request.session['member']['id']
+        active_count = ActivityMember.objects.filter(activity_id=activity_id,status=1).count() + 1
+        wait_count = ActivityMember.objects.filter(activity_id=activity_id,status=-1).count()
+        total_count = active_count + wait_count
+        club = activity.club
+        club_notices = list(ClubNotice.objects.filter(status=True, club_id=club.id).order_by('-id')[:4])
+        tennplay_notices = list(Notice.objects.filter(notice_type=0).order_by('-id')[:4])
+        my_activity = Activity.objects.filter(Q(club__member_id=member_id) | Q(activitymember__member_id=member_id)).count()
+
+        context = {'activity': activity,
+                   'active_count': active_count,
+                   'wait_count':wait_count,
+                   'total_count':total_count,
+                   'club_notices':club_notices,
+                   'tennplay_notices':tennplay_notices,
+                   'my_activity':my_activity
+                   }
+
+        return render(request,'mypage/web/management-activity-web.html', context)
+
+
+class ActivityListAPIView(APIView):
+    @transaction.atomic
+    def get(self, request,member_id,page):
+        status_list = request.GET.get('status_list')
+
+        row_count = 5
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        total_count = Activity.objects.filter(
+            Q(club__member_id=member_id) | Q(activitymember__member_id=member_id)).count()
+
+        total_pages = (total_count + row_count - 1) // row_count
+
+
+        activity_data = Activity.objects.filter(
+            Q(club__member_id=member_id) | Q(activitymember__member_id=member_id)).values('id', 'created_date',
+                                                                                          'activity_title',
+                                                                                          'activity_intro',
+                                                                                          'activity_address_location',
+                                                                                          'category__category_name',
+                                                                                          'club__member_id',
+                                                                                          'activity_end',
+                                                                                          'activity_start').order_by('-created_date')[offset:limit]
+
+        response_data = {
+            'total_pages': total_pages,
+            'activity_data': activity_data,
+        }
+
+        if status_list == 'old/':
+            response_data['activity_data'] = Activity.objects.filter(
+            Q(club__member_id=member_id) | Q(activitymember__member_id=member_id)).values('id', 'created_date',
+                                                                                          'activity_title',
+                                                                                          'activity_intro',
+                                                                                          'activity_address_location',
+                                                                                          'category__category_name',
+                                                                                          'club__member_id',
+                                                                                          'activity_end',
+                                                                                          'activity_start').order_by('created_date')[offset:limit]
+
+            response_data['total_pages'] = (Activity.objects.filter(Q(club__member_id=member_id) | Q(activitymember__member_id=member_id)).count()+ row_count - 1)  //row_count
+
+        else:
+            response_data['activity_data'] = Activity.objects.filter(
+            Q(club__member_id=member_id) | Q(activitymember__member_id=member_id)).values('id', 'created_date',
+                                                                                          'activity_title',
+                                                                                          'activity_intro',
+                                                                                          'activity_address_location',
+                                                                                          'category__category_name',
+                                                                                          'club__member_id',
+                                                                                          'activity_end',
+                                                                                          'activity_start').order_by('-created_date')[offset:limit]
+            response_data['total_pages'] = (Activity.objects.filter(
+            Q(club__member_id=member_id) | Q(activitymember__member_id=member_id)).count()+ row_count - 1)  //row_count
+
+        return Response(response_data)
+
+class ActivityMemberView(View):
+    def get(self,request):
+        activity_id = request.GET.get('activity_id')
+        context = {
+            'activity_id': activity_id
+        }
+        return render(request,'mypage/web/management-activity-member-web.html',context)
+
+class ActivityMemberListAPIView(APIView):
+    @transaction.atomic
+    def get(self,request,member_id,page,activity_id):
+        member_status = request.GET.get('member_status')
+        search = request.GET.get('search')
+
+
+
+        row_count = 5 if page != 1 else 4
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        total_count = ActivityMember.objects.filter(Q(activity_id=activity_id, status=1)|Q(activity_id=activity_id, status= -1)).count() +1
+        total_pages = (total_count + row_count - 1) // row_count
+
+        if page == 1:
+            club_manager = Activity.objects.filter(id=activity_id, club__member_id=member_id).values('id',
+                                                                                                     'club__member__member_nickname',
+                                                                                                     'club__member__member_email',
+                                                                                                     'created_date', 'club__member__member_gender',
+                                                                                                     'club__member__member_birth', 'club__member__id'
+                                                                                                     ).first()
+
+            manager_favorite_categories = list(MemberFavoriteCategory.objects.filter(status=True, member_id=club_manager.get('club__member__id')).values())
+            club_manager['categories'] = manager_favorite_categories
+
+        else:
+            club_manager = None
+
+        member_list = ActivityMember.objects.filter(
+            Q(activity_id=activity_id, status=1) | Q(activity_id=activity_id, status=-1)) \
+            .values('id', 'member__member_nickname','member__member_email', 'activity__created_date','status', 'member__member_gender', 'member__member_birth')
+
+        # 새로운 리스트를 만들어 멤버 정보와 카테고리 정보를 함께 저장
+        for member_category in member_list:
+            member_id = member_category.get('member_id')
+            manager_favorite_categories_add = list(
+                MemberFavoriteCategory.objects.filter(status=True, member_id=member_id).values())
+            member_category['categories'] = manager_favorite_categories_add
+
+        # 이제 updated_member_list를 사용하여 결과를 처리할 수 있음
+
+        response_data ={
+            'club_manager': club_manager,
+            "member_list": member_list[offset:limit],
+            "total_pages": total_pages
+        }
+
+
+
+        if member_status == 'waiting':
+
+            member_list = ActivityMember.objects.filter(activity_id=activity_id, status=1) \
+            .values('id', 'member__member_nickname','member__member_email', 'activity__created_date','status', 'member__member_gender', 'member__member_birth')
+
+
+            # 새로운 리스트를 만들어 멤버 정보와 카테고리 정보를 함께 저장
+            for member_category in member_list:
+                member_id = member_category.get('member_id')
+                manager_favorite_categories_add = list(
+                    MemberFavoriteCategory.objects.filter(status=True, member_id=member_id).values())
+                member_category['categories'] = manager_favorite_categories_add
+
+            total_count = ActivityMember.objects.filter(activity_id=activity_id, status=1).count() + 1
+            total_pages = (total_count + row_count - 1) // row_count
+            response_data['member_list'] = member_list
+            response_data['total_pages'] = total_pages
+
+            if search:
+                member_list = ActivityMember.objects.filter(Q(activity_id=activity_id, status=1, member__member_nickname__icontains=search)|Q(activity_id=activity_id, status=1,member__member_email__icontains=search)) \
+                    .values('id', 'member__member_nickname', 'member__member_email', 'activity__created_date', 'status',
+                            'member__member_gender', 'member__member_birth')
+
+                # 새로운 리스트를 만들어 멤버 정보와 카테고리 정보를 함께 저장
+                for member_category in member_list:
+                    member_id = member_category.get('member_id')
+                    manager_favorite_categories_add = list(
+                        MemberFavoriteCategory.objects.filter(status=True, member_id=member_id).values())
+                    member_category['categories'] = manager_favorite_categories_add
+
+                total_count = ActivityMember.objects.filter(activity_id=activity_id, status=1).count() + 1
+                total_pages = (total_count + row_count - 1) // row_count
+                response_data['member_list'] = member_list
+                response_data['total_pages'] = total_pages
+
+
+        elif  member_status == 'attending':
+
+            member_list = ActivityMember.objects.filter(activity_id=activity_id, status= -1) \
+                .values('id', 'member__member_nickname', 'member__member_email', 'activity__created_date', 'status',
+                        'member__member_gender', 'member__member_birth')
+
+            # 새로운 리스트를 만들어 멤버 정보와 카테고리 정보를 함께 저장
+            for member_category in member_list:
+                member_id = member_category.get('member_id')
+                manager_favorite_categories_add = list(
+                    MemberFavoriteCategory.objects.filter(status=True, member_id=member_id).values())
+                member_category['categories'] = manager_favorite_categories_add
+
+            total_count = ActivityMember.objects.filter(activity_id=activity_id, status= -1).count() + 1
+            total_pages = (total_count + row_count - 1) // row_count
+            response_data['member_list'] = member_list
+            response_data['total_pages'] = total_pages
+
+            if search:
+                member_list = ActivityMember.objects.filter(Q(activity_id=activity_id, status=-1, member__member_nickname__icontains=search) | Q(activity_id=activity_id, status=-1, member__member_email__icontains=search)) \
+                    .values('id', 'member__member_nickname', 'member__member_email', 'activity__created_date', 'status',
+                            'member__member_gender', 'member__member_birth')
+
+                # 새로운 리스트를 만들어 멤버 정보와 카테고리 정보를 함께 저장
+                for member_category in member_list:
+                    member_id = member_category.get('member_id')
+                    manager_favorite_categories_add = list(
+                        MemberFavoriteCategory.objects.filter(status=True, member_id=member_id).values())
+                    member_category['categories'] = manager_favorite_categories_add
+
+                total_count = ActivityMember.objects.filter(activity_id=activity_id, status=-1).count() + 1
+                total_pages = (total_count + row_count - 1) // row_count
+                response_data['member_list'] = member_list
+                response_data['total_pages'] = total_pages
+
+        else:
+            member_list = ActivityMember.objects.filter(
+                Q(activity_id=activity_id, status=1) | Q(activity_id=activity_id, status=-1)) \
+                .values('id', 'member__member_nickname', 'member__member_email', 'activity__created_date', 'status',
+                        'member__member_gender', 'member__member_birth')
+
+            # 새로운 리스트를 만들어 멤버 정보와 카테고리 정보를 함께 저장
+            for member_category in member_list:
+                member_id = member_category.get('member_id')
+                manager_favorite_categories_add = list(
+                    MemberFavoriteCategory.objects.filter(status=True, member_id=member_id).values())
+                member_category['categories'] = manager_favorite_categories_add
+
+            total_count = ActivityMember.objects.filter(
+                Q(activity_id=activity_id, status=1) | Q(activity_id=activity_id, status=-1)).count() + 1
+            total_pages = (total_count + row_count - 1) // row_count
+            response_data['member_list'] = member_list
+            response_data['total_pages'] = total_pages
+
+            if search:
+                member_list = ActivityMember.objects.filter(
+                    Q(activity_id=activity_id, status=1,member__member_nickname__icontains=search) | Q(activity_id=activity_id, status= -1,member__member_nickname__icontains=search) | Q(activity_id=activity_id, status=1, member__member_email__icontains=search) | Q(activity_id=activity_id, status= -1, member__member_email__icontains=search)) \
+                    .values('id', 'member__member_nickname', 'member__member_email', 'activity__created_date', 'status',
+                            'member__member_gender', 'member__member_birth')
+
+                # 새로운 리스트를 만들어 멤버 정보와 카테고리 정보를 함께 저장
+                for member_category in member_list:
+                    member_id = member_category.get('member_id')
+                    manager_favorite_categories_add = list(
+                        MemberFavoriteCategory.objects.filter(status=True, member_id=member_id).values())
+                    member_category['categories'] = manager_favorite_categories_add
+
+                total_count = ActivityMember.objects.filter(
+                    Q(activity_id=activity_id, status=1) | Q(activity_id=activity_id, status=-1)).count() + 1
+                total_pages = (total_count + row_count - 1) // row_count
+                response_data['member_list'] = member_list
+                response_data['total_pages'] = total_pages
+
+        return Response(response_data)
+
+
+class ActivityMemberUpdateAPIView(APIView):
+    @transaction.atomic
+    def patch(self, request, activity_member_id):
+        ActivityMember.objects.filter(id=activity_member_id).update(status =1)
+
+        return Response('good')
+
+    @transaction.atomic
+    def delete(self, request, activity_member_id):
+        ActivityMember.objects.filter(id=activity_member_id).update(status =0)
+
+        return Response('good')
+
+
+class ActivityMemberWriteAPI(APIView):
+    @transaction.atomic
+    def post(self, request):
+        data = request.data
+        receiver_email = data['receiver_email']
+        receiver_instance = Member.objects.filter(member_email=receiver_email).first()
+        receiver_id = receiver_instance.id
+        # Letter 모델 생성
+        letter = Letter.objects.create(
+            receiver_id=receiver_id,
+            letter_content=data['letter_content'],
+            sender_id=request.session['member']['id']
+        )
+
+        # ReceivedLetter 모델 생성
+        ReceivedLetter.objects.create(letter_id=letter.id)
+
+        # SentLetter 모델 생성
+        SentLetter.objects.create(letter_id=letter.id)
+        Alarm.objects.create(target_id=letter.id, alarm_type=4, sender_id=letter.sender_id, receiver_id= letter.receiver_id)
+
+
+
+        return Response("good")
+
+
+class ActivityEditView(View):
+    def get(self, request):
+        activity_id = request.GET.get('activity_id')
+        activity = Activity.objects.filter(id=activity_id).first()
+        member_id = request.session['member']['id']
+        member = Member.objects.filter(id = member_id)
+
+
+
+        context = { 'activity':activity,
+            'member':member
+        }
+
+        return render(request, 'mypage/web/management-activity-edit-web.html', context)

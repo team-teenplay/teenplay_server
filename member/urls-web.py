@@ -6,8 +6,10 @@ from member.views import MemberLoginWebView, MemberJoinWebView, MypageInfoWebVie
     MemberAlarmCountAPI, MypageTeenchindeleteview, MypageTeenchinLetterAPIview, MapagePaymentView, MypagePayListAPIVIEW, \
     MypagePayDeleteAPIVIEW, MypageReplyView, MypageReplyAPIVIEW, MypageReplyDeleteAPIVIEW, TeenChinAPI, \
     MypageClubMainView, MypageActivityListAPI, MypageMemberView, MypageNoticeView, MypageNoticeAPI, \
-    MypageNoticeCreateView, MypageSettingView, MypageMemberFilerAPI, MypageMemberStatusAPI,\
-    ClubAlarmManageAPI, MypageActivityLikeAPIVIEW, MypageActivityAPIVIEW, MypageActivityVIEW
+    MypageNoticeCreateView, MypageSettingView, MypageMemberFilerAPI, MypageMemberStatusAPI, \
+    ClubAlarmManageAPI, MypageActivityLikeAPIVIEW, MypageActivityAPIVIEW, MypageActivityVIEW, ActivityManagentView, \
+    ActivityListAPIView, ActivityMemberView, ActivityMemberListAPIView, ActivityMemberUpdateAPIView, \
+    ActivityMemberWriteAPI, ActivityEditView
 
 app_name = 'member'
 
@@ -49,5 +51,12 @@ urlpatterns = [
     path('mypage-setting/', MypageSettingView.as_view(), name="mypage-setting"),
     path('mypage-activity/', MypageActivityVIEW.as_view(), name="mypage-activity"),
     path('mypage-activity/<int:member_id>/<int:page>/', MypageActivityAPIVIEW.as_view(), name="mypage-apiactivity"),
-    path('mypage-activity/<int:activity_id>/', MypageActivityLikeAPIVIEW.as_view(), name="mypage-apiactivitylike")
+    path('mypage-activity/<int:activity_id>/', MypageActivityLikeAPIVIEW.as_view(), name="mypage-apiactivitylike"),
+    path('activity/', ActivityManagentView.as_view(), name="management-activity"),
+    path('activity/<int:member_id>/<int:page>/', ActivityListAPIView.as_view(), name="management-aipactivity"),
+    path('activity-member/', ActivityMemberView.as_view(), name="management-activitymember"),
+    path('activity-member/<int:member_id>/<int:page>/<int:activity_id>/', ActivityMemberListAPIView.as_view(),name="management-aipactivitymember"),
+    path('activity-member/<int:activity_member_id>/', ActivityMemberUpdateAPIView.as_view(),name="managment-apiupdateactivitymember"),
+    path('activity-member/api/', ActivityMemberWriteAPI.as_view(), name="managment-apideleteactivitymember"),
+    path('activity-edit/', ActivityEditView.as_view(), name="managment-edit")
 ]

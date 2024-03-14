@@ -1658,7 +1658,6 @@ select {
     padding: 0 0.75rem;
     min-height: 1px;
     padding-top: 10px !important;
-    display: none;
 }
 
 .location-name-title,
@@ -1676,6 +1675,11 @@ select {
     border-radius: 6px !important;
     font-size: 14px;
     height: 48px;
+
+}
+
+.location-map-title-input-text{
+    display: none;
 }
 
 .input-location-name-row:after {
@@ -1697,7 +1701,7 @@ select {
     padding: 0 0.75rem;
     min-height: 1px;
     padding-top: 10px !important;
-    display: none;
+
 }
 
 .activity-event-map {

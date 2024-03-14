@@ -21,15 +21,15 @@
                                     </div>
                                     <div>
                                         <!-- 주소 필요 -->
-                                        <a href="">나의 모임</a>
+                                        <a href="/">나의 모임</a>
                                     </div>
                                     <div>
                                         <!-- 주소 필요 -->
-                                        <a href="">나의 댓글</a>
+                                        <a href="/member/mypage-reply/">나의 댓글</a>
                                     </div>
                                     <div>
                                         <!-- 주소 필요 -->
-                                        <a href="">나의 활동</a>
+                                        <a href="/member/mypage-activity/">나의 활동</a>
                                     </div>
                                     <div>
                                         <!-- 주소 필요 -->
@@ -37,19 +37,19 @@
                                     </div>
                                     <div>
                                         <!-- 주소 필요 -->
-                                        <a href="">결제 내역</a>
+                                        <a href="/member/mypage-payment/">결제 내역</a>
                                     </div>
                                     <div>
                                         <!-- 주소 필요 -->
-                                        <a href="">쪽지 목록</a>
+                                        <a href="/member/mypage-letter/">쪽지 목록</a>
                                     </div>
                                     <div>
                                         <!-- 주소 필요 -->
-                                        <a href="">알림 목록</a>
+                                        <a href="/member/mypage-alram/">알림 목록</a>
                                     </div>
                                     <div>
                                         <!-- 주소 필요 -->
-                                        <a href="">내 정보 수정</a>
+                                        <a href="/member/mypage-info/">내 정보 수정</a>
                                     </div>
                                 </div>
                             </div>
@@ -109,12 +109,12 @@
                             <div class="sender-box">
                                 <div class="sender-title">보낸 사람</div>
                                 <!-- 회원의 이름과 이메일이 필요 -->
-                                <div class="send-sender-email" type="text">아무개(example@sample.com)</div>
+                                <div class="send-sender-email" type="text">{{ request.session.member.member_nickname }}({{ request.session.member.member_email }})</div>
                             </div>
                             <div class="receiver-box">
                                 <div class="receiver-title">받는 사람</div>
                                 <!-- 형식: 아무개(example@sample.com) -->
-                                <input class="send-receiver-email" autocomplete="off" type="text" placeholder="example@sample.com" />
+                                <input class="send-receiver-email" autocomplete="off" type="text" placeholder="example@sample.com" readonly/>
                             </div>
                         </div>
                         <div class="letter-content-area">
