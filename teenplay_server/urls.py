@@ -69,7 +69,7 @@ urlpatterns = [
     # 관리자 - 게시글 홍보글 관리
     path('admin/promote/', AdminPromoteView.as_view(), name='admin-promote'),
     path('admin/promotes/<int:page>/', AdminPromoteAPI.as_view(), name='admin-promote-api'),
-    # path('admin/promotes/delete/<int:promote_id>/', AdminPromoteView.as_view(), name='admin-promote-delete'),
+    path('admin/promotes/delete/<int:promote_id>/', AdminPromoteDeleteAPI.as_view(), name='admin-promote-delete'),
     # 관리자 - 게시글 활동모집글 관리
     path('admin/activity/', AdminActivityView.as_view(), name='admin-activity'),
     path('admin/activities/<int:page>/', AdminPromoteAPI.as_view(), name='admin-activity-api'),

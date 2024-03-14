@@ -159,6 +159,8 @@ class AdminPromoteAPI(APIView):
         order = request.GET.get('order', 'recent')
         type = request.GET.get('type', '')
         keyword = request.GET.get('keyword', '')
+        print(type)
+        print(keyword)
 
         row_count = 10
 
@@ -169,9 +171,9 @@ class AdminPromoteAPI(APIView):
 
         if type:
             if keyword:
-                # 작성자
+                # 모임 이름
                 if type == 'w':
-                    condition &= Q(club__member__member_nickname__contains=keyword)
+                    condition &= Q(club__club_name__contains=keyword)
 
                 # 제목
                 elif type == 'p':
@@ -202,17 +204,14 @@ class AdminPromoteAPI(APIView):
         if order == 'popular':
             ordering = '-post_read_count'
 
-        print('들어옴!')
-
         columns = [
             'id',
             'post_title',
             'post_content',
             'image_path',
             'created_date',
+            'view_count'
         ]
-
-        print('들어옴!')
 
         club_post = ClubPost.objects.filter(condition).values(*columns).order_by(ordering)
         club_name = club_post.annotate(club_name=F('club__club_name'))
@@ -233,14 +232,14 @@ class AdminPromoteAPI(APIView):
 class AdminPromoteDeleteAPI(APIView):
     # 게시글 삭제
     @transaction.atomic
-    def delete(self, request, activity_id):
+    def delete(self, request, promote_id):
         status = 0
         updated_date = timezone.now()
 
-        activity = Activity.objects.get(id=activity_id)
-        activity.status = status
-        activity.updated_date = updated_date
-        activity.save(update_fields=['status', 'updated_date'])
+        club_post = ClubPost.objects.get(id=promote_id)
+        club_post.status = status
+        club_post.updated_date = updated_date
+        club_post.save(update_fields=['status', 'updated_date'])
 
         return Response('success')
 
