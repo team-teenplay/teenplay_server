@@ -112,9 +112,9 @@
                                                     </button>
                                                     <div>
                                                         <!-- 검색창 모달 -->
-                                                        <ul id="admin-message-modal-search-add" class="hidden">
-                                                            <button class="admin-message-modal-search-send-add">모임이름</button>
-                                                            <button class="admin-message-modal-search-receive-add">제목</button>
+                                                        <ul id="admin-message-modal-search-add" class="admin-message-modal-search-add hidden">
+                                                            <button class="admin-message-modal-search-send-add type" value="w">모임이름</button>
+                                                            <button class="admin-message-modal-search-receive-add type" value="p">제목</button>
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -136,7 +136,7 @@
                             <!-- 첫번째(왼쪽 전체0) -->
                             <div class="main-user-total-list">
                                 <span class="main-user-total-text">전체</span>
-                                <span class="main-user-total-number">0</span>
+                                <span class="main-user-total-number" id="total-count">0</span>
                             </div>
                             <!-- 2번째 -->
                             <!-- 일단은 없애요^^ -->
@@ -186,39 +186,39 @@
                     <!-- 아래 버튼 -->
                     <div class="main-user-bottom-box">
                         <ul class="main-user-bottom-ul">
-                            <!-- 여기에 왼 숫자 오 들어감 -->
-                            <!-- 먼저 왼 -->
-                            <li>
-                                <button aria-label="page turning button" disabled type="button" class="main-user-bottom-reft">
-                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="main-user-bottom-svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M15.58 3.27c.504.405.563 1.115.13 1.587L9.168 12l6.543 7.143a1.076 1.076 0 0 1-.13 1.586 1.26 1.26 0 0 1-1.695-.122L6 12l7.885-8.607a1.26 1.26 0 0 1 1.695-.122Z"></path>
-                                    </svg>
-                                </button>
-                            </li>
-                            <!-- 숫자 -->
-                            <li class="main-margin">
-                                <button type="button" class="main-user-bottom add-color" id="button1">
-                                    <span class="main-user-number">1</span>
-                                </button>
-                            </li>
-                            <li class="main-margin">
-                                <button aria-label="page number button" type="button" class="main-user-bottom" id="button2">
-                                    <span class="main-user-number">2</span>
-                                </button>
-                            </li>
-                            <li class="main-margin">
-                                <button aria-label="page number button" type="button" class="main-user-bottom" id="button3">
-                                    <span class="main-user-number">3</span>
-                                </button>
-                            </li>
-                            <!-- 오른쪽 -->
-                            <li class="main-margin">
-                                <button aria-label="page turning button" disabled type="button" class="main-user-bottom-right">
-                                    <svg class="main-user-bottom-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M8.42 20.73a1.076 1.076 0 0 1-.13-1.587L14.832 12 8.289 4.857a1.076 1.076 0 0 1 .13-1.586 1.26 1.26 0 0 1 1.696.122L18 12l-7.885 8.607a1.26 1.26 0 0 1-1.695.122Z"></path>
-                                    </svg>
-                                </button>
-                            </li>
+{#                            <!-- 여기에 왼 숫자 오 들어감 -->#}
+{#                            <!-- 먼저 왼 -->#}
+{#                            <li>#}
+{#                                <button aria-label="page turning button" disabled type="button" class="main-user-bottom-reft">#}
+{#                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="main-user-bottom-svg">#}
+{#                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M15.58 3.27c.504.405.563 1.115.13 1.587L9.168 12l6.543 7.143a1.076 1.076 0 0 1-.13 1.586 1.26 1.26 0 0 1-1.695-.122L6 12l7.885-8.607a1.26 1.26 0 0 1 1.695-.122Z"></path>#}
+{#                                    </svg>#}
+{#                                </button>#}
+{#                            </li>#}
+{#                            <!-- 숫자 -->#}
+{#                            <li class="main-margin">#}
+{#                                <button type="button" class="main-user-bottom add-color" id="button1">#}
+{#                                    <span class="main-user-number">1</span>#}
+{#                                </button>#}
+{#                            </li>#}
+{#                            <li class="main-margin">#}
+{#                                <button aria-label="page number button" type="button" class="main-user-bottom" id="button2">#}
+{#                                    <span class="main-user-number">2</span>#}
+{#                                </button>#}
+{#                            </li>#}
+{#                            <li class="main-margin">#}
+{#                                <button aria-label="page number button" type="button" class="main-user-bottom" id="button3">#}
+{#                                    <span class="main-user-number">3</span>#}
+{#                                </button>#}
+{#                            </li>#}
+{#                            <!-- 오른쪽 -->#}
+{#                            <li class="main-margin">#}
+{#                                <button aria-label="page turning button" disabled type="button" class="main-user-bottom-right">#}
+{#                                    <svg class="main-user-bottom-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">#}
+{#                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M8.42 20.73a1.076 1.076 0 0 1-.13-1.587L14.832 12 8.289 4.857a1.076 1.076 0 0 1 .13-1.586 1.26 1.26 0 0 1 1.696.122L18 12l-7.885 8.607a1.26 1.26 0 0 1-1.695.122Z"></path>#}
+{#                                    </svg>#}
+{#                                </button>#}
+{#                            </li>#}
                         </ul>
                     </div>
                 </div>
@@ -236,6 +236,7 @@
                 </div>
             </div>
         </div>
+        <div id="admin-user-modal-backdrop" class="admin-delete-modal-backdrop hidden"></div>
         <!-- 수정 모달창 -->
         <div class="detail-box">
             <div id="admin-post-modal" class="admin-post-modal hidden">
@@ -245,38 +246,38 @@
                     <div class="titleqq">
                         <p class="admin-post-modal-title-name">제목</p>
                         <label class="admin-post-modal-title-label">
-                            <input oninput="updateButtonStatus()" type="text" class="admin-post-modal-title-input" readonly value />
+                            <input name="title" type="text" class="admin-post-modal-title-input" readonly value />
                         </label>
-                        <!-- 값 미입력시 -->
-                        <div id="red-title" class="hidden">
-                            <div class="redbox">
-                                <svg viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" class="redfont">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12.008 22.05c5.523.023 10.019-4.436 10.042-9.959.023-5.523-4.436-10.018-9.959-10.041C6.568 2.027 2.073 6.485 2.05 12.008c-.023 5.523 4.435 10.019 9.958 10.042Zm1.527-6.494a1.5 1.5 0 1 1-3-.013 1.5 1.5 0 0 1 3 .013Zm-1.181-2.505a.5.5 0 0 0 .498-.436l.646-4.997a.5.5 0 0 0-.494-.564l-1.867-.008a.5.5 0 0 0-.499.56l.604 5.002a.5.5 0 0 0 .495.44l.617.003Z"></path>
-                                </svg>
-                                값을 입력해주세요.
-                            </div>
-                        </div>
+{#                        <!-- 값 미입력시 -->#}
+{#                        <div id="red-title" class="hidden">#}
+{#                            <div class="redbox">#}
+{#                                <svg viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" class="redfont">#}
+{#                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12.008 22.05c5.523.023 10.019-4.436 10.042-9.959.023-5.523-4.436-10.018-9.959-10.041C6.568 2.027 2.073 6.485 2.05 12.008c-.023 5.523 4.435 10.019 9.958 10.042Zm1.527-6.494a1.5 1.5 0 1 1-3-.013 1.5 1.5 0 0 1 3 .013Zm-1.181-2.505a.5.5 0 0 0 .498-.436l.646-4.997a.5.5 0 0 0-.494-.564l-1.867-.008a.5.5 0 0 0-.499.56l.604 5.002a.5.5 0 0 0 .495.44l.617.003Z"></path>#}
+{#                                </svg>#}
+{#                                값을 입력해주세요.#}
+{#                            </div>#}
+{#                        </div>#}
                     </div>
                     <div>
                         <p class="admin-post-modal-content-name">내용</p>
                         <label class="admin-post-modal-content-label">
-                            <textarea oninput="updateButtonStatus()" class="admin-post-modal-content-input" readonly value></textarea>
+                            <textarea name="content" class="admin-post-modal-content-input" readonly ></textarea>
                         </label>
                         <!-- 값 미입력시 -->
-                        <div id="red-content" class="hidden">
-                            <div class="redbox">
-                                <svg viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" class="redfont">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12.008 22.05c5.523.023 10.019-4.436 10.042-9.959.023-5.523-4.436-10.018-9.959-10.041C6.568 2.027 2.073 6.485 2.05 12.008c-.023 5.523 4.435 10.019 9.958 10.042Zm1.527-6.494a1.5 1.5 0 1 1-3-.013 1.5 1.5 0 0 1 3 .013Zm-1.181-2.505a.5.5 0 0 0 .498-.436l.646-4.997a.5.5 0 0 0-.494-.564l-1.867-.008a.5.5 0 0 0-.499.56l.604 5.002a.5.5 0 0 0 .495.44l.617.003Z"></path>
-                                </svg>
-                                값을 입력해주세요.
-                            </div>
-                        </div>
+{#                        <div id="red-content" class="hidden">#}
+{#                            <div class="redbox">#}
+{#                                <svg viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" class="redfont">#}
+{#                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12.008 22.05c5.523.023 10.019-4.436 10.042-9.959.023-5.523-4.436-10.018-9.959-10.041C6.568 2.027 2.073 6.485 2.05 12.008c-.023 5.523 4.435 10.019 9.958 10.042Zm1.527-6.494a1.5 1.5 0 1 1-3-.013 1.5 1.5 0 0 1 3 .013Zm-1.181-2.505a.5.5 0 0 0 .498-.436l.646-4.997a.5.5 0 0 0-.494-.564l-1.867-.008a.5.5 0 0 0-.499.56l.604 5.002a.5.5 0 0 0 .495.44l.617.003Z"></path>#}
+{#                                </svg>#}
+{#                                값을 입력해주세요.#}
+{#                            </div>#}
+{#                        </div>#}
                     </div>
                     <div>
                         <p class="admin-post-modal-thumbnail-name">이미지</p>
                         <div class="admin-post-modal-thumbnail-warp">
                             <div class="admin-post-modal-thumbnail-container">
-                                <img id="main-post-photo-img" class="admin-post-modal-thumbnail-img" src="/staticfiles/images/teenplay_logo/logo3.png" alt="" />
+                                <img id="main-post-photo-img" class="admin-post-modal-thumbnail-img" src="" alt="" />
                             </div>
                         </div>
                         <!-- 여기아래에 안내문 적어주기 -->
@@ -284,7 +285,7 @@
                     <div>
                         <p class="admin-post-modal-place-name">카테고리</p>
                         <label class="admin-post-modal-place-label">
-                            <input oninput="updateButtonStatus()" type="text" class="admin-post-modal-title-input" readonly value />
+                            <input name="category" type="text" class="admin-post-modal-title-input" readonly value="" />
                         </label>
                         <!-- 값 미입력시 -->
                         <div id="red-category" class="hidden">
@@ -297,19 +298,22 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- 버튼 아래 있는것들 -->
-            <div class="admin-user-modal-button">
-                <div class="admin-user-modal-left">
-                    <button class="admin-user-modal-left-detail-button" id="modalCloseButton">닫기</button>
+                <!-- 버튼 아래 있는것들 -->
+                <div class="admin-user-modal-button">
+                    <div class="admin-user-modal-left">
+                        <button class="admin-user-modal-left-detail-button" id="modalCloseButton">닫기</button>
+                    </div>
                 </div>
             </div>
         </div>
         <!-- 모달 뒷배경  -->
-        <div id="admin-user-modal-backdrop" class="hidden"></div>
+        <div id="admin-user-modal-backdrop" class="admin-user-modal-backdrop hidden"></div>
     </main>
 {% endblock %}
 {% block js %}
+    <script>
+        const csrf_token = '{{ csrf_token }}';
+    </script>
     <script src="{% static 'admin/web/js/promote/admin-promote-module-web.js' %}"></script>
     <script src="{% static 'admin/web/js/promote/admin-promote-web.js' %}"></script>
 {#    <script src="{% static 'admin/web/js/promote/admin-post-promote-addimg-web.js' %}"></script>#}

@@ -13,17 +13,7 @@ const CreateService = (() => {
                         <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-id="${page.id}" />
                     </div>
                     <div class="main-user-list-name">${page.activity_writer}</div>
-            `;
-            if (page.activity_title.length >= 15) {
-                text += `
-                    <div class="main-user-list-status">${page.activity_title.slice(0, 15)}...</div>
-                `
-            } else if (page.activity_title.length <= 15) {
-                text += `
                     <div class="main-user-list-status">${page.activity_title}</div>
-                `
-            }
-            text += `
                     <div class="main-user-list-date">${page.created_date.slice(0, 10)}</div>
                     <div class="main-user-list-pay">${page.recruit_start.slice(0, 10)}</div>
                     <div class="main-user-list-startdate">${page.recruit_end.slice(0, 10)}</div>
