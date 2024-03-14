@@ -4,8 +4,7 @@ const teenplayMoreButtonWrap = document.querySelector('.tp-show-more-btn-wrap')
 const teenplayWrap= document.querySelector('.club-teenplay-contents-box')
 const teenplayAddButton = document.querySelector('.tp-show-more-btn')
 const resetTeenplayForm = document.getElementById('teenplay-modal-reset-form')
-
-
+let pageAdd=1
 // 시간 변환 함수
 function timeSince(dateString) {
     const date = new Date(dateString);
@@ -66,12 +65,11 @@ function deleteTeenplayAction (teenplayDeleteIdx, clubId){
         if (result.value) {
             Swal.fire("삭제 완료", "틴플레이 삭제가 완료되었습니다.", "success");
             clubDetailService.updateTeenplayStatus(teenplayDeleteIdx).then(() => {
-                let page = 1
                 clubDetailService.getTeenplayList(clubId, page).then((teenplayInfo) => {
                     teenplayWrap.innerHTML = ''
+                    pageAdd =1
                     let teenplayFirstInfo = teenplayInfo.teenplay_list
                     let containTeenplay = teenplayWrap.getElementsByClassName('club-teenplay-contents').length
-
                     if (teenplayFirstInfo.length > 0){
                         if(containTeenplay === 0){
                             teenplayWrap.innerHTML += showList(teenplayFirstInfo)
@@ -225,7 +223,8 @@ teenplayTabButton.addEventListener('click',  (e)=> {
 
 // 더보기 버튼 클릭
 teenplayMoreButtonWrap.addEventListener('click', async (e) => {
-    const teenplayAddList = await clubDetailService.getTeenplayList(clubId,++page)
+    const teenplayAddList = await clubDetailService.getTeenplayList(clubId,++pageAdd)
+    console.log(pageAdd)
     teenplayWrap.innerHTML += addList(teenplayAddList)
 })
 
@@ -238,6 +237,7 @@ teenplayWrap.addEventListener('click', (e) => {
     if(deleteIcon){
         const teenplayDeleteIdx= deleteIcon.querySelector('img').classList[1];
         deleteTeenplayAction(teenplayDeleteIdx, clubId)
+        pageadd = 1
     }
 })
 
