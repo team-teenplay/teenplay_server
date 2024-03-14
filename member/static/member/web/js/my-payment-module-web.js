@@ -7,15 +7,19 @@ const payService = (() => {
         }
         return pay
             ;}
-
-        const remove = async (pay_id) => {
-        await fetch(`/member/mypage-payment/${pay_id}/`, {
-            method: 'delete',
-            headers: {'X-CSRFToken': csrf_Token}
+        const check = async (pay_reason) =>{
+        const response = await fetch("/member/mypage-payment/api/", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'X-CSRFToken': csrf_Token
+            },
+            body: JSON.stringify(pay_reason)
         });
-        }
+        return await response.json();
+    }
 
-    return {getList:getList, remove:remove}
+    return {getList:getList, check:check}
 })();
 
 
