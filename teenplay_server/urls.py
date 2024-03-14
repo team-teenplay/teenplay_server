@@ -68,8 +68,8 @@ urlpatterns = [
     path('admin/teenplay/', AdminTeenplayView.as_view(), name='admin-teenplay'),
     # 관리자 - 게시글 홍보글 관리
     path('admin/promote/', AdminPromoteView.as_view(), name='admin-promote'),
-    path('admin/promotes/<int:page>/', AdminPromoteView.as_view(), name='admin-promote-api'),
-    path('admin/promotes/delete/<int:promote_id>/', AdminPromoteView.as_view(), name='admin-promote-delete'),
+    path('admin/promotes/<int:page>/', AdminPromoteAPI.as_view(), name='admin-promote-api'),
+    # path('admin/promotes/delete/<int:promote_id>/', AdminPromoteView.as_view(), name='admin-promote-delete'),
     # 관리자 - 게시글 활동모집글 관리
     path('admin/activity/', AdminActivityView.as_view(), name='admin-activity'),
     path('admin/activities/<int:page>/', AdminPromoteAPI.as_view(), name='admin-activity-api'),
@@ -77,7 +77,7 @@ urlpatterns = [
     # 관리자 - 게시글 위시리스트 관리
     path('admin/wishlist/', AdminWishlistView.as_view(), name='admin-wishlist'),
     path('admin/wishlists/<int:page>/', AdminWishlistAPI.as_view(), name='admin-wishlist-api'),
-    path('admin/wishlists/delete/<int:wishlist_id>/', AdminWishlistUpdateAPI.as_view(), name='admin-wishlist-api'),
+    # path('admin/wishlists/delete/<int:wishlist_id>/', AdminWishlistUpdateAPI.as_view(), name='admin-wishlist-api'),
     # 관리자 - 전체 모임 관리
     path('admin/meeting/', AdminMeetingView.as_view(), name='admin-meeting'),
     # 관리자 - 축제 관리
