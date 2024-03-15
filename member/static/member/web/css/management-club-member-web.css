@@ -940,3 +940,13 @@ textarea[name="send-content"]::-webkit-scrollbar {
     background-color: rgb(225 228 230/var(--tw-bg-opacity));
     border-color: rgb(225 228 230/var(--tw-border-opacity));
 }
+
+.member-info-list div {
+  display: flex;
+  justify-content: start;
+  align-content: center;
+}
+
+.member-info-list div div{
+ margin: auto 0;
+}

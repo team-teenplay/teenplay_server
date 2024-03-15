@@ -7,12 +7,13 @@ memberInfoDetails.addEventListener('change', (e) => {
     }
 });
 
-const checkedAllCategory = document.querySelector(".checked-all-category");
+const allCheckedFn = () => {
+    const checkedAllCategory = document.querySelector(".checked-all-category");
 const inputCheckboxes = document.querySelectorAll("input[type=checkbox]");
 
 checkedAllCategory.addEventListener("click", () => {
     for (const inputCheckbox of inputCheckboxes) {
-        if (inputCheckbox.checked === true) {
+        if (inputCheckbox.checked) {
             inputCheckbox.checked = false;
         } else {
             inputCheckbox.checked = true;
@@ -20,6 +21,8 @@ checkedAllCategory.addEventListener("click", () => {
     }
     insertCheckedMemberCount();
 });
+
+}
 
 const insertCheckedMemberCount = () => {
     const checkedMemberCount = document.querySelector(".checked-member-count");
@@ -67,6 +70,22 @@ const sendCheckBtn = sendModalWrap.querySelector(".send-check-btn");
 textarea.addEventListener("input", (e) => {
     sendCheckBtn.disabled = !e.target.value.trim();
 });
+
+sendCheckBtn.addEventListener('click', async () => {
+    const sender = document.querySelector('.send-sender-email').innerText
+    const content = document.querySelector('textarea').value
+    const receiverElements = document.querySelectorAll('.email-span')
+    let receivers = []
+    receiverElements.forEach((element)=>{
+        receivers.push(element.innerText)
+    })
+    const letter = {
+        'sender': sender,
+        'receivers': receivers,
+        'content': content
+    }
+    await mypageSendLetterService.post(letter)
+})
 
 // 쪽지 보내기 모달 버튼 클릭 시 발생하는 이벤트
 const sendModalBtns = document.querySelectorAll(".send-modal-container button");
@@ -144,7 +163,7 @@ const memberEmissionStatusUpdate = (memberId) => {
             if (e.target.className == "kick-out-btn") {
                 // 데이터가 없어 임시 방편으로 사용
                 if (memberId) {
-                    const response = await mypageMemberStatusService.del(memberId)
+                    const response = await mypageMemberStatusService.del(club_id, memberId)
                     if (response === 'ok') {
                         target.remove();
                     }
@@ -208,7 +227,7 @@ const memberStatusJoinUpdate = (memberId) => {
             if (e.target.className == "join-btn") {
                 // 데이터가 없어 임시 방편으로 사용
                 if (memberId) {
-                    const response = await mypageMemberStatusService.patch(memberId)
+                    const response = await mypageMemberStatusService.patch(club_id, memberId)
                     if (response === 'ok') {
                         target.querySelector(".member-status").innerHTML = `<div class="member-status-join-btn">가입중</div>`;
                     }
@@ -241,7 +260,9 @@ const memberStatusJoinUpdate = (memberId) => {
 
 const createList = (filterList) => {
     let memberHTML = ``
+    console.log(filterList)
     if (!filterList) return
+
     filterList.clubMembers.forEach((member) => {
         let statusHTML = '';
         if (member.status === 1) {
@@ -264,38 +285,39 @@ const createList = (filterList) => {
                         </div>
                     </div>
                 </div>
-                <div class="member-name name">${member.member__member_nickname}</div>
+                <div class="member-name"><div class="name">${member.member__member_nickname}</div></div>
                 <div class="member-email">
                     <div class="email">${member.member__member_email}</div>
                 </div>
                 <div class="member-age-gender">
-                    <div class="age">29</div>
+                    <div class="age">29/</div>
                     <div class="gender">
-                    ${member.member__member_gender === 1 ? '남자' : member.member__member_gender === 2 ? '여자' : member.member__member_gender === 0 && '선택 안함'}
+                     ${member.member__member_gender === 1 ? '남자' : member.member__member_gender === 2 ? '여자' : member.member__member_gender === 0 && '선택 안함'}
                     </div>
                 </div>
-                <div class="member-interest-area">${member.member__member_address}</div>
+                <div class="member-interest-area"><div class="address">${member.member__member_address}</div></div>
                 <div class="member-interest-filed">
-                    ${member.member_favorite_categories[0].category__category_name}${member.category_count === 0 ? '' : '외 ' + member.category_count + '개'}
+                    <div class="category">${member.member_favorite_categories ? member.member_favorite_categories[0]?.category__category_name : ''}${member.category_count === 0 || !member.category_count ? '' : '외 ' + member.category_count + '개'}</div>
                 </div>
                 ${statusHTML}
                 <div class="member-join-date">
                     <div class="date">${member.member__created_date}</div>
                 </div>
                 <div class="member-activity">
-                    <span>${member.activities[0].activity__activity_title}${member.activities.length === 0 ? '' : '외 ' + member.activities.length + '개'}</span>
+                    <div>${member.activities ? member.activities[0]?.activity__activity_title : ''}${member.activities.length === 0 ? '' : '외 ' + member.activities.length + '개'}</div>
                 </div>
             </div>
         `
     })
     memberInfoDetails.innerHTML = memberHTML
+    allCheckedFn()
     statusUpdateModal();
     memberStatusJoinUpdate();
     memberEmissionStatusUpdate();
 }
 
 const memberListHandler = async (filter = '전체 상태', search) => {
-    const filterList = await mypageMemberService.list(filter, search)
+    const filterList = await mypageMemberService.list(club_id, filter, search)
     createList(filterList)
 }
 memberListHandler()
@@ -311,8 +333,6 @@ const filter = {};
 
 // 핸들러 함수 정의
 function handleFilterEvent(e) {
-
-
     if (e.target === memberSearchInput) {
         search.search = e.target.value;
     } else if (e.target === memberStatusBox) {
@@ -336,3 +356,5 @@ function filterModule(data) {
 
     memberListHandler(filterValue, searchValue);
 }
+
+
