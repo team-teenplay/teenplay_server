@@ -942,4 +942,8 @@ activityJoinButton.addEventListener("click", () => {
     location.href = `/activity/join?id=${activityId}`;
 })
 
-// 관리하기 버튼 클릭 시 관리페이지로 이동 (추후 추가할 예정)
+// 관리하기 버튼 클릭 시 관리페이지로 이동
+const activityManageButton = document.querySelector(".manage-item-button");
+activityManageButton.addEventListener("click", () => {
+    location.href = `/member/activity?activity_id=${activityId}`;
+})

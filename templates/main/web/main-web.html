@@ -150,7 +150,10 @@
                                                 <div class="post-info">
                                                     <div class="post-thumbnail-box">
                                                         <a class="post-thumbnail-link" href="{{ pop_activity.get_absolute_url }}" ondragstart="return false">
-                                                            <img class="post-thumbnail" alt="활동 썸네일 이미지" src="/upload/{{ pop_activity.thumbnail_path }}" />
+                                                            <img class="post-thumbnail" alt="활동 썸네일 이미지" 
+                                                                 {% if pop_activity.thumbnail_path %}src="/upload/{{ pop_activity.thumbnail_path }}"
+                                                                 {% else %} src="{% static 'public/web/images/logo/logo8.png' %}" {% endif %}
+                                                            />
                                                         </a>
                                                         <div class="like-box" {% if not request.session.member %} style="display: none;" {% endif %}>
                                                             <input type="hidden" name="activity-id" value="{{ pop_activity.id }}">
@@ -217,7 +220,10 @@
                                                 <div class="post-info">
                                                     <div class="post-thumbnail-box">
                                                         <a class="post-thumbnail-link" href="{{ new_activity.get_absolute_url }}" ondragstart="return false">
-                                                            <img class="post-thumbnail" alt="활동 썸네일 이미지" src="/upload/{{ new_activity.thumbnail_path }}" />
+                                                            <img class="post-thumbnail" alt="활동 썸네일 이미지" 
+                                                                 {% if new_activity.thumbnail_path %}src="/upload/{{ new_activity.thumbnail_path }}"
+                                                                 {% else %} src="{% static 'public/web/images/logo/logo8.png' %}" {% endif %}
+                                                            />
                                                         </a>
                                                         <div class="like-box"{% if not request.session.member %} style="display: none;" {% endif %}>
                                                             <input type="hidden" name="activity-id" value="{{ new_activity.id }}">
@@ -284,7 +290,10 @@
                                                 <div class="post-info">
                                                     <div class="post-thumbnail-box">
                                                         <a class="post-thumbnail-link" href="{{ recommend_activity.get_absolute_url }}" ondragstart="return false">
-                                                            <img class="post-thumbnail" alt="활동 썸네일 이미지" src="/upload/{{ recommend_activity.thumbnail_path }}" />
+                                                            <img class="post-thumbnail" alt="활동 썸네일 이미지" 
+                                                                 {% if recommend_activity.thumbnail_path %}src="/upload/{{ recommend_activity.thumbnail_path }}"
+                                                                 {% else %} src="{% static 'public/web/images/logo/logo8.png' %}" {% endif %}
+                                                            />
                                                         </a>
                                                         <div class="like-box"{% if not request.session.member %} style="display: none;" {% endif %}>
                                                             <input type="hidden" name="activity-id" value="{{ recommend_activity.id }}">
