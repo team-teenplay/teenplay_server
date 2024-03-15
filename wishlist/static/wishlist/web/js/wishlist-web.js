@@ -3,6 +3,25 @@ const div = document.querySelector(".add-post");
 const addButton = document.querySelector(".post-watch");
 const moreButton = document.querySelector(".post-watch-button")
 const categoryBtn = document.querySelectorAll(".top-categroy-item")
+let myWishlistIdCheck = myWishlistId ? myWishlistId : 0;
+
+// 위시리스트 게시글의 프로필 클릭시 프로필 모달 보여주기
+const addClickEventWishlistProfile = () => {
+    const profilePhotos = document.querySelectorAll(".post-profile-img-container");
+    profilePhotos.forEach((wrap) => {
+        wrap.addEventListener("click", (e) => {
+            let wishlistId = wrap.classList[1];
+            showMemberProfileModal(wishlistId);
+        })
+    })
+    const modalDivision = document.querySelector(".modal-divison.teenchin-modal")
+    const modalContainer = document.querySelector(".teenchin-box.post-update-wrap")
+    modalDivision.addEventListener("click", (e) => {
+        if (e.target !== modalContainer){
+            hideMemberProfileModal()
+        }
+    })
+}
 
 // 위시리스트 리스트
 const showList = (data) => {
@@ -33,14 +52,14 @@ const showList = (data) => {
                                 <div class="post-username-container">
                                     <!-- 위시리스트 게시글 프로필 이름 부분 -->
                                     <div class="post-username-text">
-                                        <span class="member-name${wishlist.id}">${wishlist.member_name}</span>
+                                        <span class="member-name${wishlist.id}" id="${wishlist.is_private}">${wishlist.member_name}</span>
                                     </div>
                                     <!-- 위시리스트 작성자 id -->
                                     <input type="hidden" name="writer-id" class="wishlist-writer-id${wishlist.id}" value="${wishlist.member_id}">
                                     <!-- 위시리스트 게시글 정보 부분 -->
                                     <div class="wishlist-post-info-container">
-                                        <span class="post-category">${wishlist.category_name}</span>
-                                        <span class="post-upload-date">${timeForToday(wishlist.created_date)}</span>
+                                        <span class="post-category${wishlist.id}" id="${wishlist.category_id}">${wishlist.category_name}</span>
+                                        <span class="post-upload-date">${timeForToday(wishlist.updated_date)}</span>
                                     </div>
                                 </div>
                             </div>
@@ -73,7 +92,7 @@ const showList = (data) => {
                                             <svg class="post-like-icon liked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="display:none">
                                                 <path d="M9.653 16.915l-.005-.003-.019-.01a20.759 20.759 0 01-1.162-.682 22.045 22.045 0 01-2.582-1.9C4.045 12.733 2 10.352 2 7.5a4.5 4.5 0 018-2.828A4.5 4.5 0 0118 7.5c0 2.852-2.044 5.233-3.885 6.82a22.049 22.049 0 01-3.744 2.582l-.019.01-.005.003h-.002a.739.739 0 01-.69.001l-.002-.001z"></path>
                                             </svg>
-                                            <span class="post-like-count">${wishlist.like_count}</span>
+                                            <span class="post-like-count">${wishlist.like_total}</span>
                                         </div>
                                         `
             }
@@ -114,7 +133,7 @@ const showList = (data) => {
                         </div>
                         <!-- 위시리스트 게시글 제목 부분 -->
                         <div class="post-title-wrap">
-                            <div class="post-title-text">${wishlist.wishlist_content}</div>
+                            <div class="post-title-text${wishlist.id}">${wishlist.wishlist_content}</div>
                         </div>
                             <!-- 위시리스트 게시글 태그 부분 -->
                             <div class="post-tags-wrap ${wishlist.id}">
@@ -153,16 +172,100 @@ const showList = (data) => {
     return text;
 }
 
+const addAllevents = () => {
+    const postUpdateButtons = document.querySelectorAll(".post-menu-open-choice")
+    const modalPostUpdate = document.querySelector(".post-update");
+    const modalPostUpdateClose = document.querySelector(".update-close-container");
+    console.log("실행은 되네요")
+    // 위시리스트 수정 메뉴 버튼
+    postUpdateButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            modalPostUpdate.classList.remove("hidden");
+        });
+    });
+
+    // 위시리스트 수정 모달 돌아가기 버튼
+    modalPostUpdateClose.addEventListener("click", () => {
+        modalPostUpdate.classList.add("hidden");
+    });
+
+    const modalPostUpdateFinish = document.querySelector(".update-finish-botton");
+    // 위시리스트 수정 모달 발행하기 버튼
+    modalPostUpdateFinish.addEventListener("click", () => {
+        modalPostUpdate.classList.add("hidden");
+    });
+
+    // 위시리스트 게시글 수정 타이틀 입력 이벤트
+    const updatePostTitle = document.querySelector(".update-category-input");
+
+    // 위시리스트 게시글 수정 모달 발행하기 버튼 클릭 시 이벤트 발생
+    // 수정 모달에 타이틀이 입력되지 않으면 안내 문구 빨간색으로 출력
+    modalPostUpdateFinish.addEventListener("click", () => {
+        if (!updatePostTitle.value) {
+            updatePostTitle.classList.add("red");
+            return;
+        } else {
+            updatePostTitle.classList.remove("red");
+        }
+    });
+
+    // 위시리스트 게시글 태그 수정 이벤트
+    // 위시리스트 수정 모달에서 태그 입력 시 이벤트 발생
+    // 만약, 엔터를 입력했다면,
+    tagInput.addEventListener("keyup", (e) => {
+        if (e.keyCode === 13) {
+            // 위시리스트 수정 모달 태그 목록 쿼리
+            const tags = document.querySelectorAll(".update-tags-wrap .tag-list");
+
+            // 입력 값의 길이가 10 이하이며, 목록의 태그 개수가 5이하면,
+            // 태그 값 추가(태그 생성)
+            if (e.target.value.length <= 10 && tags.length <= 5) {
+                if (e.target.value) {
+                    modifyWishlistTag(e.target.value);
+                }
+            } else {
+                // 위 값이 아니라면, 오류 메시지 출력
+                tagError.classList.remove("hidden")
+            }
+        }
+    });
+
+    const postUpdateWrap = document.querySelector(".post-update-wrap");
+    // 위시리스트 게시글 수정 모달창 닫기 이벤트
+    document.addEventListener("click", (e) => {
+        for (let btn of postUpdateButtons) {
+            if (btn.contains(e.target)) {
+                return false;
+            }
+        }
+        if (!postUpdateWrap.contains(e.target)) {
+            modalPostUpdate.classList.add("hidden");
+
+            const wishlistContent = document.getElementById("update-content")
+            const isPrivate = document.getElementById("update-private")
+            const category = document.getElementById("update-category")
+            const tagElements = document.querySelector('.tag-list');
+
+            wishlistContent.value = "";
+            isPrivate.value = "1";
+            category.value = "100";
+            tagElements.innerHTML = "";
+        }
+    });
+
+}
+
 // 위시리스트 보여주기 실행
-wishlistService.getList(page, category, keyword, showList).then((text) => {
-    div.innerHTML = text;
-    addMoreButton()
+wishlistService.getList(myWishlistIdCheck, page, category, keyword, showList).then(async (text) => {
+    div.innerHTML += text;
+    await addMoreButton()
     addClickEventWishlistProfile()
+    addAllevents();
 });
 
 // 각 카테고리 버튼 클릭 시 카테고리별 위시리스트 보여주기
 categoryBtn.forEach((button) => {
-    button.addEventListener('click', () => {
+    button.addEventListener('click', async () => {
         page = 1
 
         // 특정 카테고리 선택 시 전체 카테고리의 선택 속성 해제 후 선택한 카테고리에만 선택 속성 부여
@@ -172,18 +275,19 @@ categoryBtn.forEach((button) => {
         button.classList.add("all");
 
         // 카테고리에 해당하는 위시리스트 추가
-        wishlistService.getList(page, category, keyword, showList).then((text) => {
+        await wishlistService.getList(myWishlistIdCheck, page, category, keyword, showList).then(async (text) => {
             div.innerHTML = text;
             mySearchInput.value ="";
             addClickEventWishlistProfile()
-            addMoreButton()
+            await addMoreButton()
+            addAllevents();
         });
     });
 });
 
 // 더보기 버튼 검사하기
 const addMoreButton = async () => {
-    await wishlistService.getList(page+1, category, keyword).then((data) => {
+    await wishlistService.getList(0,page+1, category, keyword).then((data) => {
         // console.log(data['wishlists'].length)
         if (data['wishlists'].length !== 0) {
             addButton.style.display = "block";
@@ -196,11 +300,12 @@ const addMoreButton = async () => {
 }
 
 // 더보기 버튼 누르면 위시리스트 추가로 나오기
-moreButton.addEventListener("click", (e) => {
-    wishlistService.getList(++page, category,keyword, showList).then((text) => {
+moreButton.addEventListener("click", async (e) => {
+    await wishlistService.getList(0, ++page, category,keyword, showList).then(async (text) => {
         div.innerHTML += text;
-        addMoreButton()
+        await addMoreButton()
         addClickEventWishlistProfile()
+        addAllevents();
     })
 })
 
@@ -267,7 +372,7 @@ const replyshowList = (replies) => {
                                         <form class="comment-update-container" method="post" data-hs-cf-bound="true">
                                             <input class="comment-update" name="__RequestVerificationToken" type="hidden" value="lQ1k2HcglUXXMwOa0SIMa_JXSkG8dcFibXk3jrgj1xqrlfkZnxzZ69pIbMszXgP7-1CrLPr7j5y-xEsj8UfSWd2EpmvQnlNfBilqDAT5vUaOv7fZgaT00ILqYk8j9LZOYraW8JeO8poPFXuOtKyENA2" />
                                             <input class="comment-update-hidden" name="CommunityBoardArticleId" hidden="" />
-                                            <textarea class="comment-update-guide" id="comment-input-update-guide" name="content" type="text" placeholder="수정할 댓글을 입력하세요" autocomplete="off" required=""></textarea>
+                                            <textarea class="comment-update-guide" id="comment-input-update-guide" name="content" type="text" placeholder="수정할 댓글을 입력하세요" autocomplete="off" value="" required=""></textarea>
                                             <div class="comment-update-upload-wrap">
                                                 <div class="comment-update-upload-container">
                                                     <button class="comment-update-upload-button" id="comment-update-upload" type="button">등록</button>
@@ -295,10 +400,10 @@ const replyshowList = (replies) => {
                                             <!-- 위시리스트 댓글 작성자 이름 부분 -->
                                             <span class="member-name${reply.id}">${reply.member_name}</span>
                                             <!-- 위시리스트 댓글 작성 날짜 부분 -->
-                                            <span class="comment-info-date">${timeForToday(reply.created_date)}</span>
+                                            <span class="comment-info-date">${timeForToday(reply.updated_date)}</span>
                                         </div>
                                         <!-- 위시리스트 개별 댓글 내용 부분 -->
-                                        <div class="comment-text">${reply.reply_content}</div>
+                                        <div class="comment-text${reply.id}">${reply.reply_content}</div>
                                     </div>
                                 </div>
             `
@@ -349,7 +454,7 @@ div.addEventListener("click", async (e)  => {
         comment.classList.remove("hidden");
 
         // 댓글이 열렸을 때 댓글 리스트 보여주기
-        wishlistService.replygetList(wishlistId, replyshowList).then((replies) => {
+        await wishlistService.replygetList(wishlistId, replyshowList).then((replies) => {
             comment.innerHTML = replies;
             addClickEventReplyProfile()
             // console.log(replies)
@@ -400,10 +505,11 @@ modalCreateFinish.addEventListener("click", async () => {
     wishlistCategory.value = "100";
     tagElements.innerHTML = "";
 
-    const text = await wishlistService.getList(page, category,keyword, showList);
+    const text = await wishlistService.getList(myWishlistIdCheck, page, category, keyword, showList);
     div.innerHTML = text;
     addClickEventWishlistProfile()
     await addMoreButton()
+    addAllevents();
 
     modalCreateInput.classList.add("hidden");
 });
@@ -416,6 +522,28 @@ const createTag = document.querySelector(".create-tags-wrap .create-tag");
 const createTagError = document.querySelector(".create-tag-error");
 
 // 위시리스트 생성 모달 태그 입력 시 이벤트 발생
+const addTag = (e) => {
+    const createTagDiv = document.createElement("div");
+    createTagDiv.classList.add("create-tag-list");
+    createTagDiv.innerHTML = `
+        <span style="display: flex; align-items: center;">
+            ${e.target.value}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14px">
+              <line x1="15" y1="5" x2="5" y2="15"></line>
+              <line x1="5" y1="5" x2="15" y2="15"></line>
+            </svg>
+        </span>`;
+    createTag.appendChild(createTagDiv);
+    e.target.value = "";
+    createTagError.classList.add("hidden")
+
+    // createTagDiv 클릭 시 태그 삭제 이벤트 발생
+    createTagDiv.addEventListener("click", (e) => {
+        e.stopPropagation();
+        createTag.removeChild(createTagDiv);
+        createTagError.classList.add("hidden")
+    });
+}
 createTagInput.addEventListener("keyup", (e) => {
     if (e.keyCode === 13) {
         const createTags = document.querySelectorAll(".create-tags-wrap .create-tag-list");
@@ -424,26 +552,7 @@ createTagInput.addEventListener("keyup", (e) => {
         // 태그 값 추가(태그 생성)
         if (e.target.value.length <= 10 && createTags.length <= 5) {
             if (e.target.value) {
-                const createTagDiv = document.createElement("div");
-                createTagDiv.classList.add("create-tag-list");
-                createTagDiv.innerHTML = `
-                    <span style="display: flex; align-items: center;">
-                        ${e.target.value}
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14px">
-                          <line x1="15" y1="5" x2="5" y2="15"></line>
-                          <line x1="5" y1="5" x2="15" y2="15"></line>
-                        </svg>
-                    </span>`;
-                createTag.appendChild(createTagDiv);
-                e.target.value = "";
-                createTagError.classList.add("hidden")
-
-                // createTagDiv 클릭 시 태그 삭제 이벤트 발생
-                createTagDiv.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    createTag.removeChild(createTagDiv);
-                    createTagError.classList.add("hidden")
-                });
+                addTag(e);
             }
         //에러 메시지 출력
         } else {
@@ -471,107 +580,106 @@ document.addEventListener("click", (e) => {
     }
 });
 
+// 위시리스트 게시글 수정시 태그 추가 함수
+const tagInput = document.querySelector(".update-tags-input-container .update-tags-input");
+const tagWrap = document.querySelector(".update-tags-wrap");
+const tag = document.querySelector(".update-tags-wrap .tag");
+const tagError = document.querySelector(".tag-error-text");
+const modifyWishlistTag = (value) => {
+    // console.log('호출됨', value)
+    const tagDiv = document.createElement("div");
+    tagDiv.classList.add("tag-list");
+    tagDiv.innerHTML = `
+        <span style="display: flex; align-items: center;">
+            ${value}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14px">
+              <line x1="15" y1="5" x2="5" y2="15"></line>
+              <line x1="5" y1="5" x2="15" y2="15"></line>
+            </svg>
+        </span>`;
+    tag.appendChild(tagDiv);
+    document.querySelector("input.update-tags-input").value = "";
+    tagError.classList.add("hidden")
+
+    // tagDiv 클릭 시 이벤트 발생
+    tagDiv.addEventListener("click", (e) => {
+        // 태그 삭제
+        e.stopPropagation();
+        tag.removeChild(tagDiv);
+        tagError.classList.add("hidden")
+    });
+}
+
+
+
 
 // 위시리스트 메뉴 버튼을 눌렀을 때 수정/삭제하기
 div.addEventListener("click", async (e) => {
     // 수정 버튼 클릭시 수정 모달창 생성 및 수정하기
-    if(e.target.id === 'post-menu-open-update'){
+    if(e.target.classList[0] === 'post-menu-open-choice'){
         const wishlistId = e.target.classList[1]
-        const postUpdateButton = document.getElementById("post-menu-open-update");
-        const modalPostUpdate = document.querySelector(".post-update");
-        const modalPostUpdateClose = document.querySelector(".update-close-container");
+        // console.log(wishlistId)
+
+        /// 위시리스트 내용 옮겨오기
+        const updateText = document.querySelector(`.update-category-input`)
+        const pastText = document.querySelector(`.post-title-text${e.target.classList[1]}`)
+        updateText.value = pastText.textContent
+        // console.log(commentText.textContent)
+        // console.log(commentText)
+
+        // 카테고리 옮겨오기
+        const pastCategory = document.querySelector(`.post-category${e.target.classList[1]}`).id
+        const updateCategory = document.querySelector(`#update-category option[value="${pastCategory}"]`);
+        // console.log(pastCategory)
+        updateCategory.selected = true;
+
+        // 공개/비공개 옮겨오기
+        const isPrivate = document.querySelector(`.member-name${e.target.classList[1]}`).id
+        // console.log(isPrivate)
+        let pastPrivate = isPrivate === 'true' ? 1 : 0
+        // console.log(pastPrivate)
+        const updatePrivate = document.querySelector(`#update-private option[value="${pastPrivate}"]`);
+        updatePrivate.selected = true;
+
+        // 이전에 있던 태그들 각각 반복으로 태그박스 만들어서 넣기
+        await wishlistService.getList(myWishlistIdCheck, page, category, keyword).then((data) => {
+            const existingTags = data.tags[wishlistId]
+            // console.log(existingTags)
+            existingTags.forEach((tag) => {modifyWishlistTag(tag);});
+        })
+
         const modalPostUpdateFinish = document.querySelector(".update-finish-botton");
-
-        // 위시리스트 수정 메뉴 버튼
-        postUpdateButton.addEventListener("click", () => {
-            modalPostUpdate.classList.remove("hidden");
-        });
-        // 위시리스트 수정 모달 돌아가기 버튼
-        modalPostUpdateClose.addEventListener("click", () => {
-            modalPostUpdate.classList.add("hidden");
-        });
         // 위시리스트 수정 모달 발행하기 버튼
-        modalPostUpdateFinish.addEventListener("click", () => {
-            modalPostUpdate.classList.add("hidden");
+        modalPostUpdateFinish.addEventListener("click", async () => {
+            // 수정한 값을 가져와서 newWishlist에 할당
+            wishListId = e.target.classList[1]
+            const updatedContent = document.getElementById("update-content").value;
+            const updatedCategory = document.getElementById("update-category").value;
+            const updatedPrivate = document.getElementById("update-private").value;
+            const tagElements = document.querySelectorAll('.tag-list span');
+            const updateTagNames = Array.from(tagElements).map(span => span.textContent.trim());
+            // const updatedTags = Array.from(document.querySelectorAll('.update-tag-list span')).map(span => span.textContent.trim());
+            console.log(tagElements)
+            console.log(updateTagNames)
+            const newWishlist = {
+                wishlist_id: wishListId,
+                wishlist_content: updatedContent,
+                category_id: updatedCategory,
+                is_private: updatedPrivate,
+                tag_name: updateTagNames,
+                // 필요한 다른 속성들도 여기에 추가
+            };
+
+            // wishlistService의 update 함수를 호출하여 수정된 위시리스트 정보 전송
+            await wishlistService.wishlistUpdate(wishListId, newWishlist);
+
+            const text = await wishlistService.getList(myWishlistIdCheck, page, category, keyword, showList);
+            div.innerHTML = text;
+            await addClickEventWishlistProfile()
+            await addMoreButton()
+            await addAllevents();
         });
 
-        // 위시리스트 게시글 수정 타이틀 입력 이벤트
-        const updatePostTitle = document.querySelector(".update-category-input");
-
-        // 위시리스트 게시글 수정 모달 발행하기 버튼 클릭 시 이벤트 발생
-        // 수정 모달에 타이틀이 입력되지 않으면 안내 문구 빨간색으로 출력
-        modalPostUpdateFinish.addEventListener("click", () => {
-            if (!updatePostTitle.value) {
-                updatePostTitle.classList.add("red");
-                return;
-            } else {
-                updatePostTitle.classList.remove("red");
-            }
-        });
-
-        // 위시리스트 게시글 태그 수정 이벤트
-        const tagInput = document.querySelector(".update-tags-input-container .update-tags-input");
-        const tagWrap = document.querySelector(".update-tags-wrap");
-        const tag = document.querySelector(".update-tags-wrap .tag");
-        const tagError = document.querySelector(".tag-error-text");
-
-        // 위시리스트 수정 모달에서 태그 입력 시 이벤트 발생
-        // 만약, 엔터를 입력했다면,
-        tagInput.addEventListener("keyup", (e) => {
-            if (e.keyCode === 13) {
-                // 위시리스트 수정 모달 태그 목록 쿼리
-                const tags = document.querySelectorAll(".update-tags-wrap .tag-list");
-
-                // 입력 값의 길이가 10 이하이며, 목록의 태그 개수가 5이하면,
-                // 태그 값 추가(태그 생성)
-                if (e.target.value.length <= 10 && tags.length <= 5) {
-                    if (e.target.value) {
-                        const tagDiv = document.createElement("div");
-                        tagDiv.classList.add("tag-list");
-                        tagDiv.innerHTML = `
-                            <span style="display: flex; align-items: center;">
-                                ${e.target.value}
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14px">
-                                  <line x1="15" y1="5" x2="5" y2="15"></line>
-                                  <line x1="5" y1="5" x2="15" y2="15"></line>
-                                </svg>
-                            </span>`;
-                        tag.appendChild(tagDiv);
-                        e.target.value = "";
-                        tagError.classList.add("hidden")
-
-                        // tagDiv 클릭 시 이벤트 발생
-                        tagDiv.addEventListener("click", (e) => {
-                            // 태그 삭제
-                            e.stopPropagation();
-                            tag.removeChild(tagDiv);
-                            tagError.classList.add("hidden")
-                        });
-                    }
-                } else {
-                    // 위 값이 아니라면, 오류 메시지 출력
-                    tagError.classList.remove("hidden")
-                }
-            }
-        });
-
-        const postUpdateWrap = document.querySelector(".post-update-wrap");
-        // 위시리스트 게시글 수정 모달창 닫기 이벤트
-        document.addEventListener("click", (e) => {
-            if (!postUpdateButton.contains(e.target) && !postUpdateWrap.contains(e.target)) {
-                modalPostUpdate.classList.add("hidden");
-
-                const wishlistContent = document.getElementById("update-content")
-                const isPrivate = document.getElementById("update-private")
-                const category = document.getElementById("update-category")
-                const tagElements = document.querySelector('.tag-list');
-
-                wishlistContent.value = "";
-                isPrivate.value = "1";
-                category.value = "100";
-                tagElements.innerHTML = "";
-            }
-        });
 
     // 삭제 버튼 클릭시 삭제하기 (status =0)
     } else if (e.target.id === 'post-menu-open-delete'){
@@ -579,9 +687,10 @@ div.addEventListener("click", async (e) => {
         console.log(wishlistId)
         await wishlistService.wishlistRemove(wishlistId);
         page = 1
-        const text = await wishlistService.getList(page, category,keyword, showList);
+        const text = await wishlistService.getList(myWishlistIdCheck, page, category,keyword, showList);
         div.innerHTML = text;
         addClickEventWishlistProfile()
+        addAllevents();
         await addMoreButton();
     }
 })
@@ -640,10 +749,38 @@ div.addEventListener("click", async (e) => {
 div.addEventListener("click", async (e) => {
     // 수정 버튼 클릭시 수정하기
     if (e.target.id === 'comment-menu-open-update') {
+        wishlistId = e.target.classList[2]
         const commentMenuOpenUpdate = document.getElementById("comment-menu-open-update");
         const commentInputUpdate = document.querySelector(".comment-update-box-all-wrap");
         const commentComment = document.querySelector(".comment-list-all-wrap");
         const commentUploadFinish =document.getElementById("comment-update-upload");
+        const commenmtUpdateArea =document.getElementById("comment-input-update-guide");
+        const replyUpdateBtn = document.querySelector(".comment-update-upload-container")
+        const comment = document.getElementById(`reply-form${wishlistId}`)
+        // 입력한 정보 확인용
+        commenmtUpdateArea.addEventListener("keyup", () => {
+            console.log(commenmtUpdateArea.value)
+        })
+
+        let commentText = document.querySelector(`.comment-text${e.target.classList[1]}`)
+        commenmtUpdateArea.value = commentText.innerText
+
+
+        // 댓글 수정에서 등록버튼 눌렀을 때
+        replyUpdateBtn.addEventListener("click", async () => {
+            console.log(e.target.classList[1])
+            newReply = commenmtUpdateArea.value
+            replyId = e.target.classList[1]
+
+            wishlistService.replyUpdate(replyId, newReply)
+
+            await wishlistService.replygetList(wishlistId, replyshowList).then((replies) => {
+                comment.innerHTML = replies;
+            }).then(async () => {
+                await addClickEventReplyProfile();
+                await addMoreButton();
+            })
+        })
 
         // 댓글 수정 입력 활성화 후 개별 댓글 숨기기
         commentMenuOpenUpdate.addEventListener("click", () => {
@@ -667,7 +804,7 @@ div.addEventListener("click", async (e) => {
         // console.log(wishlistId)
         await wishlistService.replyRemove(replyId)
         // page = 1
-        wishlistService.replygetList(wishlistId, replyshowList).then((replies) => {
+        await wishlistService.replygetList(wishlistId, replyshowList).then((replies) => {
             comment.innerHTML = replies;
         }).then(async () => {
             await addClickEventReplyProfile();
@@ -719,10 +856,11 @@ function timeForToday(datetime) {
 mySearchInput.addEventListener("keyup", async (e) => {
     if (e.keyCode === 13) {
         console.log("들어옴")
-        wishlistService.getList(page, category, keyword, showList).then((text) => {
+        await wishlistService.getList(0, page, category, keyword, showList).then(async (text) => {
             div.innerHTML = text;
             addClickEventWishlistProfile()
-            addMoreButton()
+            await addMoreButton()
+            addAllevents();
         });
     }
 })
@@ -838,23 +976,7 @@ const hideMemberProfileModal = () => {
     }
 }
 
-// 위시리스트 게시글의 프로필 클릭시 프로필 모달 보여주기
-const addClickEventWishlistProfile = () => {
-    const profilePhotos = document.querySelectorAll(".post-profile-img-container");
-    profilePhotos.forEach((wrap) => {
-        wrap.addEventListener("click", (e) => {
-            let wishlistId = wrap.classList[1];
-            showMemberProfileModal(wishlistId);
-        })
-    })
-    const modalDivision = document.querySelector(".modal-divison.teenchin-modal")
-    const modalContainer = document.querySelector(".teenchin-box.post-update-wrap")
-    modalDivision.addEventListener("click", (e) => {
-        if (e.target !== modalContainer){
-            hideMemberProfileModal()
-        }
-    })
-}
+
 
 // 댓글의 프로필 클릭시 프로필 모달 보여주기
 const addClickEventReplyProfile = () => {
@@ -990,3 +1112,5 @@ if (teenFriendCancle){
         });
     });
 }
+
+// 마이페이지에서 이동시 카테고리 버튼, 태그 추가해놓기
