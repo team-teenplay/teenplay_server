@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import transaction
 from django.db.models import F, Q, Count, Exists
 from django.shortcuts import render
@@ -6,13 +8,25 @@ from django.views import View
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from teenplay_server.category import Category
 from wishlist.models import Wishlist, WishlistReply, WishlistTag, WishListLike
 
 
 class WishListView(View):
     # 페이지 이동
     def get(self, request):
-        return render(request, 'wishlist/web/wishlist-web.html')
+        wishlist_id = None
+        context = {
+            'wishlistId': wishlist_id
+        }
+        return render(request, 'wishlist/web/wishlist-web.html', context=context)
+
+    def post(self, request):
+        wishlist_id = request.POST.get('wishlist-id')
+        context = {
+            'wishlistId': wishlist_id
+        }
+        return render(request, 'wishlist/web/wishlist-web.html', context=context)
 
 
 # 위시리스트 작성
@@ -68,6 +82,8 @@ class WishListAPI(APIView):
             'member_id',
             'member_name',
             'category_name',
+            'category_id',
+            'is_private',
             'created_date',
             'id',
             'member_email',
@@ -88,13 +104,22 @@ class WishListAPI(APIView):
 
         ).values(*columns).order_by('-created_date')[offset:limit]
 
-        # wishlists = Wishlist.enabled_objects.filter(condition).annotate(
-        #     member_name=F("member__member_nickname"),
-        #     category_name=F("category__category_name"),
-        #     member_email=F('member__member_email'),
-        #     member_path=F('member__memberprofile__profile_path'),
-        #     like_count=Count('wishlistlike__id', filter=Q(wishlistlike__status=1))
-        # ).values(*columns)[offset:limit]
+        # 마이페이지에서 넘어왔을 경우
+        my_wishlist_id = request.GET.get('wishlist-id', 0)
+        if my_wishlist_id and my_wishlist_id != "None":
+            my_wishlist = Wishlist.enabled_objects.filter(id=my_wishlist_id).annotate(
+                member_name=F("member__member_nickname"),
+                category_name=F("category__category_name"),
+                member_email=F('member__member_email'),
+                member_path=F('member__memberprofile__profile_path'),
+                like_on=Count('wishlistlike__id', filter=Q(wishlistlike__status=1) & Q(wishlistlike__member_id=id)),
+                like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1)),
+                reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1))
+            ).values(*columns)
+            # print(my_wishlist)
+            if my_wishlist.exists():
+                wishlists = list(wishlists)
+                wishlists.insert(0, my_wishlist.first())
 
         # 태그
         wishlist_ids = [item['id'] for item in wishlists]
@@ -123,24 +148,31 @@ class WishListActionAPI(APIView):
         return Response('success')
 
     def patch(self, request, wishlist_id):
-        data = request.data
-        is_private = data['is_private']
-        wishlist_content = data['wishlist_content']
-        category_id = data['category_id']
+        datas = request.data
+        # print(datas)
+        new_wishlist = datas.get('new_wishlist')
+        # print(new_wishlist)
+        # new_wishlist_id = new_wishlist.get('wishlist_id')
+        # print(new_wishlist_id)
+        new_wishlist_content = new_wishlist.get('wishlist_content')
+        new_category_id = new_wishlist.get('category_id')
+        new_is_private = new_wishlist.get('is_private')
         updated_date = timezone.now()
-        tag_names = data['tag_name']
 
         wishlist = Wishlist.objects.get(id=wishlist_id)
-        wishlist.is_private = is_private
-        wishlist.wishlist_content = wishlist_content
-        wishlist.category_id = category_id
+        wishlist.wishlist_content = new_wishlist_content
+        wishlist.category_id = new_category_id
+        wishlist.is_private = new_is_private
         wishlist.updated_date = updated_date
 
-        tag = WishlistTag.objects.get(wishlist_id=wishlist_id)
-        tag.tag_names = tag_names
+        wishlist.save(update_fields=['wishlist_content', 'category_id', 'is_private', 'updated_date'])
 
-        wishlist.save(update_fields=['wishlist_content', 'updated_date'])
-        tag.save(update_fields=['tag_name'])
+        # 태그 정보 처리
+        new_tag_name = new_wishlist.get('tag_name')
+        # print(new_tag_name)
+        for tag_name in new_tag_name:
+            WishlistTag.objects.get_or_create(wishlist_id=wishlist_id, tag_name=tag_name)
+            # print(tag_name)
 
         return Response('success')
 
@@ -170,6 +202,7 @@ class ReplyListAPI(APIView):
             'member_name',
             'reply_content',
             'created_date',
+            'updated_date',
             'member_email',
             'id',
             'member_path'
@@ -193,7 +226,11 @@ class ReplyActionAPI(APIView):
 
     def patch(self, request, reply_id):
         data = request.data
-        reply_content = data['reply_content']
+        # print(reply_id)
+        # print(newReply)
+        # print(data)
+        new_reply = data['reply_content']
+        reply_content = new_reply
         updated_date = timezone.now()
 
         reply = WishlistReply.objects.get(id=reply_id)
@@ -202,7 +239,7 @@ class ReplyActionAPI(APIView):
 
         reply.save(update_fields=['reply_content', 'updated_date'])
 
-        return Response('success')
+        return Response(new_reply)
 
 
 class WishlistLikeAPIView(APIView):
