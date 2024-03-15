@@ -133,6 +133,7 @@ const showList = async (activity_data) =>{
     }
     else {
     activity_data.forEach((activity_data, i)=>{
+        console.log(activity_data)
         const activityEndDate = new Date(activity_data.activity_end);
         const currentDate = new Date();
         // 시간 정보를 무시하고 일자만을 비교
@@ -196,7 +197,6 @@ const showList = async (activity_data) =>{
                             <span class="txt-head">${changeDate(activity_data.activity_end)}</span>
                           </div>
                           <div class="middle-txt-online">
-                            <span class="txt-foot">${activity_data.activity_address_location}</span>
                           </div>
                         </div>
                         <div class="content-tit-wrap">
@@ -221,7 +221,7 @@ const showList = async (activity_data) =>{
                 `<div class="activity-wrap">
                     <div class="activity-box">
                       <div class="activity-img-box">
-                        <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.activity_id}" class="activity-img-link">
+                        <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.id}" class="activity-img-link">
                           <img
                             src="/upload/${activity_data.thumbnail_path}"
                             alt="ces올인원 패키지"
@@ -272,7 +272,6 @@ const showList = async (activity_data) =>{
                             <span class="txt-head">${changeDate(activity_data.activity_end)}</span>
                           </div>
                           <div class="middle-txt-online">
-                            <span class="txt-foot">${activity_data.activity_address_location}</span>
                           </div>
                         </div>
                         <div class="content-tit-wrap">
@@ -295,7 +294,7 @@ const showList = async (activity_data) =>{
             <div class="activity-wrap">
                 <div class="activity-box">
                   <div class="activity-img-box">
-                    <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.activity_id}" class="activity-img-link">
+                    <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.id}" class="activity-img-link">
                       <img
                         src="https://eventusstorage.blob.core.windows.net/evs/Image/moducampus/76630/ProjectInfo/Cover/57ce84d6a0c34972ad8dd11d35becc54.png"
                         alt="ces올인원 패키지"
@@ -346,7 +345,6 @@ const showList = async (activity_data) =>{
                         <span class="txt-head">${changeDate(activity_data.activity_end)}</span>
                       </div>
                       <div class="middle-txt-online">
-                        <span class="txt-foot">${activity_data.activity_address_location}</span>
                       </div>
                     </div>
                     <div class="content-tit-wrap">
@@ -411,13 +409,12 @@ const showList = async (activity_data) =>{
                   <div class="content-txt-box">
                     <div class="middle-txt">
                       <div>
-                        <span class="txt-head-confirm">상세정보</span>
+                        <a class="txt-head-confirm" herf="">활동수정</a>
                       </div>
                       <div>
                         <span class="txt-head">${changeDate(activity_data.activity_end)}</span>
                       </div>
                       <div class="middle-txt-online">
-                        <span class="txt-foot">${activity_data.activity_address_location}</span>
                       </div>
                     </div>
                     <div class="content-tit-wrap">
