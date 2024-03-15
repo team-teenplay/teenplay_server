@@ -131,7 +131,8 @@ class WishListAPI(APIView):
 
         data = {
             'wishlists': wishlists,
-            'tags': tag_info_by_wishlist
+            'tags': tag_info_by_wishlist,
+            'my_wishlist': my_wishlist_id
         }
 
         return Response(data)

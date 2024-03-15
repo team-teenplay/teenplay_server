@@ -5,6 +5,13 @@ const moreButton = document.querySelector(".post-watch-button")
 const categoryBtn = document.querySelectorAll(".top-categroy-item")
 let myWishlistIdCheck = myWishlistId ? myWishlistId : 0;
 
+// const addBoldBorder = () => {
+//     const addPost = document.querySelector('.add-post.wishlist-post:first-child');
+//     if (addPost) {
+//         addPost.classList.add('bold-border');
+//     }
+// }
+
 // 위시리스트 게시글의 프로필 클릭시 프로필 모달 보여주기
 const addClickEventWishlistProfile = () => {
     const profilePhotos = document.querySelectorAll(".post-profile-img-container");
@@ -38,10 +45,10 @@ const showList = (data) => {
         else {
             text += `
                 <!-- 위시리스트 게시글 부분 -->
-                <div class="wishlist-post">
+                <div class="wishlist-post ${data['my_wishlist']}">
                     <div class="post-wrap">
                         <!-- 위시리스트 게시글 상단 부분 -->
-                        <div class="post-top-warp">
+                        <div class="post-top-warp ${wishlist.id}">
                             <!-- 위시리스트 게시글 프로필 부분 -->
                             <div class="post-profile-warp ${wishlist.id}">
                             <input type="hidden" class="member-email${wishlist.id}" name="writer-email" value="${wishlist.member_email}">
@@ -59,7 +66,7 @@ const showList = (data) => {
                                     <!-- 위시리스트 게시글 정보 부분 -->
                                     <div class="wishlist-post-info-container">
                                         <span class="post-category${wishlist.id}" id="${wishlist.category_id}">${wishlist.category_name}</span>
-                                        <span class="post-upload-date">${timeForToday(wishlist.updated_date)}</span>
+                                        <span class="post-upload-date">${timeForToday(wishlist.created_date)}</span>
                                     </div>
                                 </div>
                             </div>
@@ -70,6 +77,7 @@ const showList = (data) => {
                                         <!-- 위시리스트 게시글 좋아요 정보 부분 -->
             `
             // console.log(data['likes'])
+            console.log(wishlist.id)
         // for (let i = 0; i < data['wishlists'].length; i++) {}
             if (wishlist.like_on === 1) {
                 text += `
@@ -172,11 +180,29 @@ const showList = (data) => {
     return text;
 }
 
+const menuOpenevents = () => {
+    // 위시리스트 게시글 메뉴 열고 닫기 이벤트
+    const wishlistPostMenuButton = document.querySelectorAll(".post-menu-container");
+    const wishlistPostMenu = document.querySelectorAll(".post-menu-open");
+    // 위시리스트 게시글 내 메뉴 버튼 클릭 시 수정/삭제 메뉴 나오기
+    wishlistPostMenuButton.forEach((btn, i) => {
+        wishlistPostMenuButton[i].addEventListener("click", () => {
+            wishlistPostMenu[i].classList.toggle("hidden");
+        });
+        // 여백 클릭 시 위시리스트 메뉴 닫기
+        document.addEventListener("click", (e) => {
+            const clickedElement = e.target;
+            if (!wishlistPostMenuButton[i].contains(clickedElement) && !wishlistPostMenu[i].contains(clickedElement)) {
+                wishlistPostMenu[i].classList.add("hidden");
+            }
+        });
+    })
+}
+
 const addAllevents = () => {
-    const postUpdateButtons = document.querySelectorAll(".post-menu-open-choice")
+    let postUpdateButtons = document.querySelectorAll(".post-menu-open-choice")
     const modalPostUpdate = document.querySelector(".post-update");
     const modalPostUpdateClose = document.querySelector(".update-close-container");
-    console.log("실행은 되네요")
     // 위시리스트 수정 메뉴 버튼
     postUpdateButtons.forEach((button) => {
         button.addEventListener("click", () => {
@@ -210,11 +236,8 @@ const addAllevents = () => {
     });
 
     // 위시리스트 게시글 태그 수정 이벤트
-    // 위시리스트 수정 모달에서 태그 입력 시 이벤트 발생
-    // 만약, 엔터를 입력했다면,
     tagInput.addEventListener("keyup", (e) => {
         if (e.keyCode === 13) {
-            // 위시리스트 수정 모달 태그 목록 쿼리
             const tags = document.querySelectorAll(".update-tags-wrap .tag-list");
 
             // 입력 값의 길이가 10 이하이며, 목록의 태그 개수가 5이하면,
@@ -233,6 +256,7 @@ const addAllevents = () => {
     const postUpdateWrap = document.querySelector(".post-update-wrap");
     // 위시리스트 게시글 수정 모달창 닫기 이벤트
     document.addEventListener("click", (e) => {
+        let postUpdateButtons = document.querySelectorAll(".post-menu-open-choice")
         for (let btn of postUpdateButtons) {
             if (btn.contains(e.target)) {
                 return false;
@@ -259,8 +283,10 @@ const addAllevents = () => {
 wishlistService.getList(myWishlistIdCheck, page, category, keyword, showList).then(async (text) => {
     div.innerHTML += text;
     await addMoreButton()
-    addClickEventWishlistProfile()
-    addAllevents();
+    await addClickEventWishlistProfile()
+    await addAllevents();
+    await menuOpenevents();
+    findFirst();
 });
 
 // 각 카테고리 버튼 클릭 시 카테고리별 위시리스트 보여주기
@@ -278,9 +304,10 @@ categoryBtn.forEach((button) => {
         await wishlistService.getList(myWishlistIdCheck, page, category, keyword, showList).then(async (text) => {
             div.innerHTML = text;
             mySearchInput.value ="";
-            addClickEventWishlistProfile()
             await addMoreButton()
-            addAllevents();
+            await addClickEventWishlistProfile()
+            await addAllevents();
+            await menuOpenevents();
         });
     });
 });
@@ -291,10 +318,8 @@ const addMoreButton = async () => {
         // console.log(data['wishlists'].length)
         if (data['wishlists'].length !== 0) {
             addButton.style.display = "block";
-            // console.log("더보기 버튼 나와라")
         } else if (data['wishlists'].length === 0) {
             addButton.style.display = "none";
-            // console.log("더보기 버튼 사라져라")
         }
     })
 }
@@ -302,39 +327,27 @@ const addMoreButton = async () => {
 // 더보기 버튼 누르면 위시리스트 추가로 나오기
 moreButton.addEventListener("click", async (e) => {
     await wishlistService.getList(0, ++page, category,keyword, showList).then(async (text) => {
-        div.innerHTML += text;
+        div.innerHTML = text;
         await addMoreButton()
-        addClickEventWishlistProfile()
-        addAllevents();
+        await addClickEventWishlistProfile()
+        await addAllevents();
+        await menuOpenevents();
     })
 })
 
-//위시리스트 메뉴 열고 닫기 (수정/삭제)
+
+// 위시리스트 메뉴 열고 닫기 (수정/삭제)
 div.addEventListener("click", async (e) => {
-    // console.log(e.target)
-    if (e.target.classList[0] === 'post-menu-icon') {
-        // 위시리스트 게시글 메뉴 열고 닫기 이벤트
-        const wishlistPostMenuButton = document.querySelectorAll(".post-menu-container");
-        const wishlistPostMenu = document.querySelectorAll(".post-menu-open");
-        // 위시리스트 게시글 내 메뉴 버튼 클릭 시 수정/삭제 메뉴 나오기
-        wishlistPostMenuButton.forEach((btn, i) => {
-            wishlistPostMenuButton[i].addEventListener("click", () => {
-                wishlistPostMenu[i].classList.toggle("hidden");
-            });
-            // 여백 클릭 시 위시리스트 메뉴 닫기
-            document.addEventListener("click", (e) => {
-                const clickedElement = e.target;
-                if (!wishlistPostMenuButton[i].contains(clickedElement) && !wishlistPostMenu[i].contains(clickedElement)) {
-                    wishlistPostMenu[i].classList.add("hidden");
-                }
-            });
-        })
+    // const postMenuContainer = e.target.closest('.post-menu-icon');
+    // if (e.target === postMenuContainer) {
+    if (e.target.classList[0] === 'post-menu-post-menu-container') {
+        menuOpenevents();
     }
 });
 
 // 댓글 리스트
 const replyshowList = (replies) => {
-    console.log(replies.length)
+    // console.log(replies.length)
     let text = ``;
     if (loginCheck) {
         text = `
@@ -400,7 +413,7 @@ const replyshowList = (replies) => {
                                             <!-- 위시리스트 댓글 작성자 이름 부분 -->
                                             <span class="member-name${reply.id}">${reply.member_name}</span>
                                             <!-- 위시리스트 댓글 작성 날짜 부분 -->
-                                            <span class="comment-info-date">${timeForToday(reply.updated_date)}</span>
+                                            <span class="comment-info-date">${timeForToday(reply.created_date)}</span>
                                         </div>
                                         <!-- 위시리스트 개별 댓글 내용 부분 -->
                                         <div class="comment-text${reply.id}">${reply.reply_content}</div>
@@ -508,8 +521,9 @@ modalCreateFinish.addEventListener("click", async () => {
     const text = await wishlistService.getList(myWishlistIdCheck, page, category, keyword, showList);
     div.innerHTML = text;
     addClickEventWishlistProfile()
-    await addMoreButton()
+    addMoreButton()
     addAllevents();
+    menuOpenevents();
 
     modalCreateInput.classList.add("hidden");
 });
@@ -613,7 +627,7 @@ const modifyWishlistTag = (value) => {
 
 
 
-// 위시리스트 메뉴 버튼을 눌렀을 때 수정/삭제하기
+// 위시리스트 수정/삭제하기
 div.addEventListener("click", async (e) => {
     // 수정 버튼 클릭시 수정 모달창 생성 및 수정하기
     if(e.target.classList[0] === 'post-menu-open-choice'){
@@ -658,9 +672,8 @@ div.addEventListener("click", async (e) => {
             const updatedPrivate = document.getElementById("update-private").value;
             const tagElements = document.querySelectorAll('.tag-list span');
             const updateTagNames = Array.from(tagElements).map(span => span.textContent.trim());
-            // const updatedTags = Array.from(document.querySelectorAll('.update-tag-list span')).map(span => span.textContent.trim());
-            console.log(tagElements)
-            console.log(updateTagNames)
+            // console.log(tagElements)
+            // console.log(updateTagNames)
             const newWishlist = {
                 wishlist_id: wishListId,
                 wishlist_content: updatedContent,
@@ -675,23 +688,25 @@ div.addEventListener("click", async (e) => {
 
             const text = await wishlistService.getList(myWishlistIdCheck, page, category, keyword, showList);
             div.innerHTML = text;
-            await addClickEventWishlistProfile()
-            await addMoreButton()
-            await addAllevents();
+            addClickEventWishlistProfile()
+            addMoreButton()
+            addAllevents();
+            menuOpenevents();
         });
 
 
     // 삭제 버튼 클릭시 삭제하기 (status =0)
     } else if (e.target.id === 'post-menu-open-delete'){
         const wishlistId = e.target.classList[1]
-        console.log(wishlistId)
+        // console.log(wishlistId)
         await wishlistService.wishlistRemove(wishlistId);
         page = 1
         const text = await wishlistService.getList(myWishlistIdCheck, page, category,keyword, showList);
         div.innerHTML = text;
         addClickEventWishlistProfile()
         addAllevents();
-        await addMoreButton();
+        menuOpenevents();
+        addMoreButton();
     }
 })
 
@@ -759,7 +774,7 @@ div.addEventListener("click", async (e) => {
         const comment = document.getElementById(`reply-form${wishlistId}`)
         // 입력한 정보 확인용
         commenmtUpdateArea.addEventListener("keyup", () => {
-            console.log(commenmtUpdateArea.value)
+            // console.log(commenmtUpdateArea.value)
         })
 
         let commentText = document.querySelector(`.comment-text${e.target.classList[1]}`)
@@ -768,7 +783,7 @@ div.addEventListener("click", async (e) => {
 
         // 댓글 수정에서 등록버튼 눌렀을 때
         replyUpdateBtn.addEventListener("click", async () => {
-            console.log(e.target.classList[1])
+            // console.log(e.target.classList[1])
             newReply = commenmtUpdateArea.value
             replyId = e.target.classList[1]
 
@@ -855,12 +870,13 @@ function timeForToday(datetime) {
 // 태그 검색시 검색 결과 보여주기
 mySearchInput.addEventListener("keyup", async (e) => {
     if (e.keyCode === 13) {
-        console.log("들어옴")
+        // console.log("들어옴")
         await wishlistService.getList(0, page, category, keyword, showList).then(async (text) => {
             div.innerHTML = text;
-            addClickEventWishlistProfile()
+            await addClickEventWishlistProfile()
             await addMoreButton()
-            addAllevents();
+            await addAllevents();
+            await menuOpenevents();
         });
     }
 })
@@ -881,7 +897,7 @@ div.addEventListener('click', async (e)=> {
         fullHeartIcon.style.display = displayStyle === 'none'? 'none': 'block';
 
         let wishlistId = button.classList[1]
-        console.log(wishlistId)
+        // console.log(wishlistId)
 
         const postLike = await wishlistService.likeWishlist(wishlistId, memberId, displayStyle)
         const likeCountContainer = button.closest('.post-items-wrap').querySelector('.post-like-count')
@@ -958,7 +974,6 @@ const showMemberProfileModal = async (wishlistId) => {
     // console.log(opponentTeenchinId)
     // console.log(loginId)
     if (profileModal.classList.contains("hidden") && (opponentTeenchinId !== memberId)) {
-        // console.log("실행")
         profileModal.classList.remove("hidden")
         const memberProfileImage = document.querySelector(`.profile-image${wishlistId}`);
         profileModalProfileImage.src = memberProfileImage.src;
@@ -998,7 +1013,6 @@ const addClickEventReplyProfile = () => {
 
 //쪽지 보내기 버튼 클릭시 쪽지 보내기 모달 출력
 sendLetterBoxBtn.addEventListener("click", () => {
-    // console.log("눌림")
     profile.classList.add("hidden");
     sendLetter.classList.remove("hidden");
 })
@@ -1113,4 +1127,17 @@ if (teenFriendCancle){
     });
 }
 
-// 마이페이지에서 이동시 카테고리 버튼, 태그 추가해놓기
+// 마이페이지에서 넘어오면서 클릭한 위시리스트가 제일 위에 보일때 테두리 강조하기
+const findFirst = () => {
+        const trueId = document.querySelector('.post-top-warp')
+        const flaseId = document.querySelector('.wishlist-post')
+        // console.log(trueId)
+        // console.log(flaseId)
+        if(trueId.classList[1] === flaseId.classList[1]) {
+            const addPost = document.querySelector('.wishlist-post:first-child');
+            // console.log(addPost)
+            if (addPost) {
+                addPost.style.borderWidth = '5px';
+            }
+        }
+    }
