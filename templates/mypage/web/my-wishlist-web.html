@@ -67,9 +67,9 @@
                                                         </button>
                                                     </div>
                                                     <div class="tab-list">
-                                                        <a class="tab">전체</a>
-                                                        <a class="tab">공개</a>
-                                                        <a class="tab">비공개</a>
+                                                        <button class="tab" name="">전체</button>
+                                                        <button class="tab" name="open">공개</button>
+                                                        <button class="tab" name="secret">비공개</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -88,105 +88,27 @@
                                                 <th class="wishlist-item-likes">좋아요</th>
                                                 <th class="wishlist-item-gap"></th>
                                             </tr>
-                                            <tr class="wishlist-details">
-                                                <td class="wishlist-content">
-                                                    <a href="">대충 실험을 위해 긴 위시리스트가 있다고 가정하고 쓰고 싶은데 적당한 내용이 떠오르지 않아 적당히 적어보는 내용입니다.</a>
-                                                </td>
-                                                <td class="wishlist-write-time">1일전</td>
-                                                <td class="wishlist-disclosure">비공개</td>
-                                                <td class="wishlist-category">문화·예술</td>
-                                                <td class="wishlist-replayes">2</td>
-                                                <td class="wishlist-likes">1</td>
-                                                <td>
-                                                    <button class="wishlist-remove" href="">삭제하기</button>
-                                                </td>
-                                            </tr>
-                                            <tr class="wishlist-details">
-                                                <td class="wishlist-content">
-                                                    <a href="">대충 실험을 위해 긴 위시리스트가 있다고 가정하고 쓰고 싶은데 적당한 내용이 떠오르지 않아 적당히 적어보는 내용입니다.</a>
-                                                </td>
-                                                <td class="wishlist-write-time">1일전</td>
-                                                <td class="wishlist-disclosure">비공개</td>
-                                                <td class="wishlist-category">문화·예술</td>
-                                                <td class="wishlist-replayes">2</td>
-                                                <td class="wishlist-likes">2</td>
-                                                <td>
-                                                    <button class="wishlist-remove" href="">삭제하기</button>
-                                                </td>
-                                            </tr>
-                                            <tr class="wishlist-details">
-                                                <td class="wishlist-content">
-                                                    <a href="">대충 실험을 위해 긴 위시리스트가 있다고 가정하고 쓰고 싶은데 적당한 내용이 떠오르지 않아 적당히 적어보는 내용입니다.</a>
-                                                </td>
-                                                <td class="wishlist-write-time">1일전</td>
-                                                <td class="wishlist-disclosure">비공개</td>
-                                                <td class="wishlist-category">문화·예술</td>
-                                                <td class="wishlist-replayes">2</td>
-                                                <td class="wishlist-likes">3</td>
-                                                <td>
-                                                    <button class="wishlist-remove" href="">삭제하기</button>
-                                                </td>
-                                            </tr>
-                                            <tr class="wishlist-details">
-                                                <td class="wishlist-content">
-                                                    <a href="">대충 실험을 위해 긴 위시리스트가 있다고 가정하고 쓰고 싶은데 적당한 내용이 떠오르지 않아 적당히 적어보는 내용입니다.</a>
-                                                </td>
-                                                <td class="wishlist-write-time">1일전</td>
-                                                <td class="wishlist-disclosure">비공개</td>
-                                                <td class="wishlist-category">문화·예술</td>
-                                                <td class="wishlist-replayes">2</td>
-                                                <td class="wishlist-likes">4</td>
-                                                <td>
-                                                    <button class="wishlist-remove" href="">삭제하기</button>
-                                                </td>
-                                            </tr>
-                                            <tr class="wishlist-details">
-                                                <td class="wishlist-content">
-                                                    <a href="">대충 실험을 위해 긴 위시리스트가 있다고 가정하고 쓰고 싶은데 적당한 내용이 떠오르지 않아 적당히 적어보는 내용입니다.</a>
-                                                </td>
-                                                <td class="wishlist-write-time">1일전</td>
-                                                <td class="wishlist-disclosure">비공개</td>
-                                                <td class="wishlist-category">문화·예술</td>
-                                                <td class="wishlist-replayes">2</td>
-                                                <td class="wishlist-likes">5</td>
-                                                <td>
-                                                    <button class="wishlist-remove" href="">삭제하기</button>
-                                                </td>
-                                            </tr>
                                         </tbody>
+                                        <tbody class="add-more">
                                     </table>
                                 </div>
-                                <div class="test">아직 작성한 위시리스트가 없습니다.</div>
+{#                                <div class="test">아직 작성한 위시리스트가 없습니다.</div>#}
                                 <!-- 페이지네이션 1페이지에 10개 -->
                                 <div class="pagination-box">
                                     <div class="pagination-contents">
                                         <div class="pagination-items">
-                                            <button class="prev-btn disabled" type="button">
+                                            <button class="next-btn" type="button" id="leftButton">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="left-arrow-svg" viewBox="0 0 20 20" fill="currentColor">
                                                     <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                                 </svg>
                                             </button>
-                                            <div class="page-numbers">
-                                                <button class="page-number-btn focus-page" type="button">
-                                                    <div class="page-number">1</div>
-                                                </button>
-                                                <button class="page-number-btn" type="button">
-                                                    <div class="page-number">2</div>
-                                                </button>
-                                                <button class="page-number-btn" type="button">
-                                                    <div class="page-number">3</div>
-                                                </button>
-                                                <button class="page-number-btn" type="button">
-                                                    <div class="page-number">4</div>
-                                                </button>
-                                                <button class="page-number-btn" type="button">
-                                                    <div class="page-number">5</div>
-                                                </button>
+                                            <div class="page-numbers" id="pageButtons">
+
                                                 <!-- <button class="page-number-btn" type="button">
                                                     <div class="page-number">...</div>
                                                 </button> -->
                                             </div>
-                                            <button class="next-btn" type="button">
+                                            <button class="next-btn" type="button" id="rightButton">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="right-arrow-svg" viewBox="0 0 20 20" fill="currentColor">
                                                     <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                                                 </svg>
@@ -221,8 +143,8 @@
                                     </h2>
                                 </div>
                                 <div class="modal-btn-box">
-                                    <button class="close-btn" type="button">닫기</button>
-                                    <button class="check-btn" type="button">확인</button>
+                                    <button class="close-btn" type="button" id="delete-out">닫기</button>
+                                    <button class="check-btn" type="button" id="delete-but">확인</button>
                                 </div>
                             </div>
                         </div>
@@ -234,5 +156,29 @@
 {% endblock %}
 
 {% block js %}
+    <script>
+    const csrf_Token = '{{ csrf_token }}';
+    const member_id = '{{ request.session.member.id }}'
+    const selectbut = document.querySelectorAll(".tab")
+    let status_wishlist = '전체'
+    selectbut.forEach((btn)=>{
+        btn.addEventListener("click", async(e)=>{
+            console.log(status_wishlist)
+            status_wishlist = btn.name
+            page = 1
+            currentPage = 1
+            const text = await wishlistService.getList(member_id, currentPage,status_wishlist, showList);
+            tbody.innerHTML = text;
+            wishlistService.getList(member_id, 1, status_wishlist,async (replies, total_pages) => {
+            maxPage = total_pages;
+            // 페이지 버튼 다시 업데이트
+            console.log(maxPage)
+            updatePageButtons();
+            });
+        })
+    })
+
+    </script>
+    <script src="{% static 'member/web/js/my-wishlist-module-web.js' %}"></script>
     <script src="{% static 'member/web/js/my-wishlist-web.js' %}"></script>
 {% endblock %}

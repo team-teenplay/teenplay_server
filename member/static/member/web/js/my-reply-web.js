@@ -50,7 +50,7 @@ maxPage = total_pages;
 const showList = async (reply) =>{
     let text ='';
     if (reply.length ===0){
-        text += `<div class="test">아직 작성한 댓글이 없습니다.</div>`
+        text += `<div class="test" style="padding-bottom: 26px">아직 작성한 댓글이 없습니다.</div>`
     }
     console.log(reply)
     reply.forEach((reply)=>{

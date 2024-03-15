@@ -10,8 +10,8 @@ const wishlistService = (() => {
         });
     }
 
-    const getList = async (page, category, keyword, callback) => {
-        const response = await fetch(`/wishlist/list/${page}/?keyword=${keyword}&category=${category}`);
+    const getList = async (myWishlistIdCheck, page, category, keyword, callback) => {
+        const response = await fetch(`/wishlist/list/${page}/?keyword=${keyword}&category=${category}&wishlist-id=${myWishlistIdCheck}`);
         const data = await response.json();
         if (callback) {
             return callback(data);
@@ -47,14 +47,14 @@ const wishlistService = (() => {
         });
     }
 
-    const wishlistUpdate = async (wishlist) => {
-        await fetch(`/wishlist/${wishlist.wishlistId}/`, {
+    const wishlistUpdate = async (wishListId, newWishlist) => {
+        await fetch(`/wishlist/wishlist/${wishListId}/`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
                 'X-CSRFToken': csrf_token
             },
-            body: JSON.stringify({'wishlist_content': wishlist.wishlistContent})
+            body: JSON.stringify({'new_wishlist': newWishlist})
         });
     }
 
@@ -65,14 +65,14 @@ const wishlistService = (() => {
         });
     }
 
-    const replyUpdate = async (reply) => {
-        await fetch(`/wishlist/reply/${reply.replyId}/`, {
+    const replyUpdate = async (replyId, newReply) => {
+        await fetch(`/wishlist/reply/${replyId}/`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
                 'X-CSRFToken': csrf_token
             },
-            body: JSON.stringify({'reply_content': reply.replyContent})
+            body: JSON.stringify({'reply_content': newReply})
         });
     }
 

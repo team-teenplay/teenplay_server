@@ -65,7 +65,7 @@ urlpatterns = [
     path('admin/user/update/<int:member_id>/', AdminUserUpdateAPI.as_view(), name='admin-user-update'),
     # 관리자 - 쪽지 관리
     path('admin/message/', AdminMessageView.as_view(), name='admin-message'),
-    path('admin/messages/<int:page>/', AdminMessageAPI.as_view(), name='admin-message-api'),
+    path('admin/messages/api/', AdminMessageAPI.as_view(), name='admin-message-api'),
     path('admin/message/update/<int:message_id>/', AdminMessageUpdateAPI.as_view(), name='admin-message-update'),
     # 관리자 - 틴플레이 관리
     path('admin/teenplay/', AdminTeenplayView.as_view(), name='admin-teenplay'),
