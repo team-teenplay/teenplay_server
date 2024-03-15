@@ -18,7 +18,7 @@ from member.serializers import MemberSerializer
 from notice.models import Notice
 from pay.models import Pay, PayCancel
 from teenplay_server.category import Category
-from wishlist.models import WishlistReply
+from wishlist.models import WishlistReply, Wishlist
 
 
 class MemberLoginWebView(View):
@@ -1771,3 +1771,85 @@ class ActivityEditView(View):
 
 
         return redirect(f'/member/activity-edit?activity_id={activity.id}')
+
+
+
+class MypageWishlistWebView(View):
+    def get(self, request):
+        member = request.session.get('member')
+        # latest_letter = Letter.objects.latest('id')  # 또는 필요한 기준으로 필터링
+        return render(request, 'mypage/web/my-wishlist-web.html', {"member": member})
+
+
+class MypageWishlistAPIView(APIView):
+    @transaction.atomic
+    def get(self, request, member_id, page):
+        status_wishlist = request.GET.get('status_wishlist')
+        row_count = 10
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        # 전체 데이터 수를 세는 쿼리
+        total_count = Wishlist.objects.filter(Q(member_id=member_id, status=1)).count()
+
+        # 전체 페이지 수 계산
+        total_pages = (total_count + row_count - 1) // row_count
+
+        # 페이지 범위에 해당하는 데이터 조회
+        # 전체
+        wishlists = Wishlist.objects.filter(Q(member_id=member_id), status=1).annotate(like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1)), reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1)), category_name=F("category__category_name")) \
+                      .values('wishlist_content', 'created_date', 'is_private', 'category_name', 'category', 'reply_total', 'like_total',
+                              'id')[offset:limit]
+        #공개
+        open = Wishlist.objects.filter(member_id=member_id, is_private=1, status=1).annotate(like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1)), reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1)), category_name=F("category__category_name")) \
+                     .values('wishlist_content', 'created_date', 'is_private', 'category_name', 'category', 'reply_total', 'like_total',
+                             'id')[offset:limit]
+        #비공개
+        secret = Wishlist.objects.filter(member_id=member_id, is_private=0, status=1).annotate(like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1)), reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1)), category_name=F("category__category_name")) \
+                       .values('wishlist_content', 'created_date', 'is_private', 'category_name', 'category', 'reply_total', 'like_total',
+                               'id')[offset:limit]
+
+
+        # 응답에 전체 페이지 수와 데이터 추가
+        response_data = {
+            'total_pages': total_pages,
+            'wishlists': wishlists,
+
+        }
+        if status_wishlist == 'open':
+            response_data['wishlists'] = Wishlist.objects.filter(member_id=member_id, is_private=1, status=1).annotate(like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1), category=F('category__category_name')),
+            reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1)), category_name=F("category__category_name")) \
+                                           .values('wishlist_content', 'created_date', 'is_private', 'category_name', 'category',
+                                                   'reply_total', 'like_total',
+                                                   'id')[offset:limit]
+
+            response_data['total_pages'] = (Wishlist.objects.filter(member_id=member_id, is_private=1, status=1).count() + row_count - 1) // row_count
+        elif status_wishlist == 'secret':
+            response_data['wishlists'] = Wishlist.objects.filter(member_id=member_id, is_private=0, status=1).annotate(like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1)),
+            reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1)), category_name=F("category__category_name")) \
+                                           .values('wishlist_content', 'created_date', 'is_private', 'category_name', 'category',
+                                                   'reply_total', 'like_total',
+                                                   'id')[offset:limit]
+            response_data['total_pages'] = (Wishlist.objects.filter(member_id=member_id, is_private=0, status=1).count() + row_count - 1) // row_count
+
+        else:
+            response_data['wishlists'] = Wishlist.objects.filter(Q(member_id=member_id, status=1)).annotate(like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1)),
+            reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1)), category_name=F("category__category_name")) \
+                                           .values('wishlist_content', 'created_date', 'is_private', 'category_name', 'category',
+                                                   'reply_total', 'like_total', 'id')[offset:limit]
+
+            response_data['total_pages'] = (Wishlist.objects.filter(member_id=member_id, status=1).count() + row_count - 1) // row_count
+
+        return Response(response_data)
+
+
+class MypageWishlistDeleteAPIView(APIView):
+    @transaction.atomic
+    def delete(self, request, wishlist_id):
+        wishlist = Wishlist.objects.get(id=wishlist_id)
+        wishlist.status = 0
+        # Wishlist.objects.filter(wishlist_id=wishlist_id).update(status=0)
+        wishlist.save(update_fields=['status'])
+
+        return Response('success')
+

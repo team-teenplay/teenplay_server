@@ -10,7 +10,8 @@ from member.views import MemberLoginWebView, MemberJoinWebView, MypageInfoWebVie
     ClubAlarmManageAPI, MypageActivityLikeAPIVIEW, MypageActivityAPIVIEW, MypageActivityVIEW, ActivityManagentView, \
     ActivityListAPIView, ActivityMemberView, ActivityMemberListAPIView, ActivityMemberUpdateAPIView, \
     ActivityMemberWriteAPI, ActivityEditView, MypageNoticeModifyView, MypageSendLetterAPI, \
-    MypageMyClubView, MypageMyClubAPI, MypageClubDeleteView, MypageMyClubAlarmStatusAPI
+    MypageMyClubView, MypageMyClubAPI, MypageClubDeleteView, MypageMyClubAlarmStatusAPI, \
+    MypageWishlistAPIView, MypageWishlistDeleteAPIView, MypageWishlistWebView
 
 app_name = 'member'
 
@@ -62,8 +63,13 @@ urlpatterns = [
     path('activity/', ActivityManagentView.as_view(), name="management-activity"),
     path('activity/<int:member_id>/<int:page>/', ActivityListAPIView.as_view(), name="management-aipactivity"),
     path('activity-member/', ActivityMemberView.as_view(), name="management-activitymember"),
-    path('activity-member/<int:member_id>/<int:page>/<int:activity_id>/', ActivityMemberListAPIView.as_view(),name="management-aipactivitymember"),
-    path('activity-member/<int:activity_member_id>/', ActivityMemberUpdateAPIView.as_view(),name="managment-apiupdateactivitymember"),
+    path('activity-member/<int:member_id>/<int:page>/<int:activity_id>/', ActivityMemberListAPIView.as_view(),
+         name="management-aipactivitymember"),
+    path('activity-member/<int:activity_member_id>/', ActivityMemberUpdateAPIView.as_view(),
+         name="managment-apiupdateactivitymember"),
     path('activity-member/api/', ActivityMemberWriteAPI.as_view(), name="managment-apideleteactivitymember"),
-    path('activity-edit/', ActivityEditView.as_view(), name="managment-edit")
+    path('activity-edit/', ActivityEditView.as_view(), name="managment-edit"),
+    path('mypage-wishlist/', MypageWishlistWebView.as_view(), name='mypage-wishlist'),
+    path('mypage-wishlist/<int:member_id>/<int:page>/', MypageWishlistAPIView.as_view(), name='mypage-wishlistapi'),
+    path('mypage-wishlist/<int:wishlist_id>/', MypageWishlistDeleteAPIView.as_view(), name='mypage-wishlist-delete')
 ]

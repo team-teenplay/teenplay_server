@@ -392,7 +392,7 @@
         <input type="hidden" name="member-email" value="{{ request.session.member.member_email }}">
 {% endblock %}
 {% block js %}
-        <script>
+    <script>
         const categoryButton = document.querySelectorAll(".top-categroy-item")
         const csrf_token = '{{ csrf_token }}';
         // 로그인 했는지 안 했는지 검사
@@ -423,7 +423,7 @@
                 keyword = e.target.value;
             }
         });
-        
+        const myWishlistId = `{{ wishlistId }}`;
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{% static 'wishlist/web/js/wishlist-web-module.js' %}"></script>
