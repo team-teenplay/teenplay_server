@@ -22,7 +22,7 @@ const CreateService = (() => {
                 `;
             } else if (page.title.length >= 20 ) {
                 text += `
-                    <div class="main-comment-list-paycount">${page.title.slice(0, 20)}...</div>
+                    <div class="main-comment-list-paycount">${page.title.slice(0, 20)}···</div>
                 `;
             }
             text += `

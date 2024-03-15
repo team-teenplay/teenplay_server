@@ -16,7 +16,7 @@
                             <div class="header-items">
                                 <div class="logo-box">
                                     <!-- 메인 페이지 주소 필요 -->
-                                    <a href="" style="line-height: 1 !important">
+                                    <a href="/" style="line-height: 1 !important">
                                         <img src="{% static 'public/web/images/logo/logo2.png' %}" height="40" alt="틴플 로고" />
                                     </a>
                                 </div>
@@ -24,9 +24,13 @@
                                     <li>
                                         <div class="mypage-menu-container">
                                             <a class="menu-btn-box">
-                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="people-svg">
-                                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-                                                </svg>
+                                                {% if request.session.member_files %}
+                                                    {% for file in request.session.member_files %}
+                                                        <img src="/upload/{{ file.profile_path }}" class="people-svg" id="preview-thumbnail">
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <img  class= "profile-thumbnail" id="preview-thumbnail" src="{% static 'public/web/images/logo/logo1.png' %}">
+                                                {% endif %}
                                             </a>
                                             <div class="menu-modal-wrap">
                                                 <div class="menu-modal-container">
@@ -37,7 +41,7 @@
                                                             <div class="member-email">{{ request.session.member.member_email }}</div>
                                                             <div>
                                                                 <!-- 해당 회원의 내 정보 수정 페이지 주소 필요 -->
-                                                                <a href="" class="info-modify-link">내 정보 수정 ></a>
+                                                                <a href="/member/mypage-info/" class="info-modify-link">내 정보 수정 ></a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -45,19 +49,19 @@
                                                     <ul class="my-menu-items">
                                                         <li>
                                                             <!-- 틴친 목록 -->
-                                                            <a href="" class="my-menu-item">틴친 목록</a>
+                                                            <a href="/member/mypage-teenchin/" class="my-menu-item">틴친 목록</a>
                                                         </li>
                                                         <li>
                                                             <!-- 나의 활동 -->
-                                                            <a href="" class="my-menu-item">나의 활동</a>
+                                                            <a href="/member/mypage-activity/" class="my-menu-item">나의 활동</a>
                                                         </li>
                                                         <li>
                                                             <!-- 나의 모임 -->
-                                                            <a href="" class="my-menu-item">나의 모임</a>
+                                                            <a href="/member/mypage-club/" class="my-menu-item">나의 모임</a>
                                                         </li>
                                                         <li>
                                                             <!-- 알림 목록 -->
-                                                            <a href="" class="my-menu-item">알림 목록</a>
+                                                            <a href="/member/mypage-alram/" class="my-menu-item">알림 목록</a>
                                                         </li>
                                                     </ul>
                                                     <div class="my-menu-divider"></div>

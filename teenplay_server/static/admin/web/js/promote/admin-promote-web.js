@@ -6,21 +6,24 @@ let type = ""
 const CreateService = (() => {
     const showList = (pagination) => {
         let text = ``;
-        pagination.activity.forEach((page) => {
+        pagination.club_post.forEach((page) => {
 
             text += `
                 <li class="main-user-list" data-id="${page.id}">
                     <div class="main-user-list-check">
                         <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-id="${page.id}" />
                     </div>
-                    <div class="main-user-list-name">단풍구름</div>
-                    <div class="main-user-list-date">내일 놀사람</div>
-                    <div class="main-user-list-status">23.02.01</div>
-                    <div class="main-user-list-pay">0</div>
-                    <div class="main-user-list-comment">0</div>
+                    <div class="main-user-list-name">${page.club_name}</div>
+                    <div id="title${page.id}" class="main-user-list-date">${page.post_title}</div>
+                    <div class="main-user-list-status">${page.created_date.slice(0,10)}</div>
+                    <div class="main-user-list-pay">${page.club_reply_count}</div>
+                    <div class="main-user-list-comment">${page.view_count}</div>
                     <div class="main-user-list-detail">
-                        <button class="member-user-list-detail-button toggle-button" data-target="1">상세보기</button>
+                        <button class="member-user-list-detail-button toggle-button" data-id="${page.id}">상세보기</button>
                     </div>
+                    <input type="hidden" id="post-content${page.id}" value="${page.post_content}">
+                    <input type="hidden" id="image-path${page.id}" value="/upload/${page.image_path}">
+                    <input type="hidden" id="club-post-category${page.id}" value="${page.club_post_category}">
                 </li>
             `;
         })
@@ -133,83 +136,7 @@ const CreateService = (() => {
         return text;
     }
 
-    //
-    const showDetail = (pagination) => {
-        let text = ``;
-        pagination.activity.forEach((page) => {
-            text += `
-            <div id="admin-post-modal" class="admin-post-modal hidden">
-                <h4 class="admin-post-modal-title">홍보글 상세보기</h4>
-                <div class="admin-post-modal-warp">
-                    <!-- 여기서부터 안에 들어가는거 하나씩 / 각각 빈 div하나 만들고 안에서 생성 -->
-                    <div class="titleqq">
-                        <p class="admin-post-modal-title-name">제목</p>
-                        <label class="admin-post-modal-title-label">
-                            <input oninput="updateButtonStatus()" type="text" class="admin-post-modal-title-input" readonly value />
-                        </label>
-                        <!-- 값 미입력시 -->
-                        <div id="red-title" class="hidden">
-                            <div class="redbox">
-                                <svg viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" class="redfont">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12.008 22.05c5.523.023 10.019-4.436 10.042-9.959.023-5.523-4.436-10.018-9.959-10.041C6.568 2.027 2.073 6.485 2.05 12.008c-.023 5.523 4.435 10.019 9.958 10.042Zm1.527-6.494a1.5 1.5 0 1 1-3-.013 1.5 1.5 0 0 1 3 .013Zm-1.181-2.505a.5.5 0 0 0 .498-.436l.646-4.997a.5.5 0 0 0-.494-.564l-1.867-.008a.5.5 0 0 0-.499.56l.604 5.002a.5.5 0 0 0 .495.44l.617.003Z"></path>
-                                </svg>
-                                값을 입력해주세요.
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <p class="admin-post-modal-content-name">내용</p>
-                        <label class="admin-post-modal-content-label">
-                            <textarea oninput="updateButtonStatus()" class="admin-post-modal-content-input" readonly value></textarea>
-                        </label>
-                        <!-- 값 미입력시 -->
-                        <div id="red-content" class="hidden">
-                            <div class="redbox">
-                                <svg viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" class="redfont">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12.008 22.05c5.523.023 10.019-4.436 10.042-9.959.023-5.523-4.436-10.018-9.959-10.041C6.568 2.027 2.073 6.485 2.05 12.008c-.023 5.523 4.435 10.019 9.958 10.042Zm1.527-6.494a1.5 1.5 0 1 1-3-.013 1.5 1.5 0 0 1 3 .013Zm-1.181-2.505a.5.5 0 0 0 .498-.436l.646-4.997a.5.5 0 0 0-.494-.564l-1.867-.008a.5.5 0 0 0-.499.56l.604 5.002a.5.5 0 0 0 .495.44l.617.003Z"></path>
-                                </svg>
-                                값을 입력해주세요.
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <p class="admin-post-modal-thumbnail-name">이미지</p>
-                        <div class="admin-post-modal-thumbnail-warp">
-                            <div class="admin-post-modal-thumbnail-container">
-                                <img id="main-post-photo-img" class="admin-post-modal-thumbnail-img" src="/staticfiles/images/teenplay_logo/logo3.png" alt="" />
-                            </div>
-                        </div>
-                        <!-- 여기아래에 안내문 적어주기 -->
-                    </div>
-                    <div>
-                        <p class="admin-post-modal-place-name">카테고리</p>
-                        <label class="admin-post-modal-place-label">
-                            <input oninput="updateButtonStatus()" type="text" class="admin-post-modal-title-input" readonly value />
-                        </label>
-                        <!-- 값 미입력시 -->
-                        <div id="red-category" class="hidden">
-                            <div class="redbox">
-                                <svg viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" class="redfont">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12.008 22.05c5.523.023 10.019-4.436 10.042-9.959.023-5.523-4.436-10.018-9.959-10.041C6.568 2.027 2.073 6.485 2.05 12.008c-.023 5.523 4.435 10.019 9.958 10.042Zm1.527-6.494a1.5 1.5 0 1 1-3-.013 1.5 1.5 0 0 1 3 .013Zm-1.181-2.505a.5.5 0 0 0 .498-.436l.646-4.997a.5.5 0 0 0-.494-.564l-1.867-.008a.5.5 0 0 0-.499.56l.604 5.002a.5.5 0 0 0 .495.44l.617.003Z"></path>
-                                </svg>
-                                값을 입력해주세요.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- 버튼 아래 있는것들 -->
-                <div class="admin-user-modal-button">
-                    <div class="admin-user-modal-left">
-                        <button class="admin-user-modal-left-detail-button" id="modalCloseButton">닫기</button>
-                    </div>
-                </div>
-            </div>
-            `
-    })
-        return text;
-    }
-
-    return {showList: showList, showPaging: showPaging, CountText: CountText, showDetail:showDetail}
+    return {showList: showList, showPaging: showPaging, CountText: CountText}
 })();
 
 
@@ -219,7 +146,6 @@ const CreateService = (() => {
 // ---------------------------------------------------------------------------------------------------------------------
 // 위시리스트 게시글 태그
 const promoteData = document.querySelector(".promote-data")
-
 // 게시글 목록 보여주기
 function allShowList() {
     adminPromoteService.getPagination(page, CreateService.showList).then((text) => {
@@ -403,7 +329,6 @@ document.addEventListener("click", (e) => {
 
 // 삭제 모달 속 삭제 버튼 클릭 시 이벤트 발생
 modalDeleteButtons.forEach((button) => {
-    //
     button.addEventListener("click", async () => {
         // 체크된 체크 박스 가져오기
         const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
@@ -429,88 +354,6 @@ modalDeleteButtons.forEach((button) => {
 
 
 
-// ---------------------------------------------------------------------------------------------------------------------
-// // 카테고리
-// // 카테고리 버튼
-// const searchOpen = document.querySelector(".main-wish-sellect-button");
-// // 카테고리 버튼 속 텍스트
-// const searchText = document.querySelector(".main-wish-sellect-button-span");
-// // 카테고리 선택 모달
-// const searchModal = document.querySelector(".admin-message-modal-search");
-// // 카테고리 모달 속 카테고리 버튼
-// const searchReceive = document.querySelector(".admin-message-modal-search-receive");
-// // 카테고리 모달 속 공지사항 버튼
-// const searchSend = document.querySelector(".admin-message-modal-search-send");
-// // 카테고리 자주묻는질문 버튼
-// const searchadd = document.querySelector(".admin-message-modal-search-donotreceive");
-// // 버튼 이미지
-// const path = document.querySelector(".main-comment-info-button-svg");
-//
-// // 검색 버튼 클릭 시 모달 열기
-// searchOpen.addEventListener("click", () => {
-//     // 이벤트 전파를 막기 위해 stopPropagation() 호출
-//     // event.stopPropagation();
-//     path.setAttribute("transform", "rotate(180)");
-//     searchModal.classList.remove("hidden");
-// });
-//
-// // 모달 외부를 클릭했을 때 이벤트 처리
-// document.addEventListener("click", (e) => {
-//     if (!searchOpen.contains(e.target) && !searchModal.contains(e.target)) {
-//         // 클릭된 요소가 검색 버튼이 아니고 모달 창에 속하지 않으면 모달을 닫음
-//         path.removeAttribute("transform");
-//         searchModal.classList.add("hidden");
-//     }
-// });
-//
-// // "전체" 버튼 클릭 시 모달 닫고 텍스트 변경
-// searchReceive.addEventListener("click", () => {
-//     path.removeAttribute("transform");
-//     searchModal.classList.add("hidden");
-//     searchText.textContent = "전체";
-// });
-//
-// // " 활동중" 버튼 클릭 시 모달 닫고 텍스트 변경
-// searchSend.addEventListener("click", () => {
-//     path.removeAttribute("transform");
-//     searchModal.classList.add("hidden");
-//     searchText.textContent = "공개";
-// });
-//
-// // "정지" 버튼 클릭 시 모달 닫고 텍스트 변경
-// searchadd.addEventListener("click", () => {
-//     path.removeAttribute("transform");
-//     searchModal.classList.add("hidden");
-//     searchText.textContent = "비공개";
-// });
-//
-// // 카테고리 버튼 가져오기
-// const categoryButtons = document.querySelectorAll('.category');
-// function noticeShowCategory() {
-//     categoryButtons.forEach((button) => {
-//         button.addEventListener("click", () => {
-//             category = button.value;
-//             adminPromoteService.getCategory(page, category, CreateService.showList).then((text) => {
-//                 wishlistData.innerHTML = text;
-//             })
-//             adminPromoteService.getCategory(page, category, CreateService.showPaging).then((text) => {
-//                 mainUserBottomUl.innerHTML = text;
-//             })
-//             adminPromoteService.getCategory(page, category, CreateService.CountText).then((text) => {
-//                 totalCount.textContent = text;
-//             })
-//
-//             searchInput.value ="";
-//             keyword = "";
-//         })
-//     })
-// }
-// noticeShowCategory();
-//
-//
-//
-//
-//
 // ---------------------------------------------------------------------------------------------------------------------
 // 검색
 // 검색 타입(모달 열기 버튼)
@@ -543,7 +386,7 @@ document.addEventListener("click", (e) => {
 // "작성자" 버튼 클릭 시 모달 닫고 텍스트 변경
 searchTypePButton.addEventListener("click", (button) => {
     searchTypeModal.classList.add("hidden");
-    seartchTypeText.textContent = "작성자";
+    seartchTypeText.textContent = "모임이름";
     type = button.value;
 });
 
@@ -557,7 +400,7 @@ searchTypeWButton.addEventListener("click", (button) => {
 searchInput.addEventListener('keyup', (e) => {
     if (e.keyCode === 13) {
         const typeValue = document.querySelector(".main-message-info-button-text-add")
-        if (typeValue.innerHTML === '작성자') {
+        if (typeValue.innerHTML === '모임이름') {
             type = 'w'
         } else if (typeValue.innerHTML === '제목') {
             type = 'p'
@@ -565,64 +408,49 @@ searchInput.addEventListener('keyup', (e) => {
 
         keyword = e.target.value
 
-        adminPromoteService.search(page, category, type, keyword, CreateService.showList).then((text) => {
+        adminPromoteService.search(page, type, keyword, CreateService.showList).then((text) => {
             promoteData.innerHTML = text;
         })
-        adminPromoteService.search(page, category, type, keyword, CreateService.showPaging).then((text) => {
+        adminPromoteService.search(page, type, keyword, CreateService.showPaging).then((text) => {
             mainUserBottomUl.innerHTML = text;
         })
-        adminPromoteService.search(page, category, type, keyword, CreateService.CountText).then((text) => {
+        adminPromoteService.search(page, type, keyword, CreateService.CountText).then((text) => {
             totalCount.textContent = text;
         })
     }
 });
 
 
+
+
+
 // ---------------------------------------------------------------------------------------------------------------------
 // 상세 보기
 // 상세 추가 태그
 const detailBox = document.querySelector(".detail-box")
+const detailModel = document.querySelector(".admin-post-modal");
+const detailModelBack = document.querySelector(".admin-user-modal-backdrop");
+const detailModelTitle = document.querySelector("input[name=title]");
+const detailModelContent = document.querySelector("textarea[name=content]");
+const detailModelImg = document.querySelector(".admin-post-modal-thumbnail-img");
+const detailModelCategory = document.querySelector("input[name=category]");
+const detailBoxClosed = document.querySelector(".admin-user-modal-left-detail-button")
 
 promoteData.addEventListener('click', (e) => {
-    // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
-    // main-user-list가 있으면 옵셔널 체이닝(?.)을 사용하여 프로퍼티에 접근해 main-comment-list-checkbox를 찾기
-    const showDetailButtons = e.target.closest(".main-user-list-detail")?.querySelectorAll(".member-user-list-detail-button");
+    if (e.target.classList[0] === 'member-user-list-detail-button') {
+        let targetID = e.target.getAttribute("data-id");
+        detailModelTitle.value = document.getElementById(`title${targetID}`).innerText
+        detailModelContent.value = document.getElementById(`post-content${targetID}`).value
+        detailModelImg.src = document.getElementById(`image-path${targetID}`).value
+        detailModelCategory.value = document.getElementById(`club-post-category${targetID}`).value
 
-    showDetailButtons.forEach((showDetailButton) => {
-        showDetailButton.addEventListener('click', async () => {
-            let targetID = showDetailButton.getAttribute("data-id");
-            console.log(targetID)
+        detailModel.classList.remove("hidden");
+        detailModelBack.classList.remove("hidden");
 
-            await adminPromoteService.showDetail(page, targetID, CreateService.showDetail).then((text) => {
-                console.log("작동중")
-                detailBox.innerHTML = text;
-            })
-
-            // 모달창
-            const detailModel = document.querySelector(".admin-post-modal");
-            const detailModelBack = document.querySelector(".admin-user-modal-backdrop");
-
-            await detailModel.classList.remove("hidden");
-            await detailModelBack.classList.remove("hidden");
-        });
-    })
+    }
 })
 
-detailBox.addEventListener('click', (e) => {
-    // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
-    // main-user-list가 있으면 옵셔널 체이닝(?.)을 사용하여 프로퍼티에 접근해 main-comment-list-checkbox를 찾기
-    // 모달 닫기 버튼
-    const detailModelCloseButtons = e.target.closest(".admin-user-modal-button")?.querySelectorAll(".admin-user-modal-left-detail-button");
-
-    detailModelCloseButtons.forEach((detailModelCloseButton) => {
-        detailModelCloseButton.addEventListener('click', async () => {
-
-            // 모달창
-            const detailModel = document.querySelector(".admin-post-modal");
-            const detailModelBack = document.querySelector(".admin-user-modal-backdrop");
-
-            await detailModel.classList.add("hidden")
-            await detailModelBack.classList.add("hidden")
-        });
-    })
+detailBoxClosed.addEventListener('click', () => {
+    detailModel.classList.add("hidden")
+    detailModelBack.classList.add("hidden")
 })

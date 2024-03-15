@@ -853,4 +853,8 @@ textarea[name="send-content"]::-webkit-scrollbar {
     display: none;
 }
 
-
+.signal-none{
+    width: 800px;
+    padding-left: 443px;
+    padding-top: 141px;
+}

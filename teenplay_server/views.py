@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 
 from activity.models import Activity, ActivityReply
 from club.models import Club, ClubPost, ClubPostReply
+from letter.models import Letter
 from member.models import AdminAccount, Member
 from member.serializers import AdminAccountSerializer
 from notice.models import Notice
@@ -45,13 +46,13 @@ class AdminLoginView(View):
         return render(request, 'admin/web/user-web.html', context)
 
 
-# 유저 페이지 이동
+# 관리자 유저 - 페이지 이동
 class AdminUserView(View):
     def get(self, request):
         return render(request, 'admin/web/user-web.html')
 
 
-# 유저 데이터 가져오기
+# 관리자 유저 - 데이터 가져오기
 class AdminUserAPI(APIView):
     def get(self, request, page):
         order = request.GET.get('order', 'recent')
@@ -119,6 +120,7 @@ class AdminUserAPI(APIView):
         return Response(context)
 
 
+# 관리자 유저 - 상태 변경
 class AdminUserUpdateAPI(APIView):
     def patch(self, request, member_id):
         updated_date = timezone.now()
@@ -136,24 +138,170 @@ class AdminUserUpdateAPI(APIView):
         return Response('success')
 
 
-# 관리자 쪽지 관리 페이지 이동
+# 관리자 쪽지 - 페이지 이동
 class AdminMessageView(View):
     def get(self, request):
         return render(request, 'admin/web/message-web.html')
 
 
-# 관리자 틴 플레이 관리 페이지 이동
+# 관리자 쪽지 - API
+class AdminMessageAPI(APIView):
+    # 데이터 가져오기
+    def post(self, request):
+        data = request.data
+
+        order = data.get('order', 'recent')
+        page = data.get('page', 1)
+        category = data.get('category', '')
+        type = data.get('type', '')
+        keyword = data.get('keyword', '')
+        targetId = data.get('targetId', '')
+
+        row_count = 10
+
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        # 삭제되지 않은 쪽지만 가져오기
+        condition = Q(status=1)
+
+        # 멤버의 상태에 따른 카테고리 조회
+        if category:
+            condition &= Q(member__status=category)
+
+        # 검색 타입에 따른 검색 결과 필터
+        if type:
+            if keyword:
+                # 보낸 사람
+                if type == 's':
+                    condition &= Q(letter__sender_id__contains=keyword)
+
+                # 받은 사람
+                elif type == 'r':
+                    condition &= Q(letter__receiver_id__contains=keyword)
+
+        # 만약, targetID에 값이 있다면,
+        if targetId:
+            # conditions에 필터 추가
+            condition &= Q(id=targetId)
+
+        # total= 쪽지 개수 세기
+        total = Letter.objects.filter(condition).all().count()
+        # print(total)
+
+        # 보여질 데이터의 개수
+        page_count = 5
+
+        # 페이징 처리
+        end_page = math.ceil(page / page_count) * page_count
+        start_page = end_page - page_count + 1
+        real_end = math.ceil(total / row_count)
+        end_page = real_end if end_page > real_end else end_page
+
+        if end_page == 0:
+            end_page = 1
+
+        # context에 필드 담기
+        context = {
+            'category': category,
+            'total': total,
+            'order': order,
+            'start_page': start_page,
+            'end_page': end_page,
+            'real_end': real_end,
+            'page_count': page_count,
+        }
+
+        # 정렬(내림차순, 최신순)
+        ordering = '-id'
+        if order == 'popular':
+            ordering = '-post_read_count'
+
+        # colums 설정
+        # 보낸 사람
+        # 	letter__sent_letter__sender
+        #
+        # 받은 사람
+        # 	letter__received_letter__letter
+        #
+        # 보낸 날짜
+        # 	letter__created_date
+        columns = [
+            'id',
+            'sender_id',
+            'receiver_id',
+            'created_date',
+            'status',
+            'letter_content'
+        ]
+
+        # 쪽지 가져오기
+        letter = Letter.objects.filter(condition).values(*columns).order_by(ordering)
+        sender_name = letter.annotate(sender_name=F('sender_id__member_nickname'))
+        receiver_name = letter.annotate(receiver_name=F('receiver_id__member_nickname'))
+        is_read = letter.annotate(is_read=F('receivedletter__is_read')).filter(updated_date__isnull=False)
+        read_date = letter.annotate(read_date=F('receivedletter__updated_date')).filter(updated_date__isnull=False)
+        member_status = letter.annotate(member_status=F('sender_id__status'))
+
+        for i in range(len(list(letter))):
+            letter[i]['sender_name'] = sender_name[i]['sender_name']
+            letter[i]['receiver_name'] = receiver_name[i]['receiver_name']
+            letter[i]['is_read'] = is_read[i]['is_read']
+            letter[i]['read_date'] = read_date[i]['read_date']
+            letter[i]['member_status'] = member_status[i]['member_status']
+
+        context['letter'] = list(letter[offset:limit])
+        print(context['letter'])
+
+        return Response(context)
+
+
+class AdminMessageUpdateAPI(APIView):
+    # 회원 상태 변경
+    @transaction.atomic
+    def fetch(self, request, promote_id):
+        status = 0
+        updated_date = timezone.now()
+
+        club_post = ClubPost.objects.get(id=promote_id)
+        club_post.status = status
+        club_post.updated_date = updated_date
+        club_post.save(update_fields=['status', 'updated_date'])
+
+        return Response('success')
+
+
+# 관리자 쪽지 - 상태 변경
+class AdminMessageUpdateAPI(APIView):
+    def patch(self, request):
+        pass
+
+
+# 관리자 틴플레이 - 페이지 이동
 class AdminTeenplayView(View):
     def get(self, request):
         return render(request, 'admin/web/teenplay-web.html')
 
 
-# 관리자 게시글 - 홍보글 관리 페이지 이동
+# 관리자 틴플레이 - 데이터 가져오기
+class AdminTeenplayAPI(APIView):
+    def get(self, request, page):
+        pass
+
+
+# 관리자 틴플레이 - 삭제하기
+class AdminTeenplayDeleteAPI(APIView):
+    def delete(self, request):
+        pass
+
+
+# 관리자 게시글 홍보글 - 페이지 이동
 class AdminPromoteView(View):
     def get(self, request):
         return render(request, 'admin/web/promote-web.html')
 
 
+# 관리자 게시글 홍보글 - 데이터 가져오기
 class AdminPromoteAPI(APIView):
     def get(self, request, page):
         order = request.GET.get('order', 'recent')
@@ -169,13 +317,13 @@ class AdminPromoteAPI(APIView):
 
         if type:
             if keyword:
-                # 작성자
+                # 모임 이름
                 if type == 'w':
-                    condition &= Q(club__member__member_nickname__contains=keyword)
+                    condition &= Q(club__club_name__contains=keyword)
 
                 # 제목
                 elif type == 'p':
-                    condition &= Q(activity_title__contains=keyword)
+                    condition &= Q(post_title__contains=keyword)
 
         total = ClubPost.objects.filter(condition).all().count()
 
@@ -205,49 +353,50 @@ class AdminPromoteAPI(APIView):
         columns = [
             'id',
             'post_title',
+            'post_content',
+            'image_path',
             'created_date',
-            'view_count',
+            'view_count'
         ]
 
         club_post = ClubPost.objects.filter(condition).values(*columns).order_by(ordering)
+        club_name = club_post.annotate(club_name=F('club__club_name'))
+        club_reply_count = club_post.annotate(club_reply_count=Count('clubpostreply__id'))
+        club_post_category = club_post.annotate(club_post_category=F('category__category_name'))
 
-        club_name = club_post.annotate()
+        for i in range(len(list(club_post))):
+            club_post[i]['club_name'] = club_name[i]['club_name']
+            club_post[i]['club_reply_count'] = club_reply_count[i]['club_reply_count']
+            club_post[i]['club_post_category'] = club_post_category[i]['club_post_category']
 
-        activity = Activity.objects.filter(condition).values(*columns).order_by(ordering)
-        activity_writer = activity.annotate(activity_writer=F('club__member__member_nickname'))
-        member_count = activity.annotate(member_count=Count('activitymember__member__id'))
-
-        for i in range(len(list(activity))):
-            activity[i]['activity_writer'] = activity_writer[i]['activity_writer']
-            activity[i]['member_count'] = member_count[i]['member_count']
-
-        context['activity'] = list(activity[offset:limit])
+        context['club_post'] = list(club_post[offset:limit])
 
         return Response(context)
 
 
-# 홍보 게시글 삭제
+# 관리자 게시글 홍보글 - 데이터 삭제
 class AdminPromoteDeleteAPI(APIView):
     # 게시글 삭제
     @transaction.atomic
-    def delete(self, request, activity_id):
+    def delete(self, request, promote_id):
         status = 0
         updated_date = timezone.now()
 
-        activity = Activity.objects.get(id=activity_id)
-        activity.status = status
-        activity.updated_date = updated_date
-        activity.save(update_fields=['status', 'updated_date'])
+        club_post = ClubPost.objects.get(id=promote_id)
+        club_post.status = status
+        club_post.updated_date = updated_date
+        club_post.save(update_fields=['status', 'updated_date'])
 
         return Response('success')
 
 
-# 관리자 게시글 - 활동 모집글 관리 페이지 이동
+# 관리자 게시글 활동 모집 - 페이지 이동
 class AdminActivityView(View):
     def get(self, request):
         return render(request, 'admin/web/activity-web.html')
 
 
+# 관리자 게시글 활동 모집 - 데이터 가져오기
 class AdminActivityAPI(APIView):
     def get(self, request, page):
         order = request.GET.get('order', 'recent')
@@ -318,9 +467,8 @@ class AdminActivityAPI(APIView):
         return Response(context)
 
 
-# 위시리스트 게시글 삭제
+# 관리자 게시글 활동 모집 - 게시글 삭제
 class AdminActivityDeleteAPI(APIView):
-    # 게시글 삭제
     @transaction.atomic
     def delete(self, request, activity_id):
         status = 0
@@ -334,13 +482,13 @@ class AdminActivityDeleteAPI(APIView):
         return Response('success')
 
 
-# 관리자 게시글 - 위시리스트 관리 페이지 이동
+# 관리자 게시글 위시리스트 - 페이지 이동
 class AdminWishlistView(View):
     def get(self, request):
         return render(request, 'admin/web/wishlist-web.html')
 
 
-# 위시리스트 데이터
+# 관리자 게시글 위시리스트 - 데이터 가져오기
 class AdminWishlistAPI(APIView):
     def get(self, request, page):
         order = request.GET.get('order', 'recent')
@@ -423,10 +571,9 @@ class AdminWishlistAPI(APIView):
         return Response(context)
 
 
-# 위시리스트 게시글 삭제
-class AdminWishlistUpdateAPI(APIView):
-    # 게시글 삭제
-    def patch(self, request, wishlist_id):
+# 관리자 게시글 위시리스트 - 게시글 삭제
+class AdminWishlistDeleteAPI(APIView):
+    def delete(self, request, wishlist_id):
         status = 0
         updated_date = timezone.now()
 
@@ -438,30 +585,43 @@ class AdminWishlistUpdateAPI(APIView):
         return Response('success')
 
 
-# 관리자 전체 모임 관리 페이지 이동
+# 관리자 전체 모임 - 페이지 이동
 class AdminMeetingView(View):
     def get(self, request):
         return render(request, 'admin/web/meeting-web.html')
 
 
-# 관리자 축제 관리 페이지 이동
+# 관리자 전체 모임 - 데이터 가져오기
+class AdminMeetingAPI(APIView):
+    def get(self, request, page):
+        pass
+
+
+# 관리자 전체 모임 - 데이터 삭제
+class AdminMeetingDeleteAPI(APIView):
+    def delete(self, request):
+        pass
+
+
+# 관리자 축제 - 페이지 이동
 class AdminFestivalView(View):
     def get(self, request):
         return render(request, 'admin/web/festival-list-web.html')
 
 
-# 관리자 축제 작성 페이지 이동
+# 관리자 축제 작성 - 페이지 이동
 class AdminFestivalWrite(View):
     def get(self, request):
         return render(request, 'admin/web/festival-create-web.html')
 
 
-# 관리자 공지사항 관리 페이지 이동
+# 관리자 공지사항 - 페이지 이동
 class AdminNoticeView(View):
     def get(self, request):
         return render(request, 'admin/web/notice-list-web.html')
 
 
+# 관리자 공지사항 - 데이터 가져오기
 class AdminNoticePaginationAPI(APIView):
     def get(self, request, page):
         order = request.GET.get('order', 'recent')
@@ -525,7 +685,7 @@ class AdminNoticePaginationAPI(APIView):
         return Response(context)
 
 
-# 공지사항 삭제
+# 관리자 공지사항 - 데이터 삭제
 class AdminNoticeUpdateAPI(APIView):
     # 게시글 삭제
     def patch(self, request, notice_id):
@@ -540,15 +700,16 @@ class AdminNoticeUpdateAPI(APIView):
         return Response('success')
 
 
-# 관리자 공지사항 작성 페이지 이동
+## 관리자 공지사항 작성
 class AdminNoticeWriteView(View):
+    # 페이지 이동
     def get(self, request):
         return render(request, 'admin/web/notice-create-web.html')
 
+    # 작성
     @transaction.atomic
     def post(self, request):
         data = request.POST
-        print('들어옴 ㅎㅎ')
         data = {
             'notice_title': data['notice_title'],
             'notice_content': data['notice_content'],
@@ -559,13 +720,13 @@ class AdminNoticeWriteView(View):
         return redirect('/admin/notice/')
 
 
-# 관리자 댓글 관리 페이지 이동
+# 관리자 댓글 - 페이지 이동
 class AdminCommentView(View):
     def get(self, request):
         return render(request, 'admin/web/comment-web.html')
 
 
-# 관리자 댓글 데이터
+# 관리자 댓글 - 데이터 가져오기
 class AdminCommentAPI(APIView):
     def get(self, request, page):
         order = request.GET.get('order', 'recent')
@@ -683,14 +844,13 @@ class AdminCommentAPI(APIView):
         return Response(context)
 
 
+# 관리자 댓글 - 데이터 삭제
 class AdminCommentDeleteAPI(APIView):
-    # 게시글 삭제
     @transaction.atomic
     def delete(self, request):
         reply_id = request.GET.get('reply_id', '')
         reply_member_id = request.GET.get('reply_member_id', '')
         created_date = request.GET.get('created_date', '')
-        print('들어옴/?!')
 
         columns = [
             'member_name',
