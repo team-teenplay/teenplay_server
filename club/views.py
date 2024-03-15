@@ -154,7 +154,7 @@ class ClubOngoingActivityAPI(APIView):
         ongoing_activities = list(Activity.objects.filter(club=club, activity_end__gt=timezone.now(), status=1)
                                   .values('id', 'activity_title', 'thumbnail_path', 'activity_start',)
                                   .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1))))
-        print(ongoing_activities)
+
         for ongoing_activity in ongoing_activities:
             ongoing_activity['is_like'] = ActivityLike.enabled_objects.filter(activity=ongoing_activity['id'], member=member).exists()
 
@@ -375,7 +375,7 @@ class ClubPrPostListView(View):
         category = request.GET.get('category', '')
         order = request.GET.get('order', '최신순')
         page = request.GET.get('page', 1)
-        print(page)
+
         context = {
             'keyword': keyword,
             'category': category,
@@ -387,7 +387,7 @@ class ClubPrPostListView(View):
 
     def post(self, request):
         datas = request.POST
-        print(datas)
+
         context = {
             'keyword': datas.get('keyword', ''),
             'category': datas.get('category', ''),
