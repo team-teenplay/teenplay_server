@@ -201,22 +201,17 @@ checkModalCheckBtn.addEventListener("click", () => {
 });
 
 
-teenchinService.getList(member_id, page + 1).then((teenchin) => {
-    if (teenchin.length !== 0){
-        cansleButton.style.display = "flex";
-    }
-});
 
-teenchinService.getList(member_id, page + 1).then((teenchin) => {
-    if (teenchin.length === 0){
-        cansleButton.style.display = "none";
-    }
-});
+
+
+
+
 
 
 
 const showList = (teenchin) =>{
     let text = '';
+    console.log(teenchin)
     if (teenchin.length ===0){
             text +=
             `<div class="signal-none">아직 새로운 알림이 없습니다.</div>`
@@ -224,7 +219,6 @@ const showList = (teenchin) =>{
     else{
 
         teenchin.forEach((teenchin)=>{
-            console.log(teenchin)
             if (teenchin.is_friend === 1 && teenchin.receiver_id === parseInt(member_id) && teenchin.sender__memberprofile__profile_path ===null ){
             text += `
             <div class="teenchin-box">
@@ -518,7 +512,7 @@ const showList = (teenchin) =>{
                                 <div class="profile-img-gap"></div>
                             </div>
                             <div class="profile-info-contents">
-                                <div class="profile-name">${teenchin.receiver__memberprofile__profile_path}</div>
+                                <div class="profile-name">${teenchin.receiver__member_nickname}</div>
                                 <div class="profile-info-item">
                                     <div style="margin-right: 10px">
                                         <span>활동</span>
@@ -606,15 +600,6 @@ const showList = (teenchin) =>{
 }
 
 
-const teenchinBtns = document.querySelectorAll(".teenchin-btn");
-
-teenchinBtns.forEach((teenchinBtn) => {
-    teenchinBtn.addEventListener("click", (e) => {
-
-
-
-    });
-});
 
 
 
@@ -627,8 +612,9 @@ teenchinshow.addEventListener("click", async (e)=>{
         teenchinModalWrap.style.display = "flex";
         teenchinModalChangedBtn.addEventListener("click", async(e)=>{
             teenchinService.remove(delet)
-            const text = await teenchinService.getList(member_id, page,status_teenchin,search, showList);
-            teenchinshow.innerHTML = text;
+            await teenchinService.getList(member_id, 1,status_teenchin,search, showList).then((text) => {
+                teenchinshow.innerHTML = text;
+            });
             page = 1
         } )
 
@@ -641,14 +627,19 @@ teenchinshow.addEventListener("click", async (e)=>{
         teenchinModalWrap.style.display = "flex";
         teenchinModalCancleBtn.addEventListener("click", async(e) =>{
             teenchinService.remove(update)
-            const text = await teenchinService.getList(member_id, page,status_teenchin,search, showList);
-            teenchinshow.innerHTML = text;
+            await teenchinService.getList(member_id, 1,status_teenchin,search, showList).then((text) => {
+                teenchinshow.innerHTML = text;
+            });
             page = 1
+            await teenchinService.getList(member_id, page,).then((teenchin) => {
+            if (teenchin.length === 0){
+            cansleButton.style.display = "none";}})
         })
          teenchinModalChangedBtn.addEventListener("click", async(e) =>{
             teenchinService.update(update)
-            const text = await teenchinService.getList(member_id, page,status_teenchin,search, showList);
-            teenchinshow.innerHTML = text;
+            await teenchinService.getList(member_id, 1,status_teenchin,search, showList).then((text) => {
+                teenchinshow.innerHTML = text;
+            });
             page = 1
         })
     }if(e.target.classList[0] === 'teenchin-wait-btn'){
@@ -659,8 +650,9 @@ teenchinshow.addEventListener("click", async (e)=>{
         teenchinModalWrap.style.display = "flex";
         teenchinModalChangedBtn.addEventListener("click", async(e) =>{
             teenchinService.remove(update)
-            const text = await teenchinService.getList(member_id, page,status_teenchin,search, showList);
-            teenchinshow.innerHTML = text;
+            await teenchinService.getList(member_id, 1,status_teenchin,search, showList).then((text) => {
+                teenchinshow.innerHTML = text;
+            });
             page = 1
         })
     }if(e.target.classList[0] === 'send-letter-btn'){
@@ -674,14 +666,18 @@ teenchinshow.addEventListener("click", async (e)=>{
                 letter_content: sendText.value,
                 receiver_id : receiver
             })
-            const text = await teenchinService.getList(member_id, page,status_teenchin,search, showList);
-            teenchinshow.innerHTML = text;
+            await teenchinService.getList(member_id, 1,status_teenchin,search, showList).then((text) => {
+                teenchinshow.innerHTML = text;
+            });
             page = 1
 
         })
     }
 
 })
+
+
+// 페이지 로드 시 실행되는 부분
 
 
 
@@ -693,10 +689,10 @@ cansleButton.addEventListener("click", (e) => {
     });
 
     teenchinService.getList(member_id, page + 1,).then((teenchin) => {
-        console.log(teenchin)
     if (teenchin.length === 0){
         cansleButton.style.display = "none";
     }
+
 });
 
 });
@@ -711,3 +707,15 @@ teenchinService.getList(member_id, page,status_teenchin,search, showList).then((
 
 
 teenchinService.getList(member_id, page,status_teenchin,search,showList);
+
+
+teenchinService.getList(member_id, page,status_teenchin,search ).then((teenchin) => {
+    console.log(teenchin.length)
+if (teenchin.length === 0){
+    cansleButton.style.display = "none";
+}})
+teenchinService.getList(member_id, page+1,status_teenchin,search).then((teenchin) => {
+    console.log(teenchin.length)
+if (teenchin.length === 0){
+    cansleButton.style.display = "none";
+}})
