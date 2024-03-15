@@ -40,7 +40,7 @@ const createList = (sortList) => {
 }
 
 const activityListHandler = async (sort = '최신 개설순') => {
-    const sortList = await mypageActivityService.list(sort)
+    const sortList = await mypageActivityService.list(club_id, sort)
     createList(sortList)
 }
 activityListHandler()

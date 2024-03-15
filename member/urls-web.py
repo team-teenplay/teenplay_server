@@ -9,7 +9,9 @@ from member.views import MemberLoginWebView, MemberJoinWebView, MypageInfoWebVie
     MypageNoticeCreateView, MypageSettingView, MypageMemberFilerAPI, MypageMemberStatusAPI, \
     ClubAlarmManageAPI, MypageActivityLikeAPIVIEW, MypageActivityAPIVIEW, MypageActivityVIEW, ActivityManagentView, \
     ActivityListAPIView, ActivityMemberView, ActivityMemberListAPIView, ActivityMemberUpdateAPIView, \
-    ActivityMemberWriteAPI, ActivityEditView, MypageWishlistWebView, MypageWishlistAPIView, MypageWishlistDeleteAPIView
+    ActivityMemberWriteAPI, ActivityEditView, MypageNoticeModifyView, MypageSendLetterAPI, \
+    MypageMyClubView, MypageMyClubAPI, MypageClubDeleteView, MypageMyClubAlarmStatusAPI, \
+    MypageWishlistAPIView, MypageWishlistDeleteAPIView, MypageWishlistWebView
 
 app_name = 'member'
 
@@ -40,23 +42,31 @@ urlpatterns = [
     path('mypage-reply/<str:reply_id>/', MypageReplyDeleteAPIVIEW.as_view(), name="mypage-deletereply"),
     path('teenchin/api/', TeenChinAPI.as_view(), name="teenchin-api"),
     path('club-alarm/api/', ClubAlarmManageAPI.as_view(), name="club-alarm-manage-api"),
-    path('mypage-club/', MypageClubMainView.as_view(), name="mypage-club"),
-    path('mypage-activity-list/api/', MypageActivityListAPI.as_view(), name="mypage-activity-list-api"),
-    path('mypage-member/', MypageMemberView.as_view(), name="mypage-member"),
-    path('mypage-member-filter/api/', MypageMemberFilerAPI.as_view(), name="mypage-member-filter-api"),
-    path('mypage-member-status/api/', MypageMemberStatusAPI.as_view(), name="mypage-member-status-api"),
-    path('mypage-notice/', MypageNoticeView.as_view(), name="mypage-notice"),
-    path('mypage-notice/api/', MypageNoticeAPI.as_view(), name="mypage-notice-api"),
-    path('mypage-notice-write/', MypageNoticeCreateView.as_view(), name="mypage-create"),
-    path('mypage-setting/', MypageSettingView.as_view(), name="mypage-setting"),
+    path('mypage-my-club/', MypageMyClubView.as_view(), name="mypage-my-club"),
+    path('mypage-my-club/api/', MypageMyClubAPI.as_view(), name="mypage-my-club-api"),
+    path('mypage-my-club-alarm/<int:club_id>/', MypageMyClubAlarmStatusAPI.as_view(), name="mypage-my-club-alarm-api"),
+    path('mypage-club/<int:club_id>/', MypageClubMainView.as_view(), name="mypage-club"),
+    path('mypage-club-delete/<int:club_id>/', MypageClubDeleteView.as_view(), name="mypage-club-delete"),
+    path('mypage-activity-list/<int:club_id>/', MypageActivityListAPI.as_view(), name="mypage-activity-list-api"),
+    path('mypage-member/<int:club_id>/', MypageMemberView.as_view(), name="mypage-member"),
+    path('mypage-member-filter/<int:club_id>/', MypageMemberFilerAPI.as_view(), name="mypage-member-filter-api"),
+    path('mypage-member-status/<int:club_id>/', MypageMemberStatusAPI.as_view(), name="mypage-member-status-api"),
+    path('mypage-notice/<int:club_id>/', MypageNoticeView.as_view(), name="mypage-notice"),
+    path('mypage-notice-list/<int:club_id>/', MypageNoticeAPI.as_view(), name="mypage-notice-list-api"),
+    path('mypage-notice-write/<int:club_id>/', MypageNoticeCreateView.as_view(), name="mypage-create"),
+    path('mypage-notice-modify/<int:club_id>/', MypageNoticeModifyView.as_view(), name="mypage-modify"),
+    path('mypage-send-letter/api/', MypageSendLetterAPI.as_view(), name="mypage-send-letter-api"),
+    path('mypage-setting/<int:club_id>/', MypageSettingView.as_view(), name="mypage-setting"),
     path('mypage-activity/', MypageActivityVIEW.as_view(), name="mypage-activity"),
     path('mypage-activity/<int:member_id>/<int:page>/', MypageActivityAPIVIEW.as_view(), name="mypage-apiactivity"),
     path('mypage-activity/<int:activity_id>/', MypageActivityLikeAPIVIEW.as_view(), name="mypage-apiactivitylike"),
     path('activity/', ActivityManagentView.as_view(), name="management-activity"),
     path('activity/<int:member_id>/<int:page>/', ActivityListAPIView.as_view(), name="management-aipactivity"),
     path('activity-member/', ActivityMemberView.as_view(), name="management-activitymember"),
-    path('activity-member/<int:member_id>/<int:page>/<int:activity_id>/', ActivityMemberListAPIView.as_view(),name="management-aipactivitymember"),
-    path('activity-member/<int:activity_member_id>/', ActivityMemberUpdateAPIView.as_view(),name="managment-apiupdateactivitymember"),
+    path('activity-member/<int:member_id>/<int:page>/<int:activity_id>/', ActivityMemberListAPIView.as_view(),
+         name="management-aipactivitymember"),
+    path('activity-member/<int:activity_member_id>/', ActivityMemberUpdateAPIView.as_view(),
+         name="managment-apiupdateactivitymember"),
     path('activity-member/api/', ActivityMemberWriteAPI.as_view(), name="managment-apideleteactivitymember"),
     path('activity-edit/', ActivityEditView.as_view(), name="managment-edit"),
     path('mypage-wishlist/', MypageWishlistWebView.as_view(), name='mypage-wishlist'),
