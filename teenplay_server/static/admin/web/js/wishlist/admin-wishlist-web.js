@@ -306,6 +306,8 @@ mainUserBottomUl.addEventListener("click", (e) => {
 const modalDeleteOpenButtons = document.querySelectorAll(".member-user-list-button");
 // 전체 선택 버튼
 const statusName = document.querySelector(".main-user-status-name");
+// 전체 텍스트
+const statusNameText = document.querySelector(".main-user-total-text")
 
 wishlistData.addEventListener('click', (e) => {
     // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
@@ -327,6 +329,7 @@ wishlistData.addEventListener('click', (e) => {
                     deleteButton.classList.add("disabled");
                 }
             })
+            statusNameText.textContent = '전제 중';
             totalCount.textContent = checkedCount;
         });
     })
@@ -569,7 +572,7 @@ searchInput.addEventListener('keyup', (e) => {
 });
 
 
-// // ---------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 // 상세 보기
 // 상세 추가 태그
 const detailBox = document.querySelector(".detail-box")

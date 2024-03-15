@@ -12,10 +12,24 @@ clubNameInput.addEventListener("input", () => {
 const clubProfileUploadBtn = document.querySelector(".club-profile-upload-btn");
 const clubProfileUploadLabel = document.querySelector(".club-profile-input-label");
 const clubProfileInput = document.querySelector("#club-profile-input");
-
+const clubProfileThumbnail = document.querySelector('.club-profile-thumbnail')
 clubProfileUploadBtn.addEventListener("click", () => {
     clubProfileUploadLabel.click();
 });
+
+clubProfileInput.addEventListener('change', (e) => {
+    const targetInput = e.target;
+    const file = targetInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+        const path = event.target.result;
+        clubProfileThumbnail.setAttribute("src", path);
+    };
+    if (file) {
+        reader.readAsDataURL(file);
+    }
+})
 
 // 모임 프로필 업로드 시 이미지 확장자가 아니라면 오류 모달 표시
 
@@ -41,8 +55,51 @@ backgroundUploadBtn.addEventListener("click", () => {
     backgroundImgInput.click();
 });
 
-//
+const noneBackgroundWrap = document.querySelector(".none-background-wrap");
+const prevImgBox = document.querySelector('.prev-img-box')
+const prevCoverImg = () => {
+    if (clubBannerPath) {
+        noneBackgroundWrap.style.display = 'none'
+        prevImgBox.style.display = 'block'
+        const prevImgCancel = document.querySelector('.prev-img-cancel')
+        prevImgCancel.addEventListener('click', () => {
+            noneBackgroundWrap.style.display = 'block'
+            prevImgBox.style.display = 'none'
+            backgroundFileWrap.style.display = "none";
+            backgroundImgInput.value = ''
+        })
+    } else {
+        noneBackgroundWrap.style.display = 'block'
+        prevImgBox.style.display = 'none'
+        const backgroundUploadBtn = document.querySelector(".background-upload-btn");
+        const backgroundImgInput = document.querySelector(".background-img-input");
+        backgroundUploadBtn.addEventListener("click", () => {
+            backgroundImgInput.click();
+        });
+    }
+}
+prevCoverImg()
 
+const backgroundThumbnail = document.querySelector('.background-thumbnail')
+const prevImgBoxFn = () => {
+    backgroundImgInput.addEventListener('change', (e) => {
+        const targetInput = e.target;
+        const file = targetInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            const path = event.target.result;
+            backgroundThumbnail.setAttribute("src", path);
+            noneBackgroundWrap.style.display = 'none'
+            prevImgBox.style.display = 'block'
+
+        };
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    })
+}
+prevImgBoxFn()
 // 파일의 용량으로 단위를 계산하고 수정해주는 함수
 const getFileSizeWithExtension = (sizeInBytes) => {
     let fileSizeExt = new Array("bytes", "kb", "mb", "gb");
@@ -93,6 +150,7 @@ const createBackgroundInfo = () => {
 
 backgroundImgInput.addEventListener("change", () => {
     createBackgroundInfo();
+
 });
 
 // 확장자 오류 모달 닫는 이벤트
@@ -109,7 +167,10 @@ extensionErrorModalCloseBtn.addEventListener("click", () => {
 const backgroundCancleBox = document.querySelector(".background-cancle-box");
 
 backgroundCancleBox.addEventListener("click", () => {
+    prevImgBox.style.display = 'none'
     backgroundFileWrap.style.display = "none";
+    noneBackgroundWrap.style.display = 'block'
+    backgroundImgInput.value = ''
 });
 
 // 모임명, 담당자 이름, 이메일, 전화번호의 상태에 따라 발생하는 이벤트
@@ -143,7 +204,6 @@ clubManagerPhoneInput.addEventListener("input", () => {
 });
 checkInputValue();
 
-const noneBackgroundWrap = document.querySelector(".none-background-wrap");
 
 noneBackgroundWrap.addEventListener("dragenter", (e) => {
     e.preventDefault();

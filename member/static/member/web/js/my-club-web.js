@@ -19,48 +19,63 @@ tabs.forEach((tab) => {
     });
 });
 
-// 알림 버튼 클릭 시 알림 상태에 따라 다른 모달이 나오는 이벤트
-const signalBtns = document.querySelectorAll("#signal-btn");
-const messageMaodalContainer = document.querySelector(".message-maodal-container");
-const messageModalBox = document.querySelector(".message-modal-box");
+const alarmStatusHandler = () => {
 
-signalBtns.forEach((signalBtn) => {
-    signalBtn.addEventListener("click", (e) => {
-        let signalStatus = e.target.closest("#signal-btn").querySelector("span");
-        messageModalBox.style.animation = "popUp 0.5s";
+    const signalBtns = document.querySelectorAll("#signal-btn");
 
-        if (signalStatus.innerText == "알림 받는 중") {
-            signalStatus.innerText = "알림 설정";
 
-            e.target.closest("#signal-btn").className = "signal-off";
-            e.target.closest("#signal-btn").querySelector(".signal-on-svg").classList.replace("signal-on-svg", "signal-off-svg");
+    signalBtns.forEach((signalBtn) => {
+        signalBtn.addEventListener("click", async (e) => {
+            let signalStatus = e.target.closest("#signal-btn").querySelector("span");
+            let messageModalBox = document.querySelector(".message-modal-box");
 
-            messageModalBox.querySelector(".message-check-box").style.display = "none";
-            messageModalBox.querySelector(".modal-header-title").innerText = "모임 알림을 해제했습니다.";
-            messageModalBox.querySelector(".message-guide-ment").innerText = "더 이상 새로운 모임 알림을 받을 수 없습니다.";
-            messageModalBox.querySelector(".continuously-btn").innerText = "확인";
-            messageModalBox.querySelector(".club-page-btn").style.display = "none";
+            messageModalBox.style.animation = "popUp 0.5s";
 
-            messageMaodalContainer.style.display = "block";
-            return;
-        }
-        signalStatus.innerText = "알림 받는 중";
-        e.target.closest("#signal-btn").className = "signal-on";
-        e.target.closest("#signal-btn").querySelector(".signal-off-svg").classList.replace("signal-off-svg", "signal-on-svg");
-        messageModalBox.querySelector(".message-check-box").style.display = "";
-        messageModalBox.querySelector(".modal-header-title").innerText = "모임 알림을 설정했습니다.";
-        messageModalBox.querySelector(".message-guide-ment").innerText = "모임에 새로운 행사가 개설되면 알림으로 알려드려요";
-        messageModalBox.querySelector(".continuously-btn").innerText = "계속 살펴보기";
-        messageModalBox.querySelector(".club-page-btn").style.display = "";
-        messageMaodalContainer.style.display = "block";
+            if (signalStatus.innerText === "알림 받는 중") {
+
+                const clubId = e.target.closest('.club-box').classList[1]
+                await mypageClubAlarmStatusService.alarm(clubId)
+
+                signalStatus.innerText = "알림 설정";
+
+                e.target.closest("#signal-btn").className = "signal-off";
+                e.target.closest("#signal-btn").querySelector(".signal-on-svg").classList.replace("signal-on-svg", "signal-off-svg");
+                const messageMaodalContainer = document.querySelector(".message-maodal-container");
+                messageModalBox.querySelector(".message-check-box").style.display = "none";
+                messageModalBox.querySelector(".modal-header-title").innerText = "모임 알림을 해제했습니다.";
+                messageModalBox.querySelector(".message-guide-ment").innerText = "더 이상 새로운 모임 알림을 받을 수 없습니다.";
+                messageModalBox.querySelector(".continuously-btn").innerText = "확인";
+                messageModalBox.querySelector(".club-page-btn").style.display = "none";
+                messageMaodalContainer.style.display = "block";
+
+
+            } else if (signalStatus.innerText === "알림 설정") {
+
+                const clubId = e.target.closest('.club-box').classList[1]
+                await mypageClubAlarmStatusService.alarm(clubId)
+                signalStatus.innerText = "알림 받는 중";
+                e.target.closest("#signal-btn").className = "signal-on";
+                e.target.closest("#signal-btn").querySelector(".signal-off-svg").classList.replace("signal-off-svg", "signal-on-svg");
+                const messageMaodalContainer = document.querySelector(".message-maodal-container");
+                messageModalBox.querySelector(".message-check-box").style.display = "";
+                messageModalBox.querySelector(".modal-header-title").innerText = "모임 알림을 설정했습니다.";
+                messageModalBox.querySelector(".message-guide-ment").innerText = "모임에 새로운 행사가 개설되면 알림으로 알려드려요";
+                messageModalBox.querySelector(".continuously-btn").innerText = "계속 살펴보기";
+                messageModalBox.querySelector(".club-page-btn").style.display = "";
+                messageMaodalContainer.style.display = "block";
+            }
+
+        });
     });
-});
+}
 
-const moveBtns = document.querySelectorAll(".move-btn-box button");
 
-moveBtns.forEach((moveBtn) => {
-    moveBtn.addEventListener("click", () => {
-        if (moveBtn.className == "continuously-btn") {
+const modalBtnHandler = () => {
+    const messageModalBox = document.querySelector(".message-modal-box");
+
+    messageModalBox.addEventListener("click", (e) => {
+        const messageMaodalContainer = document.querySelector(".message-maodal-container");
+        if (e.target.closest('.continuously-btn')) {
             messageModalBox.style.animation = "popDown 0.5s";
             setTimeout(() => {
                 messageMaodalContainer.style.display = "none";
@@ -70,4 +85,99 @@ moveBtns.forEach((moveBtn) => {
             messageMaodalContainer.style.display = "none";
         }
     });
-});
+}
+
+
+const clubList = document.querySelector('.club-list')
+
+const createClubList = (sortList) => {
+    const clubListHTML = generateClubListHTML(sortList);
+    clubList.innerHTML = clubListHTML;
+
+}
+
+const generateClubListHTML = (sortList) => {
+    let clubListHTML = "";
+
+    sortList.forEach((club) => {
+        clubListHTML += `
+            <div class="club-box ${club.club_id}">
+                <div class="club-items">
+                    <!-- 모임 상세보기 이동 주소 필요 -->
+                    <a href="/member/mypage-club/${club.club_id}">
+                        <div class="club-profile-img-contents">
+                            <div class="club-profile-img-box">
+                                <img class="club-profile-img" src="/upload/${club.profile_path}" />
+                            </div>
+                            <div class="club-profile-img-gap"></div>
+                        </div>
+                        <div class="club-info-contents">
+                            <div class="club-name">${club.name}</div>
+                            <div class="club-info-item">${club.activity_count} <span>개의 활동</span></div>
+                        </div>
+                    </a>
+                    <div class="club-btn-container">
+                        <div class="club-btn-box">
+                            ${generateButtonHTML(club.join_status, club.alarms)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    return clubListHTML;
+}
+
+const generateButtonHTML = (joinStatus, alarms) => {
+    if (joinStatus === 2) {
+        return `
+            <button class="management-btn" type="button">
+                <svg viewBox="0 0 24 24" fill="rgb(36 93 203/var(--tw-text-opacity))"
+                     preserveAspectRatio="xMidYMid meet" class="management-svg" focusable="false"
+                     style="pointer-events: none">
+                    <g>
+                        <path
+                            d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"></path>
+                    </g>
+                </svg>
+                <span>관리하기</span>
+            </button>`;
+    } else if (joinStatus === -1) {
+        return `
+            <button class="club-wait-btn" type="button" disabled>
+                <svg class="check-svg" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C17.523 2 22 6.478 22 12C22 17.522 17.523 22 12 22C6.477 22 2 17.522 2 12C2 6.478 6.477 2 12 2ZM12 3.667C7.405 3.667 3.667 7.405 3.667 12C3.667 16.595 7.405 20.333 12 20.333C16.595 20.333 20.333 16.595 20.333 12C20.333 7.405 16.595 3.667 12 3.667ZM11.9987 14.5022C12.5502 14.5022 12.9973 14.9494 12.9973 15.5009C12.9973 16.0524 12.5502 16.4996 11.9987 16.4996C11.4471 16.4996 11 16.0524 11 15.5009C11 14.9494 11.4471 14.5022 11.9987 14.5022ZM11.9945 7C12.3742 6.9997 12.6882 7.2816 12.7381 7.64764L12.7451 7.7494L12.7487 12.251C12.749 12.6652 12.4135 13.0013 11.9993 13.0016C11.6196 13.0019 11.3055 12.72 11.2556 12.354L11.2487 12.2522L11.2451 7.7506C11.2447 7.33639 11.5802 7.00033 11.9945 7Z"></path>
+                </svg>
+                <span>가입대기</span>
+            </button>`;
+    } else if (alarms) {
+        return `
+            <button class="club-btn" type="button" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" class="check-svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                          clip-rule="evenodd"></path>
+                </svg>
+                <span>가입중</span>
+            </button>
+            <button id="signal-btn" class="signal-on" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" class="signal-on-svg" viewBox="0 0 20 20"
+                     fill="currentColor">
+                    <path
+                        d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path>
+                </svg>
+                <span>알림 받는 중</span>
+            </button>`;
+    }
+}
+
+
+const clubListHandler = async () => {
+    const sortList = await mypageClubListService.list()
+    createClubList(sortList)
+    modalBtnHandler()
+    alarmStatusHandler()
+}
+clubListHandler()
+
+

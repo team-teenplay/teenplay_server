@@ -86,56 +86,6 @@
                                                                 <div class="normal-content-divide">
                                                                     <div class="divide-line"></div>
                                                                 </div>
-                                                                <div>
-                                                                    <p class="item-title-text">공개 여부</p>
-                                                                    <div class="normal-item-contents">
-                                                                        <div class="normal-item f">
-                                                                            <input class="all-open" type="radio" id="eventus-radio" name="normal-radio" checked="true" />
-                                                                            <label class="radio-check-icon" for="eventus-radio">전체 공개</label>
-                                                                            <span class="label-desciption"> 누구나 이 행사페이지를 열람할 수 있어요.</span>
-                                                                        </div>
-                                                                        <div></div>
-                                                                        <div class="normal-item s">
-                                                                            <input class="all-open" type="radio" id="channel-radio" name="normal-radio" />
-                                                                            <label class="radio-small-check-icon" for="channel-radio">부분 공개</label>
-                                                                            <span class="label-desciption"> 틴친만 행사페이지를 열람할 수 있어요.</span>
-                                                                        </div>
-                                                                        <div class="normal-item t">
-                                                                            <input class="all-open" type="radio" id="none-radio" name="normal-radio" />
-                                                                            <label class="radio-none-check-icon" for="none-radio">공개하지 않음</label>
-                                                                            <span class="label-desciption"> 나만 확인 가능해요.</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="join-title-box">
-                                                                    <p class="join-title">모집 방법</p>
-                                                                    <div class="join-content-items">
-                                                                        <div class="join-radio-tie">
-                                                                            <span>
-                                                                                <input class="all-open" type="radio" id="join-teenplay-radio" checked="true" name="join-radio" />
-                                                                                <label class="teenplay-join" for="join-teenplay-radio"
-                                                                                    >틴친에서 모집해요.
-                                                                                    <i data-title="이벤터스에서 모집하면 홍보, 참가자관리, 사전 설문, 통계 데이터, 리포팅까지 올인원으로 관리할 수 있어요.👍🏻 " class="material-symbols-outlined tip"> release_alert </i>
-                                                                                </label>
-                                                                            </span>
-                                                                        </div>
-                                                                        <div class="out-join-tie">
-                                                                            <span>
-                                                                                <input class="all-open" type="radio" id="out-link-radio" name="join-radio" />
-                                                                                <label class="out-link-join" for="out-link-radio">외부 플랫폼/링크에서 모집해요 </label>
-                                                                            </span>
-                                                                            <div class="out-link-display">
-                                                                                <input class="outside-url" type="text" placeholder="https://" />
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="not-join-tie">
-                                                                            <span>
-                                                                                <input class="all-open" type="radio" id="not-join-radio" name="join-radio" />
-                                                                                <label class="not-join-text" for="not-join-radio">모집을 안 해요.</label>
-                                                                            </span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
                                                                 <div class="join-deadline-box">
                                                                     <p class="deadline-title">모집기한</p>
                                                                     <div class="deadline-content-tie">
@@ -145,13 +95,13 @@
                                                                             </div>
                                                                             <div class="deadline-choice-tie">
                                                                                 <div class="choice-date">
-                                                                                    <input class="datepicker" id="start-date" placeholder="날짜선택" autocomplete="off" />
+                                                                                    <input class="datepicker" id="start-date" placeholder="날짜선택" autocomplete="off" value="{{ activity.recruit_start |date:"Y.m.d" }}"/>
                                                                                     <div class="error-message-box-date">
                                                                                         <div class="error-message-text">필수 항목입니다.</div>
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="choice-time">
-                                                                                    <input class="timepicker" id="start-time" placeholder="시간선택" autocomplete="off" />
+                                                                                    <input class="timepicker" id="start-time" placeholder="시간선택" autocomplete="off" value="{{ activity.recruit_start |date:"h:00" }}" />
                                                                                     <div class="error-message-box-time">
                                                                                         <div class="error-message-text">필수 항목입니다.</div>
                                                                                     </div>
@@ -164,13 +114,13 @@
                                                                             </div>
                                                                             <div class="deadline-choice-tie">
                                                                                 <div class="choice-date">
-                                                                                    <input class="datepicker" id="end-date" placeholder="날짜선택" autocomplete="off" />
+                                                                                    <input class="datepicker" id="end-date" placeholder="날짜선택" autocomplete="off"  value="{{ activity.recruit_end |date:"Y.m.d" }}" />
                                                                                     <div class="error-message-box-date">
                                                                                         <div class="error-message-text">필수 항목입니다.</div>
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="choice-time">
-                                                                                    <input class="timepicker" id="end-time" placeholder="시간선택" autocomplete="off" />
+                                                                                    <input class="timepicker" id="end-time" placeholder="시간선택" autocomplete="off"  value="{{ activity.recruit_end |date:"h:00" }}"/>
                                                                                     <div class="error-message-box-time">
                                                                                         <div class="error-message-text">필수 항목입니다.</div>
                                                                                     </div>
@@ -186,14 +136,7 @@
                                                                     <div class="join-access-tie">
                                                                         <div class="join-access-aggree">
                                                                             <span>
-                                                                                <input class="all-open" type="radio" id="access-clear" name="access" checked="true" />
-                                                                                <label for="access-clear">자동</label>
-                                                                                <span class="access-description">사용자가 참가신청하면 자동으로 참가확정 상태가 돼요.</span>
-                                                                            </span>
-                                                                        </div>
-                                                                        <div class="join-access-aggree">
-                                                                            <span>
-                                                                                <input class="all-open" type="radio" id="access-non-clear" name="access" />
+                                                                                <input class="all-open" type="radio" id="access-non-clear" name="access" checked="true" />
                                                                                 <label for="access-non-clear">수동</label>
                                                                                 <span class="access-description">호스트가 참가신청 전까지 대기 상태입니다.</span>
                                                                             </span>
@@ -210,7 +153,7 @@
                                                                                 <div class="info-content">
                                                                                     <div class="content-item">
                                                                                         <input class="checked-in" type="checkbox" checked="checked" value="true" />
-                                                                                        <label for="">이름 *</label>
+                                                                                        <label for="">이름 {{ member.id }}</label>
                                                                                     </div>
                                                                                 </div>
                                                                                 <div class="info-content">
@@ -220,24 +163,6 @@
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="join-max-count">
-                                                                    <p class="join-max-count-title">대기자 접수</p>
-                                                                    <span class="join-max-count-sub-title"> 모집수량이 초과된 후에도 신청할 수 있어요. </span>
-                                                                    <div class="join-max-count-tie">
-                                                                        <div class="join-max-count-access">
-                                                                            <span>
-                                                                                <input class="all-open" type="radio" id="count-access" name="max-count" checked="true" />
-                                                                                <label for="count-access">사용</label>
-                                                                            </span>
-                                                                        </div>
-                                                                        <div class="join-max-count-access">
-                                                                            <span>
-                                                                                <input class="all-open" type="radio" id="non-count-access" name="max-count" />
-                                                                                <label for="non-count-access">사용 안함</label>
-                                                                            </span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -267,7 +192,7 @@
                                                                         <div class="detail-row">
                                                                             <div class="subject-own">
                                                                                 <div class="subject-select-box">
-                                                                                    <select class="subject-category" id="subject-category">
+                                                                                    <select class="subject-category" id="subject-category" value="{{ activity.category_id }}">
                                                                                         <option value="disabled" selected="selected">분야선택</option>
                                                                                         <option value="경영">경영</option>
                                                                                         <option value="경제/금융">경제/금융</option>
@@ -291,7 +216,7 @@
                                                                             <div class="error-message-text">필수 항목입니다.</div>
                                                                         </div>
                                                                         <div class="activity-row-input">
-                                                                            <input class="input-activity-title" id="activity-title-input" placeholder="텍스트 입력" type="text" autocomplete="off" />
+                                                                            <input class="input-activity-title" id="activity-title-input" placeholder="텍스트 입력" type="text" autocomplete="off" value="{{ activity.activity_title }}" />
                                                                         </div>
                                                                     </div>
                                                                     <div class="activity-intro">
@@ -300,7 +225,7 @@
                                                                     </div>
                                                                     <div class="activity-row">
                                                                         <div class="activity-col">
-                                                                            <input class="input-activity-intro" id="activity-intro-input" placeholder="소개글 입력" type="text" />
+                                                                            <input class="input-activity-intro" id="activity-intro-input" placeholder="소개글 입력" type="text" value="{{ activity.activity_intro }}" />
                                                                         </div>
                                                                     </div>
                                                                     <div class="activity-location">
@@ -309,32 +234,12 @@
                                                                             <div class="activity-location-select-col">
                                                                                 <div class="location-row-item-center">
                                                                                     <div class="location-row-item-col">
-                                                                                        <div class="location-select-box">
-                                                                                            <select class="location-select-default">
-                                                                                                <option value="place">도로명/지번 주소 검색</option>
-                                                                                                <option value="direct">직접 입력</option>
-                                                                                                <option value="not-yet" selected="selected">아직 정해지지 않음</option>
-                                                                                            </select>
-                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                         <div class="location-devide-container-row">
                                                                             <div class="location-devide-container-col">
-                                                                                <div class="input-location-map-title-row">
-                                                                                    <div class="input-location-map-title-col">
-                                                                                        <div>
-                                                                                            <span class="location-map-text-title"> 주소 </span>
-                                                                                            <div class="error-message-box-address">
-                                                                                                <div class="error-message-text">필수 항목입니다.</div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div>
-                                                                                            <input class="location-map-title-input-text" placeholder="마포대로 어딘가" name="location-content-input" autocomplete="off" />
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
                                                                                 <div class="activity-map-row">
                                                                                     <div class="activity-map-col">
                                                                                         <div class="activity-map-box">
@@ -355,7 +260,7 @@
                                                                                             </div>
                                                                                         </div>
                                                                                         <div>
-                                                                                            <input class="location-name-input-text" placeholder="프론트윈 16F" name="location-name-input" autocomplete="off" />
+                                                                                            <input class="location-name-input-text" placeholder="프론트윈 16F" name="location-name-input" autocomplete="off"  value="{{ activity.activity_address_location }}" />
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -365,7 +270,7 @@
                                                                                             <span class="location-content-title"> 장소설명 </span>
                                                                                         </div>
                                                                                         <div>
-                                                                                            <input class="location-content-input-text" placeholder="주차는 건물 지하에 하세요" name="location-content-input" autocomplete="off" />
+                                                                                            <input class="location-content-input-text" placeholder="주차는 건물 지하에 하세요" name="location-content-input" autocomplete="off" value="{{ activity.activity_address_detail }}" />
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>

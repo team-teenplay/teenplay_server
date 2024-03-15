@@ -249,7 +249,7 @@ menu, ol, ul {
 
 .activity-prfile {
     width: 2.5rem;
-    height: 2.5rem;
+    height: 1.5rem;
 }
 
 .activity-prfile-img {
@@ -528,12 +528,20 @@ menu, ol, ul {
     display: none;
 }
 
+#sorting-target {
+    font-weight: 400;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    padding-left: 37px;
+    padding-right: 37px;
+    cursor: pointer;
+}
 .sorting-target {
     font-weight: 400;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+    padding-left: 28px;
+    padding-right: 28px;
     cursor: pointer;
 }
 
@@ -850,4 +858,15 @@ menu, ol, ul {
     --tw-space-x-reverse: 0;
     margin-right: calc(1rem*var(--tw-space-x-reverse));
     margin-left: calc(1rem*(1 - var(--tw-space-x-reverse)));
+}
+
+.focus-page {
+    --tw-space-x-reverse: 0;
+    margin-right: calc(9px*var(--tw-space-x-reverse));
+    margin-left: calc(9px*(1 - var(--tw-space-x-reverse)));
+    --tw-text-opacity: 1;
+    color: rgb(248 250 251/var(--tw-text-opacity));
+    --tw-bg-opacity: 1;
+    background-color: #ce201b;
+    pointer-events: none;
 }

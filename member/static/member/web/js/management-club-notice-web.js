@@ -121,7 +121,7 @@ clubNoticeDelete.addEventListener('click', () => {
         }
     });
     const deleteBtn = document.querySelector('.delete-btn');
-    deleteBtn.addEventListener('click', ()=>{
-        clubNoticeService.del(list)
+    deleteBtn.addEventListener('click', async ()=>{
+        await clubNoticeService.del(club_id, list)
     })
 });

@@ -15,14 +15,14 @@
                 <div class="sud-header-container">
                     <div class="sud-header-box">
                         <!-- 모임 개요 페이지 주소 필요 -->
-                        <a class="sud-header-category" href="">활동 개요</a>
+                        <a class="sud-header-category" href="http://127.0.0.1:10000/member/activity/?activity_id={{ activity_id}}">활동 개요</a>
                         <!-- 구성원 페이지 주소 필요 -->
-                        <a class="sud-header-category select-category" href="">참가자</a>
+                        <a class="sud-header-category select-category" href="http://127.0.0.1:10000/member/activity-member/?activity_id={{ activity_id }}">참가자</a>
                         <!-- 모임 공지사항 페이지 주소 필요 -->
-                        <a class="sud-header-category" href="">활동 수정</a>
+                        <a class="sud-header-category" href="http://127.0.0.1:10000/member/activity-edit/?activity_id={{ activity_id }}">활동 수정</a>
                     </div>
                     <!-- 모임 상세페이지 주소 필요 -->
-                    <a class="clup-detail-link" href="" target="_blank">
+                    <a class="clup-detail-link" href="http://127.0.0.1:10000/activity/detail/?id={{ activity_id }}" target="_blank">
                         <span>활동 페이지 바로가기</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="move-svg" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
@@ -43,23 +43,23 @@
                         </div>
                     </div>
                     <div class="member-search-box">
-                        <select class="member-status-box" name="" id="">
-                            <option>전체 상태</option>
-                            <option>참가대기</option>
-                            <option>참가중</option>
+                        <select class="member-status-box" name="status" id="">
+                            <option value="">전체 상태</option>
+                            <option value="waiting">참가대기</option>
+                            <option value="attending">참가중</option>
                         </select>
                         <div>
-                            <input class="member-search-input" type="text" name="" id="" autocomplete="off" placeholder="이름,이메일" />
+                            <input class="member-search-input" type="text" name="" id="member-search-input" autocomplete="off" placeholder="이름,이메일" />
                         </div>
                     </div>
                     <div class="member-management-assistance">
                         <!-- (전체 구성원 수)개중 (페이지수)-(해당 페이지에 구성원 수)개 -->
-                        <div class="count-on-page">3개중 1-3개</div>
+                        <div class="count-on-page"></div>
                         <div class="send-letter-box">
                             <span class="checked-member-contents">
                                 <span>현재 선택된 참가자</span>
                                 <!-- 선택된 인원 수 표시 -->
-                                <span class="checked-member-count">0명</span>
+                                <span class="checked-member-count">명</span>
                             </span>
                             <span class="send-to-checked-member">쪽지 보내기</span>
                         </div>
@@ -72,7 +72,6 @@
                                 <div class="member-name-category">이름</div>
                                 <div class="member-email-category">이메일</div>
                                 <div class="member-age-gender-category">연령/성별</div>
-                                <div class="member-interest-area-category">관심지역</div>
                                 <div class="member-interest-filed-category">관심분야</div>
                                 <div class="member-status-category">상태</div>
                                 <div class="member-join-date-category">신청일</div>
@@ -80,91 +79,22 @@
                             </div>
                             <!-- 맴버 정보 리스트 -->
                             <div class="member-info-details">
-                                <div class="member-info-list">
-                                    <div class="member-select-wrap">
-                                        <div>
-                                            <div class="member-select-container">
-                                                <div class="member-select-box">
-                                                    <input type="checkbox" name="" id="member-checkbox" true-value="true" false-value="false" />
-                                                    <label class="member-checkbox-label" for="member-checkbox"></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="member-name">서경덕</div>
-                                    <div class="member-email">
-                                        <div class="email">dk******@naver.com</div>
-                                    </div>
-                                    <div class="member-age-gender">
-                                        <div class="age">29</div>
-                                        <div class="gender">남성</div>
-                                    </div>
-                                    <div class="member-interest-area">서울</div>
-                                    <div class="member-interest-filed">
-                                        <span>IT/프로그래밍외 1개 </span>
-                                    </div>
-                                    <div class="member-status">
-                                        <div class="member-status-join-btn">참가중</div>
-                                    </div>
-                                    <div class="member-join-date">
-                                        <div class="date">2024-02-10</div>
-                                    </div>
-                                    <div class="member-secessions">
-                                        <div class="member-secession-btn">취소</div>
-                                    </div>
-                                </div>
-                                <div class="member-info-list">
-                                    <div class="member-select-wrap">
-                                        <div>
-                                            <div class="member-select-container">
-                                                <div class="member-select-box">
-                                                    <input type="checkbox" name="" id="member-checkbox" true-value="true" false-value="false" />
-                                                    <label class="member-checkbox-label" for="member-checkbox"></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="member-name">서경덕</div>
-                                    <div class="member-email">
-                                        <div class="email">dk******@naver.com</div>
-                                    </div>
-                                    <div class="member-age-gender">
-                                        <div class="age">29</div>
-                                        <div class="gender">남성</div>
-                                    </div>
-                                    <div class="member-interest-area">서울</div>
-                                    <div class="member-interest-filed">
-                                        <span>IT/프로그래밍외 1개 </span>
-                                    </div>
-                                    <div class="member-status">
-                                        <div class="member-status-stand-btn">참가대기</div>
-                                    </div>
-                                    <div class="member-join-date">
-                                        <div class="date">2024-02-10</div>
-                                    </div>
-                                    <div class="member-secessions">
-                                        <div class="member-secession-btn">취소</div>
-                                    </div>
-                                </div>
+                                
+                                
                             </div>
                             <!-- 페이지네이션 버튼 부분(1페이지당 6개) -->
                             <div class="pagination-wrap">
                                 <div class="pagination-container">
                                     <div class="pagination-box">
-                                        <button class="prev-btn disabled" type="button">
+                                        <button class="next-btn" type="button" id="leftButton">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="left-svg" viewBox="0 0 20 20" fill="currentColor">
                                                 <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                             </svg>
                                         </button>
-                                        <div class="pagination-number-box">
-                                            <button class="page-number-btn seleced-page-number-btn" type="button">
-                                                <div class="page-number">1</div>
-                                            </button>
-                                            <button class="page-number-btn" type="button">
-                                                <div class="page-number">2</div>
-                                            </button>
+                                        <div class="pagination-number-box" id="pageButtons">
+
                                         </div>
-                                        <button class="next-btn" type="button">
+                                        <button class="next-btn" type="button" id="rightButton">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="right-svg" viewBox="0 0 20 20" fill="currentColor">
                                                 <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                                             </svg>
@@ -211,7 +141,7 @@
                             <div class="sender-box">
                                 <div class="sender-title">보낸 사람</div>
                                 <!-- 회원의 이름과 이메일이 필요 -->
-                                <div class="send-sender-email">아무개(example@sample.com)</div>
+                                <div class="send-sender-email">{{ request.session.member.member_nickname }}({{ request.session.member.member_email }})</div>
                             </div>
                             <div class="receiver-box">
                                 <div class="receiver-title">받는 사람</div>
@@ -364,5 +294,44 @@
 {% endblock %}
 
 {% block js %}
+    <script>
+            
+    const csrf_Token = '{{ csrf_token }}';
+    const member_id = '{{ request.session.member.id }}'
+    const activity_id = '{{ activity_id }}'
+
+    const statussel = document.querySelector(".member-status-box");
+    let member_status = '';
+    statussel.addEventListener("change", async (e)=> {
+    member_status = statussel.value;
+    page = 1
+    currentPage = 1
+    await activityMemberService.getList(member_id, page,activity_id,member_status,search, showList).then((text) => {
+    inner.innerHTML = text;
+    updatePageButtons();
+    insertCheckedMemberCount();
+});
+});
+    
+    let search = '';
+    const textInsert = document.getElementById("member-search-input");
+    textInsert.addEventListener("keyup", async (e) => {
+        if (e.keyCode  === 13 ) {
+            search = textInsert.value;  // 수정: 변수에 입력된 텍스트 할당
+            console.log(search);  // 예시: 할당된 값을 콘솔에 출력
+            textInsert.value = ''
+            page = 1
+            currentPage = 1
+            await activityMemberService.getList(member_id, page,activity_id,member_status,search, showList).then((text) => {
+            inner.innerHTML = text;
+            updatePageButtons();
+            insertCheckedMemberCount();
+            });
+            
+        }
+    });
+
+    </script>
+    <script src="{% static 'member/web/js/management-activity-module-module-web.js'%}"></script>
     <script src="{% static 'member/web/js/management-activity-member-web.js'%}"></script>
 {% endblock %}

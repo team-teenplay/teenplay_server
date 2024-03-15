@@ -812,7 +812,7 @@ color: #9ca3af;
     margin: 0;
 }
 
-.main-comment-list{
+.main-user-list{
     padding-top: 16px;
     padding-bottom: 16px;
     padding-left: 8px;
@@ -1097,7 +1097,6 @@ background-color: #FFF0EE;
   }
   
   .admin-user-modal-title{
-  
     font-weight: 700;
     font-size: 20px;
     line-height: 28px;
@@ -1549,7 +1548,7 @@ background-color: #FFF0EE;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    width: 130px;
+    /*width: 130px;*/
     height: 36px;
     justify-content: center;
     align-items: center;
@@ -1631,6 +1630,10 @@ margin-left: 16px;}
     padding: 0;
 }
 
+. {
+    background-color: #CE201B;
+}
+
 .add-color{
     background-color: #CE201B;
 }
@@ -1646,6 +1649,16 @@ margin-left: 16px;}
 }
 
 .toggle-button.disabled:hover {
+    border-color: #F2F4F5;
+    background-color: #F2F4F5;
+}
+.main-festival-add-top-create-button.disabled {
+    border-color: #F2F4F5;
+    background-color: #F2F4F5;
+    cursor: default;
+}
+
+.main-festival-add-top-create-button.disabled:hover {
     border-color: #F2F4F5;
     background-color: #F2F4F5;
 }

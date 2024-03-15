@@ -92,7 +92,7 @@ const showList =(pay) =>{
                                 <div class="payment-activity-thumbnail-wrap">
                                     <div class="payment-activity-thumbnail-container">
                                         <!-- 해당 활동 상세보기 주소 필요 -->
-                                        <a href="" target="_blank">
+                                        <a href="http://127.0.0.1:10000/member/activity/?activity_id=${pay.id}" target="_blank">
                                             <!-- 해당 활동의 썸네일 경로 필요 -->
                                             <img class="payment-activity-thumbnail" src="/upload/${pay.member__club__club_profile_path}" />
                                         </a>

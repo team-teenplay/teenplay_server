@@ -16,13 +16,13 @@
             <div class="sud-header-container">
                 <div class="sud-header-box">
                     <!-- 모임 개요 페이지 주소 필요 -->
-                    <a class="sud-header-category" href="">모임 개요</a>
+                    <a class="sud-header-category" href="/member/mypage-club/{{ club_id }}">모임 개요</a>
                     <!-- 구성원 페이지 주소 필요 -->
-                    <a class="sud-header-category" href="">구성원</a>
+                    <a class="sud-header-category" href="/member/mypage-member/{{ club_id }}">구성원</a>
                     <!-- 모임 공지사항 페이지 주소 필요 -->
-                    <a class="sud-header-category select-category" href="">모임 공지사항</a>
+                    <a class="sud-header-category select-category" href="/member/mypage-notice/{{ club_id }}">모임 공지사항</a>
                     <!-- 모임 설정 페이지 주소 필요 -->
-                    <a class="sud-header-category" href="">모임 설정</a>
+                    <a class="sud-header-category" href="/member/mypage-setting/{{ club_id }}">모임 설정</a>
                 </div>
                 <!-- 모임 상세페이지 주소 필요 -->
                 <a class="club-detail-link" href="" target="_blank">
@@ -43,7 +43,7 @@
                         <div class="club-notice-tool">
                             <button class="club-notice-delete" type="button" disabled>공지 삭제</button>
                             <!-- 공지 작성 주소 필요 -->
-                            <a class="club-notice-write" href="/member/mypage-notice-write/">공지 작성</a>
+                            <a class="club-notice-write" href="/member/mypage-notice-write/{{club_id}}">공지 작성</a>
                         </div>
                     </div>
                     <div class="club-notice-box">
@@ -88,7 +88,8 @@
                                             <div class="club-notice-date">{{ clubNotice.created_date }}</div>
                                             <div class="club-notice-modify">
                                                 <!-- 수정하기 링크 필요 -->
-                                                <a class="club-notice-modify-link" href="/member/mypage-notice-modify/?id={{ clubNotice.id }}">수정</a>
+                                                <a class="club-notice-modify-link"
+                                                   href="/member/mypage-notice-modify/{{ club_id }}/?id={{ clubNotice.id }}">수정</a>
                                             </div>
                                         </div>
                                         <div class="club-notice-content-box">
@@ -152,6 +153,7 @@
 {% block js %}
     <script>
         const csrf_token = '{{ csrf_token }}';
+        const club_id = '{{ club_id }}';
     </script>
     <script src="{% static 'member/web/js/management-mypage-module.js' %}"></script>
     <script src="{% static 'member/web/js/management-club-notice-web.js' %}"></script>

@@ -29,7 +29,7 @@ const CreateService = (() => {
             }
             text += `
                 <div class="main-user-list-detail">
-                        <button class="member-user-list-detail-button toggle-button" data-target="${page.id}">상세보기</button>
+                        <button class="member-user-list-detail-button toggle-button" data-id="${page.id}">상세보기</button>
                     </div>
                 </li>
             `
@@ -145,7 +145,59 @@ const CreateService = (() => {
         return text;
     }
 
-    return { showList: showList, showPaging: showPaging, CountText: CountText }
+    const showDetail = (pagination) => {
+        let text = ``;
+        pagination.notices.forEach((page) => {
+            console.log(page)
+            text += `
+                <div id="admin-post-modal" class="admin-post-modal hidden">
+                    <h4 class="admin-post-modal-title">공지사항 상세보기</h4>
+                    <div class="admin-post-modal-warp">
+                        <!-- 여기서부터 안에 들어가는거 하나씩 / 각각 빈 div하나 만들고 안에서 생성 -->
+                        <div class="titleqq">
+                            <p class="admin-post-modal-title-name">공지사항 제목</p>
+                            <label class="admin-post-modal-title-label">
+                                <input oninput="updateButtonStatus()" type="text" class="admin-post-modal-title-input" value="${page.notice_title}" />
+                            </label>
+                            <!-- 값 미입력시 -->
+                            <div id="red-title" class="hidden">
+                                <div class="redbox">
+                                    <svg viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" class="redfont">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12.008 22.05c5.523.023 10.019-4.436 10.042-9.959.023-5.523-4.436-10.018-9.959-10.041C6.568 2.027 2.073 6.485 2.05 12.008c-.023 5.523 4.435 10.019 9.958 10.042Zm1.527-6.494a1.5 1.5 0 1 1-3-.013 1.5 1.5 0 0 1 3 .013Zm-1.181-2.505a.5.5 0 0 0 .498-.436l.646-4.997a.5.5 0 0 0-.494-.564l-1.867-.008a.5.5 0 0 0-.499.56l.604 5.002a.5.5 0 0 0 .495.44l.617.003Z"></path>
+                                    </svg>
+                                    값을 입력해주세요.
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="admin-post-modal-content-name">공지사항 내용</p>
+                            <label class="admin-post-modal-content-label">
+                                <textarea oninput="updateButtonStatus()" class="admin-post-modal-content-input">${page.notice_content}</textarea>
+                            </label>
+                            <!-- 값 미입력시 -->
+                            <div id="red-content" class="hidden">
+                                <div class="redbox">
+                                    <svg viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" class="redfont">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12.008 22.05c5.523.023 10.019-4.436 10.042-9.959.023-5.523-4.436-10.018-9.959-10.041C6.568 2.027 2.073 6.485 2.05 12.008c-.023 5.523 4.435 10.019 9.958 10.042Zm1.527-6.494a1.5 1.5 0 1 1-3-.013 1.5 1.5 0 0 1 3 .013Zm-1.181-2.505a.5.5 0 0 0 .498-.436l.646-4.997a.5.5 0 0 0-.494-.564l-1.867-.008a.5.5 0 0 0-.499.56l.604 5.002a.5.5 0 0 0 .495.44l.617.003Z"></path>
+                                    </svg>
+                                    값을 입력해주세요.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 버튼 아래 있는것들 -->
+                    <div class="admin-user-modal-button">
+                        <div class="admin-user-modal-left">
+                            <button class="admin-user-modal-left-detail-button" id="modalCloseButton">취소</button>
+                        </div>
+                    </div>
+            </div>
+            `
+        })
+        return text;
+    }
+
+    return { showList: showList, showPaging: showPaging, CountText: CountText, showDetail:showDetail }
 })();
 
 
@@ -255,6 +307,8 @@ mainUserBottomUl.addEventListener("click", (e) => {
 const modalDeleteOpenButtons = document.querySelectorAll(".member-user-list-button");
 // 전체 선택 버튼
 const statusName = document.querySelector(".main-user-status-name");
+// 전체 텍스트
+const statusNameText = document.querySelector(".main-user-total-text")
 
 noticeData.addEventListener('click', (e) => {
     // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
@@ -276,6 +330,7 @@ noticeData.addEventListener('click', (e) => {
                     deleteButton.classList.add("disabled");
                 }
             })
+            statusNameText.textContent = '전제 중';
             totalCount.textContent = checkedCount;
         });
     })
@@ -293,7 +348,7 @@ const modalDeleteButtons = document.querySelectorAll(".admin-user-modal-right-bu
 
 // 상태변경
 const deletemodal = document.getElementById("admin-user-modal");
-const deletemodalBack = document.getElementById("admin-user-modal-backdrop");
+const deletemodalBack = document.querySelector(".delete-box-backdrop");
 
 let currentTargetLi;
 
@@ -468,3 +523,64 @@ searchInput.addEventListener('keyup', (e) => {
         })
     }
 });
+
+
+
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// 상세 보기
+// 상세 추가 태그
+const detailBox = document.querySelector(".detail-box")
+
+noticeData.addEventListener('click', (e) => {
+    // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
+    // main-user-list가 있으면 옵셔널 체이닝(?.)을 사용하여 프로퍼티에 접근해 main-comment-list-checkbox를 찾기
+    const showDetailButtons = e.target.closest(".main-user-list-detail")?.querySelectorAll(".member-user-list-detail-button");
+
+    console.log(showDetailButtons)
+    showDetailButtons.forEach((showDetailButton) => {
+        showDetailButton.addEventListener('click', async () => {
+            console.log(showDetailButton)
+            let targetID = showDetailButton.getAttribute("data-id");
+            console.log(targetID)
+
+            await adminNoticeService.showDetail(page, targetID, CreateService.showDetail).then((text) => {
+                console.log("작동중")
+                detailBox.innerHTML = text;
+            })
+
+            // 모달창
+            const detailModel = document.querySelector(".admin-post-modal");
+            const detailModelBack = document.querySelector(".detail-box-backdrop");
+
+            await detailModel.classList.remove("hidden");
+            await detailModelBack.classList.remove("hidden");
+        });
+    })
+})
+
+detailBox.addEventListener('click', (e) => {
+    // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
+    // main-user-list가 있으면 옵셔널 체이닝(?.)을 사용하여 프로퍼티에 접근해 main-comment-list-checkbox를 찾기
+    // 모달 닫기 버튼
+    const detailModelCloseButtons = e.target.closest(".admin-user-modal-button")?.querySelectorAll(".admin-user-modal-left-detail-button");
+
+    detailModelCloseButtons.forEach((detailModelCloseButton) => {
+        detailModelCloseButton.addEventListener('click', async () => {
+
+            // 모달창
+            const detailModel = document.querySelector(".admin-post-modal");
+            const detailModelBack = document.querySelector(".detail-box-backdrop");
+
+            await detailModel.classList.add("hidden")
+            await detailModelBack.classList.add("hidden")
+        });
+    })
+})
+
+
+
+
+
+// ---------------------------------------------------------------------------------------------------------------------
