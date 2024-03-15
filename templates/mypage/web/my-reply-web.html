@@ -165,10 +165,9 @@
             currentPage = 1
             const text = await replyService.getList(member_id, currentPage, status_reply, showList);
             inner.innerHTML = text;
-            replyService.getList(member_id, 1, status_reply, async (reply, total_pages) => {
+            await replyService.getList(member_id, 1, status_reply, async (reply, total_pages) => {
             maxPage = total_pages;
-
-            updatePageButtons();
+            await updatePageButtons();
 
             })
         })
