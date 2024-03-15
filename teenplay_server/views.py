@@ -147,12 +147,15 @@ class AdminMessageView(View):
 # 관리자 쪽지 - API
 class AdminMessageAPI(APIView):
     # 데이터 가져오기
-    def get(self, request, page):
-        order = request.GET.get('order', 'recent')
-        category = request.GET.get('category', '')
-        type = request.GET.get('type', '')
-        keyword = request.GET.get('keyword', '')
-        targetId = request.GET.get('targetId', '')
+    def post(self, request):
+        data = request.data
+
+        order = data.get('order', 'recent')
+        page = data.get('page', 1)
+        category = data.get('category', '')
+        type = data.get('type', '')
+        keyword = data.get('keyword', '')
+        targetId = data.get('targetId', '')
 
         row_count = 10
 
@@ -184,7 +187,7 @@ class AdminMessageAPI(APIView):
 
         # total= 쪽지 개수 세기
         total = Letter.objects.filter(condition).all().count()
-        print(total)
+        # print(total)
 
         # 보여질 데이터의 개수
         page_count = 5
@@ -234,21 +237,26 @@ class AdminMessageAPI(APIView):
 
         # 쪽지 가져오기
         letter = Letter.objects.filter(condition).values(*columns).order_by(ordering)
-        is_read = letter.annotate(is_read=F('receivedletter__is_read'))
-        read_date = letter.annotate(read_date=F('receivedletter__updated_date'))
-        print(read_date)
-        member_status = letter.annotate(member_status=F('sender_id__member__status'))
+        sender_name = letter.annotate(sender_name=F('sender_id__member_nickname'))
+        receiver_name = letter.annotate(receiver_name=F('receiver_id__member_nickname'))
+        is_read = letter.annotate(is_read=F('receivedletter__is_read')).filter(updated_date__isnull=False)
+        read_date = letter.annotate(read_date=F('receivedletter__updated_date')).filter(updated_date__isnull=False)
+        member_status = letter.annotate(member_status=F('sender_id__status'))
 
         for i in range(len(list(letter))):
+            letter[i]['sender_name'] = sender_name[i]['sender_name']
+            letter[i]['receiver_name'] = receiver_name[i]['receiver_name']
             letter[i]['is_read'] = is_read[i]['is_read']
             letter[i]['read_date'] = read_date[i]['read_date']
             letter[i]['member_status'] = member_status[i]['member_status']
 
         context['letter'] = list(letter[offset:limit])
+        print(context['letter'])
 
         return Response(context)
 
 
+class AdminMessageUpdateAPI(APIView):
     # 회원 상태 변경
     @transaction.atomic
     def fetch(self, request, promote_id):

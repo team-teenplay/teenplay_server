@@ -87,9 +87,9 @@
                                                     </button>
                                                     <div>
                                                         <!-- 검색창 모달 -->
-                                                        <ul id="admin-message-modal-search" class="hidden">
-                                                            <button class="admin-message-modal-search-send">보낸사람</button>
-                                                            <button class="admin-message-modal-search-receive">받은사람</button>
+                                                        <ul id="admin-message-modal-search" class="admin-message-modal-search hidden">
+                                                            <button class="admin-message-modal-search-send type" value="s">보낸사람</button>
+                                                            <button class="admin-message-modal-search-receive type" value="r">받은사람</button>
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -127,10 +127,10 @@
                                                 </div>
                                             </button>
                                             <!-- 공개 비공개 모달창 -->
-                                            <ul id="admin-message-modal-search-add" class="hidden">
-                                                <button class="admin-message-modal-search-receive-add">전체</button>
-                                                <button class="admin-message-modal-search-send-add">활동중</button>
-                                                <button class="admin-message-modal-search-donotreceive-add">정지</button>
+                                            <ul id="admin-message-modal-search-add" class="admin-message-modal-search-add hidden">
+                                                <button class="admin-message-modal-search-receive-add category" value="">전체</button>
+                                                <button class="admin-message-modal-search-send-add category" value="1">활동중</button>
+                                                <button class="admin-message-modal-search-donotreceive-add category" value="0">정지</button>
                                             </ul>
                                         </div>
                                     </div>
@@ -253,31 +253,33 @@
 
     <!-- 회원정지 모달창 -->
     <div id="admin-user-modal" class="admin-user-modal hidden">
-        <h4 class="admin-user-modal-title">정지사유를 작성해주세요!</h4>
-        <div>
-            <div>
-                <textarea class="admin-user-modal-text" id="modal-text" oninput="resizeTextarea()"></textarea>
-            </div>
-        </div>
+        <h4 class="admin-user-modal-title">정말 변경하시겠습니까?</h4>
+{#        <div>#}
+{#            <div>#}
+{#                <textarea class="admin-user-modal-text" id="modal-text" oninput="resizeTextarea()"></textarea>#}
+{#            </div>#}
+{#        </div>#}
         <div class="admin-user-modal-button">
             <div class="admin-user-modal-left">
                 <button class="admin-user-modal-left-button" id="modalCloseButton">취소</button>
             </div>
             <div class="admin-user-modal-right">
-                <button class="admin-user-modal-right-button" id="modalApplyButton">적용하기</button>
+                <button class="admin-user-modal-right-button" id="modalApplyButton">변경하기</button>
             </div>
         </div>
     </div>
     <div id="admin-user-modal-backdrop" class="admin-user-modal-backdrop hidden"></div>
     <!-- 메시지 모달창 -->
-    <div id="admin-message-modal" class="hidden">
-        <h4 class="admin-message-modal-title">메시지 내용</h4>
-        <div>
-            <textarea type="text" readonly class="admin-user-modal-text-message" id="modal-message-text" oninput="resizeTextarea()"></textarea>
-        </div>
-        <div class="admin-message-modal-button">
-            <div class="admin-message-modal-left">
-                <button class="admin-message-modal-left-button" id="modalCloseButton">닫기</button>
+    <div class="detail-box">
+        <div id="admin-message-modal" class="admin-message-modal hidden">
+            <h4 class="admin-message-modal-title">메시지 내용</h4>
+            <div>
+                <textarea name="content" type="text" readonly class="admin-user-modal-text-message" id="modal-message-text"></textarea>
+            </div>
+            <div class="admin-message-modal-button">
+                <div class="admin-message-modal-left">
+                    <button class="admin-message-modal-left-button" id="modalCloseButton">닫기</button>
+                </div>
             </div>
         </div>
     </div>

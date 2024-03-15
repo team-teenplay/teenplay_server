@@ -1500,6 +1500,21 @@ margin-left: 16px;}
     background-color: #CE201B;
 }
 
+.add-text-color{
+    color: #FFFFFF!important;
+}
+
+.toggle-button.disabled {
+    border-color: #F2F4F5;
+    background-color: #F2F4F5;
+    cursor: default;
+}
+
+.toggle-button.disabled:hover {
+    border-color: #F2F4F5;
+    background-color: #F2F4F5;
+}
+
     
 .main-user-number{
     font-weight: 700;
