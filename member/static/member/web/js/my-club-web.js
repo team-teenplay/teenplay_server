@@ -47,6 +47,9 @@ const alarmStatusHandler = () => {
                 messageModalBox.querySelector(".continuously-btn").innerText = "확인";
                 messageModalBox.querySelector(".club-page-btn").style.display = "none";
                 messageMaodalContainer.style.display = "block";
+                messageModalBox.querySelector(".club-page-btn").addEventListener('click', ()=>{
+                    window.location = `/member/mypage-club/${clubId}`
+                })
 
 
             } else if (signalStatus.innerText === "알림 설정") {
@@ -104,7 +107,7 @@ const generateClubListHTML = (sortList) => {
             <div class="club-box ${club.club_id}">
                 <div class="club-items">
                     <!-- 모임 상세보기 이동 주소 필요 -->
-                    <a href="/member/mypage-club/${club.club_id}">
+                    <a href="${club.join_status === 2 ? '/member/mypage-club/' + club.club_id :'/club/detail/?id=' + club.club_id }">
                         <div class="club-profile-img-contents">
                             <div class="club-profile-img-box">
                                 <img class="club-profile-img" src="/upload/${club.profile_path}" />
@@ -118,7 +121,7 @@ const generateClubListHTML = (sortList) => {
                     </a>
                     <div class="club-btn-container">
                         <div class="club-btn-box">
-                            ${generateButtonHTML(club.join_status, club.alarms)}
+                            ${generateButtonHTML(club.join_status, club.alarms, club.club_id)}
                         </div>
                     </div>
                 </div>
@@ -128,10 +131,10 @@ const generateClubListHTML = (sortList) => {
     return clubListHTML;
 }
 
-const generateButtonHTML = (joinStatus, alarms) => {
+const generateButtonHTML = (joinStatus, alarms, club_id) => {
     if (joinStatus === 2) {
         return `
-            <button class="management-btn" type="button">
+            <a class="management-btn" href="/member/mypage-club/${club_id}">
                 <svg viewBox="0 0 24 24" fill="rgb(36 93 203/var(--tw-text-opacity))"
                      preserveAspectRatio="xMidYMid meet" class="management-svg" focusable="false"
                      style="pointer-events: none">
@@ -141,7 +144,7 @@ const generateButtonHTML = (joinStatus, alarms) => {
                     </g>
                 </svg>
                 <span>관리하기</span>
-            </button>`;
+            </a>`;
     } else if (joinStatus === -1) {
         return `
             <button class="club-wait-btn" type="button" disabled>
