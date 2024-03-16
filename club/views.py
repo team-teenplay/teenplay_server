@@ -459,7 +459,7 @@ class ClubTeenplayAPIView(APIView):
         context = {
             'member': request.session['member'],
             'club': Club.objects.filter(id=club_id).values(),
-            'teenplay_list': TeenPlay.enable_objects.filter(club=club_id).annotate(like_count=Count('teenplaylike__status')).values('like_count','id', 'created_date', 'updated_date','teenplay_title','club_id','video_path','thumbnail_path','status').order_by('-id')[offset:limit],
+            'teenplay_list': TeenPlay.enable_objects.filter(club=club_id).annotate(like_count=Count('teenplaylike__status')).values('like_count','id', 'created_date', 'updated_date','teenplay_title','club_id','video_path','thumbnail_path','status','club__member_id').order_by('-id')[offset:limit],
             'has_next': TeenPlay.enable_objects.filter(club=club_id)[limit:limit + 1].exists()
         }
         return Response(context)

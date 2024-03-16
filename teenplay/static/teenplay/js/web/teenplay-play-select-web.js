@@ -16,10 +16,8 @@ let likeBtns = document.querySelectorAll(".play-like-btn");
 let emptyHeart = document.querySelectorAll(".play-like-icon.empty");
 let fullHeart = document.querySelectorAll(".play-like-icon.full");
 
-
 const addList = (teenplayList) => {
     if('id' in teenplayList){
-        console.log(teenplayList)
         if(teenplayList.member_like){
             let text = `
             <div class="play-each ${teenplayList.id}">
