@@ -69,7 +69,6 @@ const showPagination = (pageInfo) => {
         `;
         addPaginationEvent(pageInfo);
     }
-
 }
 
 const showList = (clubPostList) => {

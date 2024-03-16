@@ -1,18 +1,50 @@
-const mypageActivityService = (() => {
-    const list = async (club_id, sort = '최신 개설순', page = 1) => {
+const mypageActivityListService = (() => {
+    const list = async (club_id, page, order, callback) => {
         const response = await fetch(`/member/mypage-activity-list/${club_id}/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
                 'X-CSRFToken': csrf_token
             },
-            body: JSON.stringify({'sort': sort, 'page': page})
+            body: JSON.stringify({
+                'page': page,
+                'order': order
+            })
+        })
+        const list = await response.json()
+
+        if (callback) {
+            return callback(list)
+        }
+        return list
+    }
+
+    return {list: list}
+})();
+
+const mypageMemberListService = (() => {
+    const list = async (club_id, page, order, search, callback) => {
+        const response = await fetch(`/member/mypage-member-list/${club_id}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'X-CSRFToken': csrf_token
+            },
+            body: JSON.stringify({
+                order: order,
+                search: search,
+                page: page
+            })
         });
-        return await response.json();
+        const list = await response.json()
+        console.log(club_id, page, order, search,)
+        if (callback) {
+            return callback(list)
+        }
+        return list
     }
     return {list: list}
 })()
-
 
 const clubNoticeService = (() => {
     const del = async (club_id, delList) => {
@@ -28,23 +60,9 @@ const clubNoticeService = (() => {
     return {del: del}
 })()
 
-const mypageMemberService = (() => {
-    const list = async (club_id,filter = '전체 상태', search='') => {
-        const response = await fetch(`/member/mypage-member-filter/${club_id}/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8',
-                'X-CSRFToken': csrf_token
-            },
-            body: JSON.stringify({'filter': filter, 'search':search})
-        });
-        return await response.json();
-    }
-    return {list: list}
-})()
 
 const mypageMemberStatusService = (() => {
-    const del = async (club_id,memberId) => {
+    const del = async (club_id, memberId) => {
         const response = await fetch(`/member/mypage-member-status/${club_id}/`, {
             method: 'DELETE',
             headers: {
@@ -72,22 +90,22 @@ const mypageMemberStatusService = (() => {
 
 const mypageSendLetterService = (() => {
     const post = async (letter) => {
-        // console.log(letter)
-        // const response = await fetch(`/member/mypage-send-letter/api/`, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json;charset=utf-8',
-        //         'X-CSRFToken': csrf_token
-        //     },
-        //     body: JSON.stringify({'letter': letter})
-        // });
-        // return await response.json();
+        console.log(letter)
+        const response = await fetch(`/member/mypage-send-letter/api/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'X-CSRFToken': csrf_token
+            },
+            body: JSON.stringify({'letter': letter})
+        });
+        return await response.json();
     }
     return {post: post}
 })()
 
 const mypageClubListService = (() => {
-    const list = async (sort='') => {
+    const list = async (sort = '') => {
         console.log(sort)
         const response = await fetch(`/member/mypage-my-club/api/`, {
             method: 'POST',

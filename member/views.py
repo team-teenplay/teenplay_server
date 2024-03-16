@@ -1,3 +1,5 @@
+import math
+
 from bootpay_backend import BootpayBackend
 from django.db import transaction
 from django.db.models import F, Q, Value, Count
@@ -1052,8 +1054,14 @@ class ClubAlarmManageAPI(APIView):
         return Response("success")
 
 
-class MypageClubMainView(View):
+class MypageActivityListView(View):
     def get(self, request, club_id):
+        order = request.GET.get('order', '최신순')
+        page = request.GET.get('page', 1)
+        page_info = {
+            'order': order,
+            'page': page
+        }
 
         club_profile = Club.enabled_objects.filter(id=club_id).values('club_profile_path').first()
         print(club_profile)
@@ -1095,6 +1103,7 @@ class MypageClubMainView(View):
 
         context = {
             'insite': insite,
+            'page_info': page_info,
             'activities_count': activities_count,
             'notices': notices,
             'club_notices': club_notices,
@@ -1102,14 +1111,27 @@ class MypageClubMainView(View):
         }
         return render(request, 'mypage/web/management-club-web.html', context)
 
+    def post(self, request):
+        datas = request.POST
+
+        context = {
+            'page_info': {
+                'order': datas.get('order', '최신순'),
+                'page': datas.get('page', 1)
+            }
+        }
+
+        return render(request, 'mypage/web/management-club-web.html', context)
+
 
 class MypageActivityListAPI(APIView):
     def post(self, request, club_id):
-        sort = request.data.get('sort', '최신 개설순')
-        page = request.data.get('get', 1)
-        row_count = 4
-        # offset = (page - 1) * row_count
-        # limit = page * row_count
+        order = request.data.get('order', '최신 개설순')
+        page = int(request.data.get('page', 1))
+
+        row_count = 6
+        offset = (page - 1) * row_count
+        limit = page * row_count
 
         weekday_translation = {
             'Mon': '월',
@@ -1121,17 +1143,40 @@ class MypageActivityListAPI(APIView):
             'Sun': '일'
         }
         sort_field = '-created_date'
-        if sort == '최신 개설순':
+        if order == '최신 개설순':
             sort_field = '-created_date'
-        elif sort == '활동 일시순':
+        elif order == '활동 일시순':
             sort_field = '-activity_start'
-        elif sort == '인기순':
+        elif order == '인기순':
             pass
 
         activities_queryset = Activity.enabled_objects.filter(club_id=club_id, activity_end__gt=timezone.now(),
                                                               status=1)
-        activities = activities_queryset.values('id', 'activity_title', 'activity_start', 'created_date').order_by(
-            sort_field)
+
+        total_count = activities_queryset.count()
+
+        page_count = 5
+
+        end_page = math.ceil(page / page_count) * page_count
+        start_page = end_page - page_count + 1
+        real_end = math.ceil(total_count / row_count)
+        end_page = real_end if end_page > real_end else end_page
+
+        if end_page == 0:
+            end_page = 1
+
+        page_info = {
+            'totalCount': total_count,
+            'startPage': start_page,
+            'endPage': end_page,
+            'page': page,
+            'realEnd': real_end,
+            'pageCount': page_count,
+        }
+
+        activities = list(activities_queryset.values('id', 'activity_title', 'activity_start', 'created_date').order_by(
+            sort_field)[offset:limit])
+
         for activity in activities:
             activity_start = activity['activity_start']
             create_date = activity['created_date']
@@ -1139,6 +1184,8 @@ class MypageActivityListAPI(APIView):
                 activity_start.strftime('%a')] + ')' + activity_start.strftime(" %H:%M")
             activity['created_date'] = create_date.strftime("%m월 %d일") + '(' + weekday_translation[
                 create_date.strftime('%a')] + ')' + create_date.strftime(" %H:%M")
+
+        activities.append(page_info)
         return Response(activities)
 
 
@@ -1183,30 +1230,71 @@ class MypageMyClubAlarmStatusAPI(APIView):
 
 class MypageMemberView(View):
     def get(self, request, club_id):
-        context = {'club_id': club_id}
+        search = request.GET.get('search', '')
+        order = request.GET.get('order', '전체 상태')
+        page = request.GET.get('page', 1)
+
+        context = {
+            'search': search,
+            'order': order,
+            'page': page,
+            'club_id': club_id,
+        }
+        return render(request, 'mypage/web/management-club-member-web.html', context)
+
+    def post(self, request):
+        datas = request.POST
+        context = {
+            'order': datas.get('order', '최신순'),
+            'page': datas.get('page', 1),
+            'search': datas.get('search', 1),
+        }
+
         return render(request, 'mypage/web/management-club-member-web.html', context)
 
 
-class MypageMemberFilerAPI(APIView):
+class MypageMemberListAPI(APIView):
     def post(self, request, club_id):
-        filter = request.data.get('filter', '전체 상태')
         search = request.data.get('search', '')
+        order = request.data.get('order', '전체 상태')
+        page = int(request.data.get('page', 1))
+        row_count = 8
+        offset = (page - 1) * row_count
+        limit = page * row_count
 
-        filter_field = Q(club_id=club_id)
+        condition = Q(club_id=club_id)
         if search:
-            filter_field &= Q(member__member_email__contains=search) | Q(member__member_nickname__contains=search)
-        if filter == '가입대기':
-            filter_field &= Q(status=-1)
-        elif filter == '가입중':
-            filter_field &= Q(status=1)
+            condition &= Q(member__member_email__contains=search) | Q(member__member_nickname__contains=search)
+        if order == '가입대기':
+            condition &= Q(status=-1)
+        elif order == '가입중':
+            condition &= Q(status=1)
 
-        club_members_queryset = ClubMember.objects.filter(filter_field).exclude(status=0)
-        club_members = club_members_queryset.values('id', 'member__member_nickname', 'member__member_email',
-                                                    'member__member_gender',
-                                                    'member__member_address', 'member__created_date', 'status',
-                                                    'member')
+        club_members_queryset = ClubMember.objects.filter(condition).exclude(status=0)
+
+        club_members = list(club_members_queryset.values('id', 'member__member_nickname', 'member__member_email',
+                                                         'member__member_gender',
+                                                         'member__member_address', 'member__created_date', 'status',
+                                                         'member')[offset:limit])
         club_members_count = club_members_queryset.count()
 
+        page_count = 5
+        end_page = math.ceil(page / page_count) * page_count
+        start_page = end_page - page_count + 1
+        real_end = math.ceil(club_members_count / row_count)
+        end_page = real_end if end_page > real_end else end_page
+
+        if end_page == 0:
+            end_page = 1
+
+        page_info = {
+            'totalCount': club_members_count,
+            'startPage': start_page,
+            'endPage': end_page,
+            'page': page,
+            'realEnd': real_end,
+            'pageCount': page_count,
+        }
         for club_member in club_members:
             club_member['member__created_date'] = club_member['member__created_date'].strftime("%Y-%m-%d")
             member_favorite_categories = MemberFavoriteCategory.objects.filter(member=club_member['member']).values(
@@ -1217,11 +1305,9 @@ class MypageMemberFilerAPI(APIView):
             activities = ActivityMember.objects.filter(member=club_member['member']).values('activity__activity_title')
             club_member['activities'] = list(activities)
 
-        data = {
-            'clubMembersCount': club_members_count,
-            'clubMembers': club_members,
-        }
-        return Response(data)
+        club_members.append(page_info)
+
+        return Response(club_members)
 
 
 class MypageClubDeleteView(View):
@@ -1262,18 +1348,29 @@ class MypageMemberStatusAPI(APIView):
 
 class MypageNoticeView(View):
     def get(self, request, club_id):
+        page = request.GET.get('page', 1)
+
         club_notices = ClubNotice.objects.filter(club_id=club_id, status=1).order_by('-id').values('id', 'notice_title',
                                                                                                    'notice_content',
                                                                                                    'created_date')
         for club_notice in club_notices:
             club_notice['created_date'] = club_notice['created_date'].strftime("%Y.%m.%d")
 
-        context = {'clubNotices': club_notices, 'club_id': club_id}
+        context = {
+            'page': page,
+            'club_id': club_id
+        }
 
         return render(request, 'mypage/web/management-club-notice-web.html', context)
 
-
 class MypageNoticeAPI(APIView):
+    def delete(self, request, club_id):
+        del_list = request.data['del_list']
+        for del_item in del_list:
+            ClubNotice.objects.filter(id=del_item, club_id=club_id, status=1).update(status=0)
+
+        return Response('ok')
+class MypageNoticeDeleteAPI(APIView):
     def delete(self, request, club_id):
         del_list = request.data['del_list']
         for del_item in del_list:

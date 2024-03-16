@@ -1,26 +1,17 @@
-const memberInfoDetails = document.querySelector('.member-info-details');
-
-memberInfoDetails.addEventListener('change', (e) => {
-    if (e.target.matches('input[type=checkbox]')) {
-        // 체크박스가 변경된 경우에만 실행되는 로직
-        insertCheckedMemberCount();
-    }
-});
-
 const allCheckedFn = () => {
     const checkedAllCategory = document.querySelector(".checked-all-category");
-const inputCheckboxes = document.querySelectorAll("input[type=checkbox]");
+    const inputCheckboxes = document.querySelectorAll("input[type=checkbox]");
 
-checkedAllCategory.addEventListener("click", () => {
-    for (const inputCheckbox of inputCheckboxes) {
-        if (inputCheckbox.checked) {
-            inputCheckbox.checked = false;
-        } else {
-            inputCheckbox.checked = true;
+    checkedAllCategory.addEventListener("click", () => {
+        for (const inputCheckbox of inputCheckboxes) {
+            if (inputCheckbox.checked) {
+                inputCheckbox.checked = false;
+            } else {
+                inputCheckbox.checked = true;
+            }
         }
-    }
-    insertCheckedMemberCount();
-});
+        insertCheckedMemberCount();
+    });
 
 }
 
@@ -76,7 +67,7 @@ sendCheckBtn.addEventListener('click', async () => {
     const content = document.querySelector('textarea').value
     const receiverElements = document.querySelectorAll('.email-span')
     let receivers = []
-    receiverElements.forEach((element)=>{
+    receiverElements.forEach((element) => {
         receivers.push(element.innerText)
     })
     const letter = {
@@ -92,7 +83,7 @@ const sendModalBtns = document.querySelectorAll(".send-modal-container button");
 
 sendModalBtns.forEach((sendModalBtn) => {
     sendModalBtn.addEventListener("click", (e) => {
-        if (e.target.className == "send-check-btn") {
+        if (e.target.className === "send-check-btn") {
             sendModalWrap.querySelector(".send-modal-container").style.animation = "popDown 0.5s";
             setTimeout(() => {
                 sendModalWrap.querySelector(".send-modal-container").style.display = "none";
@@ -160,7 +151,7 @@ const memberEmissionStatusUpdate = (memberId) => {
     kickOutModalContainerBtns.forEach((kickOutModalContainerBtn) => {
         kickOutModalContainerBtn.addEventListener("click", async (e) => {
             kickOutModalContainer.style.animation = "popDown 0.5s";
-            if (e.target.className == "kick-out-btn") {
+            if (e.target.className === "kick-out-btn") {
                 // 데이터가 없어 임시 방편으로 사용
                 if (memberId) {
                     const response = await mypageMemberStatusService.del(club_id, memberId)
@@ -168,15 +159,13 @@ const memberEmissionStatusUpdate = (memberId) => {
                         target.remove();
                     }
                 }
-
-
                 setTimeout(() => {
                     kickOutModalContainer.style.display = "none";
                     kickOutCheckModalContainer.querySelector(".modal-header-title").innerText = `${targetName}님을 퇴출했습니다.`;
                     kickOutCheckModalContainer.style.animation = "popUp 0.5s";
                     kickOutCheckModalContainer.style.display = "flex";
                 }, 450);
-            } else if (e.target.className == "kick-out-modal-cancle-btn") {
+            } else if (e.target.className === "kick-out-modal-cancle-btn") {
                 setTimeout(() => {
                     kickOutModalWrap.style.display = "none";
                 }, 450);
@@ -224,7 +213,7 @@ const memberStatusJoinUpdate = (memberId) => {
     joinModalContainerBtns.forEach((joinModalContainerBtn) => {
         joinModalContainerBtn.addEventListener("click", async (e) => {
             joinModalContainer.style.animation = "popDown 0.5s";
-            if (e.target.className == "join-btn") {
+            if (e.target.className === "join-btn") {
                 // 데이터가 없어 임시 방편으로 사용
                 if (memberId) {
                     const response = await mypageMemberStatusService.patch(club_id, memberId)
@@ -240,7 +229,7 @@ const memberStatusJoinUpdate = (memberId) => {
                     joinCheckModalContainer.style.animation = "popUp 0.5s";
                     joinCheckModalContainer.style.display = "flex";
                 }, 450);
-            } else if (e.target.className == "join-modal-cancle-btn") {
+            } else if (e.target.className === "join-modal-cancle-btn") {
                 setTimeout(() => {
                     joinModalWrap.style.display = "none";
                 }, 450);
@@ -256,24 +245,93 @@ const memberStatusJoinUpdate = (memberId) => {
         });
     });
 }
+const addPaginationEvent = async (pageInfo) => {
+    const prevBtn = document.querySelector(".prev-btn")
+    const nextBtn = document.querySelector(".next-btn")
+    const pageNumberBtn = document.querySelectorAll(".page-number-btn")
+    const pageNumber = document.querySelectorAll(".page-number")
 
+    prevBtn.addEventListener("click", async () => {
+        if (pageInfo.currentPage <= 1) return;
+        await mypageMemberListService.list(club_id, --page, order, search, showList);
+    })
 
-const createList = (filterList) => {
-    let memberHTML = ``
-    console.log(filterList)
-    if (!filterList) return
+    nextBtn.addEventListener("click", async () => {
+        if (pageInfo.currentPage === pageInfo.realEnd) return;
+        await mypageMemberListService.list(club_id, ++page, order, search, showList);
+    })
 
-    filterList.clubMembers.forEach((member) => {
-        let statusHTML = '';
-        if (member.status === 1) {
-            statusHTML = `<div class="member-status"><div class="member-status-join-btn">가입중</div></div>`;
-        } else if (member.status === -1) {
-            statusHTML = `<div class="member-status"><div class="member-status-stand-btn">가입대기</div></div>`;
-        } else {
-            statusHTML = '';
+    pageNumberBtn.forEach((btn, i) => {
+        btn.addEventListener("click", async () => {
+            page = pageNumber[i].innerHTML;
+            await mypageMemberListService.list(club_id, page, order, search, showList);
+        })
+    })
+}
+const paginationBox = document.querySelector('.pagination-box')
+const showPagination = (pageInfo) => {
+    const totalCount = pageInfo.totalCount;
+    const startPage = pageInfo.startPage;
+    const endPage = pageInfo.endPage;
+    const currentPage = pageInfo.page;
+    const realEnd = pageInfo.realEnd;
+    let pageText = ``;
+    if (totalCount === 0) {
+        paginationBox.innerHTML = ``;
+    } else {
+        paginationBox.innerHTML = `
+               <button class="prev-btn ${currentPage === 1 ? 'disabled' : ''}" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="left-svg"
+                         viewBox="0 0 20 20"
+                         fill="currentColor">
+                        <path fill-rule="evenodd"
+                              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                              clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+                <div class="pagination-number-box">
+        `;
+        for (let i = startPage; i <= endPage; i++) {
+            paginationBox.innerHTML += `
+          <button class="page-number-btn ${currentPage === i ? 'seleced-page-number-btn' : ''}" type="button">
+                <div class="page-number">${i}</div>
+            </button>
+            `;
         }
-        memberHTML += `
-            <div class="member-info-list ${member.id}">
+        paginationBox.innerHTML += `
+             </div>
+                <button class="next-btn ${currentPage === realEnd ? 'disabled' : ''}" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="right-svg"
+                         viewBox="0 0 20 20"
+                         fill="currentColor">
+                        <path fill-rule="evenodd"
+                              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                              clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+        `;
+        addPaginationEvent(pageInfo);
+    }
+}
+
+const showList = (orderList) => {
+    let text = ``;
+    let pageInfo = orderList.pop()
+    if (orderList.length === 0) {
+        text += ``
+    } else {
+        for (let item of orderList) {
+            text += ``
+            let statusHTML = '';
+            if (item.status === 1) {
+                statusHTML = `<div class="member-status"><div class="member-status-join-btn">가입중</div></div>`;
+            } else if (item.status === -1) {
+                statusHTML = `<div class="member-status"><div class="member-status-stand-btn">가입대기</div></div>`;
+            } else {
+                statusHTML = '';
+            }
+            text += `
+            <div class="member-info-list ${item.id}">
                 <div class="member-select-wrap">
                     <div>
                         <div class="member-select-container">
@@ -285,76 +343,55 @@ const createList = (filterList) => {
                         </div>
                     </div>
                 </div>
-                <div class="member-name"><div class="name">${member.member__member_nickname}</div></div>
+                <div class="member-name"><div class="name">${item.member__member_nickname}</div></div>
                 <div class="member-email">
-                    <div class="email">${member.member__member_email}</div>
+                    <div class="email">${item.member__member_email}</div>
                 </div>
                 <div class="member-age-gender">
                     <div class="age">29/</div>
                     <div class="gender">
-                     ${member.member__member_gender === 1 ? '남자' : member.member__member_gender === 2 ? '여자' : member.member__member_gender === 0 && '선택 안함'}
+                     ${item.member__member_gender === 1 ? '남자' : item.member__member_gender === 2 ? '여자' : item.member__member_gender === 0 && '선택 안함'}
                     </div>
                 </div>
-                <div class="member-interest-area"><div class="address">${member.member__member_address}</div></div>
+                <div class="member-interest-area"><div class="address">${item.member__member_address}</div></div>
                 <div class="member-interest-filed">
-                    <div class="category">${member.member_favorite_categories ? member.member_favorite_categories[0]?.category__category_name : ''}${member.category_count === 0 || !member.category_count ? '' : '외 ' + member.category_count + '개'}</div>
+                    <div class="category">${item.member_favorite_categories[0] ? item.member_favorite_categories[0].category__category_name : ''}${item.category_count <= 0 || !item.category_count ? '' : '외 ' + item.category_count + '개'}</div>
                 </div>
                 ${statusHTML}
                 <div class="member-join-date">
-                    <div class="date">${member.member__created_date}</div>
+                    <div class="date">${item.member__created_date}</div>
                 </div>
                 <div class="member-activity">
-                    <div>${member.activities ? member.activities[0]?.activity__activity_title : ''}${member.activities.length === 0 ? '' : '외 ' + member.activities.length + '개'}</div>
+                    <div>${item.activities[0] ? item.activities[0].activity__activity_title : ''}${item.activities.length === 0 ? '' : '외 ' + item.activities.length + '개'}</div>
                 </div>
             </div>
         `
-    })
-    memberInfoDetails.innerHTML = memberHTML
+        }
+    }
+    memberInfoDetails.innerHTML = text
+    showPagination(pageInfo)
     allCheckedFn()
-    statusUpdateModal();
-    memberStatusJoinUpdate();
-    memberEmissionStatusUpdate();
+    statusUpdateModal()
 }
-
-const memberListHandler = async (filter = '전체 상태', search) => {
-    const filterList = await mypageMemberService.list(club_id, filter, search)
-    createList(filterList)
-}
-memberListHandler()
-
 const memberStatusBox = document.querySelector('.member-status-box')
 const memberSearchInput = document.querySelector('.member-search-input')
+memberStatusBox.addEventListener('change', async (e) => {
+    order = e.target.value
+    page = 1
+    await mypageMemberListService.list(club_id, page, order, search, showList)
+});
+memberSearchInput.addEventListener("keyup", async (e) => {
+    search = e.target.value
+    page = 1
+    await mypageMemberListService.list(club_id, page, order, search, showList)
+})
 
-// keyup 이벤트 및 change 이벤트에 대한 단일 핸들러 함수 등록
-memberSearchInput.addEventListener('keyup', handleFilterEvent);
-memberStatusBox.addEventListener('change', handleFilterEvent);
-const search = {};
-const filter = {};
+const memberInfoDetails = document.querySelector('.member-info-details');
 
-// 핸들러 함수 정의
-function handleFilterEvent(e) {
-    if (e.target === memberSearchInput) {
-        search.search = e.target.value;
-    } else if (e.target === memberStatusBox) {
-        filter.filter = e.target.value;
+memberInfoDetails.addEventListener('change', (e) => {
+    if (e.target.matches('input[type=checkbox]')) {
+        // 체크박스가 변경된 경우에만 실행되는 로직
+        insertCheckedMemberCount();
     }
-
-    filterModule({...search, ...filter});
-}
-
-// filterModule 함수 정의
-function filterModule(data) {
-    let searchValue;
-    let filterValue;
-
-    if (data.search) {
-        searchValue = data.search;
-    }
-    if (data.filter) {
-        filterValue = data.filter;
-    }
-
-    memberListHandler(filterValue, searchValue);
-}
-
-
+});
+mypageMemberListService.list(club_id, page, order, search, showList);

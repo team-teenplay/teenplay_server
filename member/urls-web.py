@@ -5,13 +5,13 @@ from member.views import MemberLoginWebView, MemberJoinWebView, MypageInfoWebVie
     MypageAlramView, MypageAlramAPIView, MypageAlramDeleteAPIView, MypageTeenchinview, MypageTeenchinAPIview, \
     MemberAlarmCountAPI, MypageTeenchindeleteview, MypageTeenchinLetterAPIview, MapagePaymentView, MypagePayListAPIVIEW, \
     MypagePayDeleteAPIVIEW, MypageReplyView, MypageReplyAPIVIEW, MypageReplyDeleteAPIVIEW, TeenChinAPI, \
-    MypageClubMainView, MypageActivityListAPI, MypageMemberView, MypageNoticeView, MypageNoticeAPI, \
-    MypageNoticeCreateView, MypageSettingView, MypageMemberFilerAPI, MypageMemberStatusAPI, \
+    MypageActivityListView, MypageActivityListAPI, MypageMemberView, MypageNoticeView, MypageNoticeAPI, \
+    MypageNoticeCreateView, MypageSettingView, MypageMemberListAPI, MypageMemberStatusAPI, \
     ClubAlarmManageAPI, MypageActivityLikeAPIVIEW, MypageActivityAPIVIEW, MypageActivityVIEW, ActivityManagentView, \
     ActivityListAPIView, ActivityMemberView, ActivityMemberListAPIView, ActivityMemberUpdateAPIView, \
     ActivityMemberWriteAPI, ActivityEditView, MypageNoticeModifyView, MypageSendLetterAPI, \
     MypageMyClubView, MypageMyClubAPI, MypageClubDeleteView, MypageMyClubAlarmStatusAPI, \
-    MypageWishlistAPIView, MypageWishlistDeleteAPIView, MypageWishlistWebView
+    MypageWishlistAPIView, MypageWishlistDeleteAPIView, MypageWishlistWebView, MypageNoticeDeleteAPI
 
 app_name = 'member'
 
@@ -45,14 +45,15 @@ urlpatterns = [
     path('mypage-my-club/', MypageMyClubView.as_view(), name="mypage-my-club"),
     path('mypage-my-club/api/', MypageMyClubAPI.as_view(), name="mypage-my-club-api"),
     path('mypage-my-club-alarm/<int:club_id>/', MypageMyClubAlarmStatusAPI.as_view(), name="mypage-my-club-alarm-api"),
-    path('mypage-club/<int:club_id>/', MypageClubMainView.as_view(), name="mypage-club"),
+    path('mypage-club/<int:club_id>/', MypageActivityListView.as_view(), name="mypage-club"),
     path('mypage-club-delete/<int:club_id>/', MypageClubDeleteView.as_view(), name="mypage-club-delete"),
     path('mypage-activity-list/<int:club_id>/', MypageActivityListAPI.as_view(), name="mypage-activity-list-api"),
     path('mypage-member/<int:club_id>/', MypageMemberView.as_view(), name="mypage-member"),
-    path('mypage-member-filter/<int:club_id>/', MypageMemberFilerAPI.as_view(), name="mypage-member-filter-api"),
+    path('mypage-member-list/<int:club_id>/', MypageMemberListAPI.as_view(), name="mypage-member-list-api"),
     path('mypage-member-status/<int:club_id>/', MypageMemberStatusAPI.as_view(), name="mypage-member-status-api"),
     path('mypage-notice/<int:club_id>/', MypageNoticeView.as_view(), name="mypage-notice"),
     path('mypage-notice-list/<int:club_id>/', MypageNoticeAPI.as_view(), name="mypage-notice-list-api"),
+    path('mypage-notice-delete/<int:club_id>/', MypageNoticeDeleteAPI.as_view(), name="mypage-notice-list-api"),
     path('mypage-notice-write/<int:club_id>/', MypageNoticeCreateView.as_view(), name="mypage-create"),
     path('mypage-notice-modify/<int:club_id>/', MypageNoticeModifyView.as_view(), name="mypage-modify"),
     path('mypage-send-letter/api/', MypageSendLetterAPI.as_view(), name="mypage-send-letter-api"),
