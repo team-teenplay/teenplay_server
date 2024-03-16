@@ -117,12 +117,12 @@ createButton.addEventListener('click', async () => {
     });
 
     await adminNoticeService.write({
-        notice_title: notice_title,
-        notice_content: notice_content,
-        notice_type: notice_type
-    });
+                notice_title: notice_title,
+                notice_content: notice_content,
+                notice_type: notice_type
+            });
 
-    notice_title.value = ""
-    notice_content.value = ""
-    notice_type.value = ""
+    // notice_title.value = ""
+    // notice_content.value = ""
+    // notice_type.value = ""
 })
