@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 
 from activity.models import Activity, ActivityReply
 from club.models import Club, ClubPost, ClubPostReply
+from festival.models import Festival
 from letter.models import Letter
 from member.models import AdminAccount, Member
 from member.serializers import AdminAccountSerializer
@@ -648,12 +649,124 @@ class AdminFestivalView(View):
     def get(self, request):
         return render(request, 'admin/web/festival-list-web.html')
 
+class AdminFestivalPaginationAPI(APIView):
+    def get(self, request, page):
+        order = request.GET.get('order', 'recent')
+        keyword = request.GET.get('keyword', '')
+        targetId = request.GET.get('targetId', '')
+
+        row_count = 10
+
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        condition = Q(status=1)
+
+        if keyword:
+            condition &= Q(festival_title__contains=keyword)
+        else:
+            condition &= Q()
+
+        if targetId:
+            condition &= Q(id=targetId)
+
+        total = Festival.objects.filter(condition).all().count()
+
+        page_count = 5
+
+        end_page = math.ceil(page / page_count) * page_count
+        start_page = end_page - page_count + 1
+        real_end = math.ceil(total / row_count)
+        end_page = real_end if end_page > real_end else end_page
+
+        if end_page == 0:
+            end_page = 1
+
+        context = {
+            'total': total,
+            'order': order,
+            'start_page': start_page,
+            'end_page': end_page,
+            'real_end': real_end,
+            'page_count': page_count,
+        }
+
+        ordering = '-id'
+        if order == 'popular':
+            ordering = '-post_read_count'
+
+        columns = [
+            'id',
+            'festival_title',
+            'festival_location',
+            'festival_end',
+            'festival_content',
+            'thumbnail_path',
+            'festival_price',
+            'festival_address',
+            'festival_address_detail',
+            'festival_location',
+            'festival_start',
+            'host_info',
+            'host_phone',
+            'provider_info',
+            'provider_url',
+            'created_date',
+            'festival_content',
+        ]
+
+        festivals = Festival.objects.filter(condition).values(*columns).order_by(ordering)
+
+        context['festivals'] = list(festivals[offset:limit])
+
+        return Response(context)
+
+# 관리자 축제 - 데이터 삭제
+class AdminFestivalUpdateAPI(APIView):
+    @transaction.atomic
+    def patch(self, request, festival_id):
+        print("축제 늗널마ㅓㅏㅁㄴ")
+        print(festival_id)
+        print(request.data['festival_id'])
+
+        status = 0
+        updated_date = timezone.now()
+
+        festival = Notice.objects.get(id=festival_id)
+        festival.status = status
+        festival.updated_date = updated_date
+        festival.save(update_fields=['status', 'updated_date'])
+
+        return Response('success')
+
 
 # 관리자 축제 작성 - 페이지 이동
 class AdminFestivalWrite(View):
     def get(self, request):
         return render(request, 'admin/web/festival-create-web.html')
 
+    @transaction.atomic
+    def post(self, request):
+        data = request.POST
+        data = {
+            'festival_title': data['festival_title'],
+            'festival_content': data.get('festival_content'),
+            'festival_price': data.get('festival_price'),
+            'festival_address': data.get('festival_address'),
+            'festival_address_detail': data.get('festival_address_detail'),
+            'festival_location': data.get('festival_location'),
+            'festival_start': data.get('festival_start'),
+            'festival_end': data.get('festival_end'),
+            'host_info': data.get('host_info'),
+            'host_phone': data.get('host_phone'),
+            'provider_info': data.get('provider_info'),
+            'provider_url': data.get('provider_url'),
+
+        }
+
+        print(data)
+        Festival.objects.create(**data)
+        return redirect('/admin/festival/')
 
 # 관리자 공지사항 - 페이지 이동
 class AdminNoticeView(View):

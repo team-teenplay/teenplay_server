@@ -26,8 +26,10 @@ from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroduc
     AdminNoticePaginationAPI, AdminWishlistAPI, AdminNoticeUpdateAPI, AdminUserAPI, \
     AdminCommentAPI, AdminCommentDeleteAPI, AdminActivityAPI, AdminActivityDeleteAPI, AdminPromoteAPI, \
     AdminPromoteDeleteAPI, AdminMessageAPI, \
-    AdminWishlistDeleteAPI, AdminMeetingAPI, AdminMeetingDeleteAPI
-    # AdminTeenplayView, AdminTeenplayAPI, AdminTeenplayDeleteAPI
+    AdminWishlistDeleteAPI, AdminMeetingAPI, AdminMeetingDeleteAPI, AdminFestivalPaginationAPI, AdminFestivalUpdateAPI
+
+
+# AdminTeenplayView, AdminTeenplayAPI, AdminTeenplayDeleteAPI
 
 
 # urls에 음수 값 넣기 가능!
@@ -89,7 +91,9 @@ urlpatterns = [
     path('admin/meetings/delete/<int:meeting_id>', AdminMeetingDeleteAPI.as_view(), name='admin-meeting-delete'),
     # 관리자 - 축제 관리
     path('admin/festival/', AdminFestivalView.as_view(), name='admin-festival'),
-    path('admin/festival/write/<int:page>/', AdminFestivalWrite.as_view(), name='admin-festival-write'),
+    path('admin/festivals/<int:page>/', AdminFestivalPaginationAPI.as_view(), name='admin-festival-page-api'),
+    path('admin/festivals/delete/<int:festival_id>/', AdminFestivalUpdateAPI.as_view(), name='admin-festival-delete-api'),
+    path('admin/festival/write/', AdminFestivalWrite.as_view(), name='admin-festival-write'),
     # 관리자 - 공지사항 관리
     path('admin/notice/', AdminNoticeView.as_view(), name='admin-notice'),
     path('admin/notices/<int:page>/', AdminNoticePaginationAPI.as_view(), name='admin-notice-page-api'),
