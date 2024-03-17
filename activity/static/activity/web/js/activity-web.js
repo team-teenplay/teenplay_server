@@ -343,6 +343,7 @@ endDateTie.addEventListener("click", async (e) => {
                                         </button>
                                     </div>`;
             showFinished = true;
+            page = 1;
             await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
         }
     }
@@ -358,6 +359,7 @@ endDateTie.addEventListener("click", async (e) => {
                 divToRemove.remove();
             }
             showFinished = false;
+            page = 1;
             await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
             // divToRemove.parentNode.removeChild(divToRemove);
             // 위에서 div 생성 시 id값으로 생성해 줬기 때문에 해당 id 값을 찾아서 div를 지워주면 된다
@@ -389,6 +391,7 @@ const manageCategoryHiddenBg = async (checkbox, i) => {
         if (!categories.includes(checkbox.value)){
             categories.push(checkbox.value);
         }
+        page = 1;
         await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
         return;
     }
@@ -398,6 +401,7 @@ const manageCategoryHiddenBg = async (checkbox, i) => {
     if (categories.includes(checkbox.value)){
         categories = categories.filter(item => item !== checkbox.value);
     }
+    page = 1;
     await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
 }
 
@@ -423,6 +427,7 @@ checkExit.addEventListener("click", async (e) => {
             parentDiv.style.display = "none";
             document.getElementById("keyword-text").innerText = "";
             searchKeyword = "";
+            page = 1;
             await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
         }
     }
@@ -478,6 +483,7 @@ checkExit.addEventListener("click", async (e) => {
             categoryCheck[Number(parentDiv.classList[2])-1] = false;
             categories = categories.filter(item => item !== parentDiv.classList[2]);
             parentDiv.remove();
+            page = 1;
             await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
         }
     }
@@ -501,6 +507,7 @@ endDateCheck.forEach((textCategoryValue) => {
                     inputName.checked = false;
                 }
             });
+            page = 1;
             showFinished = false;
             await getList(searchKeyword, page, date, region, categories, showFinished, ordering, showList);
         }
