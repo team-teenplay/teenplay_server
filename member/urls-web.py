@@ -66,7 +66,7 @@ urlpatterns = [
     path('activity-member/', ActivityMemberView.as_view(), name="management-activitymember"),
     path('activity-member/<int:member_id>/<int:page>/<int:activity_id>/', ActivityMemberListAPIView.as_view(),
          name="management-aipactivitymember"),
-    path('activity-member/<int:activity_member_id>/', ActivityMemberUpdateAPIView.as_view(),
+    path('activity-member/<int:activity_member_id>/<int:activity_id>/', ActivityMemberUpdateAPIView.as_view(),
          name="managment-apiupdateactivitymember"),
     path('activity-member/api/', ActivityMemberWriteAPI.as_view(), name="managment-apideleteactivitymember"),
     path('activity-edit/', ActivityEditView.as_view(), name="managment-edit"),
