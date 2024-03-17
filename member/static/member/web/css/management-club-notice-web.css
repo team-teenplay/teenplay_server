@@ -167,7 +167,6 @@ audio, canvas, embed, iframe, img, object, svg, video {
 }
 
 .main {
-  padding-top: 5rem;
   min-height: 100vh;
 }
 

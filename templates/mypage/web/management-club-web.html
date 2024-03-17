@@ -24,7 +24,7 @@
                     <a class="sud-header-category" href="/member/mypage-setting/{{ club_id }}">모임 설정</a>
                 </div>
                 <!-- 모임 상세페이지 주소 필요 -->
-                <a class="club-detail-link" href="" target="_blank">
+                <a class="club-detail-link" href="/club/detail/?id={{ club_id }}" target="_blank">
                     <span>모임 페이지 바로가기</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="move-svg" viewBox="0 0 20 20" fill="currentColor">
                         <path
@@ -43,12 +43,15 @@
                             <div>
                                 <div class="club-prfile">
                                     <!-- 모임 프로필 사진 주소 필요 -->
-                                    <img class="club-prfile-img"
-                                         src="/upload/{{ insite.club_profile }}"/>
+                                    {% if insite.club_profile %}
+                                        <img src="/upload/{{ insite.club_profile }}" alt="프로필 사진" class="club-profile-img" />
+                                    {% else %}
+                                        <img src="{% static 'public/web/images/logo/logo1.png' %}"  alt="커버 이미지" class="club-profile-img" />
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="club-name-box">
-                                <span class="club-name">틴플</span>
+                                <span class="club-name">{{ insite.club_name }}</span>
                             </div>
                         </div>
                         <div class="activity-open">
@@ -193,8 +196,7 @@
                                                             <div class="club-activity-hits">4</div>
                                                             <div class="club-activity-title">
                                                                 <!-- 활동 관리 페이지 주소, 제목 필요 -->
-                                                                <a class="club-activity-link"
-                                                                   href="">{{ activity.activity_title }}</a>
+                                                                <a class="club-activity-link" href="/member/activity/?activity_id={{ activity.id }}">{{ activity.activity_title }}</a>
                                                             </div>
                                                             <div class="club-activity-date">{{ activity.activity_start }}</div>
                                                             <div class="club-activity-open-date">{{ activity.activity_end }}</div>

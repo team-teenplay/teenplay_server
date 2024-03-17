@@ -216,7 +216,6 @@ textarea {
 }
 
 #host-center {
-    margin-top: 72px;
     overflow-x: auto;
     overflow-y: hidden;
     transition: margin-left 0.2s;
