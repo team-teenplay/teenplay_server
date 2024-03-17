@@ -103,7 +103,7 @@ const showList = (orderList) => {
                     <div class="club-activity-hits">4</div>
                     <div class="club-activity-title">
                         <!-- 활동 관리 페이지 주소, 제목 필요 -->
-                        <a class="club-activity-link" href="">${item.activity_title}</a>
+                        <a class="club-activity-link" href="/member/activity/?activity_id=${ item.id }">${item.activity_title}</a>
                     </div>
                     <div class="club-activity-date">${item.activity_start}</div>
                     <div class="club-activity-open-date">${item.created_date}</div>

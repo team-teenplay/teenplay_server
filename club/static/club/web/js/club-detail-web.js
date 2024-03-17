@@ -20,7 +20,7 @@ const clubName = document.querySelector(".club-detail-name").innerText;
 // 관리하기 버튼 클릭 시 모임 관리 페이지로 이동
 const manageBtnEvent = () => {
     document.getElementById("manage").addEventListener("click", () => {
-        window.location.href = ``
+        window.location.href = `/member/mypage-club/${club.id}/`
     })
 }
 
