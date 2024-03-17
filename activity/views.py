@@ -440,13 +440,13 @@ class ActivityJoinWebView(View):
             activity_member.save(update_fields=['status', 'updated_date'])
 
         # 활동 가입 신청 알림 모임장에게 전송하기
-        activity = Activity.enabled_objects.filter(id=data['activity-id']).first()
+        activity = Activity.enabled_objects.filter(id=request.POST.get('activity-id')).first()
         club = Club.enabled_objects.filter(id=activity.club.id).first()
         if activity and club:
             alarm_data = {
                 'target_id': activity.id,
                 'alarm_type': 11,
-                'sender_id': data.get('member-id'),
+                'sender_id': request.POST.get('member-id'),
                 'receiver_id': club.member.id
             }
             Alarm.objects.create(**alarm_data)

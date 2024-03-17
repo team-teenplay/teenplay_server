@@ -705,18 +705,23 @@ activityReplyService.getList(true, page+1, activityId, showOrHideMoreButton);
 
 // 댓글 목록 불러오기, 댓글 작성, 댓글 수정/삭제
 const commentWrap = document.querySelector(".k-comment-list-box-wrap")
-const commentListAllWrap = document.querySelector(".k-comment-list-all-wrap")
 const memberId = document.querySelector("input[name=member-id]").value;
 const showReplies = async (isAdd, replies) => {
     if (replies.length === 0) {
-        commentWrap.innerHTML += `
+        commentWrap.innerHTML = `
+            <div class="k-comment-line"></div>
+            <div class="k-comment-list-all-wrap"></div>
             <div class="feed-item">
                 <span>등록된 댓글이 없습니다.</span>
             </div>
         `;
     } else {
-        let text = ``
-
+        const commentListAllWrap = document.querySelector(".k-comment-list-all-wrap")
+        let emptyCommentWrap = document.querySelector(".k-comment-list-box-wrap .feed-item");
+        if (emptyCommentWrap) {
+            emptyCommentWrap.style.display = "none";
+        }
+        let text = ``;
         replies.forEach((reply) => {
             text += `
                 <!-- 댓글 수정 부분 -->

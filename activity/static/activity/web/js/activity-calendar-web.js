@@ -14,7 +14,7 @@ function initializeDatepicker() {
             // console.log("A new date selection was made: " + start.format("YYYY-MM-DD") + " to " + end.format("YYYY-MM-DD"));
             date = `${start.format('MM/DD/YYYY')} - ${end.format('MM/DD/YYYY')}`;
             page = 1;
-            await getList(page, date, region, categories, showFinished, ordering, showList);
+            await getList('', page, date, region, categories, showFinished, ordering, showList);
         }
     );
 }
