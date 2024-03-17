@@ -1,3 +1,5 @@
+import math
+
 from bootpay_backend import BootpayBackend
 from django.db import transaction
 from django.db.models import F, Q, Value, Count
@@ -158,7 +160,7 @@ class MypageInfoWebView(View):
                     member_profile.save()
                 except MemberProfile.DoesNotExist:
                     # 멤버 프로필이 없는 경우 생성
-                    MemberProfile.objects.create(member_id=member.id, profile_path=uploaded_file,)
+                    MemberProfile.objects.create(member_id=member.id, profile_path=uploaded_file, )
 
             # 수정된 데이터를 세션에 다시 저장
             request.session['member'] = {
@@ -191,10 +193,10 @@ class MypageDeleteWebView(View):
     def get(self, request):
         member = request.session['member']['id']
         frofile = MemberProfile.objects.filter(member_id=member)
-        context = { 'frofile':frofile
+        context = {'frofile': frofile
 
-        }
-        return render(request, 'mypage/web/withdrawal-web.html' , context)
+                   }
+        return render(request, 'mypage/web/withdrawal-web.html', context)
 
     @transaction.atomic
     def post(self, request):
@@ -403,21 +405,26 @@ class MypageTeenchinAPIview(APIView):
         limit = page * row_count
 
         teenchin = []
-        teenchin += Friend.objects.filter(sender_id=member_id, is_friend=1 ).values('id', 'is_friend', 'sender_id', 'receiver_id', 'sender__member_nickname',
-                               'receiver__member_nickname','receiver__memberprofile__profile_path',)
-        teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=1 ).values('id', 'is_friend', 'sender_id', 'receiver_id', 'sender__member_nickname',
-                               'receiver__member_nickname','sender__memberprofile__profile_path')
+        teenchin += Friend.objects.filter(sender_id=member_id, is_friend=1).values('id', 'is_friend', 'sender_id',
+                                                                                   'receiver_id',
+                                                                                   'sender__member_nickname',
+                                                                                   'receiver__member_nickname',
+                                                                                   'receiver__memberprofile__profile_path', )
+        teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=1).values('id', 'is_friend', 'sender_id',
+                                                                                     'receiver_id',
+                                                                                     'sender__member_nickname',
+                                                                                     'receiver__member_nickname',
+                                                                                     'sender__memberprofile__profile_path')
         teenchin += Friend.objects.filter(sender_id=member_id, is_friend=-1).values('id', 'is_friend', 'sender_id',
-                                                                                   'receiver_id',
-                                                                                   'sender__member_nickname',
-                                                                                   'receiver__member_nickname',
-                                                                                   'receiver__memberprofile__profile_path')
+                                                                                    'receiver_id',
+                                                                                    'sender__member_nickname',
+                                                                                    'receiver__member_nickname',
+                                                                                    'receiver__memberprofile__profile_path')
         teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=-1).values('id', 'is_friend', 'sender_id',
-                                                                                   'receiver_id',
-                                                                                   'sender__member_nickname',
-                                                                                   'receiver__member_nickname',
-                                                                                   'sender__memberprofile__profile_path')
-
+                                                                                      'receiver_id',
+                                                                                      'sender__member_nickname',
+                                                                                      'receiver__member_nickname',
+                                                                                      'sender__memberprofile__profile_path')
 
         if status_letter == 'case-a/':
             teenchin = []
@@ -433,30 +440,37 @@ class MypageTeenchinAPIview(APIView):
                                                                                          'sender__memberprofile__profile_path')
             if search_text:
                 teenchin = []
-                teenchin += Friend.objects.filter(sender_id=member_id, is_friend=1, receiver__member_nickname__icontains=search_text).values('id', 'is_friend',
-                                                                                           'sender_id',
-                                                                                           'receiver_id',
-                                                                                           'sender__member_nickname',
-                                                                                           'receiver__member_nickname',
-                                                                                           'receiver__memberprofile__profile_path', )
-                teenchin += Friend.objects.filter(sender_id=member_id, is_friend=1, receiver__member_email__icontains=search_text).values('id', 'is_friend',
-                                                                                           'sender_id',
-                                                                                           'receiver_id',
-                                                                                           'sender__member_nickname',
-                                                                                           'receiver__member_nickname',
-                                                                                           'receiver__memberprofile__profile_path', )
-                teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=1,sender__member_email__icontains=search_text).values('id', 'is_friend',
-                                                                                             'sender_id',
-                                                                                             'receiver_id',
-                                                                                             'sender__member_nickname',
-                                                                                             'receiver__member_nickname',
-                                                                                             'sender__memberprofile__profile_path')
-                teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=1,sender__member_nickname__icontains=search_text).values('id', 'is_friend',
-                                                                                             'sender_id',
-                                                                                             'receiver_id',
-                                                                                             'sender__member_nickname',
-                                                                                             'receiver__member_nickname',
-                                                                                             'sender__memberprofile__profile_path')
+                teenchin += Friend.objects.filter(sender_id=member_id, is_friend=1,
+                                                  receiver__member_nickname__icontains=search_text).values('id',
+                                                                                                           'is_friend',
+                                                                                                           'sender_id',
+                                                                                                           'receiver_id',
+                                                                                                           'sender__member_nickname',
+                                                                                                           'receiver__member_nickname',
+                                                                                                           'receiver__memberprofile__profile_path', )
+                teenchin += Friend.objects.filter(sender_id=member_id, is_friend=1,
+                                                  receiver__member_email__icontains=search_text).values('id',
+                                                                                                        'is_friend',
+                                                                                                        'sender_id',
+                                                                                                        'receiver_id',
+                                                                                                        'sender__member_nickname',
+                                                                                                        'receiver__member_nickname',
+                                                                                                        'receiver__memberprofile__profile_path', )
+                teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=1,
+                                                  sender__member_email__icontains=search_text).values('id', 'is_friend',
+                                                                                                      'sender_id',
+                                                                                                      'receiver_id',
+                                                                                                      'sender__member_nickname',
+                                                                                                      'receiver__member_nickname',
+                                                                                                      'sender__memberprofile__profile_path')
+                teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=1,
+                                                  sender__member_nickname__icontains=search_text).values('id',
+                                                                                                         'is_friend',
+                                                                                                         'sender_id',
+                                                                                                         'receiver_id',
+                                                                                                         'sender__member_nickname',
+                                                                                                         'receiver__member_nickname',
+                                                                                                         'sender__memberprofile__profile_path')
 
 
         elif status_letter == 'case-b/':
@@ -468,18 +482,22 @@ class MypageTeenchinAPIview(APIView):
                                                                                         'receiver__memberprofile__profile_path')
             if search_text:
                 teenchin = []
-                teenchin += Friend.objects.filter(sender_id=member_id, is_friend=-1,receiver__member_nickname__icontains=search_text).values('id', 'is_friend',
-                                                                                            'sender_id',
-                                                                                            'receiver_id',
-                                                                                            'sender__member_nickname',
-                                                                                            'receiver__member_nickname',
-                                                                                            'receiver__memberprofile__profile_path')
-                teenchin += Friend.objects.filter(sender_id=member_id, is_friend=-1,receiver__member_email__icontains=search_text).values('id', 'is_friend',
-                                                                                            'sender_id',
-                                                                                            'receiver_id',
-                                                                                            'sender__member_nickname',
-                                                                                            'receiver__member_nickname',
-                                                                                            'receiver__memberprofile__profile_path')
+                teenchin += Friend.objects.filter(sender_id=member_id, is_friend=-1,
+                                                  receiver__member_nickname__icontains=search_text).values('id',
+                                                                                                           'is_friend',
+                                                                                                           'sender_id',
+                                                                                                           'receiver_id',
+                                                                                                           'sender__member_nickname',
+                                                                                                           'receiver__member_nickname',
+                                                                                                           'receiver__memberprofile__profile_path')
+                teenchin += Friend.objects.filter(sender_id=member_id, is_friend=-1,
+                                                  receiver__member_email__icontains=search_text).values('id',
+                                                                                                        'is_friend',
+                                                                                                        'sender_id',
+                                                                                                        'receiver_id',
+                                                                                                        'sender__member_nickname',
+                                                                                                        'receiver__member_nickname',
+                                                                                                        'receiver__memberprofile__profile_path')
 
         elif status_letter == 'case-c/':
             teenchin = []
@@ -491,18 +509,21 @@ class MypageTeenchinAPIview(APIView):
                                                                                           'sender__memberprofile__profile_path')
             if search_text:
                 teenchin = []
-                teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=-1,sender__member_email__icontains=search_text).values('id', 'is_friend',
-                                                                                              'sender_id',
-                                                                                              'receiver_id',
-                                                                                              'sender__member_nickname',
-                                                                                              'receiver__member_nickname',
-                                                                                              'sender__memberprofile__profile_path')
-                teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=-1 ,sender__member_nickname__icontains=search_text).values('id', 'is_friend',
-                                                                                              'sender_id',
-                                                                                              'receiver_id',
-                                                                                              'sender__member_nickname',
-                                                                                              'receiver__member_nickname',
-                                                                                              'sender__memberprofile__profile_path')
+                teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=-1,
+                                                  sender__member_email__icontains=search_text).values('id', 'is_friend',
+                                                                                                      'sender_id',
+                                                                                                      'receiver_id',
+                                                                                                      'sender__member_nickname',
+                                                                                                      'receiver__member_nickname',
+                                                                                                      'sender__memberprofile__profile_path')
+                teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=-1,
+                                                  sender__member_nickname__icontains=search_text).values('id',
+                                                                                                         'is_friend',
+                                                                                                         'sender_id',
+                                                                                                         'receiver_id',
+                                                                                                         'sender__member_nickname',
+                                                                                                         'receiver__member_nickname',
+                                                                                                         'sender__memberprofile__profile_path')
 
         else:
             teenchin = []
@@ -529,54 +550,68 @@ class MypageTeenchinAPIview(APIView):
                                                                                           'sender__memberprofile__profile_path')
             if search_text:
                 teenchin = []
-                teenchin += Friend.objects.filter(sender_id=member_id, is_friend=1,receiver__member_nickname__icontains=search_text).values('id', 'is_friend',
-                                                                                           'sender_id',
-                                                                                           'receiver_id',
-                                                                                           'sender__member_nickname',
-                                                                                           'receiver__member_nickname',
-                                                                                           'receiver__memberprofile__profile_path', )
-                teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=1 ,sender__member_nickname__icontains=search_text).values('id', 'is_friend',
-                                                                                             'sender_id',
-                                                                                             'receiver_id',
-                                                                                             'sender__member_nickname',
-                                                                                             'receiver__member_nickname',
-                                                                                             'sender__memberprofile__profile_path')
-                teenchin += Friend.objects.filter(sender_id=member_id, is_friend=-1,receiver__member_nickname__icontains=search_text).values('id', 'is_friend',
-                                                                                            'sender_id',
-                                                                                            'receiver_id',
-                                                                                            'sender__member_nickname',
-                                                                                            'receiver__member_nickname',
-                                                                                            'receiver__memberprofile__profile_path')
-                teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=-1,sender__member_nickname__icontains=search_text).values('id', 'is_friend',
-                                                                                              'sender_id',
-                                                                                              'receiver_id',
-                                                                                              'sender__member_nickname',
-                                                                                              'receiver__member_nickname',
-                                                                                              'sender__memberprofile__profile_path')
-                teenchin += Friend.objects.filter(sender_id=member_id, is_friend=1,receiver__member_email__icontains=search_text).values('id', 'is_friend',
-                                                                                           'sender_id',
-                                                                                           'receiver_id',
-                                                                                           'sender__member_nickname',
-                                                                                           'receiver__member_nickname',
-                                                                                           'receiver__memberprofile__profile_path', )
-                teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=1,sender__member_email__icontains=search_text).values('id', 'is_friend',
-                                                                                             'sender_id',
-                                                                                             'receiver_id',
-                                                                                             'sender__member_nickname',
-                                                                                             'receiver__member_nickname',
-                                                                                             'sender__memberprofile__profile_path')
-                teenchin += Friend.objects.filter(sender_id=member_id, is_friend=-1,receiver__member_email__icontains=search_text).values('id', 'is_friend',
-                                                                                            'sender_id',
-                                                                                            'receiver_id',
-                                                                                            'sender__member_nickname',
-                                                                                            'receiver__member_nickname',
-                                                                                            'receiver__memberprofile__profile_path')
-                teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=-1,sender__member_email__icontains=search_text).values('id', 'is_friend',
-                                                                                              'sender_id',
-                                                                                              'receiver_id',
-                                                                                              'sender__member_nickname',
-                                                                                              'receiver__member_nickname',
-                                                                                              'sender__memberprofile__profile_path')
+                teenchin += Friend.objects.filter(sender_id=member_id, is_friend=1,
+                                                  receiver__member_nickname__icontains=search_text).values('id',
+                                                                                                           'is_friend',
+                                                                                                           'sender_id',
+                                                                                                           'receiver_id',
+                                                                                                           'sender__member_nickname',
+                                                                                                           'receiver__member_nickname',
+                                                                                                           'receiver__memberprofile__profile_path', )
+                teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=1,
+                                                  sender__member_nickname__icontains=search_text).values('id',
+                                                                                                         'is_friend',
+                                                                                                         'sender_id',
+                                                                                                         'receiver_id',
+                                                                                                         'sender__member_nickname',
+                                                                                                         'receiver__member_nickname',
+                                                                                                         'sender__memberprofile__profile_path')
+                teenchin += Friend.objects.filter(sender_id=member_id, is_friend=-1,
+                                                  receiver__member_nickname__icontains=search_text).values('id',
+                                                                                                           'is_friend',
+                                                                                                           'sender_id',
+                                                                                                           'receiver_id',
+                                                                                                           'sender__member_nickname',
+                                                                                                           'receiver__member_nickname',
+                                                                                                           'receiver__memberprofile__profile_path')
+                teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=-1,
+                                                  sender__member_nickname__icontains=search_text).values('id',
+                                                                                                         'is_friend',
+                                                                                                         'sender_id',
+                                                                                                         'receiver_id',
+                                                                                                         'sender__member_nickname',
+                                                                                                         'receiver__member_nickname',
+                                                                                                         'sender__memberprofile__profile_path')
+                teenchin += Friend.objects.filter(sender_id=member_id, is_friend=1,
+                                                  receiver__member_email__icontains=search_text).values('id',
+                                                                                                        'is_friend',
+                                                                                                        'sender_id',
+                                                                                                        'receiver_id',
+                                                                                                        'sender__member_nickname',
+                                                                                                        'receiver__member_nickname',
+                                                                                                        'receiver__memberprofile__profile_path', )
+                teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=1,
+                                                  sender__member_email__icontains=search_text).values('id', 'is_friend',
+                                                                                                      'sender_id',
+                                                                                                      'receiver_id',
+                                                                                                      'sender__member_nickname',
+                                                                                                      'receiver__member_nickname',
+                                                                                                      'sender__memberprofile__profile_path')
+                teenchin += Friend.objects.filter(sender_id=member_id, is_friend=-1,
+                                                  receiver__member_email__icontains=search_text).values('id',
+                                                                                                        'is_friend',
+                                                                                                        'sender_id',
+                                                                                                        'receiver_id',
+                                                                                                        'sender__member_nickname',
+                                                                                                        'receiver__member_nickname',
+                                                                                                        'receiver__memberprofile__profile_path')
+                teenchin += Friend.objects.filter(receiver_id=member_id, is_friend=-1,
+                                                  sender__member_email__icontains=search_text).values('id', 'is_friend',
+                                                                                                      'sender_id',
+                                                                                                      'receiver_id',
+                                                                                                      'sender__member_nickname',
+                                                                                                      'receiver__member_nickname',
+                                                                                                      'sender__memberprofile__profile_path')
 
         return Response(teenchin[offset:limit])
 
@@ -665,7 +700,6 @@ class MypagePayDeleteAPIVIEW(APIView):
                                    cancel_username='관리자', cancel_message='취소됨')
 
         PayCancel.objects.create(pay_cancel_reason=reason)
-
 
         return Response('good')
 
@@ -1029,8 +1063,14 @@ class ClubAlarmManageAPI(APIView):
         return Response("success")
 
 
-class MypageClubMainView(View):
+class MypageActivityListView(View):
     def get(self, request, club_id):
+        order = request.GET.get('order', '최신순')
+        page = request.GET.get('page', 1)
+        page_info = {
+            'order': order,
+            'page': page
+        }
 
         club_profile = Club.enabled_objects.filter(id=club_id).values('club_profile_path').first()
         print(club_profile)
@@ -1072,6 +1112,7 @@ class MypageClubMainView(View):
 
         context = {
             'insite': insite,
+            'page_info': page_info,
             'activities_count': activities_count,
             'notices': notices,
             'club_notices': club_notices,
@@ -1079,14 +1120,27 @@ class MypageClubMainView(View):
         }
         return render(request, 'mypage/web/management-club-web.html', context)
 
+    def post(self, request):
+        datas = request.POST
+
+        context = {
+            'page_info': {
+                'order': datas.get('order', '최신순'),
+                'page': datas.get('page', 1)
+            }
+        }
+
+        return render(request, 'mypage/web/management-club-web.html', context)
+
 
 class MypageActivityListAPI(APIView):
     def post(self, request, club_id):
-        sort = request.data.get('sort', '최신 개설순')
-        page = request.data.get('get', 1)
-        row_count = 4
-        # offset = (page - 1) * row_count
-        # limit = page * row_count
+        order = request.data.get('order', '최신 개설순')
+        page = int(request.data.get('page', 1))
+
+        row_count = 6
+        offset = (page - 1) * row_count
+        limit = page * row_count
 
         weekday_translation = {
             'Mon': '월',
@@ -1098,17 +1152,42 @@ class MypageActivityListAPI(APIView):
             'Sun': '일'
         }
         sort_field = '-created_date'
-        if sort == '최신 개설순':
+        if order == '최신 개설순':
             sort_field = '-created_date'
-        elif sort == '활동 일시순':
+        elif order == '활동 일시순':
             sort_field = '-activity_start'
-        elif sort == '인기순':
-            pass
+
+        # 조회수 어딧느닞 모르겠음
+        # elif order == '인기순':
+        #     pass
 
         activities_queryset = Activity.enabled_objects.filter(club_id=club_id, activity_end__gt=timezone.now(),
                                                               status=1)
-        activities = activities_queryset.values('id', 'activity_title', 'activity_start', 'created_date').order_by(
-            sort_field)
+
+        total_count = activities_queryset.count()
+
+        page_count = 5
+
+        end_page = math.ceil(page / page_count) * page_count
+        start_page = end_page - page_count + 1
+        real_end = math.ceil(total_count / row_count)
+        end_page = real_end if end_page > real_end else end_page
+
+        if end_page == 0:
+            end_page = 1
+
+        page_info = {
+            'totalCount': total_count,
+            'startPage': start_page,
+            'endPage': end_page,
+            'page': page,
+            'realEnd': real_end,
+            'pageCount': page_count,
+        }
+
+        activities = list(activities_queryset.values('id', 'activity_title', 'activity_start', 'created_date').order_by(
+            sort_field)[offset:limit])
+
         for activity in activities:
             activity_start = activity['activity_start']
             create_date = activity['created_date']
@@ -1116,18 +1195,43 @@ class MypageActivityListAPI(APIView):
                 activity_start.strftime('%a')] + ')' + activity_start.strftime(" %H:%M")
             activity['created_date'] = create_date.strftime("%m월 %d일") + '(' + weekday_translation[
                 create_date.strftime('%a')] + ')' + create_date.strftime(" %H:%M")
+
+        activities.append(page_info)
         return Response(activities)
 
 
 class MypageMyClubView(View):
     def get(self, request):
-        return render(request, 'mypage/web/my-club-web.html')
+        order = request.GET.get('order', '이름 순')
+        page = request.GET.get('page', 1)
+
+        context = {
+            'order':order,
+            'page':page
+        }
+        return render(request, 'mypage/web/my-club-web.html', context)
 
 
 class MypageMyClubAPI(APIView):
     def post(self, request):
         member = request.session.get('member')
-        sort = request.data
+        order = request.data.get('order', '이름 순')
+        page = int(request.data.get('page', 1))
+        print(page,order)
+
+        filter = 'name'
+        if order == '최신순':
+            filter = '-created_date'
+        if order == '오래된 순':
+            filter ='created_date'
+        elif order == '활동 순':
+            filter = '-activity_count'
+
+
+        row_count = 6
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
         clubs = Club.enabled_objects.filter(member_id=member['id']) \
             .annotate(name=F('club_name'), profile_path=F('club_profile_path'), activity_count=Count('activity'),
                       alarms=F('clubmember__alarm_status'), join_status=Value(2)) \
@@ -1139,11 +1243,12 @@ class MypageMyClubAPI(APIView):
                       join_status=F('status')) \
             .values('club_id', 'name', 'profile_path', 'alarms', 'join_status', 'activity_count', 'created_date')
 
+        combined_data = club_member.union(clubs).order_by(filter)
 
-        combined_data = club_member.union(clubs).order_by('-created_date')
-        # for data in combined_data:
-        #     print(data)
-        return Response(combined_data)
+        club_list = list(combined_data[offset:limit])
+        for club in club_list:
+            print(club)
+        return Response(club_list)
 
 
 class MypageMyClubAlarmStatusAPI(APIView):
@@ -1158,32 +1263,74 @@ class MypageMyClubAlarmStatusAPI(APIView):
 
         return Response('ok')
 
+
 class MypageMemberView(View):
     def get(self, request, club_id):
-        context = {'club_id': club_id}
+        search = request.GET.get('search', '')
+        order = request.GET.get('order', '전체 상태')
+        page = request.GET.get('page', 1)
+
+        context = {
+            'search': search,
+            'order': order,
+            'page': page,
+            'club_id': club_id,
+        }
+        return render(request, 'mypage/web/management-club-member-web.html', context)
+
+    def post(self, request):
+        datas = request.POST
+        context = {
+            'order': datas.get('order', '최신순'),
+            'page': datas.get('page', 1),
+            'search': datas.get('search', 1),
+        }
+
         return render(request, 'mypage/web/management-club-member-web.html', context)
 
 
-class MypageMemberFilerAPI(APIView):
+class MypageMemberListAPI(APIView):
     def post(self, request, club_id):
-        filter = request.data.get('filter', '전체 상태')
         search = request.data.get('search', '')
+        order = request.data.get('order', '전체 상태')
+        page = int(request.data.get('page', 1))
+        row_count = 8
+        offset = (page - 1) * row_count
+        limit = page * row_count
 
-        filter_field = Q(club_id=club_id)
+        condition = Q(club_id=club_id)
         if search:
-            filter_field &= Q(member__member_email__contains=search) | Q(member__member_nickname__contains=search)
-        if filter == '가입대기':
-            filter_field &= Q(status=-1)
-        elif filter == '가입중':
-            filter_field &= Q(status=1)
+            condition &= Q(member__member_email__contains=search) | Q(member__member_nickname__contains=search)
+        if order == '가입대기':
+            condition &= Q(status=-1)
+        elif order == '가입중':
+            condition &= Q(status=1)
 
-        club_members_queryset = ClubMember.objects.filter(filter_field).exclude(status=0)
-        club_members = club_members_queryset.values('id', 'member__member_nickname', 'member__member_email',
-                                                    'member__member_gender',
-                                                    'member__member_address', 'member__created_date', 'status',
-                                                    'member')
+        club_members_queryset = ClubMember.objects.filter(condition).exclude(status=0)
+
+        club_members = list(club_members_queryset.values('id', 'member__member_nickname', 'member__member_email',
+                                                         'member__member_gender',
+                                                         'member__member_address', 'member__created_date', 'status',
+                                                         'member')[offset:limit])
         club_members_count = club_members_queryset.count()
 
+        page_count = 5
+        end_page = math.ceil(page / page_count) * page_count
+        start_page = end_page - page_count + 1
+        real_end = math.ceil(club_members_count / row_count)
+        end_page = real_end if end_page > real_end else end_page
+
+        if end_page == 0:
+            end_page = 1
+
+        page_info = {
+            'totalCount': club_members_count,
+            'startPage': start_page,
+            'endPage': end_page,
+            'page': page,
+            'realEnd': real_end,
+            'pageCount': page_count,
+        }
         for club_member in club_members:
             club_member['member__created_date'] = club_member['member__created_date'].strftime("%Y-%m-%d")
             member_favorite_categories = MemberFavoriteCategory.objects.filter(member=club_member['member']).values(
@@ -1194,11 +1341,9 @@ class MypageMemberFilerAPI(APIView):
             activities = ActivityMember.objects.filter(member=club_member['member']).values('activity__activity_title')
             club_member['activities'] = list(activities)
 
-        data = {
-            'clubMembersCount': club_members_count,
-            'clubMembers': club_members,
-        }
-        return Response(data)
+        club_members.append(page_info)
+
+        return Response(club_members)
 
 
 class MypageClubDeleteView(View):
@@ -1208,7 +1353,7 @@ class MypageClubDeleteView(View):
         club_members_count = ClubMember.objects.filter(club=club, status=-1).count()
 
         context = {
-            'club_id':club_id,
+            'club_id': club_id,
             'club_name': club.club_name,
             'activities_count': activities_count,
             'club_members_count': club_members_count,
@@ -1221,6 +1366,7 @@ class MypageClubDeleteView(View):
         club.save()
 
         return redirect('/member/mypage-my-club/')
+
 
 class MypageMemberStatusAPI(APIView):
     def delete(self, request, club_id):
@@ -1238,18 +1384,59 @@ class MypageMemberStatusAPI(APIView):
 
 class MypageNoticeView(View):
     def get(self, request, club_id):
-        club_notices = ClubNotice.objects.filter(club_id=club_id, status=1).order_by('-id').values('id', 'notice_title',
-                                                                                                   'notice_content',
-                                                                                                   'created_date')
-        for club_notice in club_notices:
-            club_notice['created_date'] = club_notice['created_date'].strftime("%Y.%m.%d")
+        page = request.GET.get('page', 1)
 
-        context = {'clubNotices': club_notices, 'club_id': club_id}
+        context = {
+            'page': page,
+            'club_id': club_id
+        }
 
         return render(request, 'mypage/web/management-club-notice-web.html', context)
 
 
 class MypageNoticeAPI(APIView):
+    def post(self, request, club_id):
+        del_item = request.data.get('del_item', '')
+        page = int(request.data.get('page', 1))
+        row_count = 5
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        if del_item:
+            for item in del_item:
+                ClubNotice.objects.filter(id=item, club_id=club_id, status=1).update(status=0)
+
+        club_notices_queryset = ClubNotice.objects.filter(club_id=club_id, status=1)
+        club_notices = list(club_notices_queryset.order_by('-id').values('id', 'notice_title', 'notice_content', 'created_date')[offset:limit])
+        club_notices_count = club_notices_queryset.count()
+
+        page_count = 5
+        end_page = math.ceil(page / page_count) * page_count
+        start_page = end_page - page_count + 1
+        real_end = math.ceil(club_notices_count / row_count)
+        end_page = real_end if end_page > real_end else end_page
+
+        if end_page == 0:
+            end_page = 1
+
+        page_info = {
+            'totalCount': club_notices_count,
+            'startPage': start_page,
+            'endPage': end_page,
+            'page': page,
+            'realEnd': real_end,
+            'pageCount': page_count,
+        }
+
+        for club_notice in club_notices:
+            club_notice['created_date'] = club_notice['created_date'].strftime("%Y.%m.%d")
+
+        club_notices.append(page_info)
+
+        return Response(club_notices)
+
+
+class MypageNoticeDeleteAPI(APIView):
     def delete(self, request, club_id):
         del_list = request.data['del_list']
         for del_item in del_list:
@@ -1330,7 +1517,12 @@ class MypageSendLetterAPI(APIView):
                 'letter_content': letter['content']
             }
 
-            Letter.objects.create(**data)
+            letter = Letter.objects.create(**data)
+            ReceivedLetter.objects.create(letter_id=letter.id)
+
+            SentLetter.objects.create(letter_id=letter.id)
+            Alarm.objects.create(target_id=letter.id, alarm_type=4, sender_id=letter.sender_id,
+                                 receiver_id=letter.receiver_id)
 
         return Response('ok')
 
@@ -1392,17 +1584,27 @@ class MypageActivityAPIVIEW(APIView):
 
         activity_data = []
         # 클럽장
-        activity_data += Activity.objects.filter(activitymember__member_id=member_id).values('id', 'created_date', 'activity_title', 'thumbnail_path', 'club__member_id', 'activity_end','activitymember__status')
-        activity_data += Activity.objects.filter(club__member_id=member_id).values('id', 'created_date', 'activity_title', 'thumbnail_path', 'club__member_id', 'activity_end')
-
+        activity_data += Activity.objects.filter(activitymember__member_id=member_id).values('id', 'created_date',
+                                                                                             'activity_title',
+                                                                                             'thumbnail_path',
+                                                                                             'club__member_id',
+                                                                                             'activity_end',
+                                                                                             'activitymember__status')
+        activity_data += Activity.objects.filter(club__member_id=member_id).values('id', 'created_date',
+                                                                                   'activity_title', 'thumbnail_path',
+                                                                                   'club__member_id', 'activity_end')
 
         for activity in activity_data:
             activity_id = activity.get('id')
-            activity_like = ActivityLike.enabled_objects.filter(activity_id=activity_id ,member_id=member_id)
+            activity_like = ActivityLike.enabled_objects.filter(activity_id=activity_id, member_id=member_id)
             activity['status'] = activity_like.exists()
 
         if status_like == 'like':
-            activity_data = ActivityLike.objects.filter(member_id=member_id, status=1).values('id','status','activity__thumbnail_path','activity__activity_end' ,'activity__activity_title','activity_id')
+            activity_data = ActivityLike.objects.filter(member_id=member_id, status=1).values('id', 'status',
+                                                                                              'activity__thumbnail_path',
+                                                                                              'activity__activity_end',
+                                                                                              'activity__activity_title',
+                                                                                              'activity_id')
 
         return Response(activity_data[offset:limit])
 
@@ -1731,13 +1933,13 @@ class ActivityEditView(View):
         activity_id = request.GET.get('activity_id')
         activity = Activity.objects.filter(id=activity_id).first()
         member_id = request.session['member']['id']
-        member = Member.objects.filter(id = member_id).first()
+        member = Member.objects.filter(id=member_id).first()
         categories = Category.objects.filter(status=True)
 
-        context = { 'activity':activity,
-            'member':member,
-            'categories' :categories,
-        }
+        context = {'activity': activity,
+                   'member': member,
+                   'categories': categories,
+                   }
 
         return render(request, 'mypage/web/management-activity-edit-web.html', context)
 
@@ -1749,15 +1951,14 @@ class ActivityEditView(View):
         print(activity.activity_title)
         print('------')
         a = data.get('activity-title')
-        recruit_start = make_datetime(data.get('recruit-start-date').replace(" ", ""),data.get('recruit-start-time'))
-        recruit_end = make_datetime(data.get('recruit-end-date').replace(" ", ""),data.get('recruit-end-time'))
+        recruit_start = make_datetime(data.get('recruit-start-date').replace(" ", ""), data.get('recruit-start-time'))
+        recruit_end = make_datetime(data.get('recruit-end-date').replace(" ", ""), data.get('recruit-end-time'))
         category = Category.objects.get(id=data.get('category'))
         thumbnail = request.FILES.get('thumbnail-path')
         banner = request.FILES.get('banner-path')
-        activity_start = make_datetime(data.get('activity-start-date').replace(" ", ""), data.get('activity-start-time'))
+        activity_start = make_datetime(data.get('activity-start-date').replace(" ", ""),
+                                       data.get('activity-start-time'))
         activity_end = make_datetime(data.get('activity-end-date').replace(" ", ""), data.get('activity-end-time'))
-
-
 
         activity.activity_title = a
         activity.activity_content = data.get('activity-content')
@@ -1777,10 +1978,7 @@ class ActivityEditView(View):
 
         activity.save()
 
-
-
         return redirect(f'/member/activity-edit?activity_id={activity.id}')
-
 
 
 class MypageWishlistWebView(View):
@@ -1806,18 +2004,29 @@ class MypageWishlistAPIView(APIView):
 
         # 페이지 범위에 해당하는 데이터 조회
         # 전체
-        wishlists = Wishlist.objects.filter(Q(member_id=member_id), status=1).annotate(like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1)), reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1)), category_name=F("category__category_name")) \
-                      .values('wishlist_content', 'created_date', 'is_private', 'category_name', 'category', 'reply_total', 'like_total',
-                              'id')[offset:limit]
-        #공개
-        open = Wishlist.objects.filter(member_id=member_id, is_private=1, status=1).annotate(like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1)), reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1)), category_name=F("category__category_name")) \
-                     .values('wishlist_content', 'created_date', 'is_private', 'category_name', 'category', 'reply_total', 'like_total',
+        wishlists = Wishlist.objects.filter(Q(member_id=member_id), status=1).annotate(
+            like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1)),
+            reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1)),
+            category_name=F("category__category_name")) \
+                        .values('wishlist_content', 'created_date', 'is_private', 'category_name', 'category',
+                                'reply_total', 'like_total',
+                                'id')[offset:limit]
+        # 공개
+        open = Wishlist.objects.filter(member_id=member_id, is_private=1, status=1).annotate(
+            like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1)),
+            reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1)),
+            category_name=F("category__category_name")) \
+                   .values('wishlist_content', 'created_date', 'is_private', 'category_name', 'category', 'reply_total',
+                           'like_total',
+                           'id')[offset:limit]
+        # 비공개
+        secret = Wishlist.objects.filter(member_id=member_id, is_private=0, status=1).annotate(
+            like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1)),
+            reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1)),
+            category_name=F("category__category_name")) \
+                     .values('wishlist_content', 'created_date', 'is_private', 'category_name', 'category',
+                             'reply_total', 'like_total',
                              'id')[offset:limit]
-        #비공개
-        secret = Wishlist.objects.filter(member_id=member_id, is_private=0, status=1).annotate(like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1)), reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1)), category_name=F("category__category_name")) \
-                       .values('wishlist_content', 'created_date', 'is_private', 'category_name', 'category', 'reply_total', 'like_total',
-                               'id')[offset:limit]
-
 
         # 응답에 전체 페이지 수와 데이터 추가
         response_data = {
@@ -1826,28 +2035,41 @@ class MypageWishlistAPIView(APIView):
 
         }
         if status_wishlist == 'open':
-            response_data['wishlists'] = Wishlist.objects.filter(member_id=member_id, is_private=1, status=1).annotate(like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1), category=F('category__category_name')),
-            reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1)), category_name=F("category__category_name")) \
-                                           .values('wishlist_content', 'created_date', 'is_private', 'category_name', 'category',
-                                                   'reply_total', 'like_total',
-                                                   'id')[offset:limit]
+            response_data['wishlists'] = Wishlist.objects.filter(member_id=member_id, is_private=1, status=1).annotate(
+                like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1),
+                                 category=F('category__category_name')),
+                reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1)),
+                category_name=F("category__category_name")) \
+                                             .values('wishlist_content', 'created_date', 'is_private', 'category_name',
+                                                     'category',
+                                                     'reply_total', 'like_total',
+                                                     'id')[offset:limit]
 
-            response_data['total_pages'] = (Wishlist.objects.filter(member_id=member_id, is_private=1, status=1).count() + row_count - 1) // row_count
+            response_data['total_pages'] = (Wishlist.objects.filter(member_id=member_id, is_private=1,
+                                                                    status=1).count() + row_count - 1) // row_count
         elif status_wishlist == 'secret':
-            response_data['wishlists'] = Wishlist.objects.filter(member_id=member_id, is_private=0, status=1).annotate(like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1)),
-            reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1)), category_name=F("category__category_name")) \
-                                           .values('wishlist_content', 'created_date', 'is_private', 'category_name', 'category',
-                                                   'reply_total', 'like_total',
-                                                   'id')[offset:limit]
-            response_data['total_pages'] = (Wishlist.objects.filter(member_id=member_id, is_private=0, status=1).count() + row_count - 1) // row_count
+            response_data['wishlists'] = Wishlist.objects.filter(member_id=member_id, is_private=0, status=1).annotate(
+                like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1)),
+                reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1)),
+                category_name=F("category__category_name")) \
+                                             .values('wishlist_content', 'created_date', 'is_private', 'category_name',
+                                                     'category',
+                                                     'reply_total', 'like_total',
+                                                     'id')[offset:limit]
+            response_data['total_pages'] = (Wishlist.objects.filter(member_id=member_id, is_private=0,
+                                                                    status=1).count() + row_count - 1) // row_count
 
         else:
-            response_data['wishlists'] = Wishlist.objects.filter(Q(member_id=member_id, status=1)).annotate(like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1)),
-            reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1)), category_name=F("category__category_name")) \
-                                           .values('wishlist_content', 'created_date', 'is_private', 'category_name', 'category',
-                                                   'reply_total', 'like_total', 'id')[offset:limit]
+            response_data['wishlists'] = Wishlist.objects.filter(Q(member_id=member_id, status=1)).annotate(
+                like_total=Count('wishlistlike__id', filter=Q(wishlistlike__status=1)),
+                reply_total=Count('wishlistreply__id', filter=Q(wishlistreply__status=1)),
+                category_name=F("category__category_name")) \
+                                             .values('wishlist_content', 'created_date', 'is_private', 'category_name',
+                                                     'category',
+                                                     'reply_total', 'like_total', 'id')[offset:limit]
 
-            response_data['total_pages'] = (Wishlist.objects.filter(member_id=member_id, status=1).count() + row_count - 1) // row_count
+            response_data['total_pages'] = (Wishlist.objects.filter(member_id=member_id,
+                                                                    status=1).count() + row_count - 1) // row_count
 
         return Response(response_data)
 
@@ -1861,4 +2083,3 @@ class MypageWishlistDeleteAPIView(APIView):
         wishlist.save(update_fields=['status'])
 
         return Response('success')
-

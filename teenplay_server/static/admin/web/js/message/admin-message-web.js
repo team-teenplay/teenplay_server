@@ -8,12 +8,11 @@ const CreateService = (() => {
         console.log(pagination)
         let text = ``;
         pagination.letter.forEach((page) => {
-            console.log(page.read_date)
 
             text += `
                 <li class="main-message-list" data-id="${page.id}">
                     <div class="main-comment-list-check">
-                        <input type="checkbox" class="main-comment-list-checkbox" />
+                        <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-id="${page.id}" />
                     </div>
                     <div class="main-message-list-name">${page.sender_name}</div>
                     <div class="main-message-list-status">${page.receiver_name}</div>

@@ -269,9 +269,10 @@ overflowHidden = document.querySelector(".max-overflow-hidden");
 isHiddenShadow = document.querySelector(".is-hidden-shadow");
 
 // 활동 내용의 높이에 따라 활동소개더보기 버튼 표시 유무 및 아랫쪽 흐려짐 여부 설정
-const activityContentBox = document.querySelector(".title-text");
-const flipButtonContainer = document.querySelector(".filp-more")
-if (activityContentBox.offsetHeight >= window.innerHeight * 0.8) {
+const activityContentBox = document.querySelector(".overflow-hidden-box");
+console.log(activityContentBox.offsetHeight);
+const flipButtonContainer = document.querySelector(".filp-more");
+if (activityContentBox.offsetHeight <= window.innerHeight * 0.5) {
     flipButtonContainer.style.display = "none";
     isHiddenShadow.style.backgroundImage = "none";
 } else {
