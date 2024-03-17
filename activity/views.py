@@ -51,7 +51,7 @@ class ActivityCreateWebView(View):
         pay_id = data.get('pay-id')
         pay = Pay.objects.filter(status=True, id=pay_id).first()
         try:
-            activity_content = data.get('activity-content')
+            activity_content = data.get('activity-content')[1:-1]
             recruit_start = make_datetime(data.get('recruit-start-date'), data.get('recruit-start-time'))
             recruit_end = make_datetime(data.get('recruit-end-date'), data.get('recruit-end-time'))
             category = Category.objects.get(id=data.get('category'))
