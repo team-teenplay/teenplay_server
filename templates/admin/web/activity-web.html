@@ -22,12 +22,12 @@
                     </a>
                 </li>
                 <!-- 틴플레이관리 -->
-                <li class="main-user-other">
-                    <a href="/admin/teenplay/" class="main-user-warp">
-                        <img class="main-user-image" src="{% static 'admin/web/images/play-img.png' %}" alt="user-image" />
-                        <span class="main-user-text">틴 플레이 관리</span>
-                    </a>
-                </li>
+{#                <li class="main-user-other">#}
+{#                    <a href="/admin/teenplay/" class="main-user-warp">#}
+{#                        <img class="main-user-image" src="{% static 'admin/web/images/play-img.png' %}" alt="user-image" />#}
+{#                        <span class="main-user-text">틴 플레이 관리</span>#}
+{#                    </a>#}
+{#                </li>#}
                 <!-- 게시글 관리 -->
                 <li class="main-user">
                     <a href="/admin/promote/" class="main-user-warp">
@@ -242,16 +242,16 @@
         <div id="admin-user-modal-backdrop" class="admin-delete-modal-backdrop hidden"></div>
         <!-- 수정 모달창 -->
         <div class="detail-box">
-{#            <div id="admin-post-modal" class="hidden">#}
-{#                <h4 class="admin-post-modal-title">활동 모집글 상세보기</h4>#}
-{#                <div class="admin-post-modal-warp">#}
-{#                    <!-- 여기서부터 안에 들어가는거 하나씩 / 각각 빈 div하나 만들고 안에서 생성 -->#}
-{#                    <div class="titleqq">#}
-{#                        <p class="admin-post-modal-title-name">제목</p>#}
-{#                        <label class="admin-post-modal-title-label">#}
-{#                            <input oninput="updateButtonStatus()" type="text" class="admin-post-modal-title-input" readonly value />#}
-{#                        </label>#}
-{#                        <!-- 값 미입력시 -->#}
+            <div id="admin-post-modal" class="admin-post-modal hidden">
+                <h4 class="admin-post-modal-title">활동 모집글 상세보기</h4>
+                <div class="admin-post-modal-warp">
+                    <!-- 여기서부터 안에 들어가는거 하나씩 / 각각 빈 div하나 만들고 안에서 생성 -->
+                    <div class="titleqq">
+                        <p class="admin-post-modal-title-name">제목</p>
+                        <label class="admin-post-modal-title-label">
+                            <input name="title" type="text" class="admin-post-modal-title-input" readonly value="" />
+                        </label>
+                        <!-- 값 미입력시 -->
 {#                        <div id="red-title" class="hidden">#}
 {#                            <div class="redbox">#}
 {#                                <svg viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" class="redfont">#}
@@ -260,13 +260,14 @@
 {#                                값을 입력해주세요.#}
 {#                            </div>#}
 {#                        </div>#}
-{#                    </div>#}
-{#                    <div>#}
-{#                        <p class="admin-post-modal-content-name">내용</p>#}
-{#                        <label class="admin-post-modal-content-label">#}
-{#                            <textarea oninput="updateButtonStatus()" class="admin-post-modal-content-input" readonly value></textarea>#}
-{#                        </label>#}
-{#                        <!-- 값 미입력시 -->#}
+                    </div>
+                    <div>
+                        <p class="admin-post-modal-content-name">내용</p>
+                        <label class="admin-post-modal-content-label">
+                            <div class="admin-post-modal-content-input"></div>
+{#                            <textarea name="content" class="admin-post-modal-content-input" readonly></textarea>#}
+                        </label>
+                        <!-- 값 미입력시 -->
 {#                        <div id="red-content" class="hidden">#}
 {#                            <div class="redbox">#}
 {#                                <svg viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" class="redfont">#}
@@ -275,15 +276,15 @@
 {#                                값을 입력해주세요.#}
 {#                            </div>#}
 {#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#            <!-- 버튼 아래 있는것들 -->#}
-{#            <div class="admin-user-modal-button">#}
-{#                <div class="admin-user-modal-left">#}
-{#                    <button class="admin-user-modal-left-detail-button" id="modalCloseButton">닫기</button>#}
-{#                </div>#}
-{#            </div>#}
+                    </div>
+                </div>
+                <!-- 버튼 아래 있는것들 -->
+                <div class="admin-user-modal-button">
+                    <div class="admin-user-modal-left">
+                        <button class="admin-user-modal-left-detail-button" id="modalCloseButton">닫기</button>
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- 모달 뒷배경 -->
         <div id="admin-user-modal-backdrop" class="admin-user-modal-backdrop hidden"></div>

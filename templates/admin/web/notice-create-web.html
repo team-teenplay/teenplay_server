@@ -67,7 +67,7 @@
         </nav>
         <!-- 사실상 여기만 수정하면 모든게 끝입니다! -->
         <div class="main-festival-add">
-            <form name="notice-create-form" action="/admin/notice/" method="post" enctype="multipart/form-data">
+            <form name="notice-create-form" action="/admin/notice/write/" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="main-festival-add-warp">
                     <!-- 맨위에 작성버튼 -->
@@ -75,11 +75,11 @@
                         <div class="main-festival-add-top-in">
                             <h3 class="main-festival-add-top-text">공지사항 작성하기</h3>
                             <div class="main-festival-add-top-choice">
-                                <button class="main-festival-add-top-cancle-button" type="button">
-                                    <a href="/admin/notice/" class="main-festival-add-top-cancle-text">
-                                        <div>취소하기</div>
-                                    </a>
-                                </button>
+                                <a href="/admin/notice/" class="main-festival-add-top-cancle-button">
+                                    <button class="main-festival-add-top-cancle-text" type="button">
+                                            <div>취소하기</div>
+                                    </button>
+                                </a>
                                 <div class="main-festival-add-top-create-text">
                                     <button class="main-festival-add-top-create-button">작성하기</button>
                                 </div>
@@ -156,7 +156,7 @@
         const csrf_token = '{{ csrf_token }}';
     </script>
     <script src="{% static 'admin/web/js/notice/admin-notice-module-web.js' %}"></script>
-    <script src="{% static 'admin/web/js/notice/notice-create/admin-notice-create-web.js' %}"></script>
-{#    <script src="{% static 'admin/web/js/notice/notice-create/admin-notice-create-button-web.js' %}"></script>#}
+{#    <script src="{% static 'admin/web/js/notice/notice-create/admin-notice-create-web.js' %}"></script>#}
+    <script src="{% static 'admin/web/js/notice/notice-create/admin-notice-create-button-web.js' %}"></script>
 {#    <script src="{% static 'admin/web/js/notice/notice-create/admin-notice-create-redbox-web.js' %}"></script>#}
 {% endblock %}

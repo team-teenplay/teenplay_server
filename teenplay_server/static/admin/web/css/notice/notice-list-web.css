@@ -749,7 +749,11 @@ color: #9ca3af;
     line-height: 18px;
     color: #1d1d1e;
     fill: #1d1d1e;
-    
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
 }
 
 .main-user-list-status{
