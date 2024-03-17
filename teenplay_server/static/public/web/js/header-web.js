@@ -263,45 +263,46 @@ if (memberServiceWrap) {
         alarmCount2.innerText = Number(alarmCount) <= 99 ? alarmCount : '99+';
     }
 
-    getAlarmCount(alarmMemberId, showAlarmCount)
+    getAlarmCount(alarmMemberId, showAlarmCount);
 
-    // 카테고리 띄우기
-    const headerCategoryWrap = document.querySelector(".category-group-items");
-
-    const getCategories = async (callback) => {
-        const response = await fetch(`/activity/categories/api/`);
-        const categories = await response.json();
-        if (callback) {
-            callback(categories);
-        }
-    }
-
-    const showCategories = (categories) => {
-        let text = ``;
-        categories.forEach((category) => {
-            text += `
-                <form class="category-form" action="/activity/list/" method="post" name="category-form${category.id}">
-                    <input type="hidden" name="csrfmiddlewaretoken" id="csrfmiddlewaretoken" value="${csrfToken}">
-                    <div class="category-item">
-                        <div class="item-link">
-                            <input type="hidden" name="category-id" value="${category.id}">
-                            <span>${category.category_name}</span>
-                        </div>
-                    </div>
-                </form>
-            `;
-        })
-        headerCategoryWrap.innerHTML = text;
-        const forms = document.querySelectorAll(".category-form");
-        forms.forEach((form) => {
-            form.addEventListener("click", (e) => {
-                form.submit();
-            })
-        })
-    }
-
-    getCategories(showCategories);
 }
+// 카테고리 띄우기
+const headerCategoryWrap = document.querySelector(".category-group-items");
+
+const getCategories = async (callback) => {
+    const response = await fetch(`/activity/categories/api/`);
+    const categories = await response.json();
+    if (callback) {
+        callback(categories);
+    }
+}
+
+const showCategories = (categories) => {
+    let text = ``;
+    categories.forEach((category) => {
+        text += `
+            <form class="category-form" action="/activity/list/" method="post" name="category-form${category.id}">
+                <input type="hidden" name="csrfmiddlewaretoken" id="csrfmiddlewaretoken" value="${csrfToken}">
+                <div class="category-item">
+                    <div class="item-link">
+                        <input type="hidden" name="category-id" value="${category.id}">
+                        <span>${category.category_name}</span>
+                    </div>
+                </div>
+            </form>
+        `;
+    })
+    headerCategoryWrap.innerHTML = text;
+    const forms = document.querySelectorAll(".category-form");
+    forms.forEach((form) => {
+        form.addEventListener("click", (e) => {
+            form.submit();
+        })
+    })
+}
+
+getCategories(showCategories);
+
 
 // 추천 검색어의 각 검색어 클릭 시 검색 결과로 이동
 const recommendKeywordForms = document.querySelectorAll(".recommend-keyword-form");
