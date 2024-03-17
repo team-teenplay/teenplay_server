@@ -59,7 +59,7 @@
                 </div>
                 <div class="member-management-assistance">
                     <!-- (전체 구성원 수)개중 (페이지수)-(해당 페이지에 구성원 수)개 -->
-                    <div class="count-on-page">{{ clubMembersCount }}개중 1-8개</div>
+                    <div></div>
                     <div class="send-letter-box">
                         <span class="checked-member-contents">
                             <span>현재 선택된 구성원</span>
@@ -90,30 +90,6 @@
                         <div class="pagination-wrap">
                             <div class="pagination-container">
                                 <div class="pagination-box">
-                                    <button class="prev-btn disabled" type="button">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="left-svg" viewBox="0 0 20 20"
-                                             fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                                                  clip-rule="evenodd"></path>
-                                        </svg>
-                                    </button>
-                                    <div class="pagination-number-box">
-                                        <button class="page-number-btn seleced-page-number-btn" type="button">
-                                            <div class="page-number">1</div>
-                                        </button>
-                                        <button class="page-number-btn" type="button">
-                                            <div class="page-number">2</div>
-                                        </button>
-                                    </div>
-                                    <button class="next-btn" type="button">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="right-svg" viewBox="0 0 20 20"
-                                             fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                                  clip-rule="evenodd"></path>
-                                        </svg>
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -284,6 +260,9 @@
     <script>
         const csrf_token = '{{ csrf_token }}';
         const club_id = '{{ club_id }}';
+        let page = {{ page }};
+        let order = `{{ order }}`;
+        let search = `{{ search }}`;
     </script>
     <script src="{% static 'member/web/js/management-mypage-module.js' %}"></script>
     <script src="{% static 'member/web/js/management-club-member-web.js' %}"></script>

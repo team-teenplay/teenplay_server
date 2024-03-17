@@ -135,10 +135,16 @@ writeButton.addEventListener("click", async (e) => {
         letter_content: letter_content.value,
         receiver_id: receiver_id.value
     });
-    replyService.getList(member_id, page,status_letter, showList).then((text) => {
+    await replyService.getList(member_id, page,status_letter, showList).then((text) => {
     tbody.innerHTML = text;
-});
+    });
+    await replyService.getList(member_id, 1,status_letter,(replies, total_pages) => {
+    maxPage = total_pages;
+    });
+
+    updatePageButtons();
 })
+
 
 replyService.getList(member_id, 1, status_letter,(replies, total_pages) => {
 maxPage = total_pages;
@@ -150,7 +156,7 @@ const showList = async (replies) => {
     if (replies.length === 0 ){
        text += `<div class="test" style="    padding-top: 22px;
     padding-left: 482px;
-    padding-bottom: 36px;">아직 작성한 댓글이 없습니다.</div>`
+    padding-bottom: 36px;">아직 작성한 쪽지가 없습니다.</div>`
     }
     replies.forEach((letter) =>  {
         if (replies.length ===0) {
@@ -245,7 +251,7 @@ const updatePageButtons = () => {
 updatePageButtons();
 
 // 서버에서 전체 페이지 수를 가져와서 최대 페이지 업데이트
-replyService.getList(member_id, 1, status_letter, async (reply, total_pages) => {
+replyService.getList(member_id, 1, status_letter, async (replies, total_pages) => {
     maxPage = total_pages;
     // 페이지 버튼 다시 업데이트
     updatePageButtons();
@@ -275,9 +281,14 @@ rightButton.addEventListener('click', async () => {
 
 
 // 서버에서 전체 페이지 수를 가져와서 최대 페이지 업데이트
-replyService.getList(member_id, 1,status_letter,(reply, total_pages) => {
+replyService.getList(member_id, 1,status_letter,(replies, total_pages) => {
     maxPage = total_pages;
 });
+
+
+
+
+
 
 const deleteModalwrap = document.querySelector(".delete-modal-wrap");
 const deleteBut = document.getElementById('delete-but')
@@ -291,10 +302,18 @@ tbody.addEventListener("click", async (e)=>{
         deleteModalwrap.style.display = 'block'
         deleteBut.addEventListener("click",async (e)=>{
             await replyService.remove(letter_id);
+            await replyService.getList(member_id, page,status_letter, showList).then((text) => {
+                tbody.innerHTML = text;
+            });
+            await replyService.getList(member_id, 1,status_letter,(replies, total_pages) => {
+            maxPage = total_pages;
+            });
+
+
             page = 1
-            const text = await replyService.getList(member_id, currentPage,status_letter, showList);
-            tbody.innerHTML = text;
+            currentPage = 1
             deleteModalwrap.style.display = 'none'
+            updatePageButtons();
         })
     }else if(e.target.classList[0] === 'letter-text'){
 
@@ -329,6 +348,7 @@ tbody.addEventListener("click", async (e)=>{
             ;
             const letter_id = e.target.classList[1]
             await replyService.update(letter_id);
+            updatePageButtons();
 
     }
 })

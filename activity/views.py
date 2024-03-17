@@ -139,6 +139,19 @@ class ActivityDetailWebView(View):
     def get(self, request):
         activity_id = request.GET['id']
         activity = Activity.objects.filter(id=activity_id).first()
+        activity_content = activity.activity_content
+        for i in range(len(activity_content)):
+            if activity_content[i] == '"':
+                activity_content = activity_content[i+1:]
+            elif activity_content[i] == '<':
+                break
+        for i in range(len(activity_content)-1, -1, -1):
+            if activity_content[i] == '"':
+                activity_content = activity_content[:i]
+            elif activity_content[i] == '>':
+                break
+        activity.activity_content = activity_content
+
         category = activity.category
         club = activity.club
         member_id = request.session['member']['id']

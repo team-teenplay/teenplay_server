@@ -129,12 +129,18 @@ const memberPopBk = document.querySelector(".member-pop-background");
 const memberPopIcon = document.querySelector(".pop-member-btn-close");
 const memberPopupImage = document.querySelector(".pop-member-image-picture");
 const memberImages = document.querySelectorAll(".member-image-picture")
+const memberNames = document.querySelectorAll(".member-name");
+const memberPositions = document.querySelectorAll(".member-appointment");
+const memberPopName = document.querySelector(".pop-member-name");
+const memberPopPosition = document.querySelector(".pop-member-appointment");
 memberProfileClick.forEach((members, i) => {
     members.addEventListener("click", (e) => {
         memberPop.style.display = "flex";
         memberPop.style.alignItems = "center";
         memberPop.style.justifyContent = "center";
         memberPopupImage.style.backgroundImage = memberImages[i].style.backgroundImage;
+        memberPopName.innerText = memberNames[i].innerText;
+        memberPopPosition.innerText = memberPositions[i].innerText;
     });
 });
 

@@ -92,16 +92,16 @@ const showList =(pay) =>{
                                 <div class="payment-activity-thumbnail-wrap">
                                     <div class="payment-activity-thumbnail-container">
                                         <!-- 해당 활동 상세보기 주소 필요 -->
-                                        <a href="http://127.0.0.1:10000/member/activity/?activity_id=${pay.activity__club_id}" target="_blank">
+                                        <a href="http://127.0.0.1:10000/member/activity/?activity_id=${pay.activity__id}" target="_blank">
                                             <!-- 해당 활동의 썸네일 경로 필요 -->
-                                            <img class="payment-activity-thumbnail" src="/upload/${pay.member__club__club_profile_path}" />
+                                            <img class="payment-activity-thumbnail" src="/upload/${pay.activity__thumbnail_path}" />
                                         </a>
                                     </div>
                                 </div>
                                 <div class="club-activity-content">
                                     <div class="club-name-time">
                                         <div class="club-name-box">
-                                            <span>${pay.member__club__club_name}</span>
+                                            <span>${pay.activity__club__club_name}</span>
                                         </div>
                                         <div class="open-time-box">
                                             <div class="open-time">결제일${changeDate(pay.created_date)}</div>
@@ -110,7 +110,7 @@ const showList =(pay) =>{
                                     <div class="payment-activity-info">
                                         <div class="payment-activity-title">${pay.activity__activity_title}.</div>
                                         <div class="payment-activity-oneline-info">
-                                            <span>${pay.member__club__club_intro}</span>
+                                            <span>${pay.activity__activity_intro}</span>
                                         </div>
                                     </div>
                                 </div>

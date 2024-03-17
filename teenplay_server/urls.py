@@ -21,12 +21,13 @@ from django.urls import path, include
 
 from main.views import MainView, FooterNoticeLatestAPI
 from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroductionView, CompanyNoticeListAPI, \
-    AdminMessageView, AdminTeenplayView, AdminPromoteView, AdminActivityView, AdminWishlistView, AdminMeetingView, \
+    AdminMessageView, AdminPromoteView, AdminActivityView, AdminWishlistView, AdminMeetingView, \
     AdminFestivalView, AdminFestivalWrite, AdminNoticeView, AdminNoticeWriteView, AdminCommentView, AdminUserUpdateAPI, \
     AdminNoticePaginationAPI, AdminWishlistAPI, AdminNoticeUpdateAPI, AdminUserAPI, \
     AdminCommentAPI, AdminCommentDeleteAPI, AdminActivityAPI, AdminActivityDeleteAPI, AdminPromoteAPI, \
-    AdminPromoteDeleteAPI, AdminMessageAPI, AdminMessageUpdateAPI, AdminTeenplayAPI, AdminTeenplayDeleteAPI, \
+    AdminPromoteDeleteAPI, AdminMessageAPI, \
     AdminWishlistDeleteAPI, AdminMeetingAPI, AdminMeetingDeleteAPI
+    # AdminTeenplayView, AdminTeenplayAPI, AdminTeenplayDeleteAPI
 
 
 # urls에 음수 값 넣기 가능!
@@ -65,12 +66,11 @@ urlpatterns = [
     path('admin/user/update/<int:member_id>/', AdminUserUpdateAPI.as_view(), name='admin-user-update'),
     # 관리자 - 쪽지 관리
     path('admin/message/', AdminMessageView.as_view(), name='admin-message'),
-    path('admin/messages/api/', AdminMessageAPI.as_view(), name='admin-message-api'),
-    path('admin/message/update/<int:message_id>/', AdminMessageUpdateAPI.as_view(), name='admin-message-update'),
+    path('admin/messages/<int:page>/', AdminMessageAPI.as_view(), name='admin-message-api'),
     # 관리자 - 틴플레이 관리
-    path('admin/teenplay/', AdminTeenplayView.as_view(), name='admin-teenplay'),
-    path('admin/teenplaies/<int:page>/', AdminTeenplayAPI.as_view(), name='admin-teenplay-api'),
-    path('admin/teenplaies/delete/<int:teenplay_id>/', AdminTeenplayDeleteAPI.as_view(), name='admin-teenplay-delete'),
+    # path('admin/teenplay/', AdminTeenplayView.as_view(), name='admin-teenplay'),
+    # path('admin/teenplaies/<int:page>/', AdminTeenplayAPI.as_view(), name='admin-teenplay-api'),
+    # path('admin/teenplaies/delete/<int:teenplay_id>/', AdminTeenplayDeleteAPI.as_view(), name='admin-teenplay-delete'),
     # 관리자 - 게시글 홍보글 관리
     path('admin/promote/', AdminPromoteView.as_view(), name='admin-promote'),
     path('admin/promotes/<int:page>/', AdminPromoteAPI.as_view(), name='admin-promote-api'),

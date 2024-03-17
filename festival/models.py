@@ -7,6 +7,22 @@ from teenplay_server.period import Period
 class Festival(Period):
     festival_title = models.TextField(null=False, blank=False)
     festival_content = models.TextField(null=False, blank=False)
+    #     1. 문화관광축제
+    #     2. 일반축제
+    #     3. 전통공연
+    #     4. 연극
+    #     5. 뮤지컬
+    #     6. 오페라
+    #     7. 전시회
+    #     8. 박람회
+    #     9. 컨벤션
+    #     10. 무용
+    #     11. 클래식음악회
+    #     12. 대중콘서트
+    #     13. 영화
+    #     14. 스포츠경기
+    #     15. 기타행사
+    festival_category = models.IntegerField(null=False, blank=False)
     festival_price = models.FloatField(null=True)
     festival_address = models.TextField(null=True)
     festival_address_detail = models.TextField(null=True)
