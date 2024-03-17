@@ -51,7 +51,7 @@ class ActivityCreateWebView(View):
         pay_id = data.get('pay-id')
         pay = Pay.objects.filter(status=True, id=pay_id).first()
         try:
-            activity_content = data.get('activity-content')[1:-1]
+            activity_content = data.get('activity-content')
             recruit_start = make_datetime(data.get('recruit-start-date'), data.get('recruit-start-time'))
             recruit_end = make_datetime(data.get('recruit-end-date'), data.get('recruit-end-time'))
             category = Category.objects.get(id=data.get('category'))
@@ -139,6 +139,19 @@ class ActivityDetailWebView(View):
     def get(self, request):
         activity_id = request.GET['id']
         activity = Activity.objects.filter(id=activity_id).first()
+        activity_content = activity.activity_content
+        for i in range(len(activity_content)):
+            if activity_content[i] == '"':
+                activity_content = activity_content[i+1:]
+            elif activity_content[i] == '<':
+                break
+        for i in range(len(activity_content)-1, -1, -1):
+            if activity_content[i] == '"':
+                activity_content = activity_content[:i]
+            elif activity_content[i] == '>':
+                break
+        activity.activity_content = activity_content
+
         category = activity.category
         club = activity.club
         member_id = request.session['member']['id']
