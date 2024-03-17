@@ -68,7 +68,9 @@
         </nav>
         <!-- 사실상 여기만 수정하면 모든게 끝입니다! -->
         <div class="main-festival-add">
-            <div class="main-festival-add-warp">
+            <form action="{% url 'admin-festival-write' %}" method="post" enctype="multipart/form-data" name="admin-festival-write">
+                {% csrf_token %}
+                <div class="main-festival-add-warp">
                 <!-- 맨위에 작성버튼 -->
                 <div class="main-festival-add-top">
                     <div class="main-festival-add-top-in">
@@ -134,7 +136,7 @@
                         <div>
                             <p class="main-festival-info-detail-titel">축제 제목</p>
                             <label class="main-festival-info-detail-label">
-                                <input oninput="updateButtonStatus()" class="main-festival-info-detail-input" placeholder="제목을 입력해주세요" type="text" value />
+                                <input name="festival_title" class="main-festival-info-detail-input" placeholder="제목을 입력해주세요" type="text" value="" />
                             </label>
                             <!-- 값 미입력시 -->
                             <div id="red-title" class="hidden">
@@ -149,7 +151,7 @@
                         <!-- 축제 내용 입력 -->
                         <div>
                             <p class="main-festival-info-subtitle">축제 내용</p>
-                            <textarea oninput="updateButtonStatus()" class="main-festival-info-detail-textarea" placeholder="내용을 입력해주세요"></textarea>
+                            <textarea name="festival_content" oninput="updateButtonStatus()" class="main-festival-info-detail-textarea" placeholder="내용을 입력해주세요"></textarea>
                             <!-- 값 미입력시 -->
                             <div id="red-content" class="hidden">
                                 <div class="redbox">
@@ -180,7 +182,7 @@
                         <div>
                             <p class="main-festival-plan-detail-pay">이용요금</p>
                             <label class="main-festival-plan-detail-pay-label">
-                                <input oninput="updateButtonStatus()" class="main-festival-plan-detail-pay-input" type="text" placeholder="이용요금을 입력해주세요." value />
+                                <input name="festival_price" oninput="updateButtonStatus()" class="main-festival-plan-detail-pay-input" type="text" placeholder="이용요금을 입력해주세요." value="" />
                             </label>
                             <!-- 값 미입력시 -->
                             <div id="red-pay" class="hidden">
@@ -196,7 +198,7 @@
                         <div>
                             <p class="main-festival-plan-detail-adress">주소</p>
                             <label class="main-festival-plan-detail-adress-label">
-                                <input class="main-festival-plan-detail-adress-input" type="text" placeholder="주소를 입력해주세요." value oninput="updateButtonStatus()" />
+                                <input name="festival_address" class="main-festival-plan-detail-adress-input" type="text" placeholder="주소를 입력해주세요." value oninput="updateButtonStatus()" />
                             </label>
                             <!-- 값 미입력시 -->
                             <div id="red-address" class="hidden">
@@ -212,7 +214,7 @@
                         <div>
                             <p class="main-festival-plan-detail-adressadd">상세주소</p>
                             <label class="main-festival-plan-detail-adressadd-label">
-                                <input oninput="updateButtonStatus()" class="main-festival-plan-detail-adressadd-input" type="text" placeholder="상세주소를 입력해주세요." value />
+                                <input name="festival_address_detail" oninput="updateButtonStatus()" class="main-festival-plan-detail-adressadd-input" type="text" placeholder="상세주소를 입력해주세요." value />
                             </label>
                             <!-- 값 미입력시 -->
                             <div id="red-addressdetail" class="hidden">
@@ -228,7 +230,7 @@
                         <div>
                             <p class="main-festival-plan-detail-place">행사장소</p>
                             <label class="main-festival-plan-detail-place-label">
-                                <input oninput="updateButtonStatus()" class="main-festival-plan-detail-place-input" type="text" placeholder="행사장소를 입력해주세요." value />
+                                <input name="festival_location" oninput="updateButtonStatus()" class="main-festival-plan-detail-place-input" type="text" placeholder="행사장소를 입력해주세요." value />
                             </label>
                             <!-- 값 미입력시 -->
                             <div id="red-place" class="hidden">
@@ -244,7 +246,7 @@
                         <div>
                             <p class="main-festival-plan-detail-startdate">행사 기간</p>
                             <label class="main-festival-plan-detail-startdate-label">
-                                <input oninput="updateButtonStatus()" class="main-festival-plan-detail-startdate-input" type="text" placeholder="행사 시작일을 입력해주세요." value />
+                                <input name="festival_start" oninput="updateButtonStatus()" class="main-festival-plan-detail-startdate-input" type="text" placeholder="행사 시작일을 입력해주세요." value />
                             </label>
                             <!-- 값 미입력시 -->
                             <div id="red-start" class="hidden">
@@ -291,21 +293,21 @@
                             </div>
                         </div> -->
                         <!-- 내용7. 행사 시간 -->
-                        <div>
-                            <p class="main-festival-plan-detail-time">행사 시간</p>
-                            <label class="main-festival-plan-detail-time-label">
-                                <input oninput="updateButtonStatus()" class="main-festival-plan-detail-time-input" type="text" placeholder="행사 시간을 입력해주세요." value />
-                            </label>
-                            <!-- 값 미입력시 -->
-                            <div id="red-time" class="hidden">
-                                <div class="redbox">
-                                    <svg viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" class="redfont">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12.008 22.05c5.523.023 10.019-4.436 10.042-9.959.023-5.523-4.436-10.018-9.959-10.041C6.568 2.027 2.073 6.485 2.05 12.008c-.023 5.523 4.435 10.019 9.958 10.042Zm1.527-6.494a1.5 1.5 0 1 1-3-.013 1.5 1.5 0 0 1 3 .013Zm-1.181-2.505a.5.5 0 0 0 .498-.436l.646-4.997a.5.5 0 0 0-.494-.564l-1.867-.008a.5.5 0 0 0-.499.56l.604 5.002a.5.5 0 0 0 .495.44l.617.003Z"></path>
-                                    </svg>
-                                    값을 입력해주세요.
-                                </div>
-                            </div>
-                        </div>
+{#                        <div>#}
+{#                            <p class="main-festival-plan-detail-time">행사 시간</p>#}
+{#                            <label class="main-festival-plan-detail-time-label">#}
+{#                                <input oninput="updateButtonStatus()" class="main-festival-plan-detail-time-input" type="text" placeholder="행사 시간을 입력해주세요." value />#}
+{#                            </label>#}
+{#                            <!-- 값 미입력시 -->#}
+{#                            <div id="red-time" class="hidden">#}
+{#                                <div class="redbox">#}
+{#                                    <svg viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" class="redfont">#}
+{#                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12.008 22.05c5.523.023 10.019-4.436 10.042-9.959.023-5.523-4.436-10.018-9.959-10.041C6.568 2.027 2.073 6.485 2.05 12.008c-.023 5.523 4.435 10.019 9.958 10.042Zm1.527-6.494a1.5 1.5 0 1 1-3-.013 1.5 1.5 0 0 1 3 .013Zm-1.181-2.505a.5.5 0 0 0 .498-.436l.646-4.997a.5.5 0 0 0-.494-.564l-1.867-.008a.5.5 0 0 0-.499.56l.604 5.002a.5.5 0 0 0 .495.44l.617.003Z"></path>#}
+{#                                    </svg>#}
+{#                                    값을 입력해주세요.#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
                     </div>
                 </div>
                 <!-- 줄긋기 -->
@@ -326,7 +328,7 @@
                         <div>
                             <p class="main-festival-admin-detail-info">주최자 정보</p>
                             <label class="main-festival-admin-detail-info-label">
-                                <input oninput="updateButtonStatus()" class="main-festival-admin-detail-info-input" type="text" placeholder="주최자 정보를 입력해주세요." value />
+                                <input name="host_info" oninput="updateButtonStatus()" class="main-festival-admin-detail-info-input" type="text" placeholder="주최자 정보를 입력해주세요." value />
                             </label>
                             <!-- 값 미입력시 -->
                             <div id="red-info" class="hidden">
@@ -342,7 +344,7 @@
                         <div>
                             <p class="main-festival-admin-detail-phone">주최자 연락처</p>
                             <label class="main-festival-admin-detail-phone-label">
-                                <input oninput="updateButtonStatus()" class="main-festival-admin-detail-phone-input" type="text" placeholder="주최자 연락처를 입력해주세요." value />
+                                <input name="host_phone" oninput="updateButtonStatus()" class="main-festival-admin-detail-phone-input" type="text" placeholder="주최자 연락처를 입력해주세요." value />
                             </label>
                             <!-- 값 미입력시 -->
                             <div id="red-phone" class="hidden">
@@ -374,7 +376,7 @@
                         <div>
                             <p class="main-festival-give-detail-info">제공자</p>
                             <label class="main-festival-give-detail-info-label">
-                                <input oninput="updateButtonStatus()" class="main-festival-give-detail-info-input" type="text" placeholder="제공자를 입력해주세요." value />
+                                <input name="provider_info" oninput="updateButtonStatus()" class="main-festival-give-detail-info-input" type="text" placeholder="제공자를 입력해주세요." value />
                             </label>
                             <!-- 값 미입력시 -->
                             <div id="red-give" class="hidden">
@@ -390,7 +392,7 @@
                         <div>
                             <p class="main-festival-give-detail-phone">제공자 url</p>
                             <label class="main-festival-give-detail-phone-label">
-                                <input oninput="updateButtonStatus()" class="main-festival-give-detail-phone-input" type="text" placeholder="주최자 url를 입력해주세요." value />
+                                <input name="provider_url" oninput="updateButtonStatus()" class="main-festival-give-detail-phone-input" type="text" placeholder="주최자 url를 입력해주세요." value />
                             </label>
                             <!-- 값 미입력시 -->
                             <div id="red-url" class="hidden">
@@ -405,13 +407,19 @@
                     </div>
                 </div>
             </div>
+            </form>
         </div>
     </main>
 {% endblock %}
 {% block js %}
+    <script>
+        const csrf_token = '{{ csrf_token }}';
+    </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="{% static 'admin/web/js/festival/create/admin-festival-create-web.js' %}"></script>
+    <script src="{% static 'admin/web/js/festival/listview/admin-festival-module-list-web.js' %}"></script>
     <script src="{% static 'admin/web/js/festival/create/admin-festival-create-addimg-web.js' %}"></script>
     <script src="{% static 'admin/web/js/festival/create/admin-festival-create-button-web.js' %}"></script>
     <script src="{% static 'admin/web/js/festival/create/admin-festival-create-calendar-web.js' %}"></script>
