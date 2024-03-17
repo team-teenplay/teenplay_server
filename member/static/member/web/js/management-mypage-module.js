@@ -31,13 +31,12 @@ const mypageMemberListService = (() => {
                 'X-CSRFToken': csrf_token
             },
             body: JSON.stringify({
-                order: order,
-                search: search,
-                page: page
+                'order': order,
+                'search': search,
+                'page': page
             })
         });
         const list = await response.json()
-        console.log(club_id, page, order, search,)
         if (callback) {
             return callback(list)
         }
@@ -46,9 +45,34 @@ const mypageMemberListService = (() => {
     return {list: list}
 })()
 
+
+const mypageClubNoticeListService = (() => {
+    const list = async (club_id, page, del_item, callback) => {
+        console.log(del_item)
+        const response = await fetch(`/member/mypage-notice-list/${club_id}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'X-CSRFToken': csrf_token
+            },
+            body: JSON.stringify({
+                page: page,
+                del_item: del_item
+            })
+        });
+        const list = await response.json()
+        if (callback) {
+            return callback(list)
+        }
+        return list
+    }
+    return {list: list}
+})()
+
+
 const clubNoticeService = (() => {
     const del = async (club_id, delList) => {
-        await fetch(`/member/mypage-notice-list/${club_id}/`, {
+        await fetch(`/member/mypage-notice-delete/${club_id}/`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
@@ -105,18 +129,26 @@ const mypageSendLetterService = (() => {
 })()
 
 const mypageClubListService = (() => {
-    const list = async (sort = '') => {
-        console.log(sort)
+    const list = async (page, order, callback) => {
         const response = await fetch(`/member/mypage-my-club/api/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
                 'X-CSRFToken': csrf_token
             },
-            body: JSON.stringify({'sort': sort})
-        });
-        return await response.json();
+            body: JSON.stringify({
+                'page': page,
+                'order': order
+            })
+        })
+        const list = await response.json()
+        if (callback) {
+
+            return callback(list)
+        }
+        return list
     }
+
     return {list: list}
 })()
 

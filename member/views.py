@@ -1147,8 +1147,10 @@ class MypageActivityListAPI(APIView):
             sort_field = '-created_date'
         elif order == '활동 일시순':
             sort_field = '-activity_start'
-        elif order == '인기순':
-            pass
+
+        # 조회수 어딧느닞 모르겠음
+        # elif order == '인기순':
+        #     pass
 
         activities_queryset = Activity.enabled_objects.filter(club_id=club_id, activity_end__gt=timezone.now(),
                                                               status=1)
@@ -1191,13 +1193,36 @@ class MypageActivityListAPI(APIView):
 
 class MypageMyClubView(View):
     def get(self, request):
-        return render(request, 'mypage/web/my-club-web.html')
+        order = request.GET.get('order', '이름 순')
+        page = request.GET.get('page', 1)
+
+        context = {
+            'order':order,
+            'page':page
+        }
+        return render(request, 'mypage/web/my-club-web.html', context)
 
 
 class MypageMyClubAPI(APIView):
     def post(self, request):
         member = request.session.get('member')
-        sort = request.data
+        order = request.data.get('order', '이름 순')
+        page = int(request.data.get('page', 1))
+        print(page,order)
+
+        filter = 'name'
+        if order == '최신순':
+            filter = '-created_date'
+        if order == '오래된 순':
+            filter ='created_date'
+        elif order == '활동 순':
+            filter = '-activity_count'
+
+
+        row_count = 6
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
         clubs = Club.enabled_objects.filter(member_id=member['id']) \
             .annotate(name=F('club_name'), profile_path=F('club_profile_path'), activity_count=Count('activity'),
                       alarms=F('clubmember__alarm_status'), join_status=Value(2)) \
@@ -1209,10 +1234,12 @@ class MypageMyClubAPI(APIView):
                       join_status=F('status')) \
             .values('club_id', 'name', 'profile_path', 'alarms', 'join_status', 'activity_count', 'created_date')
 
-        combined_data = club_member.union(clubs).order_by('-created_date')
-        for data in combined_data:
-            print(data)
-        return Response(combined_data)
+        combined_data = club_member.union(clubs).order_by(filter)
+
+        club_list = list(combined_data[offset:limit])
+        for club in club_list:
+            print(club)
+        return Response(club_list)
 
 
 class MypageMyClubAlarmStatusAPI(APIView):
@@ -1350,12 +1377,6 @@ class MypageNoticeView(View):
     def get(self, request, club_id):
         page = request.GET.get('page', 1)
 
-        club_notices = ClubNotice.objects.filter(club_id=club_id, status=1).order_by('-id').values('id', 'notice_title',
-                                                                                                   'notice_content',
-                                                                                                   'created_date')
-        for club_notice in club_notices:
-            club_notice['created_date'] = club_notice['created_date'].strftime("%Y.%m.%d")
-
         context = {
             'page': page,
             'club_id': club_id
@@ -1363,13 +1384,49 @@ class MypageNoticeView(View):
 
         return render(request, 'mypage/web/management-club-notice-web.html', context)
 
-class MypageNoticeAPI(APIView):
-    def delete(self, request, club_id):
-        del_list = request.data['del_list']
-        for del_item in del_list:
-            ClubNotice.objects.filter(id=del_item, club_id=club_id, status=1).update(status=0)
 
-        return Response('ok')
+class MypageNoticeAPI(APIView):
+    def post(self, request, club_id):
+        del_item = request.data.get('del_item', '')
+        page = int(request.data.get('page', 1))
+        row_count = 5
+        offset = (page - 1) * row_count
+        limit = page * row_count
+
+        if del_item:
+            for item in del_item:
+                ClubNotice.objects.filter(id=item, club_id=club_id, status=1).update(status=0)
+
+        club_notices_queryset = ClubNotice.objects.filter(club_id=club_id, status=1)
+        club_notices = list(club_notices_queryset.order_by('-id').values('id', 'notice_title', 'notice_content', 'created_date')[offset:limit])
+        club_notices_count = club_notices_queryset.count()
+
+        page_count = 5
+        end_page = math.ceil(page / page_count) * page_count
+        start_page = end_page - page_count + 1
+        real_end = math.ceil(club_notices_count / row_count)
+        end_page = real_end if end_page > real_end else end_page
+
+        if end_page == 0:
+            end_page = 1
+
+        page_info = {
+            'totalCount': club_notices_count,
+            'startPage': start_page,
+            'endPage': end_page,
+            'page': page,
+            'realEnd': real_end,
+            'pageCount': page_count,
+        }
+
+        for club_notice in club_notices:
+            club_notice['created_date'] = club_notice['created_date'].strftime("%Y.%m.%d")
+
+        club_notices.append(page_info)
+
+        return Response(club_notices)
+
+
 class MypageNoticeDeleteAPI(APIView):
     def delete(self, request, club_id):
         del_list = request.data['del_list']

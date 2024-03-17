@@ -1,7 +1,7 @@
 // 정렬 우선 순위 선택하는 버튼 클릭 시 모달 열기
 const tabListBtn = document.querySelector(".tab-list-btn");
 const tabList = document.querySelector(".tab-list");
-
+let text = ``;
 document.addEventListener("click", (e) => {
     if (!e.target.closest(".tab-list-contents")) {
         tabList.classList.remove("block");
@@ -14,16 +14,16 @@ document.addEventListener("click", (e) => {
 const tabs = document.querySelectorAll(".tab");
 
 tabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
+    tab.addEventListener("click", async () => {
         tabListBtn.firstElementChild.innerText = tab.innerText;
+        order = tabListBtn.firstElementChild.innerText
+        text = ``;
+        await mypageClubListService.list(page, order, showList)
     });
 });
 
 const alarmStatusHandler = () => {
-
     const signalBtns = document.querySelectorAll("#signal-btn");
-
-
     signalBtns.forEach((signalBtn) => {
         signalBtn.addEventListener("click", async (e) => {
             let signalStatus = e.target.closest("#signal-btn").querySelector("span");
@@ -47,7 +47,7 @@ const alarmStatusHandler = () => {
                 messageModalBox.querySelector(".continuously-btn").innerText = "확인";
                 messageModalBox.querySelector(".club-page-btn").style.display = "none";
                 messageMaodalContainer.style.display = "block";
-                messageModalBox.querySelector(".club-page-btn").addEventListener('click', ()=>{
+                messageModalBox.querySelector(".club-page-btn").addEventListener('click', () => {
                     window.location = `/member/mypage-club/${clubId}`
                 })
 
@@ -89,25 +89,53 @@ const modalBtnHandler = () => {
         }
     });
 }
+const addPaginationEvent = async () => {
+    const nextBtn = document.querySelector(".teenchin-more-btn")
+
+    nextBtn.addEventListener("click", async () => {
+        await mypageClubListService.list(++page, order, showList);
+    })
+}
+const moreBtnBox = document.querySelector('.more-btn-box')
+const showPagination = (orderList) => {
+    console.log(orderList)
+    if (orderList.length === 0) {
+        moreBtnBox.innerHTML = ``;
+
+        return;
+    }
+    moreBtnBox.innerHTML = `
+        <button class="teenchin-more-btn" type="button">
+            <div class="more-text-box">
+                <div style="margin-right: 0.5rem">더보기</div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="down-arrow-svg" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </div>
+        </button>
+        `;
+    addPaginationEvent();
+}
 
 
 const clubList = document.querySelector('.club-list')
 
-const createClubList = (sortList) => {
-    const clubListHTML = generateClubListHTML(sortList);
-    clubList.innerHTML = clubListHTML;
-
-}
-
-const generateClubListHTML = (sortList) => {
-    let clubListHTML = "";
-
-    sortList.forEach((club) => {
-        clubListHTML += `
+const showList = (orderList) => {
+    if (orderList.length === 0) {
+        text += `<div class="club-none-box" style="margin-top: 30px">
+                                <div class="club-none-ment">가입한 모임이 없습니다.</div>
+                                <!-- 모임 홍보 게시판 주소 필요 -->
+                                <a class="club-pr-link" href=""> 모임 가입하러 가기 </a>
+                            </div>`
+    } else {
+        for (let club of orderList) {
+            text += `
             <div class="club-box ${club.club_id}">
                 <div class="club-items">
                     <!-- 모임 상세보기 이동 주소 필요 -->
-                    <a href="${club.join_status === 2 ? '/member/mypage-club/' + club.club_id :'/club/detail/?id=' + club.club_id }">
+                    <a href="${club.join_status === 2 ? '/member/mypage-club/' + club.club_id : '/club/detail/?id=' + club.club_id}">
                         <div class="club-profile-img-contents">
                             <div class="club-profile-img-box">
                                 <img class="club-profile-img" src="/upload/${club.profile_path}" />
@@ -126,9 +154,13 @@ const generateClubListHTML = (sortList) => {
                     </div>
                 </div>
             </div>
-        `;
-    });
-    return clubListHTML;
+        `
+        }
+    }
+    clubList.innerHTML = text;
+    showPagination(orderList)
+    modalBtnHandler()
+    alarmStatusHandler()
 }
 
 const generateButtonHTML = (joinStatus, alarms, club_id) => {
@@ -173,14 +205,4 @@ const generateButtonHTML = (joinStatus, alarms, club_id) => {
             </button>`;
     }
 }
-
-
-const clubListHandler = async () => {
-    const sortList = await mypageClubListService.list()
-    createClubList(sortList)
-    modalBtnHandler()
-    alarmStatusHandler()
-}
-clubListHandler()
-
-
+mypageClubListService.list(page, order, showList)

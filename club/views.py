@@ -66,15 +66,15 @@ class ClubDetailView(View):
             'owner_phone',
         ]
 
-        club_list = Club.objects.filter(id=club_id)\
+        club_list = Club.objects.filter(id=club_id) \
             .annotate(
             owner_id=F('member__id'),
             owner_name=F('member__member_nickname'),
             owner_email=F('member__member_email'),
-            owner_phone=F('member__member_phone')).values(*columns)\
+            owner_phone=F('member__member_phone')).values(*columns) \
             .annotate(club_member_count=Count('clubmember', filter=Q(clubmember__status=1)))
 
-        club_activity_count = Club.objects.filter(id=club_id).values('id')\
+        club_activity_count = Club.objects.filter(id=club_id).values('id') \
             .annotate(club_activity_count=Count('activity')).first()
 
         club_list = list(club_list)
@@ -152,11 +152,13 @@ class ClubOngoingActivityAPI(APIView):
         club = Club.objects.get(id=club_id)
 
         ongoing_activities = list(Activity.objects.filter(club=club, activity_end__gt=timezone.now(), status=1)
-                                  .values('id', 'activity_title', 'thumbnail_path', 'activity_start',)
-                                  .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1))))
+                                  .values('id', 'activity_title', 'thumbnail_path', 'activity_start', )
+                                  .annotate(
+            participant_count=Count('activitymember', filter=Q(activitymember__status=1))))
         print(ongoing_activities)
         for ongoing_activity in ongoing_activities:
-            ongoing_activity['is_like'] = ActivityLike.enabled_objects.filter(activity=ongoing_activity['id'], member=member).exists()
+            ongoing_activity['is_like'] = ActivityLike.enabled_objects.filter(activity=ongoing_activity['id'],
+                                                                              member=member).exists()
 
         return Response(ongoing_activities)
 
@@ -171,13 +173,15 @@ class ClubFinishedActivityAPI(APIView):
 
         club = Club.objects.get(id=club_id)
 
-        finished_activities = list(Activity.objects.filter(club=club,activity_end__lte=timezone.now(), status=1)
+        finished_activities = list(Activity.objects.filter(club=club, activity_end__lte=timezone.now(), status=1)
                                    .values('id', 'activity_title', 'thumbnail_path', 'activity_start')
-                                   .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1)))
+                                   .annotate(
+            participant_count=Count('activitymember', filter=Q(activitymember__status=1)))
                                    .order_by('-id'))
 
         for finished_activity in finished_activities:
-            finished_activity['is_like'] = ActivityLike.enabled_objects.filter(activity=finished_activity['id'], member=member).exists()
+            finished_activity['is_like'] = ActivityLike.enabled_objects.filter(activity=finished_activity['id'],
+                                                                               member=member).exists()
 
         return Response(finished_activities[offset:limit])
 
@@ -309,9 +313,11 @@ class ClubPrPostReplyAPI(APIView):
         offset = (page - 1) * row_count
         limit = page * row_count
 
-        replies = ClubPostReply.enabled_objects.filter(club_post_id=club_post_id)\
-            .annotate(member_email=F('member__member_email'), member_name=F('member__member_nickname'), member_path=F('member__memberprofile__profile_path'))\
-            .values('id', 'reply_content', 'created_date', 'member_id', 'member_email', 'member_name', 'member_path').order_by('-id')
+        replies = ClubPostReply.enabled_objects.filter(club_post_id=club_post_id) \
+            .annotate(member_email=F('member__member_email'), member_name=F('member__member_nickname'),
+                      member_path=F('member__memberprofile__profile_path')) \
+            .values('id', 'reply_content', 'created_date', 'member_id', 'member_email', 'member_name',
+                    'member_path').order_by('-id')
 
         replies_count = replies.count()
         replies_info = {
@@ -451,15 +457,19 @@ class ClubPrPostListAPI(APIView):
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 class ClubTeenplayAPIView(APIView):
-    def get(self,request, club_id, page):
+    def get(self, request, club_id, page):
         row_count = 5
-        offset = (page-1) * row_count
+        offset = (page - 1) * row_count
         limit = page * row_count
 
         context = {
             'member': request.session['member'],
             'club': Club.objects.filter(id=club_id).values(),
-            'teenplay_list': TeenPlay.enable_objects.filter(club=club_id).annotate(like_count=Count('teenplaylike__status')).values('like_count','id', 'created_date', 'updated_date','teenplay_title','club_id','video_path','thumbnail_path','status').order_by('-id')[offset:limit],
+            'teenplay_list': TeenPlay.enable_objects.filter(club=club_id).annotate(
+                like_count=Count('teenplaylike__status')).values('like_count', 'id', 'created_date', 'updated_date',
+                                                                 'teenplay_title', 'club_id', 'video_path',
+                                                                 'thumbnail_path', 'status').order_by('-id')[
+                             offset:limit],
             'has_next': TeenPlay.enable_objects.filter(club=club_id)[limit:limit + 1].exists()
         }
         return Response(context)
@@ -467,7 +477,7 @@ class ClubTeenplayAPIView(APIView):
 
 class ClubTeenplayDeleteAPIView(APIView):
     @transaction.atomic
-    def get(self,request,  teenplay_id):
+    def get(self, request, teenplay_id):
         TeenPlay.enable_objects.filter(id=teenplay_id).update(status=0)
         return Response("success")
 
@@ -479,10 +489,10 @@ class ClubTeenplayUploadAPIView(APIView):
         files = request.FILES
 
         data = {
-            'teenplay_title' : data['title'],
+            'teenplay_title': data['title'],
             'club_id': data['clubId'],
-            'video_path' : files['video'],
-            'thumbnail_path' :files['thumbnail']
+            'video_path': files['video'],
+            'thumbnail_path': files['thumbnail']
         }
 
         TeenPlay.objects.create(**data)
