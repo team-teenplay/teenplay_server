@@ -158,7 +158,7 @@ const userData = document.querySelector(".user-data")
 
 // 목록 보여주기
 function allShowList() {
-    adminUserService.getPagination(page, CreateService.showList).then((text) => {
+    adminUserService.getPagination(page, category, keyword, CreateService.showList).then((text) => {
         userData.innerHTML = text;
     })
 }
@@ -169,7 +169,7 @@ const mainUserBottomUl = document.querySelector(".main-user-bottom-ul")
 
 // 페이지 번호 보여주기(전체 데이터)
 function allShowPaging() {
-    adminUserService.getPagination(page, CreateService.showPaging).then((text) => {
+    adminUserService.getPagination(page, category, keyword, CreateService.showPaging).then((text) => {
         mainUserBottomUl.innerHTML = text;
     })
 }
@@ -180,7 +180,7 @@ const totalCount = document.querySelector(".main-user-total-number")
 
 // 공지사항 개수 표기 (전체 데이터)
 function CountShowText() {
-    adminUserService.getPagination(page, CreateService.CountText).then((text) => {
+    adminUserService.getPagination(page, category, keyword, CreateService.CountText).then((text) => {
         totalCount.textContent = text;
     })
 }
@@ -274,7 +274,7 @@ userData.addEventListener('click', (e) => {
                     deleteButton.classList.add("disabled");
                 }
             })
-            statusNameText.textContent = '전제 중';
+            statusNameText.textContent = '전체 중';
             totalCount.textContent = checkedCount;
         });
     })
@@ -343,7 +343,7 @@ modalDeleteButtons.forEach((button) => {
             // 체크된 checkbox와 가장 가까운 li 요소를 찾고 data-id 값을 가져오기
             const targetId = checkbox.closest("li").getAttribute("data-id");
             // data-id 속성 값이 같은 li 요소를 가져오기
-            await adminUserService.remove({ targetId: targetId });
+            await adminUserService.update({ targetId: targetId });
         }
 
         // 모달 닫기
@@ -421,15 +421,9 @@ function noticeShowCategory() {
         button.addEventListener("click", () => {
             category = button.value;
             console.log(category)
-            adminUserService.getCategory(page, category, CreateService.showList).then((text) => {
-                userData.innerHTML = text;
-            })
-            adminUserService.getCategory(page, category, CreateService.showPaging).then((text) => {
-                mainUserBottomUl.innerHTML = text;
-            })
-            adminUserService.getCategory(page, category, CreateService.CountText).then((text) => {
-                totalCount.textContent = text;
-            })
+            allShowList();
+            allShowPaging();
+            CountShowText();
 
             searchInput.value ="";
             keyword = "";
@@ -451,14 +445,8 @@ const searchInput = document.querySelector(".main-user-info-input")
 searchInput.addEventListener('keyup', (e) => {
     if (e.keyCode === 13) {
         keyword = e.target.value
-        adminUserService.search(page, category, keyword, CreateService.showList).then((text) => {
-            userData.innerHTML = text;
-        })
-        adminUserService.search(page, category, keyword, CreateService.showPaging).then((text) => {
-            mainUserBottomUl.innerHTML = text;
-        })
-        adminUserService.search(page, category, keyword, CreateService.CountText).then((text) => {
-            totalCount.textContent = text;
-        })
+        allShowList();
+        allShowPaging();
+        CountShowText();
     }
 });

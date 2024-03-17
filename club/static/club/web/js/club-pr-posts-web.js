@@ -1,4 +1,6 @@
-// let page = 1;
+if(page === ''){
+    page = 1;
+}
 // let category = '';
 // let ordering = '최신순';
 // let keyword = '';

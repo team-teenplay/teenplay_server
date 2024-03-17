@@ -152,10 +152,9 @@ class ClubOngoingActivityAPI(APIView):
         club = Club.objects.get(id=club_id)
 
         ongoing_activities = list(Activity.objects.filter(club=club, activity_end__gt=timezone.now(), status=1)
-                                  .values('id', 'activity_title', 'thumbnail_path', 'activity_start', )
-                                  .annotate(
-            participant_count=Count('activitymember', filter=Q(activitymember__status=1))))
-        print(ongoing_activities)
+                                  .values('id', 'activity_title', 'thumbnail_path', 'activity_start',)
+                                  .annotate(participant_count=Count('activitymember', filter=Q(activitymember__status=1))))
+
         for ongoing_activity in ongoing_activities:
             ongoing_activity['is_like'] = ActivityLike.enabled_objects.filter(activity=ongoing_activity['id'],
                                                                               member=member).exists()
@@ -381,7 +380,7 @@ class ClubPrPostListView(View):
         category = request.GET.get('category', '')
         order = request.GET.get('order', '최신순')
         page = request.GET.get('page', 1)
-        print(page)
+
         context = {
             'keyword': keyword,
             'category': category,
@@ -393,7 +392,7 @@ class ClubPrPostListView(View):
 
     def post(self, request):
         datas = request.POST
-        print(datas)
+
         context = {
             'keyword': datas.get('keyword', ''),
             'category': datas.get('category', ''),
@@ -465,11 +464,7 @@ class ClubTeenplayAPIView(APIView):
         context = {
             'member': request.session['member'],
             'club': Club.objects.filter(id=club_id).values(),
-            'teenplay_list': TeenPlay.enable_objects.filter(club=club_id).annotate(
-                like_count=Count('teenplaylike__status')).values('like_count', 'id', 'created_date', 'updated_date',
-                                                                 'teenplay_title', 'club_id', 'video_path',
-                                                                 'thumbnail_path', 'status').order_by('-id')[
-                             offset:limit],
+            'teenplay_list': TeenPlay.enable_objects.filter(club=club_id).annotate(like_count=Count('teenplaylike__status')).values('like_count','id', 'created_date', 'updated_date','teenplay_title','club_id','video_path','thumbnail_path','status','club__member_id').order_by('-id')[offset:limit],
             'has_next': TeenPlay.enable_objects.filter(club=club_id)[limit:limit + 1].exists()
         }
         return Response(context)

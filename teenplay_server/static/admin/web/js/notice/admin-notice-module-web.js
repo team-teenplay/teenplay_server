@@ -1,13 +1,13 @@
 // 공지사항 관리자 서비스 생성
 const adminNoticeService = (() => {
-    const write = async (notice) => {
-        const response= await fetch(`/admin/notice/write/`, {
+    const write = async (notice_info) => {
+        await fetch(`/admin/notice/write/`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
                 'X-CSRFToken': csrf_token
             },
-            body: JSON.stringify(notice)
+            body: JSON.stringify(notice_info)
         });
     }
 

@@ -114,7 +114,11 @@ inner.addEventListener("click", async(e)=>{
             currentPage = 1
             const text = await replyService.getList(member_id, currentPage,status_reply, showList);
             inner.innerHTML = text;
+            await replyService.getList(member_id, 1, status_reply, async (reply, total_pages) => {
+                maxPage = total_pages;
+            })
             deleteModalwrap.style.display = "none"
+            updatePageButtons();
         })
     }
 })

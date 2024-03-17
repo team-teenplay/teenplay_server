@@ -357,9 +357,7 @@ class MypageAlramAPIView(APIView):
         offset = (page - 1) * row_count
         limit = page * row_count
 
-        alram = Alarm.objects.filter(receiver_id=member_id, status=1).values('id', 'alarm_type', 'receiver_id',
-                                                                             'created_date').order_by('-created_date')[
-                offset:limit]
+        alram = Alarm.objects.filter(receiver_id=member_id, status=1).values('id', 'alarm_type', 'target_id','created_date', 'receiver_id').order_by('-created_date')[offset:limit]
 
         return Response(alram)
 
@@ -662,14 +660,20 @@ class MapagePaymentView(View):
 class MypagePayListAPIVIEW(APIView):
 
     def get(self, request, member_id, page):
-        row_count = 1
+        row_count = 3
         offset = (page - 1) * row_count
         limit = page * row_count
 
-        pay = Pay.objects.filter(member_id=member_id, status=1).values('id', 'created_date', 'member__club__club_name',
-                                                                       'member__club__club_profile_path',
+        pay = Pay.objects.filter(member_id=member_id, status=1).values('id', 'created_date', 'activity__activity_title',
+                                                                       'activity__club__club_name',
+                                                                       'activity__activity_intro',
                                                                        'member__club__club_intro',
-                                                                       'activity__activity_title', )[offset:limit]
+                                                                       'activity__activity_title',
+                                                                       'activity__thumbnail_path',
+                                                                       'activity__id')[offset:limit]
+
+
+
 
         return Response(pay)
 
@@ -680,7 +684,12 @@ class MypagePayDeleteAPIVIEW(APIView):
         pay_reason = request.data
         reason = pay_reason['reason']
         pay_id = pay_reason['pay']
-        pay = Pay.objects.filter(id=pay_id).update(status=0)
+        activity = Activity.objects.filter(pay_id=pay_id).first()
+        pay = Pay.objects.filter(id=pay_id).first()
+        pay.status = 0
+        pay.save(update_fields=['status'])
+        activity.status = 0
+        activity.save(update_fields=['status'])
         receipt_id = pay.receipt_id
         bootpay = BootpayBackend('65e44626e57a7e001be37370',
                                  'NQmDRBsgOfziMiNXUEKrJGQ+YhXZncneSVG/auKihFA=')
