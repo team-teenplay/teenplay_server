@@ -19,9 +19,12 @@ class MainView(View):
             member_id = member.get('id')
 
         popular_activities = Activity.enabled_objects\
-                                 .annotate(member_count=Count('activitymember'), like_count=Count('activitylike')).order_by('-member_count')[:8]
+                                 .annotate(member_count=Count('activitymember')).order_by('-member_count')[:8]
+
 
         for activity in popular_activities:
+            likes = ActivityLike.enabled_objects.filter(activity_id=activity.id).count()
+            activity.like_count = likes
             is_like = ActivityLike.enabled_objects.filter(activity_id=activity.id, member_id=member_id).exists()
             activity.is_like = is_like
 
