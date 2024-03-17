@@ -9,15 +9,15 @@ const activityMemberService = (() => {
             return callback(member_list,clubManager, total_pages);
         }
 
-        const update = async (activity_member_id) => {
-            await fetch(`/member/activity-member/${activity_member_id}/`, {
+        const update = async (activity_member_id, activity_id) => {
+            await fetch(`/member/activity-member/${activity_member_id}/${activity_id}/`, {
             method: 'PATCH',
             headers: {'X-CSRFToken': csrf_Token}
         });
     }
 
-        const remove = async (activity_member_id) => {
-            await fetch(`/member/activity-member/${activity_member_id}/`, {
+        const remove = async (activity_member_id, activity_id) => {
+            await fetch(`/member/activity-member/${activity_member_id}/${activity_id}/`, {
             method: 'delete',
             headers: {'X-CSRFToken': csrf_Token}
             });
