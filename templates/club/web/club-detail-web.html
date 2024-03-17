@@ -19,7 +19,7 @@
                 </div>
                 <div class="club-detail-wrap">
                     <div class="club-detail-top">
-                        {% if club.club_banner_path %}
+                        {% if club.club_profile_path %}
                             <img src="/upload/{{ club.club_profile_path }}" alt="프로필 사진" class="club-profile-image" />
                         {% else %}
                             <img src="{% static 'public/web/images/logo/logo1.png' %}"  alt="커버 이미지" class="club-profile-image" />
