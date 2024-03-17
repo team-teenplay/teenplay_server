@@ -221,7 +221,6 @@ button {
 }
 
 .intro-wrap {
-    padding-top: 5rem;
     --tw-bg-opacity: 1;
     background-color: rgb(248 250 251/var(--tw-bg-opacity));
     min-height: 100vh;
