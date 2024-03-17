@@ -39,8 +39,11 @@
                             <div class="activity-prfile-box">
                                 <div>
                                     <div class="activity-prfile">
-                                        <!-- 모임 프로필 사진 주소 필요 -->
-                                        <img class="activity-prfile-img" src="/upload/{{ activity.thumbnail_path }}/" />
+                                        {% if activity.thumbnail_path %}
+                                            <img src="/upload/{{ activity.thumbnail_path }}" class="activity-prfile-img" id="preview-thumbnail">
+                                        {% else %}
+                                            <img class="activity-prfile-img" id="preview-thumbnail" src="{% static 'public/web/images/logo/logo1.png' %}">
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <div class="activity-name-box">
@@ -264,15 +267,13 @@
         btn.addEventListener("click", async (e) => {
             status_list = btn.name
             console.log(status_list)
-
-            const text =  await activityService.getList(member_id, currentPage, status_list, showList);
+            const text =  await activityService.getList(member_id, 1, status_list, showList);
             inner.innerHTML = text;
             await activityService.getList(member_id, 1, status_list, async (reply, total_pages) => {
             maxPage = total_pages;
             page = 1
             currentPage = 1
             updatePageButtons();
-
             })
         })
     })

@@ -1,9 +1,6 @@
-// 유저 정보 가져오기
-const adminUserService = (() => {
-    // 페이지 가져오기
-    const getPagination = async (page, category, keyword, callback) => {
-        console.log(category)
-        const response = await fetch(`/admin/users/${page}/`, {
+const adminMeetingModule = (() => {
+    const getPagination = async (page, keyword, callback) => {
+        const response = await fetch(`/admin/meetings/${page}/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
@@ -11,7 +8,6 @@ const adminUserService = (() => {
             },
             body: JSON.stringify({
                 'page': page,
-                'category': category,
                 'keyword': keyword
             })
         })
@@ -23,19 +19,18 @@ const adminUserService = (() => {
         return pagination;
     }
 
-    const update = async (targetId) => {
-        const member_id = targetId.targetId
+    const remove = async (targetId) => {
+        const meeting_id = targetId.targetId
 
-        await fetch(`/admin/user/update/${member_id}/`, {
-            method: 'patch',
+        const response = await fetch(`/admin/meetings/delete/${meeting_id}`, {
+            method: 'delete',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
                 'X-CSRFToken': csrf_token
             },
-            body: JSON.stringify({'member_id': member_id})
+            body: JSON.stringify({'meeting_id': meeting_id})
         });
-
     }
 
-    return {getPagination:getPagination, update:update}
+    return {getPagination:getPagination, remove:remove}
 })();
