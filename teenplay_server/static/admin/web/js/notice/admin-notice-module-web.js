@@ -11,32 +11,34 @@ const adminNoticeService = (() => {
         });
     }
 
-    const getPagination = async (page, callback) => {
-        const response = await fetch(`/admin/notices/${page}/`);
-        const pagination = await response.json();
+    // 페이지 가져오기
+    const getPagination = async (page, category, keyword, callback) => {
+        const response = await fetch(`/admin/notices/${page}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'X-CSRFToken': csrf_token
+            },
+            body: JSON.stringify({
+                'page': page,
+                'category': category,
+                'keyword': keyword
+            })
+        })
+        const pagination = await response.json()
 
-        if (callback){
-            return callback(pagination);
+        if(callback) {
+            return  callback(pagination)
         }
         return pagination;
     }
 
-    const getCategory = async (page, category, callback) => {
-        const response = await fetch(`/admin/notices/${page}?category=${category}`);
-        const pagination = await response.json();
 
-        if (callback){
-            return callback(pagination);
-        }
-        return pagination;
-    }
-
-
-    // 공지사항 삭제
-    const remove = async (targetId) => {
+    // 공지사항 수정
+    const update = async (targetId) => {
         const notice_id = targetId.targetId
 
-        await fetch(`/admin/notices/delete/${notice_id}/`, {
+        await fetch(`/admin/notices/update/${notice_id}/`, {
             method: 'patch',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
@@ -46,31 +48,20 @@ const adminNoticeService = (() => {
         });
     }
 
-    // 상세보기 가져오기
-    const showDetail = async (page, targetId, callback) => {
-        console.log(targetId)
 
-        const response = await fetch(`/admin/notices/${page}?targetId=${targetId}`);
-        const pagination = await response.json();
+    // 공지사항 삭제
+    const remove = async (targetId) => {
+        const notice_id = targetId.targetId
 
-        if (callback){
-            return callback(pagination);
-        }
-        return pagination;
+        await fetch(`/admin/notices/update/${notice_id}/`, {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'X-CSRFToken': csrf_token
+            },
+            body: JSON.stringify({'notice_id': notice_id})
+        });
     }
 
-    // 검색하기
-    const search = async (page, category, keyword, callback) => {
-
-        const response = await fetch(`/admin/notices/${page}/?category=${category}&keyword=${keyword}`)
-        const pagination = await response.json();
-
-        if (callback){
-            return callback(pagination);
-        }
-
-        return pagination;
-    }
-
-    return {write:write, getPagination:getPagination, getCategory: getCategory, remove: remove, showDetail:showDetail, search:search}
+    return {write:write, getPagination:getPagination, update:update, remove: remove}
 })();

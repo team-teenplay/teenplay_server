@@ -1,29 +1,19 @@
-// 작성하기
-// 작성하기 버튼
-const createButton = document.querySelector(".main-festival-add-top-create-button")
-// 제목, 내용 입력창
-const inputElements = document.querySelectorAll(".main-festival-info-detail-textarea, .main-festival-info-detail-input");
-// 제목 입력창
-const titleInput = document.querySelector(".main-festival-info-detail-input");
-// 내용 입력창
-const inputContent = document.querySelector(".main-festival-info-detail-textarea");
-// 라디오 버튼
-const radioButtons = document.querySelectorAll("input[name='selection']");
-// 공지  라벨(공지사항, 자주묻는질문)
-let labels = document.querySelectorAll("label[for='radio-notice'], label[for='radio-qr']");
-// 공지 버튼 박스
-let boxes = document.querySelectorAll(".main-festival-box");
-
-
-// 상태 확인 함수
+// 버튼 업데이트 함수
 function updateButtonStatus() {
+    // 공지사항 제목 및 내용 입력창 가져오기
+    let inputElements = document.querySelectorAll(".main-festival-info-detail-textarea, .main-festival-info-detail-input");
+    // 공지 타입 라디오 버튼 가져오기
+    let radioButtons = document.querySelectorAll("input[name='selection']");
+    // 작성하기 버튼
+    let createButton = document.querySelector(".main-festival-add-top-create-button");
+
     // 공지사항 제목 및 내용 입력창이 하나라도 비어있는지 확인
     let isAnyInputEmpty = Array.from(inputElements).some((input) => input.value.trim() === "");
     // 공지 타입 라디오 버튼이 하나라도 선택되었는지 확인
     let isAnyRadioButtonChecked = Array.from(radioButtons).some((radio) => radio.checked);
 
     //공지사항 입력창 및 버튼이 하나라도 없는 순간 작성하기 버튼 비활성화
-    createButton.disabled = isAnyInputEmpty || !isAnyRadioButtonChecked;
+    // createButton.disabled = isAnyInputEmpty || !isAnyRadioButtonChecked;
     // 비활성화 시 버튼 색상 변경
     createButton.style.backgroundColor = isAnyInputEmpty || !isAnyRadioButtonChecked ? "#f3f3f4" : "#CE201B";
     // 비활성화 시 마우스 스타일 변경
@@ -34,6 +24,13 @@ function updateButtonStatus() {
 
 // 페이지 로딩 시 라디오 버튼 과 라벨에 대한 이벤트 리스너 추가
 document.addEventListener("DOMContentLoaded", () => {
+    // 공지 타입 라디오 버튼 가져오기
+    let radioButtons = document.querySelectorAll("input[name='selection']");
+    // 공지 타입(공지사항, 자주묻는질문) 라벨 가져오기
+    let labels = document.querySelectorAll("label[for='radio-notice'], label[for='radio-qr']");
+    // 공지 타입 버튼 박스
+    let boxes = document.querySelectorAll(".main-festival-box");
+
     // 공지 타입 라디오 반복하여 하나씩 가져오기
     radioButtons.forEach((radio) => {
         // 각 라디오 버튼에 대한 이벤트 리스너 추가
@@ -47,10 +44,10 @@ document.addEventListener("DOMContentLoaded", () => {
         label.addEventListener("click", (e) => {
             // 라디오 아이디 가져오기
             let radioId = e.target.getAttribute("data-id");
-
+            console.log(radioID)
             // 라디오 아이디 radio 변수에 담기
             let radio = document.getElementById(radioId);
-
+            console.log(radio)
             // 만약, 라디오 값이 있으면
             if (radio) {
                 // 라디오 체크 후 버튼 상태 업데이트
@@ -100,29 +97,3 @@ function checkRadioAndStyle(clickedBox, id) {
     // 선택된 라디오 버튼의 속성을 true로 설정하여 라디오 버튼 선택상태로 만들기
     document.getElementById(id).checked = true;
 }
-
-
-// 작성하기 버튼 클릭 시
-createButton.addEventListener('click', async () => {
-    // 입력된 제목(title)과 내용(content) 가져오기
-    let notice_title = titleInput.value.trim();
-    let notice_content = inputContent.value;
-
-    // 선택된 라디오 버튼의 값 가져오기
-    let notice_type = "";
-    radioButtons.forEach((button) => {
-        if (button.checked) {
-            notice_type = button.value;
-        }
-    });
-
-    await adminNoticeService.write({
-                notice_title: notice_title,
-                notice_content: notice_content,
-                notice_type: notice_type
-            });
-
-    // notice_title.value = ""
-    // notice_content.value = ""
-    // notice_type.value = ""
-})

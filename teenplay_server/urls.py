@@ -27,7 +27,7 @@ from teenplay_server.views import AdminLoginView, AdminUserView, CompanyIntroduc
     AdminCommentAPI, AdminCommentDeleteAPI, AdminActivityAPI, AdminActivityDeleteAPI, AdminPromoteAPI, \
     AdminPromoteDeleteAPI, AdminMessageAPI, \
     AdminWishlistDeleteAPI, AdminMeetingAPI, AdminMeetingDeleteAPI, AdminFestivalPaginationAPI, AdminFestivalUpdateAPI, \
-    AdminFestivalWriteView
+    AdminFestivalWriteView, AdminLogoutView
 
 
 # AdminTeenplayView, AdminTeenplayAPI, AdminTeenplayDeleteAPI
@@ -63,6 +63,7 @@ urlpatterns = [
     path('app/festival/', include('festival.urls-app')),
     # 관리자
     path('admin/login/', AdminLoginView.as_view(), name='admin-login'),
+    path('admin/logout/', AdminLogoutView.as_view(), name='admin-login'),
     # 관리자 - 유저 관리
     path('admin/user/', AdminUserView.as_view(), name='admin-user'),
     path('admin/users/<int:page>/', AdminUserAPI.as_view(), name='admin-user-api'),
@@ -98,7 +99,7 @@ urlpatterns = [
     # 관리자 - 공지사항 관리
     path('admin/notice/', AdminNoticeView.as_view(), name='admin-notice'),
     path('admin/notices/<int:page>/', AdminNoticePaginationAPI.as_view(), name='admin-notice-page-api'),
-    path('admin/notices/delete/<int:notice_id>/', AdminNoticeUpdateAPI.as_view(), name='admin-notice-delete-api'),
+    path('admin/notices/update/<int:notice_id>/', AdminNoticeUpdateAPI.as_view(), name='admin-notice-delete-api'),
     path('admin/notice/write/', AdminNoticeWriteView.as_view(), name='admin-notice-write'),
     # 관리자 - 댓글 관리
     path('admin/comment/', AdminCommentView.as_view(), name='admin-comment'),

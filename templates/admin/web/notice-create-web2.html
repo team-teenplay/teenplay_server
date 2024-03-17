@@ -67,8 +67,7 @@
         </nav>
         <!-- 사실상 여기만 수정하면 모든게 끝입니다! -->
         <div class="main-festival-add">
-            <form name="notice-create-form" action="/admin/notice/" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
+            <form name="notice-create-form" action="/admin/notice/write/" method="post" enctype="multipart/form-data">
                 <div class="main-festival-add-warp">
                     <!-- 맨위에 작성버튼 -->
                     <div class="main-festival-add-top">

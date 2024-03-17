@@ -20,7 +20,7 @@ from notice.models import Notice
 
 from django.utils import timezone
 
-from wishlist.models import Wishlist, WishlistReply
+from wishlist.models import Wishlist, WishlistReply, WishlistTag
 
 
 # 관리자 로그인 페이지 이동
@@ -38,13 +38,23 @@ class AdminLoginView(View):
 
         admin = AdminAccount.objects.filter(**data)
 
-        context = {'admin_data': None}
+        url = 'admin-login'
 
         if admin.exists():
-            admin_data = AdminAccountSerializer(admin.first()).data
-            context['admin_data'] = admin_data
+            request.session['admin'] = AdminAccountSerializer(admin.first()).data
+            url = 'admin-user'
 
-        return render(request, 'admin/web/user-web.html', context)
+        return redirect(url)
+
+
+# 관리자 로그아웃
+class AdminLogoutView(View):
+    def get(self, request):
+        # 로그아웃 시 session은 비우기
+        request.session.clear()
+
+        # redirect를 통해 view로 접근하여 로그인 페이지로 이동
+        return redirect('admin-login')
 
 
 # 관리자 유저 - 페이지 이동
@@ -127,7 +137,7 @@ class AdminUserAPI(APIView):
 
 # 관리자 유저 - 상태 변경
 class AdminUserUpdateAPI(APIView):
-    # @transaction.atomic
+    @transaction.atomic
     def patch(self, request, member_id):
         updated_date = timezone.now()
 
@@ -171,18 +181,18 @@ class AdminMessageAPI(APIView):
 
         # 멤버의 상태에 따른 카테고리 조회
         if category:
-            condition &= Q(member__status=category)
+            condition &= Q(sender__status=category)
 
         # 검색 타입에 따른 검색 결과 필터
         if type:
             if keyword:
                 # 보낸 사람
                 if type == 's':
-                    condition &= Q(letter__sender_id__contains=keyword)
+                    condition &= Q(sender__member_nickname__contains=keyword)
 
                 # 받은 사람
                 elif type == 'r':
-                    condition &= Q(letter__receiver_id__contains=keyword)
+                    condition &= Q(receiver__member_nickname__contains=keyword)
 
         # total= 쪽지 개수 세기
         total = Letter.objects.filter(condition).all().count()
@@ -270,10 +280,12 @@ class AdminPromoteView(View):
 
 # 관리자 게시글 홍보글 - 데이터 가져오기
 class AdminPromoteAPI(APIView):
-    def get(self, request, page):
-        order = request.GET.get('order', 'recent')
-        type = request.GET.get('type', '')
-        keyword = request.GET.get('keyword', '')
+    def post(self, request, page):
+        data = request.data
+
+        order = data.get('order', 'recent')
+        type = data.get('type', '')
+        keyword = data.get('keyword', '')
 
         row_count = 10
 
@@ -305,6 +317,8 @@ class AdminPromoteAPI(APIView):
             end_page = 1
 
         context = {
+            'type': type,
+            'keyword': keyword,
             'total': total,
             'order': order,
             'start_page': start_page,
@@ -365,10 +379,12 @@ class AdminActivityView(View):
 
 # 관리자 게시글 활동 모집 - 데이터 가져오기
 class AdminActivityAPI(APIView):
-    def get(self, request, page):
-        order = request.GET.get('order', 'recent')
-        type = request.GET.get('type', '')
-        keyword = request.GET.get('keyword', '')
+    def post(self, request, page):
+        data = request.data
+
+        order = data.get('order', 'recent')
+        type = data.get('type', '')
+        keyword = data.get('keyword', '')
 
         row_count = 10
 
@@ -400,6 +416,8 @@ class AdminActivityAPI(APIView):
             end_page = 1
 
         context = {
+            'type': type,
+            'keyword': keyword,
             'total': total,
             'order': order,
             'start_page': start_page,
@@ -457,12 +475,14 @@ class AdminWishlistView(View):
 
 # 관리자 게시글 위시리스트 - 데이터 가져오기
 class AdminWishlistAPI(APIView):
-    def get(self, request, page):
-        order = request.GET.get('order', 'recent')
-        category = request.GET.get('category', '')
-        type = request.GET.get('type', '')
-        keyword = request.GET.get('keyword', '')
-        targetId = request.GET.get('targetId', '')
+    def post(self, request, page):
+        data = request.data
+
+        order = data.get('order', 'recent')
+        category = data.get('category', '')
+        type = data.get('type', '')
+        keyword = data.get('keyword', '')
+        wishlist_id = data.get('wishlist_id', '')
 
         row_count = 10
 
@@ -486,8 +506,8 @@ class AdminWishlistAPI(APIView):
                 elif type == 'w':
                     condition &= Q(wishlist_content__contains=keyword)
 
-        if targetId:
-            condition &= Q(id=targetId)
+        if wishlist_id:
+            condition &= Q(wishlist_id=wishlist_id)
 
         total = Wishlist.objects.filter(condition).all().count()
 
@@ -502,6 +522,9 @@ class AdminWishlistAPI(APIView):
             end_page = 1
 
         context = {
+            'category': category,
+            'type': type,
+            'keyword': keyword,
             'total': total,
             'order': order,
             'start_page': start_page,
@@ -533,7 +556,22 @@ class AdminWishlistAPI(APIView):
             wishlist[i]['wishlist_like_count'] = wishlist_like[i]['wishlist_like_count']
             wishlist[i]['wishlist_reply_count'] = wishlist_reply[i]['wishlist_reply_count']
 
-        context['wishlist'] = list(wishlist[offset:limit])
+        # context['wishlist'] = list(wishlist[offset:limit])
+        # print(context['wishlist'])
+
+        wishlist = list(wishlist[offset:limit])
+
+        wishlist_ids = [item['id'] for item in wishlist]
+        tag_info_by_wishlist = {}
+
+        for wishlist_id in wishlist_ids:
+            tag_info = WishlistTag.objects.filter(wishlist_id=wishlist_id).values_list('tag_name', flat=True)
+            tag_info_by_wishlist[wishlist_id] = list(tag_info)
+
+        context['wishlist'] = {
+            'wishlist': wishlist,
+            'tags': tag_info_by_wishlist
+        }
 
         return Response(context)
 
@@ -778,11 +816,12 @@ class AdminNoticeView(View):
 
 # 관리자 공지사항 - 데이터 가져오기
 class AdminNoticePaginationAPI(APIView):
-    def get(self, request, page):
-        order = request.GET.get('order', 'recent')
-        category = request.GET.get('category', '')
-        keyword = request.GET.get('keyword', '')
-        targetId = request.GET.get('targetId', '')
+    def post(self, request, page):
+        data = request.data
+
+        order = data.get('order', 'recent')
+        category = data.get('category', '')
+        keyword = data.get('keyword', '')
 
         row_count = 10
 
@@ -795,9 +834,6 @@ class AdminNoticePaginationAPI(APIView):
 
         if keyword:
             condition &= Q(notice_title__contains=keyword)
-
-        if targetId:
-            condition &= Q(id=targetId)
 
         total = Notice.objects.filter(condition).all().count()
 
@@ -813,6 +849,7 @@ class AdminNoticePaginationAPI(APIView):
 
         context = {
             'category': category,
+            'keyword': keyword,
             'total': total,
             'order': order,
             'start_page': start_page,
@@ -842,8 +879,12 @@ class AdminNoticePaginationAPI(APIView):
 
 # 관리자 공지사항 - 데이터 삭제
 class AdminNoticeUpdateAPI(APIView):
-    # 게시글 삭제
+    # 공지사항 수정
     def patch(self, request, notice_id):
+        pass
+
+    # 공지사항 삭제
+    def delete(self, request, notice_id):
         status = 0
         updated_date = timezone.now()
 
@@ -855,7 +896,7 @@ class AdminNoticeUpdateAPI(APIView):
         return Response('success')
 
 
-## 관리자 공지사항 작성
+# 관리자 공지사항 작성
 class AdminNoticeWriteView(View):
     # 페이지 이동
     def get(self, request):
@@ -872,17 +913,7 @@ class AdminNoticeWriteView(View):
             'notice_type': data['notice_type']
         }
 
-        print(data)
-
-        # notice_title = datas['notice_title']
-        # notice_content = datas['notice_content']
-        # notice_type = datas['notice_type']
-        #
-        # print(notice_title)
-        # print(notice_content)
-        # print(notice_type)
-
-        # Notice.objects.create(**data)
+        Notice.objects.create(**data)
         return redirect('/admin/notice/')
 
 
@@ -894,11 +925,14 @@ class AdminCommentView(View):
 
 # 관리자 댓글 - 데이터 가져오기
 class AdminCommentAPI(APIView):
-    def get(self, request, page):
-        order = request.GET.get('order', 'recent')
-        category = request.GET.get('category', '')
-        type = request.GET.get('type', '')
-        keyword = request.GET.get('keyword', '')
+    def post(self, request, page):
+        data = request.data
+        print(page)
+
+        order = data.get('order', 'recent')
+        category = data.get('category', '')
+        type = data.get('type', '')
+        keyword = data.get('keyword', '')
 
         row_count = 10
 
@@ -922,6 +956,7 @@ class AdminCommentAPI(APIView):
 
         columns = [
             'member_name',
+            'member_id_num',
             'title',
             'created',
             'reply',
@@ -935,6 +970,7 @@ class AdminCommentAPI(APIView):
         activities = Activity.enabled_objects \
             .annotate(
                 member_name=F('activityreply__member__member_nickname'),
+                member_id_num=F('activityreply__member__id'),
                 title=F('activityreply__activity__activity_title'),
                 created=F('activityreply__created_date'),
                 reply=F('activityreply__reply_content'),
@@ -949,6 +985,7 @@ class AdminCommentAPI(APIView):
         wishes = Wishlist.enabled_objects \
             .annotate(
                 member_name=F('wishlistreply__member__member_nickname'),
+                member_id_num=F('wishlistreply__member__id'),
                 title=F('wishlist_content'),
                 created=F('wishlistreply__created_date'),
                 reply=F('wishlistreply__reply_content'),
@@ -963,6 +1000,7 @@ class AdminCommentAPI(APIView):
         club_posts = ClubPost.enabled_objects \
             .annotate(
                 member_name=F('clubpostreply__member__member_nickname'),
+                member_id_num=F('clubpostreply__member__id'),
                 title=F('clubpostreply__club_post__post_title'),
                 created=F('clubpostreply__created_date'),
                 reply=F('clubpostreply__reply_content'),
@@ -991,6 +1029,9 @@ class AdminCommentAPI(APIView):
             end_page = 1
 
         context = {
+            'category': category,
+            'type': type,
+            'keyword': keyword,
             'total': total,
             'order': order,
             'start_page': start_page,
@@ -999,11 +1040,12 @@ class AdminCommentAPI(APIView):
             'page_count': page_count,
         }
 
-        ordering = '-id'
+        ordering = '-created'
         if order == 'popular':
             ordering = '-post_read_count'
 
-        comment = activity.union(wishlist).union(club_post).order_by('-created')
+        comment = activity.union(wishlist).union(club_post).order_by(ordering)
+        print(comment)
 
         context['comment'] = list(comment[offset:limit])
 
@@ -1020,6 +1062,7 @@ class AdminCommentDeleteAPI(APIView):
 
         columns = [
             'member_name',
+            'member_id_num',
             'title',
             'created',
             'reply',
@@ -1033,6 +1076,7 @@ class AdminCommentDeleteAPI(APIView):
         activities = Activity.enabled_objects \
             .annotate(
             member_name=F('activityreply__member__member_nickname'),
+            member_id_num=F('activityreply__member__id'),
             title=F('activityreply__activity__activity_title'),
             created=F('activityreply__created_date'),
             reply=F('activityreply__reply_content'),
@@ -1047,6 +1091,7 @@ class AdminCommentDeleteAPI(APIView):
         wishes = Wishlist.enabled_objects \
             .annotate(
             member_name=F('wishlistreply__member__member_nickname'),
+            member_id_num=F('wishlistreply__member__id'),
             title=F('wishlist_content'),
             created=F('wishlistreply__created_date'),
             reply=F('wishlistreply__reply_content'),
@@ -1061,6 +1106,7 @@ class AdminCommentDeleteAPI(APIView):
         club_posts = ClubPost.enabled_objects \
             .annotate(
             member_name=F('clubpostreply__member__member_nickname'),
+            member_id_num=F('clubpostreply__member__id'),
             title=F('clubpostreply__club_post__post_title'),
             created=F('clubpostreply__created_date'),
             reply=F('clubpostreply__reply_content'),
