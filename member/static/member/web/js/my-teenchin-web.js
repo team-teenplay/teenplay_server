@@ -224,7 +224,7 @@ const showList = (teenchin) =>{
             <div class="teenchin-box">
                 <div class="teenchin-items">
                     <!-- 틴친 상세프로필 이동 주소 필요 -->
-                    <a href="">
+                    <div>
                         <div class="profile-img-contents">
                             <div class="profile-img-box">
                                 <img class="profile-img" src="/static/public/web/images/logo/logo1.png" alt="" />
@@ -236,16 +236,16 @@ const showList = (teenchin) =>{
                             <div class="profile-info-item">
                                 <div style="margin-right: 10px">
                                     <span>활동</span>
-                                    <span>21</span>
+                                    <span>${teenchin.aactivity_countss}</span>
                                 </div>
                                 <span>|</span>
                                 <div style="margin-left: 10px">
                                     <span>모임</span>
-                                    <span>3</span>
+                                    <span>${teenchin.club_countss}</span>
                                 </div>
                             </div>
                         </div>
-                    </a>
+                    </div>
                     <div class="teenchin-btn-container">
                         <div class="teenchin-btn-box">
                             <button class="teenchin-btn ${teenchin.id}" type="button">
@@ -270,7 +270,7 @@ const showList = (teenchin) =>{
             <div class="teenchin-box">
                 <div class="teenchin-items">
                     <!-- 틴친 상세프로필 이동 주소 필요 -->
-                    <a href="">
+                    <div >
                         <div class="profile-img-contents">
                             <div class="profile-img-box">
                                 <img class="profile-img" src="/upload/${teenchin.sender__memberprofile__profile_path}" alt="" />
@@ -282,16 +282,16 @@ const showList = (teenchin) =>{
                             <div class="profile-info-item">
                                 <div style="margin-right: 10px">
                                     <span>활동</span>
-                                    <span>21</span>
+                                    <span>${teenchin.aactivity_countss}</span>
                                 </div>
                                 <span>|</span>
                                 <div style="margin-left: 10px">
                                     <span>모임</span>
-                                    <span>3</span>
+                                    <span>${teenchin.club_countss}</span>
                                 </div>
                             </div>
                         </div>
-                    </a>
+                    </div>
                     <div class="teenchin-btn-container">
                         <div class="teenchin-btn-box">
                             <button class="teenchin-btn ${teenchin.id}" type="button">
@@ -316,7 +316,7 @@ const showList = (teenchin) =>{
             <div class="teenchin-box">
                 <div class="teenchin-items">
                     <!-- 틴친 상세프로필 이동 주소 필요 -->
-                    <a href="">
+                    <div >
                         <div class="profile-img-contents">
                             <div class="profile-img-box">
                                 <img class="profile-img" src="/static/public/web/images/logo/logo1.png" alt="" />
@@ -328,16 +328,16 @@ const showList = (teenchin) =>{
                             <div class="profile-info-item">
                                 <div style="margin-right: 10px">
                                     <span>활동</span>
-                                    <span>21</span>
+                                    <span>${teenchin.aactivity_count}</span>
                                 </div>
                                 <span>|</span>
                                 <div style="margin-left: 10px">
                                     <span>모임</span>
-                                    <span>3</span>
+                                    <span>${teenchin.club_count}</span>
                                 </div>
                             </div>
                         </div>
-                    </a>
+                    </div>
                     <div class="teenchin-btn-container">
                         <div class="teenchin-btn-box">
                             <button class="teenchin-btn ${teenchin.id}" type="button">
@@ -362,7 +362,7 @@ const showList = (teenchin) =>{
             <div class="teenchin-box">
                 <div class="teenchin-items">
                     <!-- 틴친 상세프로필 이동 주소 필요 -->
-                    <a href="">
+                    <div >
                         <div class="profile-img-contents">
                             <div class="profile-img-box">
                                 <img class="profile-img" src="/upload/${receiver__memberprofile__profile_path}" alt="" />
@@ -374,16 +374,16 @@ const showList = (teenchin) =>{
                             <div class="profile-info-item">
                                 <div style="margin-right: 10px">
                                     <span>활동</span>
-                                    <span>21</span>
+                                    <span>${teenchin.aactivity_count}</span>
                                 </div>
                                 <span>|</span>
                                 <div style="margin-left: 10px">
                                     <span>모임</span>
-                                    <span>3</span>
+                                    <span>${teenchin.club_count}</span>
                                 </div>
                             </div>
                         </div>
-                    </a>
+                    </div>
                     <div class="teenchin-btn-container">
                         <div class="teenchin-btn-box">
                             <button class="teenchin-btn ${teenchin.id}" type="button">
@@ -408,7 +408,7 @@ const showList = (teenchin) =>{
                  <div class="teenchin-box">
                     <div class="teenchin-items">
                         <!-- 틴친 상세프로필 이동 주소 필요 -->
-                        <a href="">
+                        <div>
                             <div class="profile-img-contents">
                                 <div class="profile-img-box">
                                     <img class="profile-img" src="/static/public/web/images/logo/logo1.png" alt="HR에듀센터_인사드림(insadream)" />
@@ -420,16 +420,16 @@ const showList = (teenchin) =>{
                                 <div class="profile-info-item">
                                     <div style="margin-right: 10px">
                                         <span>활동</span>
-                                        <span>21</span>
+                                        <span>${teenchin.aactivity_countss}</span>
                                     </div>
                                     <span>|</span>
                                     <div style="margin-left: 10px">
                                         <span>모임</span>
-                                        <span>3</span>
+                                        <span>${teenchin.club_countss}</span>
                                     </div>
                                 </div>
                             </div>
-                        </a>
+                        </div>
                         <div class="teenchin-btn-container">
                             <div class="teenchin-btn-box">
                                 <button class="teenchin-agree-btn ${teenchin.id}" type="button">
@@ -456,7 +456,7 @@ const showList = (teenchin) =>{
                  <div class="teenchin-box">
                     <div class="teenchin-items">
                         <!-- 틴친 상세프로필 이동 주소 필요 -->
-                        <a href="">
+                        <div>
                             <div class="profile-img-contents">
                                 <div class="profile-img-box">
                                     <img class="profile-img" src="/upload/${teenchin.sender__memberprofile__profile_path}" alt="HR에듀센터_인사드림(insadream)" />
@@ -468,16 +468,16 @@ const showList = (teenchin) =>{
                                 <div class="profile-info-item">
                                     <div style="margin-right: 10px">
                                         <span>활동</span>
-                                        <span>21</span>
+                                        <span>${teenchin.aactivity_countss}</span>
                                     </div>
                                     <span>|</span>
                                     <div style="margin-left: 10px">
                                         <span>모임</span>
-                                        <span>3</span>
+                                        <span>${teenchin.club_countss}</span>
                                     </div>
                                 </div>
                             </div>
-                        </a>
+                        </div>
                         <div class="teenchin-btn-container">
                             <div class="teenchin-btn-box">
                                 <button class="teenchin-agree-btn ${teenchin.id}" type="button">
@@ -504,7 +504,7 @@ const showList = (teenchin) =>{
                  <div class="teenchin-box">
                     <div class="teenchin-items">
                         <!-- 틴친 상세프로필 이동 주소 필요 -->
-                        <a href="">
+                        <div>
                             <div class="profile-img-contents">
                                 <div class="profile-img-box">
                                     <img class="profile-img" src="/static/public/web/images/logo/logo1.png" alt="HR에듀센터_인사드림(insadream)" />
@@ -516,16 +516,16 @@ const showList = (teenchin) =>{
                                 <div class="profile-info-item">
                                     <div style="margin-right: 10px">
                                         <span>활동</span>
-                                        <span>21</span>
+                                        <span>${teenchin.aactivity_count}</span>
                                     </div>
                                     <span>|</span>
                                     <div style="margin-left: 10px">
                                         <span>모임</span>
-                                        <span>3</span>
+                                        <span>${teenchin.club_count}</span>
                                     </div>
                                 </div>
                             </div>
-                        </a>
+                        </div>
                         <div class="teenchin-btn-container">
                             <div class="teenchin-btn-box">
                                 <button class="teenchin-wait-btn ${teenchin.id}" type="button">
@@ -552,7 +552,7 @@ const showList = (teenchin) =>{
                  <div class="teenchin-box">
                     <div class="teenchin-items">
                         <!-- 틴친 상세프로필 이동 주소 필요 -->
-                        <a href="">
+                        <div>
                             <div class="profile-img-contents">
                                 <div class="profile-img-box">
                                     <img class="profile-img" src="/upload/${teenchin.receiver__memberprofile__profile_path}" alt="HR에듀센터_인사드림(insadream)" />
@@ -564,16 +564,16 @@ const showList = (teenchin) =>{
                                 <div class="profile-info-item">
                                     <div style="margin-right: 10px">
                                         <span>활동</span>
-                                        <span>21</span>
+                                        <span>${teenchin.aactivity_count}</span>
                                     </div>
                                     <span>|</span>
                                     <div style="margin-left: 10px">
                                         <span>모임</span>
-                                        <span>3</span>
+                                        <span>${teenchin.club_count}</span>
                                     </div>
                                 </div>
                             </div>
-                        </a>
+                        </div>
                         <div class="teenchin-btn-container">
                             <div class="teenchin-btn-box">
                                 <button class="teenchin-wait-btn ${teenchin.id}" type="button">
