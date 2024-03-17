@@ -222,6 +222,13 @@ class ActivityLikeCountAPI(APIView):
 
         return Response(activity_like_count)
 
+class ActivityMemberCountAPI(APIView):
+    def get(self, request):
+        activity_id = request.GET['id']
+        activity_member_count = ActivityMember.enabled_objects.filter(activity_id=activity_id).count()
+
+        return Response(activity_member_count)
+
 
 class ActivityReplyAPI(APIView):
     def get(self, request):
