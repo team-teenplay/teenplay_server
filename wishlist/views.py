@@ -170,8 +170,12 @@ class WishListActionAPI(APIView):
         new_tag_name = new_wishlist.get('tag_name')
         # print(new_tag_name)
         for tag_name in new_tag_name:
-            WishlistTag.objects.get_or_create(wishlist_id=wishlist_id, tag_name=tag_name)
+            wishlist_update_object,checked = WishlistTag.objects.get_or_create(wishlist_id=wishlist_id, tag_name=tag_name)
             # print(tag_name)
+        #
+        # if checked is False:
+        #     WishlistTag.objects.filter(wishlist_id=wishlist_id).update(status=0)
+
 
         return Response('success')
 

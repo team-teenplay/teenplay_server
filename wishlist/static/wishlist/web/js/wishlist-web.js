@@ -148,7 +148,8 @@ const showList = (data) => {
                         </button>
                     </div>
                     <!-- 위시리스트 댓글 부분 -->
-                    <div class="comment-all-wrap hidden" id="reply-form${wishlist.id}">
+<!--                    <div class="comment-all-wrap hidden" id="reply-form${wishlist.id}">-->
+                        <div class="comment-all-wrap ${wishlist.id} hidden" id="reply-form${wishlist.id}">
                     </div>
                 </div>
             `
@@ -328,8 +329,8 @@ mySearchInput.addEventListener("keyup", async (e) => {
         // console.log("들어옴")
         await wishlistService.getList(0, page, category, keyword, showList).then(async (text) => {
             div.innerHTML = text;
-            await addClickEventWishlistProfile()
             await addMoreButton()
+            await addClickEventWishlistProfile()
             await addAllevents();
             await menuOpenevents();
         });
@@ -652,6 +653,7 @@ const modifyWishlistTag = (value) => {
 div.addEventListener("click", async (e) => {
     // 수정 버튼 클릭시 수정 모달창 생성
     if(e.target.classList[0] === 'post-menu-open-choice'){
+        console.log("수정")
         const wishlistId = e.target.classList[1]
         // console.log(wishlistId)
 
@@ -710,14 +712,16 @@ div.addEventListener("click", async (e) => {
             // 수정된 게시글을 포함한 위시리스트 게시글 다시 뿌려주기
             const text = await wishlistService.getList(myWishlistIdCheck, page, category, keyword, showList);
             div.innerHTML = text;
-            addClickEventWishlistProfile()
+
             addMoreButton()
+            addClickEventWishlistProfile()
             addAllevents();
             menuOpenevents();
         });
 
     // 삭제 버튼 클릭시 삭제하기 (status =0)
     } else if (e.target.id === 'post-menu-open-delete'){
+        console.log("삭제")
         const wishlistId = e.target.classList[1]
         // console.log(wishlistId)
         await wishlistService.wishlistRemove(wishlistId);
@@ -732,26 +736,59 @@ div.addEventListener("click", async (e) => {
 })
 
 //댓글 등록 버튼 클릭 시 작성 완료
+// div.addEventListener("click", async (e) => {
+//     if (e.target.id === 'comment-upload-button') {
+//         // console.log(e.target)
+//         const replyBtn = document.getElementById("comment-upload-button")
+//         const wishlistId = document.querySelector(".reply-open-button").classList[1]
+//         replyBtn.addEventListener("click", async () => {
+//             const replyContent = document.getElementById("reply-content")
+//             // const wishlistId = replyBtn.classList[1]
+//             const comment = document.getElementById(`reply-form${wishlistId}`)
+//
+//             // Write 함수를 호출하여 작성된 댓글 정보 전송
+//             await wishlistService.replyWrite({
+//                 reply_content: replyContent.value,
+//                 wishlist_id: wishlistId
+//             });
+//
+//             // 작성칸 내용 초기화
+//             replyContent.value = "";
+//
+//             // 수정된 댓글을 포함한 댓글 리스트 다시 뿌려주기
+//             await wishlistService.replygetList(wishlistId, replyshowList).then((replies) => {
+//                 comment.innerHTML = replies;
+//             }).then(async () => {
+//                 await addClickEventReplyProfile();
+//                 await addMoreButton();
+//             })
+//         })
+//     }
+// });
+
+//댓글 등록 버튼 클릭 시 작성 완료
 div.addEventListener("click", async (e) => {
     if (e.target.id === 'comment-upload-button') {
-        // console.log(e.target)
-        const replyBtn = document.getElementById("comment-upload-button")
-        const wishlistId = document.querySelector(".reply-open-button").classList[1]
+        const wishlistPost = e.target.closest(".wishlist-post")
+        const replyBtn = wishlistPost.querySelector("#comment-upload-button")
+        const wishlistId = wishlistPost.querySelector(".comment-all-wrap").classList[1]
+        console.log(wishlistId)
+        // console.log(wishlistPost.querySelector(".comment-all-wrap"))
+        // const replyBtn = document.getElementById("comment-upload-button")
+        // const wishlistId = document.querySelector(".reply-open-button").classList[1]
         replyBtn.addEventListener("click", async () => {
             const replyContent = document.getElementById("reply-content")
             // const wishlistId = replyBtn.classList[1]
             const comment = document.getElementById(`reply-form${wishlistId}`)
-
-            // Write 함수를 호출하여 작성된 댓글 정보 전송
             await wishlistService.replyWrite({
                 reply_content: replyContent.value,
                 wishlist_id: wishlistId
             });
 
-            // 작성칸 내용 초기화
+            console.log(replyContent)
+
             replyContent.value = "";
 
-            // 수정된 댓글을 포함한 댓글 리스트 다시 뿌려주기
             await wishlistService.replygetList(wishlistId, replyshowList).then((replies) => {
                 comment.innerHTML = replies;
             }).then(async () => {
@@ -902,13 +939,21 @@ const sendLetterAddInfo = (wishlistId) => {
     receiverInfo.innerText = `${receiverName} (${receiverEmail})`;
 }
 
-
 // 틴친 신청 버튼
 const teenchinAddButton = document.querySelector(".teenchin-add-btn");
 // 틴친 신청취소 버튼
 const teenchinCancelButton = document.querySelector(".teenchin-request-btn");
+// 틴친 수락/거절 버튼
+const teenchinAcceptButton = document.querySelector(".teenchin-accept-btn");
 // 틴친 끊기 버튼
 const teenchinDeleteButton = document.querySelector(".teenchin-btn");
+
+// // 틴친 신청 버튼
+// const teenchinAddButton = document.querySelector(".teenchin-add-btn");
+// // 틴친 신청취소 버튼
+// const teenchinCancelButton = document.querySelector(".teenchin-request-btn");
+// // 틴친 끊기 버튼
+// const teenchinDeleteButton = document.querySelector(".teenchin-btn");
 
 // 보여주는 함수
 const helpShowButton = (button) => {
@@ -924,45 +969,79 @@ const helpHideButton = (button) => {
 }
 
 
-// 위 요소들을 사용하여 틴친 상태에 따라 버튼을 바꿔줄 함수 정의
+// 이제 위 요소들을 사용하여 틴친 상태에 따라 버튼을 바꿔줄 함수 정의
 const showButtonsByTeenchinStatus = (teenchinStatus) => {
-    if (teenchinStatus === 0) {
+    let status = teenchinStatus.teenchinStatus;
+    let isSender = teenchinStatus.isSender;
+    if (status === 0) {
         helpShowButton(teenchinAddButton);
         helpHideButton(teenchinCancelButton);
+        helpHideButton(teenchinAcceptButton)
         helpHideButton(teenchinDeleteButton);
-    } else if (teenchinStatus === 1) {
+    } else if (status === 1) {
         helpShowButton(teenchinDeleteButton);
         helpHideButton(teenchinAddButton);
+        helpHideButton(teenchinAcceptButton)
         helpHideButton(teenchinCancelButton);
-    } else {
+    } else if (isSender) {
         helpShowButton(teenchinCancelButton);
+        helpHideButton(teenchinAcceptButton);
         helpHideButton(teenchinAddButton);
+        helpHideButton(teenchinDeleteButton);
+    } else {
+        helpShowButton(teenchinAcceptButton);
+        helpHideButton(teenchinAddButton);
+        helpHideButton(teenchinCancelButton);
         helpHideButton(teenchinDeleteButton);
     }
 }
 
 
-// 틴친 클릭 시 프로필 모달 나오기
+// // 틴친 클릭 시 프로필 모달 나오기
+// const profileModal = document.querySelector("div.profile");
+// const profileModalProfileImage = document.querySelector(".profile-default-img");
+// const profileModalMemberName = document.querySelector("div.profile-name");
+// let opponentTeenchinId = 0;
+// const showMemberProfileModal = async (wishlistId) => {
+//     if (!loginCheck) return;
+//     opponentTeenchinId = document.querySelector(`.wishlist-writer-id${wishlistId}`).value;
+//     // console.log(opponentTeenchinId)
+//     // console.log(loginId)
+//     if (profileModal.classList.contains("hidden") && (opponentTeenchinId !== memberId)) {
+//         profileModal.classList.remove("hidden")
+//         const memberProfileImage = document.querySelector(`.profile-image${wishlistId}`);
+//         profileModalProfileImage.src = memberProfileImage.src;
+//         const memberProfileName = document.querySelector(`.member-name${wishlistId}`);
+//         profileModalMemberName.innerText = memberProfileName.innerText;
+//         sendLetterAddInfo(wishlistId);
+//
+//         await activityTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
+//     }
+// }
+
+// 위에서 정의한 함수를 사용할 때, 댓글에서 프로필 사진을 클릭하면
+// 해당 멤버의 id를 같이 넘겨 틴친 상태에 따라 버튼을 바로 바꿔줘야 합니다.
+// 따라서 프로필 모달이 표시됨과 동시에 이루어지도록 합니다.
+
+// 틴친 클릭 시 프로필 모달 나오도록 하기
 const profileModal = document.querySelector("div.profile");
 const profileModalProfileImage = document.querySelector(".profile-default-img");
 const profileModalMemberName = document.querySelector("div.profile-name");
 let opponentTeenchinId = 0;
 const showMemberProfileModal = async (wishlistId) => {
-    if (!loginCheck) return;
     opponentTeenchinId = document.querySelector(`.wishlist-writer-id${wishlistId}`).value;
-    // console.log(opponentTeenchinId)
-    // console.log(loginId)
-    if (profileModal.classList.contains("hidden") && (opponentTeenchinId !== memberId)) {
+    if (memberId === opponentTeenchinId) return;
+    if (profileModal.classList.contains("hidden")) {
         profileModal.classList.remove("hidden")
         const memberProfileImage = document.querySelector(`.profile-image${wishlistId}`);
         profileModalProfileImage.src = memberProfileImage.src;
         const memberProfileName = document.querySelector(`.member-name${wishlistId}`);
         profileModalMemberName.innerText = memberProfileName.innerText;
         sendLetterAddInfo(wishlistId);
-
         await activityTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
     }
 }
+
 
 
 // 여백 클릭시 프로필 모달 닫기
@@ -1057,13 +1136,13 @@ if (teenFriendAdd){
             if (result.value) {
                 await activityTeenchinService.apply(opponentTeenchinId);
                 await activityTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
+                Swal.fire("틴친 신청을 보냈어요!", "", "success");
             } else if ((result.dismiss = "cancel")) {
                 return;
             }
         });
     });
 }
-
 
 // 틴친 신청 취소 모달 이벤트
 if (teenFriendRequest){
@@ -1079,13 +1158,41 @@ if (teenFriendRequest){
             cancelButtonText: "닫기",
         }).then(async (result) => {
             if (result.value) {
-                await activityTeenchinService.cancelApplyTeenchin(opponentTeenchinId);
+                await activityTeenchinService.cancelOrAcceptDenyTeenchin(opponentTeenchinId, true, false);
                 await activityTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
+                Swal.fire("틴친 신청이 취소되었습니다.", "", "success");
             } else if ((result.dismiss = "cancel")) {
                 return;
             }
         });
     });
+}
+
+// 틴친 수락/거절 모달 이벤트
+if (teenchinAcceptButton) {
+    teenchinAcceptButton.addEventListener("click", () => {
+        Swal.fire({
+            title: "신청을 수락할까요?",
+            text: "",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#CE201B",
+            cancelButtonColor: "#E1E1E1",
+            confirmButtonText: "수락",
+            cancelButtonText: "거절",
+        }).then(async (result) => {
+            if (result.value) {
+                await activityTeenchinService.cancelOrAcceptDenyTeenchin(opponentTeenchinId, false, true);
+                await activityTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
+                Swal.fire("틴친신청을 수락했습니다.", "", "success");
+            } else if ((result.dismiss = "cancel")) {
+                await activityTeenchinService.cancelOrAcceptDenyTeenchin(opponentTeenchinId, false, false);
+                await activityTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
+                Swal.fire("틴친신청을 거절했습니다.", "", "success");
+                return;
+            }
+        });
+    })
 }
 
 // 틴친 취소 모달 이벤트
@@ -1106,12 +1213,89 @@ if (teenFriendCancle){
             if (result.value) {
                 await activityTeenchinService.removeTeenchin(opponentTeenchinId);
                 await activityTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
+                Swal.fire("틴친 관계가 해제되었어요.", "", "success");
             } else if ((result.dismiss = "cancel")) {
                 return;
             }
         });
     });
 }
+
+
+// // 틴친 추가 모달 이벤트
+// const teenFriendAdd = document.querySelector(".teenchin-add-btn");
+// const teenFriendRequest = document.querySelector(".teenchin-request-btn");
+//
+// if (teenFriendAdd){
+//     teenFriendAdd.addEventListener("click", () => {
+//         Swal.fire({
+//             title: "틴친 신청을 보낼까요?",
+//             text: "",
+//             icon: "warning",
+//             showCancelButton: true,
+//             confirmButtonColor: "#CE201B",
+//             cancelButtonColor: "#E1E1E1",
+//             confirmButtonText: "친구추가",
+//             cancelButtonText: "닫기",
+//         }).then(async (result) => {
+//             if (result.value) {
+//                 await activityTeenchinService.apply(opponentTeenchinId);
+//                 await activityTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
+//             } else if ((result.dismiss = "cancel")) {
+//                 return;
+//             }
+//         });
+//     });
+// }
+//
+//
+// // 틴친 신청 취소 모달 이벤트
+// if (teenFriendRequest){
+//     teenFriendRequest.addEventListener("click", () => {
+//         Swal.fire({
+//             title: "신청을 취소할까요?",
+//             text: "",
+//             icon: "warning",
+//             showCancelButton: true,
+//             confirmButtonColor: "#CE201B",
+//             cancelButtonColor: "#E1E1E1",
+//             confirmButtonText: "신청취소",
+//             cancelButtonText: "닫기",
+//         }).then(async (result) => {
+//             if (result.value) {
+//                 await activityTeenchinService.cancelApplyTeenchin(opponentTeenchinId);
+//                 await activityTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
+//             } else if ((result.dismiss = "cancel")) {
+//                 return;
+//             }
+//         });
+//     });
+// }
+//
+// // 틴친 취소 모달 이벤트
+// const teenFriendCancle = document.querySelector(".teenchin-btn");
+//
+// if (teenFriendCancle){
+//     teenFriendCancle.addEventListener("click", () => {
+//         Swal.fire({
+//             title: "틴친을 그만둘까요?",
+//             text: "",
+//             icon: "warning",
+//             showCancelButton: true,
+//             confirmButtonColor: "#CE201B",
+//             cancelButtonColor: "#E1E1E1",
+//             confirmButtonText: "틴친끊기",
+//             cancelButtonText: "닫기",
+//         }).then(async (result) => {
+//             if (result.value) {
+//                 await activityTeenchinService.removeTeenchin(opponentTeenchinId);
+//                 await activityTeenchinService.getTeenchinStatus(opponentTeenchinId, showButtonsByTeenchinStatus);
+//             } else if ((result.dismiss = "cancel")) {
+//                 return;
+//             }
+//         });
+//     });
+// }
 
 
 // 마이페이지에서 넘어오면서 클릭한 위시리스트가 제일 위에 보일때 테두리 강조하기
