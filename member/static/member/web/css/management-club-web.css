@@ -272,6 +272,7 @@ menu, ol, ul {
     padding-top: 0;
     justify-content: flex-end;
     display: flex;
+    gap: 15px
 }
 
 .activity-open-btn {
