@@ -131,7 +131,7 @@ const showList = async (alram) => {
                     <div class="signal-top-box">
                         <div class="type-title">
                             <div class="signal-type">틴친</div>
-                            <a href="http://127.0.0.1:10000/member/mypage-teenchin/" class="target-title">당신이 틴친을 신청한 사람이 있어요!</a>
+                            <a href="http://127.0.0.1:10000/member/mypage-teenchin/" class="target-title">당신에게 틴친을 신청한 사람이 있어요!</a>
                         </div>
                         <div class="check-date">
                             <div class="signal-delete ${alram.id}">읽음</div>
@@ -239,7 +239,7 @@ const showList = async (alram) => {
                     <div class="signal-top-box">
                         <div class="type-title">
                             <div class="signal-type">활동</div>
-                            <a href="http://127.0.0.1:10000/member/activity-member/?activity_id=${alram.target_id}"  class="target-title">누군가 당신의 모임을 신쳥했어요!!</a>
+                            <a href="http://127.0.0.1:10000/member/activity-member/?activity_id=${alram.target_id}"  class="target-title">누군가 당신의 활동을 신쳥했어요!!</a>
                         </div>
                         <div class="check-date">
                             <div class="signal-delete ${alram.id}">읽음</div>
@@ -293,7 +293,7 @@ const showList = async (alram) => {
                     <div class="signal-top-box">
                         <div class="type-title">
                             <div class="signal-type">틴친</div>
-                            <div class="target-title">당신이 신청한 틴친에게서!</div>
+                            <div class="target-title">당신이 신청한 틴친에게서 소식이왔어요!</div>
                         </div>
                         <div class="check-date">
                             <div class="signal-delete ${alram.id}">읽음</div>
@@ -311,7 +311,7 @@ const showList = async (alram) => {
                     <div class="signal-top-box">
                         <div class="type-title">
                             <div class="signal-type">틴친</div>
-                            <div class="target-title">당신이 신청한 틴친에게서!</div>
+                            <div class="target-title">당신이 신청한 틴친에게서 소식이왔어요!</div>
                         </div>
                         <div class="check-date">
                             <div class="signal-delete ${alram.id}">읽음</div>
