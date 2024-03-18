@@ -35,17 +35,20 @@ const adminNoticeService = (() => {
 
 
     // 공지사항 수정
-    const update = async (targetId) => {
-        const notice_id = targetId.targetId
+    const update = async (targetID, titleValue, contentValue) => {
+        const notice_id = targetID.targetID
+        const title = titleValue.titleValue
+        const content = contentValue.contentValue
 
         await fetch(`/admin/notices/update/${notice_id}/`, {
-            method: 'patch',
+            method: 'post',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
                 'X-CSRFToken': csrf_token
             },
-            body: JSON.stringify({'notice_id': notice_id})
+            body: JSON.stringify({'notice_id': notice_id, title: title, content: content})
         });
+
     }
 
 

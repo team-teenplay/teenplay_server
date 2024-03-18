@@ -463,22 +463,50 @@ searchInput.addEventListener('keyup', (e) => {
 // 상세 보기
 // 상세 추가 태그
 const detailModel = document.querySelector(".admin-post-modal");
-const detailModelBack = document.querySelector(".admin-user-modal-backdrop");
+const detailModelBack = document.querySelector(".detail-box-backdrop");
 const detailModelTitle = document.querySelector("input[name=title]");
 const detailModelContent = document.querySelector("textarea[name=content]");
 const detailBoxClosed = document.querySelector(".admin-user-modal-left-detail-button")
+const detailBoxApply = document.querySelector(".admin-user-modal-right-detail-button")
 
 noticeData.addEventListener('click', (e) => {
     if (e.target.classList[0] === 'member-user-list-detail-button') {
         let targetID = e.target.getAttribute("data-id");
+        console.log(targetID)
+
         detailModelTitle.value = document.getElementById(`title${targetID}`).innerText
         detailModelContent.value = document.getElementById(`content${targetID}`).value
 
         detailModel.classList.remove("hidden");
         detailModelBack.classList.remove("hidden");
 
+        let titleValue = ""
+        let contentValue = ""
+
+        if (detailModelTitle) {
+            detailModelTitle.addEventListener('keyup', () => {
+                titleValue = detailModelTitle.value;
+            });
+        }
+        if (detailModelContent) {
+            detailModelContent.addEventListener('keyup', () => {
+                contentValue = detailModelContent.value;
+            });
+        }
+
+        detailBoxApply.addEventListener('click', async () => {
+            await adminNoticeService.update({ targetID: targetID}, {titleValue: titleValue}, {contentValue: contentValue});
+
+            detailModel.classList.add("hidden")
+            detailModelBack.classList.add("hidden")
+            page = 1;
+            allShowList();
+            allShowPaging();
+            CountShowText();
+        })
     }
 })
+
 
 detailBoxClosed.addEventListener('click', () => {
     detailModel.classList.add("hidden")

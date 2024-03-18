@@ -76,12 +76,10 @@
                             <h3 class="main-festival-add-top-text">공지사항 작성하기</h3>
                             <div class="main-festival-add-top-choice">
                                 <a href="/admin/notice/" class="main-festival-add-top-cancle-button">
-                                    <button class="main-festival-add-top-cancle-text" type="button">
-                                            <div>취소하기</div>
-                                    </button>
+                                    <button class="main-festival-add-top-cancle-text" type="button">취소하기</button>
                                 </a>
                                 <div class="main-festival-add-top-create-text">
-                                    <button class="main-festival-add-top-create-button">작성하기</button>
+                                    <button class="main-festival-add-top-create-button disabled" type="button">작성하기</button>
                                 </div>
                             </div>
                         </div>
@@ -103,7 +101,7 @@
                             <div>
                                 <p class="main-festival-info-detail-titel">공지사항 제목</p>
                                 <label class="main-festival-info-detail-label">
-                                    <input name="notice_title" oninput="updateButtonStatus()" class="main-festival-info-detail-input" placeholder="제목을 입력해주세요" type="text" value="" />
+                                    <input name="notice_title" class="main-festival-info-detail-input" placeholder="제목을 입력해주세요" type="text" value="" />
                                 </label>
                                 <!-- 값 미입력시 -->
                                 <div id="red-title" class="hidden">
@@ -118,7 +116,7 @@
                             <!-- 공지 내용 입력  -->
                             <div>
                                 <p class="main-festival-info-subtitle">공지사항 내용</p>
-                                <textarea name="notice_content" oninput="updateButtonStatus()" class="main-festival-info-detail-textarea" placeholder="내용을 입력해주세요"></textarea>
+                                <textarea name="notice_content" class="main-festival-info-detail-textarea" placeholder="내용을 입력해주세요"></textarea>
                                 <!-- 값 미입력시 -->
                                 <div id="red-content" class="hidden">
                                     <div class="redbox">
@@ -132,12 +130,12 @@
                             <div>
                                 <p class="main-festival-info-categoty-titel">공지사항 카테고리</p>
                                 <div class="main-festival-add-radio">
-                                    <div class="main-festival-box" onclick="checkRadioAndStyle(this, 'radio-notice')">
-                                        <input oninput="updateButtonStatus()" type="radio" id="radio-notice" name="notice_type" value="0"/>
+                                    <div class="main-festival-box">
+                                        <input type="radio" id="radio-notice" name="notice_type" value="0"/>
                                         <label data-id="0" style="cursor: pointer">공지사항</label>
                                     </div>
-                                    <div class="main-festival-box" onclick="checkRadioAndStyle(this, 'radio-qr')">
-                                        <input oninput="updateButtonStatus()" type="radio" id="radio-qr" name="notice_type" value="1"/>
+                                    <div class="main-festival-box">
+                                        <input type="radio" id="radio-qr" name="notice_type" value="1"/>
                                         <label data-id="1" style="cursor: pointer">자주묻는질문</label>
                                     </div>
                                 </div>
@@ -155,8 +153,8 @@
     <script>
         const csrf_token = '{{ csrf_token }}';
     </script>
-    <script src="{% static 'admin/web/js/notice/admin-notice-module-web.js' %}"></script>
-{#    <script src="{% static 'admin/web/js/notice/notice-create/admin-notice-create-web.js' %}"></script>#}
-    <script src="{% static 'admin/web/js/notice/notice-create/admin-notice-create-button-web.js' %}"></script>
+    <script src="{% static 'admin/web/js/notice/notice-create/admin-notice-create-web.js' %}"></script>
+{#    <script src="{% static 'admin/web/js/notice/admin-notice-module-web.js' %}"></script>#}
+{#    <script src="{% static 'admin/web/js/notice/notice-create/admin-notice-create-button-web.js' %}"></script>#}
 {#    <script src="{% static 'admin/web/js/notice/notice-create/admin-notice-create-redbox-web.js' %}"></script>#}
 {% endblock %}

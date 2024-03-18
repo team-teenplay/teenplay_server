@@ -880,8 +880,23 @@ class AdminNoticePaginationAPI(APIView):
 # 관리자 공지사항 - 데이터 삭제
 class AdminNoticeUpdateAPI(APIView):
     # 공지사항 수정
-    def patch(self, request, notice_id):
-        pass
+    def post(self, request, notice_id):
+        print('들어옴')
+        data = request.data
+
+        title = data.get('title', '')
+        content = data.get('content', '')
+
+        updated_date = timezone.now()
+
+        notice = Notice.objects.get(id=notice_id)
+        notice.updated_date = updated_date
+        notice.notice_title = title
+        notice.notice_content = content
+        notice.save(update_fields=['updated_date', 'notice_title', 'notice_content'])
+
+        return Response('success')
+
 
     # 공지사항 삭제
     def delete(self, request, notice_id):
