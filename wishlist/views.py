@@ -185,7 +185,7 @@ class ReplyWriteAPI(APIView):
             'wishlist_id': data['wishlist_id'],
             'member_id': request.session['member']['id']
         }
-
+        print(data['wishlist_id'])
         WishlistReply.objects.create(**data)
         return Response('success')
 

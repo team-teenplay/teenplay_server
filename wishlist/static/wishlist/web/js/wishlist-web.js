@@ -10,16 +10,16 @@ let myWishlistIdCheck = myWishlistId ? myWishlistId : 0;
 
 const showList = (data) => {
     let text = ``;
-    data['wishlists'].forEach((wishlist)=> {
-        if(data['wishlists'].length === 0) {
-            text = `
-                <!-- 카테고리에  게시글이 없을 때 출력 -->
-                <div class="post-error">
-                    <span>게시글이 존재하지 않습니다.</span>
-                </div>
-            `
-        }
-        else {
+    if(data['wishlists'].length === 0) {
+        text = `
+            <!-- 카테고리에  게시글이 없을 때 출력 -->
+            <div class="post-error" style="text-align: center;">
+                <span>게시글이 존재하지 않습니다</span>
+            </div>
+        `
+    }
+    else {
+        data['wishlists'].forEach((wishlist)=> {
             text += `
                 <!-- 위시리스트 게시글 부분 -->
                 <div class="wishlist-post ${data['my_wishlist']}">
@@ -152,8 +152,8 @@ const showList = (data) => {
                     </div>
                 </div>
             `
-        }
-    });
+        });
+    }
     return text;
 }
 
@@ -340,7 +340,7 @@ mySearchInput.addEventListener("keyup", async (e) => {
 // 더보기 버튼 누르면 위시리스트 추가로 나오기
 moreButton.addEventListener("click", async (e) => {
     await wishlistService.getList(0, ++page, category,keyword, showList).then(async (text) => {
-        div.innerHTML = text;
+        div.innerHTML += text;
         await addMoreButton()
         await addClickEventWishlistProfile()
         await addAllevents();
@@ -532,13 +532,22 @@ modalCreateFinish.addEventListener("click", async () => {
     wishlistContent.value = "";
     isPrivate.value = "1";
     wishlistCategory.value = "100";
-    tagElements.innerHTML = "";
+    // tagElements.innerHTML = "";
+    // tagElements.forEach(element => {
+    // element.innerHTML = "";
+    // });
+    tagElements.forEach(span => {
+    const div = span.parentNode;
+        if (div) {
+            div.remove();
+        }
+    });
 
     // 작성된 게시글이 포함된 위시리스트 다시 화면에 보여주기
     const text = await wishlistService.getList(myWishlistIdCheck, page, category, keyword, showList);
     div.innerHTML = text;
-    addClickEventWishlistProfile()
-    addMoreButton()
+    addClickEventWishlistProfile();
+    addMoreButton();
     addAllevents();
     menuOpenevents();
 
