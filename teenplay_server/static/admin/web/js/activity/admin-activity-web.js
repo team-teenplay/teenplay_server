@@ -279,6 +279,7 @@ statusName.addEventListener('click', () => {
         if (checkbox.checked) {
             checkbox.checked = false;
             statusNameText.textContent = '전체';
+            // 이부분이 안됩니다
             modalDeleteOpenButtons.forEach((deleteButton) => {
                 deleteButton.classList.add("disabled");
             });
