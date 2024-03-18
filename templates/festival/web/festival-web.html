@@ -19,27 +19,27 @@
         </div>
         <div class="main-festival-total">
             [전국]
-            <span class="main-festival-total-span">00</span>
+            <span class="main-festival-total-span"></span>
             개의 축제가 검색되었습니다.
         </div>
         <div class="main-festival-category">
             <select class="main-festival-category-select">
                 <option value="">유형 선택</option>
-                <option value="">문화관광축제</option>
-                <option value="">일반축제</option>
-                <option value="">전통공연</option>
-                <option value="">연극</option>
-                <option value="">뮤지컬</option>
-                <option value="">오페라</option>
-                <option value="">전시회</option>
-                <option value="">박람회</option>
-                <option value="">컨벤션</option>
-                <option value="">무용</option>
-                <option value="">클래식음악회</option>
-                <option value="">대중콘서트</option>
-                <option value="">영화</option>
-                <option value="">스포츠경기</option>
-                <option value="">기타행사</option>
+                <option value="1">문화관광축제</option>
+                <option value="2">일반축제</option>
+                <option value="3">전통공연</option>
+                <option value="4">연극</option>
+                <option value="5">뮤지컬</option>
+                <option value="6">오페라</option>
+                <option value="7">전시회</option>
+                <option value="8">박람회</option>
+                <option value="9">컨벤션</option>
+                <option value="10">무용</option>
+                <option value="11">클래식음악회</option>
+                <option value="12">대중콘서트</option>
+                <option value="13">영화</option>
+                <option value="14">스포츠경기</option>
+                <option value="15">기타행사</option>
             </select>
             <div class="main-festival-category-date">
                 <div class="main-festival-category-date-warp">
@@ -308,7 +308,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <script src="{% static 'festival/web/js/festival/festival-add-content-web.js' %}"></script>
+    <script src="{% static 'festival/web/js/festival/festival-list-module.js' %}"></script>
     <script src="{% static 'festival/web/js/festival/festival-calendar-web.js' %}"></script>
+    <script src="{% static 'festival/web/js/festival/festival-add-content-web.js' %}"></script>
+    <script src="{% static 'festival/web/js/festival/festival-list-web.js' %}"></script>
 {% endblock %}
 

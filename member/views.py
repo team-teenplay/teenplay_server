@@ -909,17 +909,35 @@ class MypageTeenchindeleteview(APIView):
     @transaction.atomic
     def delete(self, request, friend_id):
         print(friend_id)
-        target_id = Friend.objects.filter(id=friend_id).update(is_friend=0, updated_date=timezone.now())
-        Alarm.objects.create(target_id=target_id, receiver_id=friend_id, alarm_type=15,
-                             sender_id=request.session['member']['id'])
+        if Friend.objects.filter(receiver_id=friend_id,sender_id=request.session['member']['id']):
+            target_id = Friend.objects.filter(receiver_id=friend_id, sender_id=request.session['member']['id']).update(is_friend=0, updated_date=timezone.now())
+            Alarm.objects.create(target_id=target_id, receiver_id=friend_id, alarm_type=15,
+                                 sender_id=request.session['member']['id'])
+
+        elif Friend.objects.filter(receiver_id=request.session['member']['id'],sender_id=friend_id):
+            target_id = Friend.objects.filter(receiver_id=request.session['member']['id'], sender_id=friend_id).update(is_friend=0, updated_date=timezone.now())
+
+
+            Alarm.objects.create(target_id=target_id, receiver_id=friend_id, alarm_type=15,
+                                 sender_id=request.session['member']['id'])
 
         return Response('good')
 
     @transaction.atomic
     def patch(self, request, friend_id):
-        target_id = Friend.objects.filter(id=friend_id).update(is_friend=1, updated_date=timezone.now())
-        Alarm.objects.create(target_id=target_id, receiver_id=friend_id, alarm_type=14,
-                             sender_id=request.session['member']['id'])
+
+        if Friend.objects.filter(receiver_id=friend_id, sender_id=request.session['member']['id']):
+            target_id = Friend.objects.filter(receiver_id=friend_id, sender_id=request.session['member']['id']).update(
+                is_friend=1, updated_date=timezone.now())
+            Alarm.objects.create(target_id=target_id, receiver_id=friend_id, alarm_type=14,
+                                 sender_id=request.session['member']['id'])
+
+        elif Friend.objects.filter(receiver_id=request.session['member']['id'], sender_id=friend_id):
+            target_id = Friend.objects.filter(receiver_id=request.session['member']['id'], sender_id=friend_id).update(
+                is_friend=1, updated_date=timezone.now())
+
+            Alarm.objects.create(target_id=target_id, receiver_id=friend_id, alarm_type=14,
+                                 sender_id=request.session['member']['id'])
 
         return Response('good')
 
@@ -1965,58 +1983,106 @@ class ActivityListAPIView(APIView):
         row_count = 5
         offset = (page - 1) * row_count
         limit = page * row_count
+        total_count = 0
 
-        total_count = Activity.objects.filter(
-            Q(club__member_id=member_id,status = 1) | Q(activitymember__member_id=member_id,status = 1)).count()
+        total_count += Activity.objects.filter(club__member_id=member_id, status = 1).count()
+        total_count += Activity.objects.filter(activitymember__member_id=member_id ,activitymember__status = 1).count()
+
 
         total_pages = (total_count + row_count - 1) // row_count
 
-        activity_data = Activity.objects.filter(
-            Q(club__member_id=member_id, status=1) | Q(activitymember__member_id=member_id, status=1)).values('id',
-                                                                                                              'created_date',
-                                                                                                              'activity_title',
-                                                                                                              'activity_intro',
-                                                                                                              'activity_address_location',
-                                                                                                              'category__category_name',
-                                                                                                              'club__member_id',
-                                                                                                              'activity_end',
-                                                                                                              'activity_start').order_by(
-            '-created_date')
+        activity_data = []
+        activity_data += Activity.objects.filter(club__member_id=member_id, status = 1).values('id',
+                                                                                                                'created_date',
+                                                                                                                'activity_title',
+                                                                                                                'activity_intro',
+                                                                                                                'activity_address_location',
+                                                                                                                'category__category_name',
+                                                                                                                'club__member_id',
+                                                                                                                'activity_end',
+                                                                                                                'activity_start').order_by(
+            '-activity_start')
+        activity_data += Activity.objects.filter(activitymember__member_id=member_id ,activitymember__status = 1).values('id',
+                                                                                                                'created_date',
+                                                                                                                'activity_title',
+                                                                                                                'activity_intro',
+                                                                                                                'activity_address_location',
+                                                                                                                'category__category_name',
+                                                                                                                'club__member_id',
+                                                                                                                'activity_end',
+                                                                                                                'activity_start').order_by(
+            '-activity_start')
 
         response_data = {
             'total_pages': total_pages,
             'activity_data': activity_data[offset:limit],
         }
 
-        if status_list == 'old/':
-            response_data['activity_data'] = Activity.objects.filter(
-                Q(club__member_id=member_id,status = 1) | Q(activitymember__member_id=member_id,status = 1)).values('id', 'created_date',
-                                                                                              'activity_title',
-                                                                                              'activity_intro',
-                                                                                              'activity_address_location',
-                                                                                              'category__category_name',
-                                                                                              'club__member_id',
-                                                                                              'activity_end',
-                                                                                              'activity_start').order_by(
-                'created_date')[offset:limit]
 
-            response_data['total_pages'] = (Activity.objects.filter(Q(club__member_id=member_id,status = 1) | Q(
-                activitymember__member_id=member_id,status = 1)).count() + row_count - 1) // row_count
+        if status_list == 'old/':
+
+            total_count = 0
+
+            total_count += Activity.objects.filter(club__member_id=member_id, status=1).count()
+            total_count += Activity.objects.filter(activitymember__member_id=member_id, activitymember__status=1).count()
+
+            total_pages = (total_count + row_count - 1) // row_count
+
+            activity_data = []
+            activity_data += Activity.objects.filter(club__member_id=member_id, status=1).values('id',
+                                                                                                    'created_date',
+                                                                                                    'activity_title',
+                                                                                                    'activity_intro',
+                                                                                                    'activity_address_location',
+                                                                                                    'category__category_name',
+                                                                                                    'club__member_id',
+                                                                                                    'activity_end',
+                                                                                                    'activity_start').order_by(
+                'activity_start')
+            activity_data += Activity.objects.filter(activitymember__member_id=member_id, activitymember__status=1).values('id',
+                                                                                                            'created_date',
+                                                                                                            'activity_title',
+                                                                                                            'activity_intro',
+                                                                                                            'activity_address_location',
+                                                                                                            'category__category_name',
+                                                                                                            'club__member_id',
+                                                                                                            'activity_end',
+                                                                                                            'activity_start').order_by(
+                'activity_start')
+
+            response_data['activity_data'] = activity_data
+            response_data['total_pages'] =  total_pages
 
         else:
-            response_data['activity_data'] = Activity.objects.filter(
-                Q(club__member_id=member_id,status = 1) | Q(activitymember__member_id=member_id,status = 1)).values('id', 'created_date',
-                                                                                              'activity_title',
-                                                                                              'activity_intro',
-                                                                                              'activity_address_location',
-                                                                                              'category__category_name',
-                                                                                              'club__member_id',
-                                                                                              'activity_end',
-                                                                                              'activity_start').order_by(
-                '-created_date')[offset:limit]
-            response_data['total_pages'] = (Activity.objects.filter(
-                Q(club__member_id=member_id,status = 1) | Q(
-                    activitymember__member_id=member_id,status = 1)).count() + row_count - 1) // row_count
+            total_count = 0
+
+            total_count += Activity.objects.filter(club__member_id=member_id, status=1).count()
+            total_count += Activity.objects.filter(activitymember__member_id=member_id, activitymember__status=1).count()
+
+            total_pages = (total_count + row_count - 1) // row_count
+
+            activity_data = []
+            activity_data += Activity.objects.filter(club__member_id=member_id, status=1).values('id',
+                                                                                                    'created_date',
+                                                                                                    'activity_title',
+                                                                                                    'activity_intro',
+                                                                                                    'activity_address_location',
+                                                                                                    'category__category_name',
+                                                                                                    'club__member_id',
+                                                                                                    'activity_end',
+                                                                                                    'activity_start').order_by(
+                '-activity_start')
+            activity_data += Activity.objects.filter(activitymember__member_id=member_id, activitymember__status=1).values('id',
+                                                                                                            'created_date',
+                                                                                                            'activity_title',
+                                                                                                            'activity_intro',
+                                                                                                            'activity_address_location',
+                                                                                                            'category__category_name',
+                                                                                                            'club__member_id',
+                                                                                                            'activity_end',
+                                                                                                            'activity_start').order_by(
+                '-activity_start')
+
 
         return Response(response_data)
 

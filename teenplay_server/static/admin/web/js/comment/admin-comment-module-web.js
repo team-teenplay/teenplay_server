@@ -1,23 +1,40 @@
 const adminCommentService = (() => {
-    const getPagination = async (page, callback) => {
-        const response = await fetch(`/admin/comments/${page}/`);
-        const pagination = await response.json();
+    // 페이지 가져오기
+    const getPagination = async (page, category, type, keyword, callback) => {
+        const response = await fetch(`/admin/comments/${page}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'X-CSRFToken': csrf_token
+            },
+            body: JSON.stringify({
+                'page': page,
+                'category': category,
+                'type': type,
+                'keyword': keyword
+            })
+        })
+        const pagination = await response.json()
 
-        if (callback){
-            return callback(pagination);
+        if(callback) {
+            return  callback(pagination)
         }
         return pagination;
     }
 
-    // 카테고리 검색
-    const getCategory = async (page, category, callback) => {
-        const response = await fetch(`/admin/comments/${page}?category=${category}`);
-        const pagination = await response.json();
+    // 회원 상태 변경
+    const update = async (targetId) => {
+        const member_id = targetId.targetId
 
-        if (callback){
-            return callback(pagination);
-        }
-        return pagination;
+        await fetch(`/admin/user/update/${member_id}/`, {
+            method: 'patch',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'X-CSRFToken': csrf_token
+            },
+            body: JSON.stringify({'member_id': member_id})
+        });
+
     }
 
     // 댓글 삭제
@@ -36,18 +53,7 @@ const adminCommentService = (() => {
         });
     }
 
-    // 검색하기
-    const search = async (page, category, type, keyword, callback) => {
-        const response = await fetch(`/admin/comments/${page}?category=${category}&type=${type}&keyword=${keyword}`)
-        const pagination = await response.json();
 
-        if (callback){
-            return callback(pagination);
-        }
-
-        return pagination;
-    }
-
-    return {getPagination:getPagination, getCategory:getCategory, remove:remove, search:search}
+    return {getPagination:getPagination, update:update, remove:remove}
 })();
 

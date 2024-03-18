@@ -50,7 +50,7 @@ class TeenplayMainListWebView(View):
                                                                                               'club__club_name',
                                                                                               'club__club_intro',
                                                                                               'club__club_profile_path',
-                                                                                              'club_id', 'likes')
+                                                                                              'club_id', 'likes', 'teenplay_title')
             member_like = TeenPlayLike.objects.filter(member_id=id, teenplay_id=radiant_teenplay, status=1).exists()
             like_count['like_check'] = member_like
             teenplay_like = {**like_count, **teenplay[0]}
@@ -79,13 +79,13 @@ class TeenplayMainListAPIView(APIView):
 
 
         teenplay_list = []
-        random_count = {'random_count': 10}
+        random_count = {'random_count': 30}
         for number in range(random_count['random_count']):
             like_count = {}
 
             radiant_teenplay = choice(teenplay_id_list)
             teenplay = TeenPlay.objects.filter(id=radiant_teenplay, status=1).annotate(
-                likes=Count('teenplaylike__status', filter=Q(teenplaylike__status=1))).values('id', 'video_path','club__club_name','club__club_intro','club__club_profile_path','club_id', 'likes')
+                likes=Count('teenplaylike__status', filter=Q(teenplaylike__status=1))).values('id', 'video_path','club__club_name','club__club_intro','club__club_profile_path','club_id', 'likes', 'teenplay_title')
             member_like = TeenPlayLike.objects.filter(member_id=id, teenplay_id=radiant_teenplay, status=1).exists()
             like_count['like_check'] = member_like
             teenplay_like = {**like_count, **teenplay[0],**random_count}

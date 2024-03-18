@@ -129,7 +129,7 @@ function unlikeModalOn(activityDiv) {
 const showList = async (activity_data) =>{
     let text='';
     if (activity_data.length ===0){
-        text += `<div class="signal-none">아직 새로운 알림이 없습니다.</div>`
+        text += `<div class="signal-none">아직 새로운 활동이 없습니다.</div>`
     }
     else {
     activity_data.forEach((activity_data, i)=>{

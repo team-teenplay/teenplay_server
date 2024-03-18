@@ -82,9 +82,9 @@ const showList = async (reply) =>{
         else if (reply.club_post_id){
             text += `<tr class="reply-details">
                     <td class="reply-title">
-                        <a href="http://127.0.0.1:10000/club/pr-post-detail/?id=${reply.club_post_id}">${reply.club_post__title}</a>
+                        <a href="http://127.0.0.1:10000/club/pr-post-detail/?id=${reply.club_post_id}">${reply.club_post__post_title}</a>
                     </td>
-                    <td class="reply-content">${reply.club_post__post_title}.</td>
+                    <td class="reply-content">${reply.reply_content}.</td>
                     <td class="reply-category">홍보 게시글</td>
                     <td class="reply-write-time">${changeDate(reply.created_date)}</td>
                     <td>

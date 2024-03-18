@@ -749,7 +749,11 @@ color: #9ca3af;
     line-height: 18px;
     color: #1d1d1e;
     fill: #1d1d1e;
-    
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
 }
 
 .main-user-list-status{
@@ -1442,8 +1446,40 @@ color: #9ca3af;
     margin: 0;
     padding: 0;
   }
-  
+
   .admin-user-modal-left-detail-button{
+    border-radius: 6px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 40px;
+    display: flex;
+    position: relative;
+    font-weight: 600;
+      font-size: 14px;
+      line-height: 16px;
+      color: #878D91;
+      fill: #878D91;
+      -webkit-appearance: button;
+      background-image: none;
+      cursor: pointer;
+      text-transform: none;
+      font-family: inherit;
+      margin: 0;
+      padding: 0;
+      padding-left: 16px;
+      padding-right: 16px;
+      background-color: #E1E1E1;
+      border-width: 1px;
+      border-color: rgba(0,0,0,.1);
+  }
+
+  .admin-user-modal-left-detail-button:hover{
+    border-color: #C2C2C2;
+    background-color: #C2C2C2;
+  }
+  
+  .admin-user-modal-right-detail-button{
     border-radius: 6px;
     justify-content: center;
     align-items: center;
@@ -1470,7 +1506,7 @@ color: #9ca3af;
     border-color: rgba(0,0,0,.1);
   }
 
-  .admin-user-modal-left-detail-button:hover{
+  .admin-user-modal-right-detail-button:hover{
     border-color: #9F0D08;
     background-color: #9F0D08;
   }

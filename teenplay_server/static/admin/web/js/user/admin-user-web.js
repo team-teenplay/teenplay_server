@@ -420,7 +420,7 @@ function noticeShowCategory() {
     categoryButtons.forEach((button) => {
         button.addEventListener("click", () => {
             category = button.value;
-            console.log(category)
+            page = 1;
             allShowList();
             allShowPaging();
             CountShowText();
@@ -445,6 +445,7 @@ const searchInput = document.querySelector(".main-user-info-input")
 searchInput.addEventListener('keyup', (e) => {
     if (e.keyCode === 13) {
         keyword = e.target.value
+        page = 1;
         allShowList();
         allShowPaging();
         CountShowText();
