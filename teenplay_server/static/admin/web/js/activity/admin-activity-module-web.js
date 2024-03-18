@@ -1,29 +1,25 @@
 const adminActivityService = (() => {
     // 페이지 가져오기
-    const getPagination = async (page, callback) => {
-        const response = await fetch(`/admin/activities/${page}/`);
-        const pagination = await response.json();
+    const getPagination = async (page, type, keyword, callback) => {
+        const response = await fetch(`/admin/activities/${page}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'X-CSRFToken': csrf_token
+            },
+            body: JSON.stringify({
+                'page': page,
+                'type': type,
+                'keyword': keyword
+            })
+        })
+        const pagination = await response.json()
 
-        if (callback){
-            return callback(pagination);
+        if(callback) {
+            return  callback(pagination)
         }
         return pagination;
     }
-
-
-    // 상세보기 가져오기
-    const showDetail = async (page, targetId, callback) => {
-        console.log(targetId)
-
-        const response = await fetch(`/admin/activities/${page}?targetId=${targetId}`);
-        const pagination = await response.json();
-
-        if (callback){
-            return callback(pagination);
-        }
-        return pagination;
-    }
-
 
     // 위시리스트 삭제
     const remove = async (targetId) => {
@@ -39,17 +35,5 @@ const adminActivityService = (() => {
         });
     }
 
-    // 검색하기
-    const search = async (page, category, type, keyword, callback) => {
-        const response = await fetch(`/admin/activities/${page}?category=${category}&type=${type}&keyword=${keyword}`)
-        const pagination = await response.json();
-
-        if (callback){
-            return callback(pagination);
-        }
-
-        return pagination;
-    }
-
-    return { getPagination: getPagination, remove: remove, search:search, showDetail:showDetail }
+    return {getPagination: getPagination, remove: remove}
 })();

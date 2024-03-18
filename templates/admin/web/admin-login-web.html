@@ -11,7 +11,7 @@
             <div class="main-login-explain">틴플레이 관리자 페이지입니다.</div>
             <form action="/admin/login/" method="post" name="admin-login-form">
                 {% csrf_token %}
-                <input oninput="updateButtonStatus()" type="text" class="main-login-id" maxlength="20" placeholder="아이디" />
+                <input name="admin_id" oninput="updateButtonStatus()" type="text" class="main-login-id" maxlength="20" placeholder="아이디" />
                 <div id="red-id" class="hidden">
                     <div class="redbox">
                         <svg viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg" class="redfont">
@@ -21,7 +21,7 @@
                     </div>
                 </div>
                 <div class="pw-box">
-                    <input oninput="updateButtonStatus()" type="password" class="main-login-pw" maxlength="20" placeholder="비밀번호" />
+                    <input name="admin_password" oninput="updateButtonStatus()" type="password" class="main-login-pw" maxlength="20" placeholder="비밀번호" />
                     <span class="main-login-pw-show" onclick="togglePasswordVisibility()"></span>
                 </div>
                 <div id="red-pw" class="hidden">
@@ -32,7 +32,7 @@
                         비밀번호를 입력해주세요.
                     </div>
                 </div>
-                <button class="main-login-button" type="button">로그인</button>
+                <button class="main-login-button">로그인</button>
             </form>
         </div>
     </div>

@@ -12,14 +12,14 @@ const CreateService = (() => {
             text += `
                 <li class="main-message-list" data-id="${page.id}">
                     <div class="main-comment-list-check">
-                        <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-id="${page.id}" />
+                        <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-id="${page.sender_id}" />
                     </div>
                     <div class="main-message-list-name">${page.sender_name}</div>
                     <div class="main-message-list-status">${page.receiver_name}</div>
                     <div class="main-message-list-date">${page.created_date.slice(0,10)}</div>
                     <div class="main-message-list-pay">${page.read_date === null ? '' : page.read_date.slice(0,10)}</div>
                     <div class="main-message-list-check">
-                        <button class="member-message-list-button" id="modalOpenButton">메시지 확인</button>
+                        <button class="member-message-list-button" id="modalOpenButton" data-id="${page.id}">메시지 확인</button>
                     </div>
                     <input type="hidden" id="post-content${page.id}" value="${page.letter_content}">
             `;
@@ -255,14 +255,14 @@ mainUserBottomUl.addEventListener("click", (e) => {
 // 상태변경 모달 오픈 버튼
 const modalDeleteOpenButtons = document.querySelectorAll(".member-user-list-button");
 // 전체 선택 버튼
-const statusName = document.querySelector(".main-user-status-name");
+const statusName = document.querySelector(".main-message-status-name");
 // 전체 텍스트
-const statusNameText = document.querySelector(".main-message-total-number")
+const statusNameText = document.querySelector(".main-message-total-text")
 
 messageData.addEventListener('click', (e) => {
-    // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
-    // main-user-list가 있으면 옵셔널 체이닝(?.)을 사용하여 프로퍼티에 접근해 main-comment-list-checkbox를 찾기
-    const checkboxes = e.target.closest(".main-user-list")?.querySelectorAll(".main-comment-list-checkbox");
+    // wishlistBox 요소 중 가까운 조상 중에서 main-message-list 요소 찾기
+    // main-message-list가 있으면 옵셔널 체이닝(?.)을 사용하여 프로퍼티에 접근해 main-comment-list-checkbox를 찾기
+    const checkboxes = e.target.closest(".main-message-list")?.querySelectorAll(".main-comment-list-checkbox");
 
     checkboxes.forEach((checkbox) => {
         checkbox.addEventListener('change', () => {
@@ -310,7 +310,7 @@ searchOpen.addEventListener("click", () => {
     // 이벤트 전파를 막기 위해 stopPropagation() 호출
     // event.stopPropagation();
     path.setAttribute("transform", "rotate(180)");
-    searchModal.classList.remove("hidden");
+    searchModal.classList.toggle("hidden");
 });
 
 // 모달 외부를 클릭했을 때 이벤트 처리
@@ -349,6 +349,7 @@ function noticeShowCategory() {
     categoryButtons.forEach((button) => {
         button.addEventListener("click", () => {
             category = button.value;
+            page = 1;
             allShowList();
             allShowPaging();
             CountShowText();
@@ -378,11 +379,6 @@ let currentTargetLi;
 modalDeleteOpenButtons.forEach((button) => {
     button.addEventListener("click", (event) => {
         const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
-
-        // 타겟의 아이디 값 가져오기
-        const targetId = event.currentTarget.getAttribute("data-id");
-        currentTargetLi = document.querySelector(`li[data-number="${targetId}"]`
-        );
 
         // 모달 열기
         if (checkedItems.length > 0) {
@@ -423,7 +419,7 @@ modalDeleteButtons.forEach((button) => {
             // 체크된 checkbox와 가장 가까운 li 요소를 찾고 data-id 값을 가져오기
             const targetId = checkbox.closest("li").getAttribute("data-id");
             // data-id 속성 값이 같은 li 요소를 가져오기
-            await adminMessageService.remove({ targetId: targetId });
+            await adminMessageService.update({ targetId: targetId });
         }
 
         // 모달 닫기
@@ -458,7 +454,7 @@ const searchInput = document.querySelector(".main-message-info-input")
 
 // 버튼 클릭 시 모달 활성화
 searchType.addEventListener('click', () => {
-    searchTypeModal.classList.remove("hidden")
+    searchTypeModal.classList.toggle("hidden")
 })
 
 // 모달 외부를 클릭했을 때 이벤트 처리
@@ -472,14 +468,12 @@ document.addEventListener("click", (e) => {
 searchTypePButton.addEventListener("click", (button) => {
     searchTypeModal.classList.add("hidden");
     seartchTypeText.textContent = "보낸사람";
-    type = button.value;
 });
 
 // " 제목" 버튼 클릭 시 모달 닫고 텍스트 변경
 searchTypeWButton.addEventListener("click", (button) => {
     searchTypeModal.classList.add("hidden");
     seartchTypeText.textContent = "받은사람";
-    type = button.value;
 });
 
 searchInput.addEventListener('keyup', (e) => {
@@ -492,7 +486,7 @@ searchInput.addEventListener('keyup', (e) => {
         }
 
         keyword = e.target.value
-
+        page = 1;
         allShowList();
         allShowPaging();
         CountShowText();
@@ -506,15 +500,16 @@ searchInput.addEventListener('keyup', (e) => {
 // ---------------------------------------------------------------------------------------------------------------------
 // 상세 보기
 // 상세 추가 태그
-const detailBox = document.querySelector(".detail-box")
 const detailModel = document.querySelector(".admin-message-modal");
 const detailModelBack = document.querySelector(".admin-message-modal-backdrop");
 const detailModelContent = document.querySelector("textarea[name=content]");
 const detailBoxClosed = document.querySelector(".admin-message-modal-left-button")
 
 messageData.addEventListener('click', (e) => {
-    if (e.target.classList[0] === 'member-user-list-detail-button') {
+    if (e.target.classList[0] === 'member-message-list-button') {
         let targetID = e.target.getAttribute("data-id");
+        console.log(targetID)
+        console.log(document.getElementById(`post-content${targetID}`).value)
         detailModelContent.value = document.getElementById(`post-content${targetID}`).value
 
         detailModel.classList.remove("hidden");

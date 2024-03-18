@@ -13,7 +13,7 @@ function updateButtonStatus() {
     let isAnyRadioButtonChecked = Array.from(radioButtons).some((radio) => radio.checked);
 
     //공지사항 입력창 및 버튼이 하나라도 없는 순간 작성하기 버튼 비활성화
-    createButton.disabled = isAnyInputEmpty || !isAnyRadioButtonChecked;
+    // createButton.disabled = isAnyInputEmpty || !isAnyRadioButtonChecked;
     // 비활성화 시 버튼 색상 변경
     createButton.style.backgroundColor = isAnyInputEmpty || !isAnyRadioButtonChecked ? "#f3f3f4" : "#CE201B";
     // 비활성화 시 마우스 스타일 변경

@@ -438,6 +438,7 @@ body {
 }
 
 .main-festival-add-top-cancle-text{
+    background-color: #E1E1E1;
     justify-content: center;
     align-items: center;
     display: flex;
@@ -461,17 +462,33 @@ body {
     font-weight: 600;
     font-size: 14px;
     line-height: 16px;
-    color: #b9b9bb;
-    fill: #b9b9bb;
-    background-color: #f3f3f4;
+    color: #fff;
+    /*fill: #b9b9bb;*/
+    background-color: #CE201B;
     -webkit-appearance: button;
     background-image: none;
-    cursor: default;
+    cursor: pointer;
     text-transform: none;
     font-family: inherit;
     margin: 0;
     padding: 0;
 
+}
+
+.main-festival-add-top-create-button:hover{
+    border-color: #9F0D08;
+    background-color: #9F0D08;
+}
+
+.main-festival-add-top-create-button.disabled {
+    border-color: #F2F4F5;
+    background-color: #F2F4F5;
+    cursor: default;
+}
+
+.main-festival-add-top-create-button.disabled:hover {
+    border-color: #F2F4F5;
+    background-color: #F2F4F5;
 }
 
 .main-festival-thumbnail{

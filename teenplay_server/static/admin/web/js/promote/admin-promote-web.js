@@ -1,13 +1,13 @@
 let page = 1
-let category = ""
 let keyword = ""
 let type = ""
 
 const CreateService = (() => {
     const showList = (pagination) => {
+        console.log(pagination.club_post)
         let text = ``;
         pagination.club_post.forEach((page) => {
-
+            console.log(page)
             text += `
                 <li class="main-user-list" data-id="${page.id}">
                     <div class="main-user-list-check">
@@ -141,14 +141,12 @@ const CreateService = (() => {
 
 
 
-
-
 // ---------------------------------------------------------------------------------------------------------------------
 // 위시리스트 게시글 태그
 const promoteData = document.querySelector(".promote-data")
 // 게시글 목록 보여주기
 function allShowList() {
-    adminPromoteService.getPagination(page, CreateService.showList).then((text) => {
+    adminPromoteService.getPagination(page, type, keyword, CreateService.showList).then((text) => {
         promoteData.innerHTML = text;
     })
 }
@@ -159,7 +157,7 @@ const mainUserBottomUl = document.querySelector(".main-user-bottom-ul")
 
 // 페이지 번호 보여주기
 function allShowPaging() {
-    adminPromoteService.getPagination(page, CreateService.showPaging).then((text) => {
+    adminPromoteService.getPagination(page, type, keyword, CreateService.showPaging).then((text) => {
         mainUserBottomUl.innerHTML = text;
     })
 }
@@ -170,7 +168,7 @@ const totalCount = document.getElementById("total-count");
 
 // 공지사항 개수 표기
 function CountShowText() {
-    adminPromoteService.getPagination(page, CreateService.CountText).then((text) => {
+    adminPromoteService.getPagination(page, type, keyword, CreateService.CountText).then((text) => {
         totalCount.textContent = text;
     })
 }
@@ -267,7 +265,7 @@ promoteData.addEventListener('click', (e) => {
                     deleteButton.classList.add("disabled");
                 }
             })
-            statusNameText.textContent = '전제 중';
+            statusNameText.textContent = '전체 중';
             totalCount.textContent = checkedCount;
         });
     })
@@ -293,11 +291,6 @@ let currentTargetLi;
 modalDeleteOpenButtons.forEach((button) => {
     button.addEventListener("click", (event) => {
         const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
-
-        // 타겟의 아이디 값 가져오기
-        const targetId = event.currentTarget.getAttribute("data-id");
-        currentTargetLi = document.querySelector(`li[data-number="${targetId}"]`
-        );
 
         // 모달 열기
         if (checkedItems.length > 0) {
@@ -387,14 +380,12 @@ document.addEventListener("click", (e) => {
 searchTypePButton.addEventListener("click", (button) => {
     searchTypeModal.classList.add("hidden");
     seartchTypeText.textContent = "모임이름";
-    type = button.value;
 });
 
 // " 제목" 버튼 클릭 시 모달 닫고 텍스트 변경
 searchTypeWButton.addEventListener("click", (button) => {
     searchTypeModal.classList.add("hidden");
     seartchTypeText.textContent = "제목";
-    type = button.value;
 });
 
 searchInput.addEventListener('keyup', (e) => {
@@ -407,16 +398,10 @@ searchInput.addEventListener('keyup', (e) => {
         }
 
         keyword = e.target.value
-
-        adminPromoteService.search(page, type, keyword, CreateService.showList).then((text) => {
-            promoteData.innerHTML = text;
-        })
-        adminPromoteService.search(page, type, keyword, CreateService.showPaging).then((text) => {
-            mainUserBottomUl.innerHTML = text;
-        })
-        adminPromoteService.search(page, type, keyword, CreateService.CountText).then((text) => {
-            totalCount.textContent = text;
-        })
+        page = 1;
+        allShowList();
+        allShowPaging();
+        CountShowText();
     }
 });
 
