@@ -334,13 +334,19 @@ inner.addEventListener("click", async (e)=>{
             joinModalWrap.style.display = "none";
         })
         agree.addEventListener("click", async (e)=>{
-            activityMemberService.update(update)
+            activityMemberService.update(update, activity_id)
             joinModalWrap.style.display = "none";
             await activityMemberService.getList(member_id, page,activity_id,member_status,search, showList).then((text) => {
             inner.innerHTML = text;
             updatePageButtons();
             insertCheckedMemberCount();
 });
+            await activityMemberService.getList(member_id, 1,activity_id,member_status,search,async (member_list,clubManager, total_pages) => {
+            maxPage = total_pages;
+            // 페이지 버튼 다시 업데이트
+            updatePageButtons();
+        });
+
         })
 
 
@@ -355,13 +361,18 @@ inner.addEventListener("click", async (e)=>{
             stopModalWrap.style.display = "none";
         })
         agrees.addEventListener("click", async (e)=>{
-            activityMemberService.remove(deletes)
+            activityMemberService.remove(deletes, activity_id)
             stopModalWrap.style.display = "none";
             await activityMemberService.getList(member_id, page,activity_id,member_status,search, showList).then((text) => {
             inner.innerHTML = text;
             updatePageButtons();
             insertCheckedMemberCount();
 });
+            await activityMemberService.getList(member_id, 1,activity_id,member_status,search,async (member_list,clubManager, total_pages) => {
+            maxPage = total_pages;
+            // 페이지 버튼 다시 업데이트
+            updatePageButtons();
+        });
 
     })
     }
@@ -374,13 +385,18 @@ inner.addEventListener("click", async (e)=>{
         cansleaddd.addEventListener("click",async (e)=>{
             kickOutModalWrap.style.display = "none";
         agreess.addEventListener("click", async (e)=>{
-            activityMemberService.remove(deletess)
+            activityMemberService.remove(deletess, activity_id)
             kickOutModalWrap.style.display = "none";
             await activityMemberService.getList(member_id, page,activity_id,member_status,search, showList).then((text) => {
             inner.innerHTML = text;
             updatePageButtons();
             insertCheckedMemberCount();
 });
+            await activityMemberService.getList(member_id, 1,activity_id,member_status,search,async (member_list,clubManager, total_pages) => {
+            maxPage = total_pages;
+            // 페이지 버튼 다시 업데이트
+            updatePageButtons();
+        });
 
     })
         })

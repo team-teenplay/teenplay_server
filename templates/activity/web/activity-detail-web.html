@@ -80,7 +80,7 @@
                                         </div>
                                         <div class="join-button-box" {% if activity_member_check or not activity_recruit_check %}style="display: none;" {% endif %}>
                                             <div class="join-button-item">
-                                                <button class="real-button">신청하기</button>
+                                                <button class="real-button" type="button">신청하기</button>
                                             </div>
                                         </div>
                                         <div class="end-item-box" {% if activity_recruit_check %}style="display: none;" {% endif %}>
@@ -90,7 +90,7 @@
                                         </div>
                                         <div class="manage-activity-box" {% if not activity_member_check %} style="display: none" {% endif %}>
                                             <div class="manage-button-item">
-                                                <button class="manage-item-button">관리하기</button>
+                                                <button class="manage-item-button" type="button">관리하기</button>
                                             </div>
                                         </div>
                                     </form>
@@ -187,7 +187,7 @@
                                     </dd>
                                 </div>
                             </dl>
-                            <div class="border-line"></div>
+                            <div class="activity-border-line"></div>
                             <div class="relative-box">
                                 <div class="relative">
                                     <div class="max-overflow-hidden">
@@ -381,7 +381,7 @@
                                 </div>
                             </div>
                             <div>
-                                <a class="more-activity-link" href="">
+                                <a class="more-activity-link" href="/activity/list/">
                                     <span>더 많은 활동 보기</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" class="more-arrow-icon" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>

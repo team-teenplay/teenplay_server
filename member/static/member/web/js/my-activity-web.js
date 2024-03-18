@@ -129,10 +129,11 @@ function unlikeModalOn(activityDiv) {
 const showList = async (activity_data) =>{
     let text='';
     if (activity_data.length ===0){
-        text += `<div class="signal-none">아직 새로운 알림이 없습니다.</div>`
+        text += `<div class="signal-none">아직 새로운 활동이 없습니다.</div>`
     }
     else {
     activity_data.forEach((activity_data, i)=>{
+        console.log(activity_data)
         const activityEndDate = new Date(activity_data.activity_end);
         const currentDate = new Date();
         // 시간 정보를 무시하고 일자만을 비교
@@ -140,7 +141,81 @@ const showList = async (activity_data) =>{
         currentDate.setHours(0, 0, 0, 0);
         // activityEndDate >= currentDate 이게 아직 안한거임
         // 끝난거
-        if (activityEndDate < currentDate){
+        if (activityEndDate < currentDate && activity_data.thumbnail_path === ""){
+        text += `<div class="activity-wrap">
+                    <div class="activity-box">
+                      <div class="activity-img-box">
+                        <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.id}" class="activity-img-link">
+                          <!-- 종료된 활동은 이미지와 제목이 회색이라 클래스명이 다름 -->
+                          <!-- <img class="passivity-img" /> -->
+                          <img
+                            src="/static/public/web/images/logo/logo8.png"
+                            alt="ces올인원 패키지"
+                            class="passivity-img"
+                          />
+                        </a>
+                        <div class="like-btn-container">
+                          <button type="button" class="like-btn " >
+                            <span class="like-on like-none">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="like-img-container ${activity_data.id} ${ activity_data.status }" viewBox="0 0 20 20" fill="currentColor">
+                                <path
+                                  fill-rule="evenodd"
+                                  d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                                  clip-rule="evenodd"
+                                  class="like-img-container ${activity_data.id} ${ activity_data.status }"
+                                ></path>
+                              </svg>
+                            </span>
+                            <span class="like-off">
+                            <input type="hidden" name="is-like" value="">
+                              <svg
+                                value = ${activity_data.status}
+                                id="like-target"
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="unlike-img-container ${activity_data.id} ${ activity_data.status }"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                ></path>
+                              </svg>
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="content-txt-box">
+                        <div class="middle-txt">
+                          <div>
+                            <span class="txt-head-end">종료</span>
+                          </div>
+                          <div>
+                            <span class="txt-head">${changeDate(activity_data.activity_end)}</span>
+                          </div>
+                          <div class="middle-txt-online">
+                          </div>
+                        </div>
+                        <div class="content-tit-wrap">
+                          <!-- 이 부분도 회색 -->
+                          <!-- <a class="passivity-content-tit" -->
+                          <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.id}" class="passivity-content-tit">${activity_data.activity_title}</a>
+                        </div>
+                        <div class="bottom-content-wrap">
+                          <div class="bottom-content-ahead">
+                            <span></span>
+                          </div>
+                          <div class="bottom-content-back">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>`
+            }
+        else if (activityEndDate < currentDate && activity_data.thumbnail_path !== ""){
         text += `<div class="activity-wrap">
                     <div class="activity-box">
                       <div class="activity-img-box">
@@ -196,13 +271,12 @@ const showList = async (activity_data) =>{
                             <span class="txt-head">${changeDate(activity_data.activity_end)}</span>
                           </div>
                           <div class="middle-txt-online">
-                            <span class="txt-foot">${activity_data.activity_address_location}</span>
                           </div>
                         </div>
                         <div class="content-tit-wrap">
                           <!-- 이 부분도 회색 -->
                           <!-- <a class="passivity-content-tit" -->
-                          <a href="#" class="passivity-content-tit">${activity_data.activity_title}</a>
+                          <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.id}" class="passivity-content-tit">${activity_data.activity_title}</a>
                         </div>
                         <div class="bottom-content-wrap">
                           <div class="bottom-content-ahead">
@@ -216,12 +290,84 @@ const showList = async (activity_data) =>{
                   </div>`
             }
         // 참여자 + status(1) 참여확정
-        else if (activityEndDate >= currentDate && activity_data.activitymember__status ===1){
+        else if (activityEndDate >= currentDate && activity_data.activitymember__status ===1 && activity_data.thumbnail_path ===''){
             text +=
                 `<div class="activity-wrap">
                     <div class="activity-box">
                       <div class="activity-img-box">
-                        <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.activity_id}" class="activity-img-link">
+                        <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.id}" class="activity-img-link">
+                          <img
+                            src="/static/public/web/images/logo/logo8.png"
+                            alt="ces올인원 패키지"
+                            class="activity-img"
+                          />
+                        </a>
+                        <div class="like-btn-container">
+                          <button type="button" class="like-btn ${activity_data.id}">
+                            <span class="like-on like-none">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="like-img-container ${activity_data.id} ${ activity_data.status }" viewBox="0 0 20 20" fill="currentColor">
+                                <path
+                                  class="like-img-container ${activity_data.id} ${ activity_data.status }"
+                                  fill-rule="evenodd"
+                                  d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                                  clip-rule="evenodd"
+                                ></path>
+                              </svg>
+                            </span>
+                            <span class="like-off">
+                            <input type="hidden" name="is-like" value="${ activity_data.status }">
+                              <svg
+                                value = ${activity_data.status}
+                                name = is-like
+                                 id="like-target"
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="unlike-img-container ${activity_data.id} ${ activity_data.status }"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                ></path>
+                              </svg>
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="content-txt-box">
+                        <div class="middle-txt">
+                          <div>
+                            <span class="txt-head-confirm">참가확정</span>
+                          </div>
+                          <div>
+                            <span class="txt-head">${changeDate(activity_data.activity_end)}</span>
+                          </div>
+                          <div class="middle-txt-online">
+                          </div>
+                        </div>
+                        <div class="content-tit-wrap">
+                          <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.id}" class="content-tit">${activity_data.activity_title}</a>
+                        </div>
+                        <div class="bottom-content-wrap">
+                          <div class="bottom-content-ahead">
+                            <span></span>
+                          </div>
+                          <div class="bottom-content-back">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>`
+        }
+        else if (activityEndDate >= currentDate && activity_data.activitymember__status ===1 && activity_data.thumbnail_path!==''){
+            text +=
+                `<div class="activity-wrap">
+                    <div class="activity-box">
+                      <div class="activity-img-box">
+                        <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.id}" class="activity-img-link">
                           <img
                             src="/upload/${activity_data.thumbnail_path}"
                             alt="ces올인원 패키지"
@@ -272,11 +418,10 @@ const showList = async (activity_data) =>{
                             <span class="txt-head">${changeDate(activity_data.activity_end)}</span>
                           </div>
                           <div class="middle-txt-online">
-                            <span class="txt-foot">${activity_data.activity_address_location}</span>
                           </div>
                         </div>
                         <div class="content-tit-wrap">
-                          <a href="#" class="content-tit">${activity_data.activity_title}</a>
+                          <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.id}" class="content-tit">${activity_data.activity_title}</a>
                         </div>
                         <div class="bottom-content-wrap">
                           <div class="bottom-content-ahead">
@@ -290,14 +435,14 @@ const showList = async (activity_data) =>{
                   </div>`
         }
         // // 참여자 + status(-1) 참여대기
-        else if (activityEndDate >= currentDate && activity_data.activitymember__status ===-1){
+        else if (activityEndDate >= currentDate && activity_data.activitymember__status ===-1 && activity_data.thumbnail_path===''){
             text += `
             <div class="activity-wrap">
                 <div class="activity-box">
                   <div class="activity-img-box">
-                    <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.activity_id}" class="activity-img-link">
+                    <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.id}" class="activity-img-link">
                       <img
-                        src="https://eventusstorage.blob.core.windows.net/evs/Image/moducampus/76630/ProjectInfo/Cover/57ce84d6a0c34972ad8dd11d35becc54.png"
+                        src="/static/public/web/images/logo/logo8.png"
                         alt="ces올인원 패키지"
                         class="activity-img"
                       />
@@ -346,11 +491,82 @@ const showList = async (activity_data) =>{
                         <span class="txt-head">${changeDate(activity_data.activity_end)}</span>
                       </div>
                       <div class="middle-txt-online">
-                        <span class="txt-foot">${activity_data.activity_address_location}</span>
                       </div>
                     </div>
                     <div class="content-tit-wrap">
-                      <a href="#" class="content-tit">${activity_data.activity_title}</a>
+                      <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.id}" class="content-tit">${activity_data.activity_title}</a>
+                    </div>
+                    <div class="bottom-content-wrap">
+                      <div class="bottom-content-ahead">
+                        <span></span>
+                      </div>
+                      <div class="bottom-content-back">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>`
+        }
+        else if (activityEndDate >= currentDate && activity_data.activitymember__status ===-1 && activity_data.thumbnail_path !==''){
+            text += `
+            <div class="activity-wrap">
+                <div class="activity-box">
+                  <div class="activity-img-box">
+                    <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.id}" class="activity-img-link">
+                      <img
+                        src="/upload/${activity_data.thumbnail_path}"
+                        alt="ces올인원 패키지"
+                        class="activity-img"
+                      />
+                    </a>
+                    <div class="like-btn-container">
+                      <button type="button" class="like-btn ${activity_data.id}">
+                        <span class="like-on like-none">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="like-img-container ${activity_data.id} ${ activity_data.status }" viewBox="0 0 20 20" fill="currentColor">
+                            <path
+                              class="like-img-container ${activity_data.id} ${ activity_data.status }"
+                              fill-rule="evenodd"
+                              d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                              clip-rule="evenodd"
+                            ></path>
+                          </svg>
+                        </span>
+                        <span class="like-off">
+                        <input type="hidden" name="is-like" value="${ activity_data.status }">
+                          <svg
+                            value = ${activity_data.status}
+                            name = is-like
+                             id="like-target"
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="unlike-img-container ${activity_data.id} ${ activity_data.status }"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                            ></path>
+                          </svg>
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="content-txt-box">
+                    <div class="middle-txt">
+                      <div>
+                        <span class="txt-head-wait">참가대기</span>
+                      </div>
+                      <div>
+                        <span class="txt-head">${changeDate(activity_data.activity_end)}</span>
+                      </div>
+                      <div class="middle-txt-online">
+                      </div>
+                    </div>
+                    <div class="content-tit-wrap">
+                      <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.id}" class="content-tit">${activity_data.activity_title}</a>
                     </div>
                     <div class="bottom-content-wrap">
                       <div class="bottom-content-ahead">
@@ -363,7 +579,78 @@ const showList = async (activity_data) =>{
                 </div>
               </div>`
         //     개최좌
-        }else if (activityEndDate >= currentDate && activity_data.club__member_id===parseInt(member_id)){
+        }
+        else if (activityEndDate >= currentDate && activity_data.club__member_id===parseInt(member_id) && activity_data.thumbnail_path === ''){
+            text += `
+            <div class="activity-wrap">
+                <div class="activity-box">
+                  <div class="activity-img-box">
+                    <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.id}" class="activity-img-link">
+                      <img
+                        src="/static/public/web/images/logo/logo8.png"
+                        alt="ces올인원 패키지"
+                        class="activity-img"
+                      />
+                    </a>
+                    <div class="like-btn-container">
+                      <button type="button" class="like-btn ${activity_data.id}" >
+                        <span class="like-on like-none">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="like-img-container ${activity_data.id} ${ activity_data.status }" viewBox="0 0 20 20" fill="currentColor">
+                            <path
+                              fill-rule="evenodd"
+                              d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                              clip-rule="evenodd"
+                              class="like-img-container ${activity_data.id} ${ activity_data.status }"
+                            ></path>
+                          </svg>
+                        </span>
+                        <span class="like-off">
+                        <input type="hidden" name="is-like" value="${ activity_data.status } ">
+                          <svg
+                            id="like-target"
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="unlike-img-container ${activity_data.id} ${ activity_data.status }"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                            ></path>
+                          </svg>
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="content-txt-box">
+                    <div class="middle-txt">
+                      <div>
+                        <a class="txt-head-confirm" href="http://127.0.0.1:10000/member/activity/?activity_id=${activity_data.id}" >활동수정</a>
+                      </div>
+                      <div>
+                        <span class="txt-head">${changeDate(activity_data.activity_end)}</span>
+                      </div>
+                      <div class="middle-txt-online">
+                      </div>
+                    </div>
+                    <div class="content-tit-wrap">
+                      <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.id}" class="content-tit">${activity_data.activity_title}</a>
+                    </div>
+                    <div class="bottom-content-wrap">
+                      <div class="bottom-content-ahead">
+                        <span></span>
+                      </div>
+                      <div class="bottom-content-back">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>`
+        }
+        else if (activityEndDate >= currentDate && activity_data.club__member_id===parseInt(member_id) && activity_data.thumbnail_path !== ''){
             text += `
             <div class="activity-wrap">
                 <div class="activity-box">
@@ -411,17 +698,16 @@ const showList = async (activity_data) =>{
                   <div class="content-txt-box">
                     <div class="middle-txt">
                       <div>
-                        <span class="txt-head-confirm">상세정보</span>
+                        <a class="txt-head-confirm" href="http://127.0.0.1:10000/member/activity/?activity_id=${activity_data.id}">활동수정</a>
                       </div>
                       <div>
                         <span class="txt-head">${changeDate(activity_data.activity_end)}</span>
                       </div>
                       <div class="middle-txt-online">
-                        <span class="txt-foot">${activity_data.activity_address_location}</span>
                       </div>
                     </div>
                     <div class="content-tit-wrap">
-                      <a href="#" class="content-tit">${activity_data.activity_title}</a>
+                      <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.id}" class="content-tit">${activity_data.activity_title}</a>
                     </div>
                     <div class="bottom-content-wrap">
                       <div class="bottom-content-ahead">
@@ -435,7 +721,78 @@ const showList = async (activity_data) =>{
               </div>`
         }
         // 좋아요 누른거
-        else if (activity_data.status === true){
+        else if (activity_data.status === true && activity_data.activity__thumbnail_path===''){
+            console.log(activity_data)
+            text += `<div class="activity-wrap">
+                        <div class="activity-box">
+                          <div class="activity-img-box">
+                            <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.activity_id}" class="activity-img-link">
+                              <img
+                                src="/static/public/web/images/logo/logo8.png"
+                                alt="ces올인원 패키지"
+                                class="activity-img"
+                              />
+                            </a>
+                            <div class="like-btn-container">
+                              <button type="button" class="like-btn ${activity_data.activity_id}" >
+                                <span class="like-on like-none">
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="like-img-container ${activity_data.activity_id} ${ activity_data.status }" viewBox="0 0 20 20" fill="currentColor">
+                                    <path
+                                      fill-rule="evenodd"
+                                      d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                                      clip-rule="evenodd"
+                                      class="like-img-container ${activity_data.activity_id} ${ activity_data.status }"
+                                    ></path>
+                                  </svg>
+                                </span>
+                                <span class="like-off">
+                                <input type="hidden" name="is-like" value="${ activity_data.status } ">
+                                  <svg
+                                    id="like-target"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="unlike-img-container ${activity_data.activity_id} ${ activity_data.status }"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                  >
+                                    <path
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                    ></path>
+                                  </svg>
+                                </span>
+                              </button>
+                            </div>
+                          </div>
+                          <div class="content-txt-box">
+                            <div class="middle-txt">
+                              <div>
+                                <span class="txt-head-confirm">관심활동</span>
+                              </div>
+                              <div>
+                                <span class="txt-head">${changeDate(activity_data.activity__activity_end)}</span>
+                              </div>
+                              <div class="middle-txt-online">
+                              </div>
+                            </div>
+                            <div class="content-tit-wrap">
+                              <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.activity_id}" class="content-tit">${activity_data.activity__activity_title}</a>
+                            </div>
+                            <div class="bottom-content-wrap">
+                              <div class="bottom-content-ahead">
+                                <span></span>
+                              </div>
+                              <div class="bottom-content-back">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                        `
+        }
+        else if (activity_data.status === true && activity_data.activity__thumbnail_path !==''){
             console.log(activity_data)
             text += `<div class="activity-wrap">
                         <div class="activity-box">
@@ -492,7 +849,7 @@ const showList = async (activity_data) =>{
                               </div>
                             </div>
                             <div class="content-tit-wrap">
-                              <a href="#" class="content-tit">${activity_data.activity__activity_title}</a>
+                              <a href="http://127.0.0.1:10000/activity/detail/?id=${activity_data.activity_id}" class="content-tit">${activity_data.activity__activity_title}</a>
                             </div>
                             <div class="bottom-content-wrap">
                               <div class="bottom-content-ahead">

@@ -16,16 +16,16 @@
             <div class="sud-header-container">
                 <div class="sud-header-box">
                     <!-- 모임 개요 페이지 주소 필요 -->
-                    <a class="sud-header-category" href="">모임 개요</a>
+                    <a class="sud-header-category" href="/member/mypage-club/{{ club_id }}">모임 개요</a>
                     <!-- 구성원 페이지 주소 필요 -->
-                    <a class="sud-header-category" href="">구성원</a>
+                    <a class="sud-header-category" href="/member/mypage-member/{{ club_id }}">구성원</a>
                     <!-- 모임 공지사항 페이지 주소 필요 -->
-                    <a class="sud-header-category select-category" href="">모임 공지사항</a>
+                    <a class="sud-header-category select-category" href="/member/mypage-notice/{{ club_id }}">모임 공지사항</a>
                     <!-- 모임 설정 페이지 주소 필요 -->
-                    <a class="sud-header-category" href="">모임 설정</a>
+                    <a class="sud-header-category" href="/member/mypage-setting/{{ club_id }}">모임 설정</a>
                 </div>
                 <!-- 모임 상세페이지 주소 필요 -->
-                <a class="club-detail-link" href="" target="_blank">
+                <a class="club-detail-link" href="/club/detail/?id={{ club_id }}" target="_blank">
                     <span>모임 페이지 바로가기</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="move-svg" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
@@ -35,7 +35,7 @@
             </div>
         </div>
         <!-- 공지사항 작성하는 공간 -->
-        <form action="{% url 'member:mypage-create' %}" class="notice-write-form" name="notice-write" method="post">
+        <form action="{% url 'member:mypage-create' club_id=club_id %}" class="notice-write-form" name="notice-write" method="post">
             {% csrf_token %}
             <div class="notice-write-msg-wrap">
                 <div class="notice-write-msg-container">
@@ -49,7 +49,7 @@
             </div>
             <div class="notice-write-input-wrap">
                 <div class="notice-write-buttons-wrap">
-                    <a href="" class="notice-write-back-btn">
+                    <a href="/member/mypage-notice/{{ club_id }}" class="notice-write-back-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                              class="notice-write-back-icon">
                             <path fill-rule="evenodd"
@@ -79,6 +79,8 @@
 {% endblock %}
 
 {% block js %}
-
+    <script>
+        const club_id = '{{ club_id }}';
+    </script>
     <script src="{% static 'member/web/js/management-club-notice-write-web.js' %}"></script>
 {% endblock %}

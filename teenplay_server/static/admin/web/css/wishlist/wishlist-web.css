@@ -792,6 +792,11 @@ color: #9ca3af;
     line-height: 18px;
     color: #1d1d1e;
     fill: #1d1d1e;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
 }
 
 .main-user-list-date{
@@ -1349,7 +1354,6 @@ color: #9ca3af;
     color: #1d1d1e;
     fill: #1d1d1e;
     font-family: inherit;
-    padding-top: 14px;
     border : 1px solid  rgba(0,0,0,.1);
     padding-left: 20px;
     padding-right: 20px;

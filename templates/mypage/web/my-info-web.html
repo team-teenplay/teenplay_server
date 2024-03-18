@@ -28,11 +28,11 @@
                                 <div class="side-bar-items">
                                     <div>
                                         <!-- 주소 필요 -->
-                                        <a href="">나의 위시리스트</a>
+                                        <a href="/member/mypage-wishlist/">나의 위시리스트</a>
                                     </div>
                                     <div>
                                         <!-- 주소 필요 -->
-                                        <a href="">나의 모임</a>
+                                        <a href="/member/mypage-my-club/">나의 모임</a>
                                     </div>
                                     <div>
                                         <!-- 주소 필요 -->
@@ -156,19 +156,19 @@
                                             <div class="gender-box">
                                                 <div>
                                                     <div class="male-box">
-                                                        <input type="radio" name="gender" id="male" value="1" {% if member.member_gender == '1' %} checked {% endif %} />
+                                                        <input type="radio" name="gender" id="male" value= 1 {% if member.member_gender == 1 %} checked {% endif %} />
                                                         <label for="male" class="male-label">남성</label>
                                                     </div>
                                                 </div>
                                                 <div>
                                                     <div class="female-box">
-                                                        <input type="radio" name="gender" id="female" value="2" {% if member.member_gender == '2' %} checked {% endif %} />
+                                                        <input type="radio" name="gender" id="female" value= 2 {% if member.member_gender == 2 %} checked {% endif %} />
                                                         <label for="female" class="female-label">여성</label>
                                                     </div>
                                                 </div>
                                                 <div>
                                                     <div class="none-box">
-                                                        <input type="radio" name="gender" id="none" value="0" {% if member.member_gender == '0' %} checked {% endif %} />
+                                                        <input type="radio" name="gender" id="none" value= 0 {% if member.member_gender == 0 %} checked {% endif %} />
                                                         <label for="none" class="none-label">선택안함</label>
                                                     </div>
                                                 </div>

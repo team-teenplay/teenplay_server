@@ -1,5 +1,4 @@
 let page = 1
-let category = ""
 let keyword = ""
 let type = ""
 
@@ -7,23 +6,14 @@ const CreateService = (() => {
     const showList = (pagination) => {
         let text = ``;
         pagination.activity.forEach((page) => {
+            console.log(page.activity_content)
             text += `
                 <li class="main-user-list" data-id="${page.id}">
                     <div class="main-user-list-check">
                         <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-id="${page.id}" />
                     </div>
                     <div class="main-user-list-name">${page.activity_writer}</div>
-            `;
-            if (page.activity_title.length >= 15) {
-                text += `
-                    <div class="main-user-list-status">${page.activity_title.slice(0, 15)}...</div>
-                `
-            } else if (page.activity_title.length <= 15) {
-                text += `
-                    <div class="main-user-list-status">${page.activity_title}</div>
-                `
-            }
-            text += `
+                    <div id="title${page.id}" class="main-user-list-status">${page.activity_title}</div>
                     <div class="main-user-list-date">${page.created_date.slice(0, 10)}</div>
                     <div class="main-user-list-pay">${page.recruit_start.slice(0, 10)}</div>
                     <div class="main-user-list-startdate">${page.recruit_end.slice(0, 10)}</div>
@@ -31,12 +21,13 @@ const CreateService = (() => {
                     <div class="main-user-list-detail">
                         <button class="member-user-list-detail-button toggle-button" data-id="${page.id}">상세보기</button>
                     </div>
+                    <div style="display: none" id="post-content${page.id}">${page.activity_content}</div>
                 </li>
             `;
         })
         return text;
     }
-
+// <input type="hidden" id="post-content${page.id}" value="${page.activity_content}">
     const showPaging = (pagination) => {
         let text = ``;
         // 시작 페이지가 1보다 큰 경우
@@ -143,41 +134,7 @@ const CreateService = (() => {
         return text;
     }
 
-    //
-    const showDetail = (pagination) => {
-        let text = ``;
-        pagination.activity.forEach((page) => {
-            text += `
-                <div id="admin-post-modal" class="admin-post-modal hidden">
-                    <h4 class="admin-post-modal-title">활동 모집글 상세보기</h4>
-                    <div class="admin-post-modal-warp">
-                        <!-- 여기서부터 안에 들어가는거 하나씩 / 각각 빈 div하나 만들고 안에서 생성 -->
-                        <div class="titleqq">
-                            <p class="admin-post-modal-title-name">제목</p>
-                            <label class="admin-post-modal-title-label">
-                                <input oninput="updateButtonStatus()" type="text" class="admin-post-modal-title-input" readonly value="${page.activity_title}" />
-                            </label>
-                        </div>
-                        <div>
-                            <p class="admin-post-modal-content-name">내용</p>
-                            <label class="admin-post-modal-content-label">
-                                <textarea oninput="updateButtonStatus()" class="admin-post-modal-content-input" readonly>${page.activity_content}</textarea>
-                            </label>
-                        </div>
-                    </div>
-                    <!-- 버튼 아래 있는것들 -->
-                    <div class="admin-user-modal-button">
-                        <div class="admin-user-modal-left">
-                            <button class="admin-user-modal-left-detail-button" id="modalCloseButton">닫기</button>
-                        </div>
-                    </div>
-                </div>
-            `
-    })
-        return text;
-    }
-
-    return {showList: showList, showPaging: showPaging, CountText: CountText, showDetail:showDetail}
+    return {showList: showList, showPaging: showPaging, CountText: CountText}
 })();
 
 
@@ -190,7 +147,7 @@ const activityData = document.querySelector(".activity-data")
 
 // 게시글 목록 보여주기
 function allShowList() {
-    adminActivityService.getPagination(page, CreateService.showList).then((text) => {
+    adminActivityService.getPagination(page, type, keyword, CreateService.showList).then((text) => {
         activityData.innerHTML = text;
     })
 }
@@ -201,7 +158,7 @@ const mainUserBottomUl = document.querySelector(".main-user-bottom-ul")
 
 // 페이지 번호 보여주기
 function allShowPaging() {
-    adminActivityService.getPagination(page, CreateService.showPaging).then((text) => {
+    adminActivityService.getPagination(page, type, keyword, CreateService.showPaging).then((text) => {
         mainUserBottomUl.innerHTML = text;
     })
 }
@@ -212,7 +169,7 @@ const totalCount = document.getElementById("total-count");
 
 // 공지사항 개수 표기
 function CountShowText() {
-    adminActivityService.getPagination(page, CreateService.CountText).then((text) => {
+    adminActivityService.getPagination(page, type, keyword, CreateService.CountText).then((text) => {
         totalCount.textContent = text;
     })
 }
@@ -309,7 +266,7 @@ activityData.addEventListener('click', (e) => {
                     deleteButton.classList.add("disabled");
                 }
             })
-            statusNameText.textContent = '전제 중';
+            statusNameText.textContent = '전체 중';
             totalCount.textContent = checkedCount;
         });
     })
@@ -398,88 +355,6 @@ modalDeleteButtons.forEach((button) => {
 
 
 // ---------------------------------------------------------------------------------------------------------------------
-// // 카테고리
-// // 카테고리 버튼
-// const searchOpen = document.querySelector(".main-wish-sellect-button");
-// // 카테고리 버튼 속 텍스트
-// const searchText = document.querySelector(".main-wish-sellect-button-span");
-// // 카테고리 선택 모달
-// const searchModal = document.querySelector(".admin-message-modal-search");
-// // 카테고리 모달 속 카테고리 버튼
-// const searchReceive = document.querySelector(".admin-message-modal-search-receive");
-// // 카테고리 모달 속 공지사항 버튼
-// const searchSend = document.querySelector(".admin-message-modal-search-send");
-// // 카테고리 자주묻는질문 버튼
-// const searchadd = document.querySelector(".admin-message-modal-search-donotreceive");
-// // 버튼 이미지
-// const path = document.querySelector(".main-comment-info-button-svg");
-//
-// // 검색 버튼 클릭 시 모달 열기
-// searchOpen.addEventListener("click", () => {
-//     // 이벤트 전파를 막기 위해 stopPropagation() 호출
-//     // event.stopPropagation();
-//     path.setAttribute("transform", "rotate(180)");
-//     searchModal.classList.remove("hidden");
-// });
-//
-// // 모달 외부를 클릭했을 때 이벤트 처리
-// document.addEventListener("click", (e) => {
-//     if (!searchOpen.contains(e.target) && !searchModal.contains(e.target)) {
-//         // 클릭된 요소가 검색 버튼이 아니고 모달 창에 속하지 않으면 모달을 닫음
-//         path.removeAttribute("transform");
-//         searchModal.classList.add("hidden");
-//     }
-// });
-//
-// // "전체" 버튼 클릭 시 모달 닫고 텍스트 변경
-// searchReceive.addEventListener("click", () => {
-//     path.removeAttribute("transform");
-//     searchModal.classList.add("hidden");
-//     searchText.textContent = "전체";
-// });
-//
-// // " 활동중" 버튼 클릭 시 모달 닫고 텍스트 변경
-// searchSend.addEventListener("click", () => {
-//     path.removeAttribute("transform");
-//     searchModal.classList.add("hidden");
-//     searchText.textContent = "공개";
-// });
-//
-// // "정지" 버튼 클릭 시 모달 닫고 텍스트 변경
-// searchadd.addEventListener("click", () => {
-//     path.removeAttribute("transform");
-//     searchModal.classList.add("hidden");
-//     searchText.textContent = "비공개";
-// });
-//
-// // 카테고리 버튼 가져오기
-// const categoryButtons = document.querySelectorAll('.category');
-// function noticeShowCategory() {
-//     categoryButtons.forEach((button) => {
-//         button.addEventListener("click", () => {
-//             category = button.value;
-//             adminActivityService.getCategory(page, category, CreateService.showList).then((text) => {
-//                 wishlistData.innerHTML = text;
-//             })
-//             adminActivityService.getCategory(page, category, CreateService.showPaging).then((text) => {
-//                 mainUserBottomUl.innerHTML = text;
-//             })
-//             adminActivityService.getCategory(page, category, CreateService.CountText).then((text) => {
-//                 totalCount.textContent = text;
-//             })
-//
-//             searchInput.value ="";
-//             keyword = "";
-//         })
-//     })
-// }
-// noticeShowCategory();
-//
-//
-//
-//
-//
-// ---------------------------------------------------------------------------------------------------------------------
 // 검색
 // 검색 타입(모달 열기 버튼)
 const searchType = document.querySelector(".main-message-info-button-add")
@@ -498,7 +373,7 @@ const searchInput = document.querySelector(".main-user-info-input")
 
 // 버튼 클릭 시 모달 활성화
 searchType.addEventListener('click', () => {
-    searchTypeModal.classList.remove("hidden")
+    searchTypeModal.classList.toggle("hidden")
 })
 
 // 모달 외부를 클릭했을 때 이벤트 처리
@@ -512,14 +387,12 @@ document.addEventListener("click", (e) => {
 searchTypePButton.addEventListener("click", (button) => {
     searchTypeModal.classList.add("hidden");
     seartchTypeText.textContent = "작성자";
-    type = button.value;
 });
 
 // " 제목" 버튼 클릭 시 모달 닫고 텍스트 변경
 searchTypeWButton.addEventListener("click", (button) => {
     searchTypeModal.classList.add("hidden");
     seartchTypeText.textContent = "제목";
-    type = button.value;
 });
 
 searchInput.addEventListener('keyup', (e) => {
@@ -532,16 +405,10 @@ searchInput.addEventListener('keyup', (e) => {
         }
 
         keyword = e.target.value
-
-        adminActivityService.search(page, category, type, keyword, CreateService.showList).then((text) => {
-            activityData.innerHTML = text;
-        })
-        adminActivityService.search(page, category, type, keyword, CreateService.showPaging).then((text) => {
-            mainUserBottomUl.innerHTML = text;
-        })
-        adminActivityService.search(page, category, type, keyword, CreateService.CountText).then((text) => {
-            totalCount.textContent = text;
-        })
+        page = 1;
+        allShowList();
+        allShowPaging();
+        CountShowText();
     }
 });
 
@@ -549,48 +416,25 @@ searchInput.addEventListener('keyup', (e) => {
 // ---------------------------------------------------------------------------------------------------------------------
 // 상세 보기
 // 상세 추가 태그
-const detailBox = document.querySelector(".detail-box")
+const detailModel = document.querySelector(".admin-post-modal");
+const detailModelBack = document.querySelector(".admin-user-modal-backdrop");
+const detailModelTitle = document.querySelector("input[name=title]");
+const detailModelContent = document.querySelector(".admin-post-modal-content-input");
+const detailBoxClosed = document.querySelector(".admin-user-modal-left-detail-button")
 
 activityData.addEventListener('click', (e) => {
-    // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
-    // main-user-list가 있으면 옵셔널 체이닝(?.)을 사용하여 프로퍼티에 접근해 main-comment-list-checkbox를 찾기
-    const showDetailButtons = e.target.closest(".main-user-list-detail")?.querySelectorAll(".member-user-list-detail-button");
+    if (e.target.classList[0] === 'member-user-list-detail-button') {
+        let targetID = e.target.getAttribute("data-id");
+        detailModelTitle.value = document.getElementById(`title${targetID}`).innerText
+        detailModelContent.innerHTML = document.getElementById(`post-content${targetID}`).innerHTML
 
-    showDetailButtons.forEach((showDetailButton) => {
-        showDetailButton.addEventListener('click', async () => {
-            let targetID = showDetailButton.getAttribute("data-id");
-            console.log(targetID)
+        detailModel.classList.remove("hidden");
+        detailModelBack.classList.remove("hidden");
 
-            await adminActivityService.showDetail(page, targetID, CreateService.showDetail).then((text) => {
-                console.log("작동중")
-                detailBox.innerHTML = text;
-            })
-
-            // 모달창
-            const detailModel = document.querySelector(".admin-post-modal");
-            const detailModelBack = document.querySelector(".admin-user-modal-backdrop");
-
-            await detailModel.classList.remove("hidden");
-            await detailModelBack.classList.remove("hidden");
-        });
-    })
+    }
 })
 
-detailBox.addEventListener('click', (e) => {
-    // wishlistBox 요소 중 가까운 조상 중에서 main-user-list 요소 찾기
-    // main-user-list가 있으면 옵셔널 체이닝(?.)을 사용하여 프로퍼티에 접근해 main-comment-list-checkbox를 찾기
-    // 모달 닫기 버튼
-    const detailModelCloseButtons = e.target.closest(".admin-user-modal-button")?.querySelectorAll(".admin-user-modal-left-detail-button");
-
-    detailModelCloseButtons.forEach((detailModelCloseButton) => {
-        detailModelCloseButton.addEventListener('click', async () => {
-
-            // 모달창
-            const detailModel = document.querySelector(".admin-post-modal");
-            const detailModelBack = document.querySelector(".admin-user-modal-backdrop");
-
-            await detailModel.classList.add("hidden")
-            await detailModelBack.classList.add("hidden")
-        });
-    })
+detailBoxClosed.addEventListener('click', () => {
+    detailModel.classList.add("hidden")
+    detailModelBack.classList.add("hidden")
 })

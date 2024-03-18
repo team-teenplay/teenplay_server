@@ -50,7 +50,7 @@ maxPage = total_pages;
 const showList = async (reply) =>{
     let text ='';
     if (reply.length ===0){
-        text += `<div class="test">아직 작성한 댓글이 없습니다.</div>`
+        text += `<div class="test" style="padding-bottom: 26px">아직 작성한 댓글이 없습니다.</div>`
     }
     console.log(reply)
     reply.forEach((reply)=>{
@@ -69,7 +69,7 @@ const showList = async (reply) =>{
     }else if (reply.wishlist_id){
             text += `<tr class="reply-details">
                     <td class="reply-title">
-                        <a href="">${reply.wishlist__wishlist_content}</a>
+                        <a href="/member/mypage-wishlist">${reply.wishlist__wishlist_content}</a>
                     </td>
                     <td class="reply-content">${reply.reply_content}.</td>
                     <td class="reply-category">위시리스트</td>
@@ -82,9 +82,9 @@ const showList = async (reply) =>{
         else if (reply.club_post_id){
             text += `<tr class="reply-details">
                     <td class="reply-title">
-                        <a href="">${reply.club_post__title}</a>
+                        <a href="http://127.0.0.1:10000/club/pr-post-detail/?id=${reply.club_post_id}">${reply.club_post__post_title}</a>
                     </td>
-                    <td class="reply-content">${reply.club_post__post_title}.</td>
+                    <td class="reply-content">${reply.reply_content}.</td>
                     <td class="reply-category">홍보 게시글</td>
                     <td class="reply-write-time">${changeDate(reply.created_date)}</td>
                     <td>
@@ -114,7 +114,11 @@ inner.addEventListener("click", async(e)=>{
             currentPage = 1
             const text = await replyService.getList(member_id, currentPage,status_reply, showList);
             inner.innerHTML = text;
+            await replyService.getList(member_id, 1, status_reply, async (reply, total_pages) => {
+                maxPage = total_pages;
+            })
             deleteModalwrap.style.display = "none"
+            updatePageButtons();
         })
     }
 })

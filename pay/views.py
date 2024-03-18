@@ -14,13 +14,14 @@ class PayCreateAPI(APIView):
     def get(self, request):
         member_id = request.GET['memberId']
         member = Member.enabled_objects.filter(id=member_id)
+        receipt_id = request.GET['receiptId']
         if member.exists():
-            pay = Pay.objects.create(member=member.first())
+            pay = Pay.objects.create(member=member.first(), receipt_id=receipt_id)
             pay = PaySerializer(pay).data
             pay = {
                 'pay': pay
             }
-            print(pay)
+
             return Response(pay)
 
         return None

@@ -135,10 +135,16 @@ writeButton.addEventListener("click", async (e) => {
         letter_content: letter_content.value,
         receiver_id: receiver_id.value
     });
-    replyService.getList(member_id, page,status_letter, showList).then((text) => {
+    await replyService.getList(member_id, page,status_letter, showList).then((text) => {
     tbody.innerHTML = text;
-});
+    });
+    await replyService.getList(member_id, 1,status_letter,(replies, total_pages) => {
+    maxPage = total_pages;
+    });
+
+    updatePageButtons();
 })
+
 
 replyService.getList(member_id, 1, status_letter,(replies, total_pages) => {
 maxPage = total_pages;
@@ -147,6 +153,11 @@ maxPage = total_pages;
 
 const showList = async (replies) => {
     let text = '';
+    if (replies.length === 0 ){
+       text += `<div class="test" style="    padding-top: 22px;
+    padding-left: 482px;
+    padding-bottom: 36px;">아직 작성한 쪽지가 없습니다.</div>`
+    }
     replies.forEach((letter) =>  {
         if (replies.length ===0) {
             `<div className="test">아직 주고 받은 쪽지가 없습니다.</div>`
@@ -177,19 +188,23 @@ const showList = async (replies) => {
 const leftButton = document.getElementById("leftButton");
 const rightButton = document.getElementById("rightButton");
 const pageButtonsContainer = document.getElementById("pageButtons");
-let currentPage = 1; // 현재 페이지
-let maxPage = 1; // 최대 페이지 초기값 설정
+let currentPage = 1;
+let maxPage = 1;
 
-
-// 페이지 버튼을 생성하고 업데이트하는 함수
 const updatePageButtons = () => {
     pageButtonsContainer.innerHTML = "";
 
-    const buttonsToShow = Math.min(maxPage, 5);  // 최대 5개의 버튼만 표시
+    if (maxPage === 0) {
+        // 페이지가 없을 경우 버튼 숨김
+        leftButton.style.display = "none";
+        rightButton.style.display = "none";
+        return;
+    }
+
+    const buttonsToShow = Math.min(maxPage, 5);
     let startPage = Math.max(1, currentPage - Math.floor(buttonsToShow / 2));
     let endPage = Math.min(maxPage, startPage + buttonsToShow - 1);
 
-    // 마지막 페이지에 도달했을 때, startPage를 조정
     if (endPage === maxPage) {
         startPage = Math.max(1, maxPage - buttonsToShow + 1);
     }
@@ -217,7 +232,7 @@ const updatePageButtons = () => {
             }
 
             currentPage = i;
-            const text = await replyService.getList(member_id, currentPage,status_letter, showList);
+            const text = await replyService.getList(member_id, currentPage, status_letter, showList);
             tbody.innerHTML = text;
 
             pageButton.classList.add("focus-page");
@@ -227,13 +242,16 @@ const updatePageButtons = () => {
 
         pageButtonsContainer.appendChild(pageButton);
     }
+
+    leftButton.style.display = "block"; // 페이지가 있을 경우 좌측 버튼 표시
+    rightButton.style.display = "block"; // 페이지가 있을 경우 우측 버튼 표시
 };
 
 // 초기 페이지 로드
 updatePageButtons();
 
 // 서버에서 전체 페이지 수를 가져와서 최대 페이지 업데이트
-replyService.getList(member_id, 1, status_letter,async (replies, total_pages) => {
+replyService.getList(member_id, 1, status_letter, async (replies, total_pages) => {
     maxPage = total_pages;
     // 페이지 버튼 다시 업데이트
     updatePageButtons();
@@ -243,7 +261,7 @@ replyService.getList(member_id, 1, status_letter,async (replies, total_pages) =>
 leftButton.addEventListener('click', async () => {
     if (currentPage > 1) {
         currentPage--;
-        const text = await replyService.getList(member_id, currentPage,status_letter, showList);
+        const text = await replyService.getList(member_id, currentPage, status_letter, showList);
         tbody.innerHTML = text;
 
         updatePageButtons(); // 페이지 버튼 업데이트
@@ -254,20 +272,23 @@ leftButton.addEventListener('click', async () => {
 rightButton.addEventListener('click', async () => {
     if (currentPage < maxPage) {
         currentPage++;
-        const text = await replyService.getList(member_id, currentPage,status_letter, showList);
+        const text = await replyService.getList(member_id, currentPage, status_letter, showList);
         tbody.innerHTML = text;
 
         updatePageButtons(); // 페이지 버튼 업데이트
     }
 });
 
-// 초기 페이지 로드
-updatePageButtons();
 
 // 서버에서 전체 페이지 수를 가져와서 최대 페이지 업데이트
-replyService.getList(member_id, 1, status_letter,(replies, total_pages) => {
+replyService.getList(member_id, 1,status_letter,(replies, total_pages) => {
     maxPage = total_pages;
 });
+
+
+
+
+
 
 const deleteModalwrap = document.querySelector(".delete-modal-wrap");
 const deleteBut = document.getElementById('delete-but')
@@ -281,10 +302,18 @@ tbody.addEventListener("click", async (e)=>{
         deleteModalwrap.style.display = 'block'
         deleteBut.addEventListener("click",async (e)=>{
             await replyService.remove(letter_id);
+            await replyService.getList(member_id, page,status_letter, showList).then((text) => {
+                tbody.innerHTML = text;
+            });
+            await replyService.getList(member_id, 1,status_letter,(replies, total_pages) => {
+            maxPage = total_pages;
+            });
+
+
             page = 1
-            const text = await replyService.getList(member_id, currentPage,status_letter, showList);
-            tbody.innerHTML = text;
+            currentPage = 1
             deleteModalwrap.style.display = 'none'
+            updatePageButtons();
         })
     }else if(e.target.classList[0] === 'letter-text'){
 
@@ -319,6 +348,7 @@ tbody.addEventListener("click", async (e)=>{
             ;
             const letter_id = e.target.classList[1]
             await replyService.update(letter_id);
+            updatePageButtons();
 
     }
 })

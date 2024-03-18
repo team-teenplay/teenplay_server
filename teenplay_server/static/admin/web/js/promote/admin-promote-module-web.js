@@ -1,55 +1,39 @@
 const adminPromoteService = (() => {
     // 페이지 가져오기
-    const getPagination = async (page, callback) => {
-        const response = await fetch(`/admin/promotes/${page}/`);
-        const pagination = await response.json();
+    const getPagination = async (page, type, keyword, callback) => {
+        const response = await fetch(`/admin/promotes/${page}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'X-CSRFToken': csrf_token
+            },
+            body: JSON.stringify({
+                'page': page,
+                'type': type,
+                'keyword': keyword
+            })
+        })
+        const pagination = await response.json()
 
-        if (callback){
-            return callback(pagination);
+        if(callback) {
+            return  callback(pagination)
         }
         return pagination;
     }
 
-
-    // 상세보기 가져오기
-    const showDetail = async (page, targetId, callback) => {
-        console.log(targetId)
-
-        const response = await fetch(`/admin/promotes/${page}?targetId=${targetId}`);
-        const pagination = await response.json();
-
-        if (callback){
-            return callback(pagination);
-        }
-        return pagination;
-    }
-
-
-    // 위시리스트 삭제
+    // 게시글 삭제
     const remove = async (targetId) => {
-        const activity_id = targetId.targetId
+        const promote_id = targetId.targetId
 
-        await fetch(`/admin/promotes/delete/${activity_id}/`, {
+        await fetch(`/admin/promotes/delete/${promote_id}/`, {
             method: 'delete',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
                 'X-CSRFToken': csrf_token
             },
-            body: JSON.stringify({'activity_id': activity_id})
+            body: JSON.stringify({'promote_id': promote_id})
         });
     }
 
-    // 검색하기
-    const search = async (page, category, type, keyword, callback) => {
-        const response = await fetch(`/admin/promotes/${page}?category=${category}&type=${type}&keyword=${keyword}`)
-        const pagination = await response.json();
-
-        if (callback){
-            return callback(pagination);
-        }
-
-        return pagination;
-    }
-
-    return { getPagination: getPagination, remove: remove, search:search, showDetail:showDetail }
+    return {getPagination: getPagination, remove: remove}
 })();

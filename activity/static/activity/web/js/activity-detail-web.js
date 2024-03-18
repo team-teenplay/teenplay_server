@@ -269,9 +269,10 @@ overflowHidden = document.querySelector(".max-overflow-hidden");
 isHiddenShadow = document.querySelector(".is-hidden-shadow");
 
 // 활동 내용의 높이에 따라 활동소개더보기 버튼 표시 유무 및 아랫쪽 흐려짐 여부 설정
-const activityContentBox = document.querySelector(".title-text");
-const flipButtonContainer = document.querySelector(".filp-more")
-if (activityContentBox.offsetHeight >= window.innerHeight * 0.8) {
+const activityContentBox = document.querySelector(".overflow-hidden-box");
+console.log(activityContentBox.offsetHeight);
+const flipButtonContainer = document.querySelector(".filp-more");
+if (activityContentBox.offsetHeight <= window.innerHeight * 0.5) {
     flipButtonContainer.style.display = "none";
     isHiddenShadow.style.backgroundImage = "none";
 } else {
@@ -704,18 +705,23 @@ activityReplyService.getList(true, page+1, activityId, showOrHideMoreButton);
 
 // 댓글 목록 불러오기, 댓글 작성, 댓글 수정/삭제
 const commentWrap = document.querySelector(".k-comment-list-box-wrap")
-const commentListAllWrap = document.querySelector(".k-comment-list-all-wrap")
 const memberId = document.querySelector("input[name=member-id]").value;
 const showReplies = async (isAdd, replies) => {
     if (replies.length === 0) {
-        commentWrap.innerHTML += `
+        commentWrap.innerHTML = `
+            <div class="k-comment-line"></div>
+            <div class="k-comment-list-all-wrap"></div>
             <div class="feed-item">
                 <span>등록된 댓글이 없습니다.</span>
             </div>
         `;
     } else {
-        let text = ``
-
+        const commentListAllWrap = document.querySelector(".k-comment-list-all-wrap")
+        let emptyCommentWrap = document.querySelector(".k-comment-list-box-wrap .feed-item");
+        if (emptyCommentWrap) {
+            emptyCommentWrap.style.display = "none";
+        }
+        let text = ``;
         replies.forEach((reply) => {
             text += `
                 <!-- 댓글 수정 부분 -->
@@ -942,4 +948,8 @@ activityJoinButton.addEventListener("click", () => {
     location.href = `/activity/join?id=${activityId}`;
 })
 
-// 관리하기 버튼 클릭 시 관리페이지로 이동 (추후 추가할 예정)
+// 관리하기 버튼 클릭 시 관리페이지로 이동
+const activityManageButton = document.querySelector(".manage-item-button");
+activityManageButton.addEventListener("click", () => {
+    location.href = `/member/activity?activity_id=${activityId}`;
+})

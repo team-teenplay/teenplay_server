@@ -12,35 +12,15 @@ const CreateService = (() => {
             text += `
                 <li class="main-user-list" data-id="${page.reply_id}" data-member="${page.reply_member_id}" data-date="${page.created}">
                     <div class="main-user-list-check">
-                        <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-id="${page.reply_id}"/>
+                        <input type="checkbox" class="main-comment-list-checkbox" id="checkbox" data-id="${page.reply_id}" data-member="${page.member_id_num}"/>
                     </div>
                     <div class="main-comment-list-status">${page.member_name}</div>
-            `;
-            if (page.title.length <= 20 ) {
-                text += `
                     <div class="main-comment-list-paycount">${page.title}</div>
-                `;
-            } else if (page.title.length >= 20 ) {
-                text += `
-                    <div class="main-comment-list-paycount">${page.title.slice(0, 20)}...</div>
-                `;
-            }
-            text += `
                     <div class="main-comment-list-date">${page.created.slice(0, 10)}</div>
-            `;
-            if (page.reply.length <= 20) {
-                text += `
                     <div class="main-comment-list-check">
                         <span class="main-comment-list-input" type="text" readonly>${page.reply}</span>
                     </div>
-                `
-            } else if (page.reply.length >= 20) {
-                text += `
-                    <div class="main-comment-list-check">
-                        <span class="main-comment-list-input" type="text" readonly>${page.reply.slice(0, 20)}...</span>
-                    </div>
-                `
-            }
+            `;
             if (page.member_status === 1) {
                 text += `
                     <div class="main-comment-list-stop" data-user-status="${page.member_status}">활동중</div>
@@ -176,7 +156,7 @@ const commentData = document.querySelector(".comment-data")
 
 // 공지사항 목록 보여주기
 function allShowList() {
-    adminCommentService.getPagination(page, CreateService.showList).then((text) => {
+    adminCommentService.getPagination(page, category, type, keyword, CreateService.showList).then((text) => {
         commentData.innerHTML = text;
     })
 }
@@ -187,7 +167,7 @@ const mainUserBottomUl = document.querySelector(".main-user-bottom-ul")
 
 // 페이지 번호 보여주기
 function allShowPaging() {
-    adminCommentService.getPagination(page, CreateService.showPaging).then((text) => {
+    adminCommentService.getPagination(page, category, type, keyword, CreateService.showPaging).then((text) => {
         mainUserBottomUl.innerHTML = text;
     })
 }
@@ -198,7 +178,7 @@ const totalCount = document.getElementById("total-count");
 
 // 공지사항 개수 표기
 function CountShowText() {
-    adminCommentService.getPagination(page, CreateService.CountText).then((text) => {
+    adminCommentService.getPagination(page, category, type, keyword, CreateService.CountText).then((text) => {
         totalCount.textContent = text;
     })
 }
@@ -304,12 +284,14 @@ commentData.addEventListener('click', (e) => {
                 if (checkedItems.length > 0) {
                     deleteButton.classList.remove("disabled");
                     checkedCount = checkedItems.length
+                    statusNameText.textContent = '전체 중';
+                    totalCount.textContent = checkedCount;
                 } else if (checkedItems.length === 0) {
                     deleteButton.classList.add("disabled");
+                    statusNameText.textContent = "전체";
+                    CountShowText();
                 }
             })
-            statusNameText.textContent = '전제 중';
-            totalCount.textContent = checkedCount;
         });
     })
 })
@@ -320,13 +302,13 @@ commentData.addEventListener('click', (e) => {
 // ---------------------------------------------------------------------------------------------------------------------
 // 상태 변경 모달
 // 모달 속 취소 버튼
-const modalUpdateCloseButtons = document.querySelectorAll(".admin-user-modal-left-button");
+const modalUpdateCloseButtons = document.querySelectorAll(".admin-user-modal-left-button-update");
 // 모달 속 삭제 버튼
-const modalUpdateButtons = document.querySelectorAll(".admin-user-modal-right-button");
+const modalUpdateButtons = document.querySelectorAll(".admin-user-modal-right-button-update");
 
 // 상태 변경 모달
-const updateModal = document.getElementById("admin-user-modal");
-const updateModalBack = document.getElementById("admin-user-modal-backdrop");
+const updateModal = document.querySelector(".admin-user-modal-update");
+const updateModalBack = document.querySelector(".admin-user-modal-backdrop-update");
 
 let currentTargetLi;
 
@@ -334,11 +316,6 @@ let currentTargetLi;
 modalUpdateOpenButtons.forEach((button) => {
     button.addEventListener("click", (event) => {
         const checkedItems = document.querySelectorAll(".main-comment-list-checkbox:checked");
-
-        // 타겟의 아이디 값 가져오기
-        const targetId = event.currentTarget.getAttribute("data-member");
-        currentTargetLi = document.querySelector(`li[data-number="${targetId}"]`
-        );
 
         // 모달 열기
         if (checkedItems.length > 0) {
@@ -357,17 +334,6 @@ modalUpdateCloseButtons.forEach((button) => {
     });
 });
 
-// // 모달 외부를 클릭했을 때 이벤트 처리
-// document.addEventListener("click", (e) => {
-//     modalUpdateOpenButtons.forEach((button) => {
-//         if (!button.contains(e.target) && !deletemodal.contains(e.target)) {
-//             // 클릭된 요소가 검색 버튼이 아니고 모달 창에 속하지 않으면 모달을 닫음
-//             deletemodal.classList.add("hidden");
-//             updateModalBack.classList.add("hidden");
-//         }
-//     });
-// });
-
 // 상태변경 모달 속 삭제 버튼 클릭 시 이벤트 발생
 modalUpdateButtons.forEach((button) => {
     //
@@ -380,7 +346,7 @@ modalUpdateButtons.forEach((button) => {
             // 체크된 checkbox와 가장 가까운 li 요소를 찾고 data-id 값을 가져오기
             const targetId = checkbox.closest("li").getAttribute("data-member");
             // data-id 속성 값이 같은 li 요소를 가져오기
-            await adminUserService.remove({ targetId: targetId });
+            await adminCommentService.update({ targetId: targetId });
         }
 
         // 모달 닫기
@@ -435,17 +401,6 @@ modalDeleteCloseButtons.forEach((button) => {
         deletemodalBack.classList.add("hidden");
     });
 });
-
-// // 모달 외부를 클릭했을 때 이벤트 처리
-// document.addEventListener("click", (e) => {
-//     modalUpdateOpenButtons.forEach((button) => {
-//         if (!button.contains(e.target) && !deletemodal.contains(e.target)) {
-//             // 클릭된 요소가 검색 버튼이 아니고 모달 창에 속하지 않으면 모달을 닫음
-//             deletemodal.classList.add("hidden");
-//             updateModalBack.classList.add("hidden");
-//         }
-//     });
-// });
 
 // 삭제 모달 속 삭제 버튼 클릭 시 이벤트 발생
 modalDeleteButtons.forEach((button) => {
@@ -540,20 +495,14 @@ const categoryButtons = document.querySelectorAll('.category');
 function noticeShowCategory() {
     categoryButtons.forEach((button) => {
         button.addEventListener("click", () => {
-            console.log(button.value)
             category = button.value;
-            adminCommentService.getCategory(page, category, CreateService.showList).then((text) => {
-                commentData.innerHTML = text;
-            })
-            adminCommentService.getCategory(page, category, CreateService.showPaging).then((text) => {
-                mainUserBottomUl.innerHTML = text;
-            })
-            adminCommentService.getCategory(page, category, CreateService.CountText).then((text) => {
-                totalCount.textContent = text;
-            })
+            page = 1;
+            allShowList();
+            allShowPaging();
+            CountShowText();
 
-            // searchInput.value ="";
-            // keyword = "";
+            searchInput.value ="";
+            keyword = "";
         })
     })
 }
@@ -596,22 +545,14 @@ document.addEventListener("click", (e) => {
 searchTypePButton.addEventListener("click", (button) => {
     searchTypeModal.classList.add("hidden");
     searchTypeText.textContent = "작성자";
-    type = button.value;
 });
 
 // " 활동중" 버튼 클릭 시 모달 닫고 텍스트 변경
 searchTypeWButton.addEventListener("click", (button) => {
     searchTypeModal.classList.add("hidden");
     searchTypeText.textContent = "게시글";
-    type = button.value;
 });
 
-
-//     searchTypeWButton.forEach((button) => {
-//         button.addEventListener("click", () => {
-//         type = button.value;
-//     })
-// })
 searchInput.addEventListener('keyup', (e) => {
     if (e.keyCode === 13) {
         const typeValue = document.querySelector(".main-comment-info-button-text")
@@ -622,16 +563,10 @@ searchInput.addEventListener('keyup', (e) => {
         }
 
         keyword = e.target.value
-
-        adminCommentService.search(page, category, type, keyword, CreateService.showList).then((text) => {
-            commentData.innerHTML = text;
-        })
-        adminCommentService.search(page, category, type, keyword, CreateService.showPaging).then((text) => {
-            mainUserBottomUl.innerHTML = text;
-        })
-        adminCommentService.search(page, category, type, keyword, CreateService.CountText).then((text) => {
-            totalCount.textContent = text;
-        })
+        page = 1;
+        allShowList();
+        allShowPaging();
+        CountShowText();
     }
 });
 

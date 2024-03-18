@@ -801,6 +801,11 @@ color: #9ca3af;
     line-height: 18px;
     color: #1d1d1e;
     fill: #1d1d1e;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
 }
 
 .main-user-list-pay{
@@ -1668,7 +1673,23 @@ margin-left: 16px;}
 }
 
 .add-color{
-    background-color: #CE201B;}
+    background-color: #CE201B;
+}
+
+.add-text-color{
+    color: #FFFFFF!important;
+}
+
+.toggle-button.disabled {
+    border-color: #F2F4F5;
+    background-color: #F2F4F5;
+    cursor: default;
+}
+
+.toggle-button.disabled:hover {
+    border-color: #F2F4F5;
+    background-color: #F2F4F5;
+}
     
 .main-user-number{
     font-weight: 700;
@@ -1920,7 +1941,7 @@ color: #9ca3af;
     display: block;
     vertical-align: middle;
     position: fixed;
-    right: 298px;
+    right: 308px;
 }
   
 .main-user-list-check{

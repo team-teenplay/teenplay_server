@@ -85,28 +85,17 @@ class ActivityCreateWebView(View):
             # 정리한 데이터로 activity 정보를 insert한 후 객체를 저장
             activity = Activity.objects.create(**data)
 
-            # 저장한 activity 객체를 활용하여 summernote에 첨부한 이미지들을 tbl_activity_image에 저장
-            summernote_images = request.FILES.getlist('files')
-            saved_image_paths = []
-            for summernote_image in summernote_images:
-                image_data = {
-                    'image_path': summernote_image,
-                    'activity': activity
-                }
-                activity_image = ActivityImage.objects.create(**image_data)
-                saved_image_paths.append(activity_image.image_path)
-            print(saved_image_paths)
-
-            # 이제 만들어놓은 activity에 접근하여 activity_content 속 img태그의 src를 수정
-            activity = Activity.objects.get(id=activity.id)
-            content = activity.activity_content
-            pattern = r'src=\\"(.*?)\\"'
-            for image_path in saved_image_paths:
-                replacement = f'src=\"/upload/{image_path}\"'
-                content = re.sub(pattern, replacement, content, count=1)
-            activity.activity_content = content
-            activity.updated_date = timezone.now()
-            activity.save(update_fields=['activity_content', 'updated_date'])
+            # summernote에서 미리 업로드한 이미지들을 대상으로 activity_id 및 status 업데이트
+            image_ids = request.POST.get('image-id')
+            if image_ids:
+                for image_id in image_ids:
+                    activity_image = ActivityImage.objects.filter(id=image_id)
+                    if activity_image.exists():
+                        activity_image = activity_image.first()
+                        activity_image.status = 1
+                        activity_image.activity_id = activity.id
+                        activity_image.updated_date = timezone.now()
+                        activity_image.save(update_fields=['status', 'activity_id', 'updated_date'])
 
             # 모임 구성원 중 알림을 켜놓은 사람들을 대상으로 알림 전송
             alarmed_member_ids = ClubMember.objects.filter(status=True, club_id=club.id, alarm_status=1).values('member_id')
@@ -128,7 +117,7 @@ class ActivityCreateWebView(View):
 
         except:
             # 오류 시 결제 취소하기
-            receipt_id = request.POST.get('receipt-id')
+            receipt_id = pay.receipt_id
             bootpay = BootpayBackend('65e44626e57a7e001be37370',
                                      'NQmDRBsgOfziMiNXUEKrJGQ+YhXZncneSVG/auKihFA=')
 
@@ -136,7 +125,7 @@ class ActivityCreateWebView(View):
 
             if 'error_code' not in token:
                 response = bootpay.cancel_payment(receipt_id=receipt_id,
-                                                  cancel_price=20000,
+                                                  cancel_price=pay.price,
                                                   cancel_username='관리자', cancel_message='취소됨')
 
             pay.status = 0
@@ -150,6 +139,19 @@ class ActivityDetailWebView(View):
     def get(self, request):
         activity_id = request.GET['id']
         activity = Activity.objects.filter(id=activity_id).first()
+        activity_content = activity.activity_content
+        for i in range(len(activity_content)):
+            if activity_content[i] == '"':
+                activity_content = activity_content[i+1:]
+            elif activity_content[i] == '<':
+                break
+        for i in range(len(activity_content)-1, -1, -1):
+            if activity_content[i] == '"':
+                activity_content = activity_content[:i]
+            elif activity_content[i] == '>':
+                break
+        activity.activity_content = activity_content
+
         category = activity.category
         club = activity.club
         member_id = request.session['member']['id']
@@ -219,6 +221,13 @@ class ActivityLikeCountAPI(APIView):
         activity_like_count = ActivityLike.enabled_objects.filter(activity_id=activity_id).count()
 
         return Response(activity_like_count)
+
+class ActivityMemberCountAPI(APIView):
+    def get(self, request):
+        activity_id = request.GET['id']
+        activity_member_count = ActivityMember.enabled_objects.filter(activity_id=activity_id).count()
+
+        return Response(activity_member_count)
 
 
 class ActivityReplyAPI(APIView):
@@ -438,18 +447,30 @@ class ActivityJoinWebView(View):
             activity_member.save(update_fields=['status', 'updated_date'])
 
         # 활동 가입 신청 알림 모임장에게 전송하기
-        activity = Activity.enabled_objects.filter(id=data['activity-id']).first()
+        activity = Activity.enabled_objects.filter(id=request.POST.get('activity-id')).first()
         club = Club.enabled_objects.filter(id=activity.club.id).first()
         if activity and club:
             alarm_data = {
                 'target_id': activity.id,
                 'alarm_type': 11,
-                'sender_id': data.get('member-id'),
+                'sender_id': request.POST.get('member-id'),
                 'receiver_id': club.member.id
             }
             Alarm.objects.create(**alarm_data)
 
-        # 임시로 메인페이지로 redirect 하겠습니다.
-        # 마이페이지의 나의 활동 페이지 view가 완성될 시 해당 view로 보내겠습니다.
-        return redirect('/')
+        return redirect('/member/mypage-activity/')
 
+
+class ActivityImageUploadAPI(APIView):
+    def post(self, request):
+        upload_image = request.FILES.get('image')
+        activity_image = ActivityImage.objects.create(image_path=upload_image)
+        activity_image.status = 0
+        activity_image.save(update_fields=['status'])
+        image_path = activity_image.image_path.url
+        image_id = activity_image.id
+
+        return Response({
+            'image_path': image_path,
+            'image_id': image_id
+        })

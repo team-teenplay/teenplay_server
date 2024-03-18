@@ -2,7 +2,6 @@
 
 
 
-
 const mypageServices = document.querySelector(".member-services");
 const mypageMenu = document.querySelector(".mypage-menu");
 const AllWhithoutClass = document.querySelectorAll("body :not(.member-services) :not(.mypage-menu)");
@@ -240,6 +239,7 @@ if (memberServiceWrap) {
     // 알람 개수 띄우기
     const alarmCount1 = document.querySelector("div.signal-sign");
     const alarmCount2 = document.querySelector(".mypage-menu-signal-count");
+    const alarmWrap1 = document.querySelector(".signal-sign-box");
     const alarmMemberId = document.querySelector("input[name=header-member-id]").value;
 
     const getAlarmCount = async (alarmMemberId, callback) => {
@@ -251,14 +251,55 @@ if (memberServiceWrap) {
     }
 
     const showAlarmCount = (alarmCount) => {
+        if (Number(alarmCount) === 0) {
+            alarmWrap1.style.display = "none";
+            alarmCount2.style.display = "none";
+            return;
+        }
+        alarmWrap1.style.display = "flex";
+        alarmCount2.style.display = "flex";
         alarmCount1.innerText = Number(alarmCount) <= 99 ? alarmCount : '99+';
         alarmCount2.innerText = Number(alarmCount) <= 99 ? alarmCount : '99+';
     }
 
     getAlarmCount(alarmMemberId, showAlarmCount)
 
-    //
+    // 카테고리 띄우기
+    const headerCategoryWrap = document.querySelector(".category-group-items");
 
+    const getCategories = async (callback) => {
+        const response = await fetch(`/activity/categories/api/`);
+        const categories = await response.json();
+        if (callback) {
+            callback(categories);
+        }
+    }
+
+    const showCategories = (categories) => {
+        let text = ``;
+        categories.forEach((category) => {
+            text += `
+                <form class="category-form" action="/activity/list/" method="post" name="category-form${category.id}">
+                    <input type="hidden" name="csrfmiddlewaretoken" id="csrfmiddlewaretoken" value="${csrfToken}">
+                    <div class="category-item">
+                        <div class="item-link">
+                            <input type="hidden" name="category-id" value="${category.id}">
+                            <span>${category.category_name}</span>
+                        </div>
+                    </div>
+                </form>
+            `;
+        })
+        headerCategoryWrap.innerHTML = text;
+        const forms = document.querySelectorAll(".category-form");
+        forms.forEach((form) => {
+            form.addEventListener("click", (e) => {
+                form.submit();
+            })
+        })
+    }
+
+    getCategories(showCategories);
 }
 
 // 추천 검색어의 각 검색어 클릭 시 검색 결과로 이동

@@ -59,14 +59,14 @@ const showList = async (alram) => {
                     <div class="signal-top-box">
                         <div class="type-title">
                             <div class="signal-type">모임</div>
-                            <div class="target-title">당신이 작성한 모임홍보글에 댓글이 작성되었어요!</div>
+                            <a href="http://127.0.0.1:10000/club/pr-post-detail/?id=${alram.target_id}" class="target-title">당신이 작성한 모임홍보글에 댓글이 작성되었어요!</a>
                         </div>
                         <div class="check-date">
-                            <div class="signal-delete ${alram.id}">삭제</div>
+                            <div class="signal-delete ${alram.id}">읽음</div>
                             <div class="signal-date">${changeDate(alram.created_date)}</div>
                         </div>
                     </div>
-                    <div class="signal-bottom-text">댓글을 확인하주세요!.</div>
+                    <a href="http://127.0.0.1:10000/club/pr-post-detail/?id=${alram.target_id}" class="signal-bottom-text">댓글을 확인하주세요!.</a>
                 </div>
             </div>
 `}
@@ -77,14 +77,14 @@ const showList = async (alram) => {
                     <div class="signal-top-box">
                         <div class="type-title">
                             <div class="signal-type">활동</div>
-                            <div class="target-title">당신이 작성한 활동글에 댓글이 작성되었어요!</div>
+                            <a href="http://127.0.0.1:10000/activity/detail/?id=${alram.target_id}" class="target-title">당신이 작성한 활동글에 댓글이 작성되었어요!</a>
                         </div>
                         <div class="check-date">
-                            <div class="signal-delete ${alram.id}">삭제</div>
+                            <div class="signal-delete ${alram.id}">읽음</div>
                             <div class="signal-date">${changeDate(alram.created_date)}</div>
                         </div>
                     </div>
-                    <div class="signal-bottom-text">댓글을 확인해주세요!</div>
+                    <a href="http://127.0.0.1:10000/activity/detail/?id=${alram.target_id}" class="signal-bottom-text">댓글을 확인해주세요!</a>
                 </div>
             </div>
 `}
@@ -95,14 +95,14 @@ const showList = async (alram) => {
                     <div class="signal-top-box">
                         <div class="type-title">
                             <div class="signal-type">위시리스트</div>
-                            <div class="target-title">당신이 작성한 위시리스트에 댓글이 작성되었어요!</div>
+                            <a href="http://127.0.0.1:10000/member/mypage-wishlist" class="target-title">당신이 작성한 위시리스트에 댓글이 작성되었어요!</a>
                         </div>
                         <div class="check-date">
-                            <div class="signal-delete ${alram.id}">삭제</div>
+                            <div class="signal-delete ${alram.id}">읽음</div>
                             <div class="signal-date">${changeDate(alram.created_date)}</div>
                         </div>
                     </div>
-                    <div class="signal-bottom-text">댓글을 확인해주세요!.</div>
+                    <a href="http://127.0.0.1:10000/member/mypage-wishlist" class="signal-bottom-text">댓글을 확인해주세요!.</a>
                 </div>
             </div>
 `}
@@ -113,14 +113,14 @@ const showList = async (alram) => {
                     <div class="signal-top-box">
                         <div class="type-title">
                             <div class="signal-type">쪽지</div>
-                            <div class="target-title">당신에게 쪽지가 도착하였어요!!</div>
+                            <a href="http://127.0.0.1:10000/member/mypage-letter/" class="target-title">당신에게 쪽지가 도착하였어요!!</a>
                         </div>
                         <div class="check-date">
-                            <div class="signal-delete ${alram.id}">삭제</div>
+                            <div class="signal-delete ${alram.id}">읽음</div>
                             <div class="signal-date">${changeDate(alram.created_date)}</div>
                         </div>
                     </div>
-                    <div class="signal-bottom-text">쪽지를 확인해주세요!.</div>
+                    <a href="http://127.0.0.1:10000/member/mypage-letter/" class="signal-bottom-text">쪽지를 확인해주세요!.</a>
                 </div>
             </div>
 `}
@@ -131,14 +131,14 @@ const showList = async (alram) => {
                     <div class="signal-top-box">
                         <div class="type-title">
                             <div class="signal-type">틴친</div>
-                            <div class="target-title">당신이 틴친을 신청한 사람이 있어요!</div>
+                            <a href="http://127.0.0.1:10000/member/mypage-teenchin/" class="target-title">당신에게 틴친을 신청한 사람이 있어요!</a>
                         </div>
                         <div class="check-date">
-                            <div class="signal-delete ${alram.id}">삭제</div>
+                            <div class="signal-delete ${alram.id}">읽음</div>
                             <div class="signal-date">${changeDate(alram.created_date)}</div>
                         </div>
                     </div>
-                    <div class="signal-bottom-text">틴친 신청내역을 확인해주세요!.</div>
+                    <a href="http://127.0.0.1:10000/member/mypage-teenchin/" class="signal-bottom-text">틴친 신청내역을 확인해주세요!.</a>
                 </div>
             </div>
 `}
@@ -149,14 +149,14 @@ const showList = async (alram) => {
                     <div class="signal-top-box">
                         <div class="type-title">
                             <div class="signal-type">활동</div>
-                            <div class="target-title">당신이 가입한 모임에 활동이 개설되었어요!</div>
+                            <a href="http://127.0.0.1:10000/activity/detail/?id=${alram.target_id}" class="target-title">당신이 가입한 모임에 활동이 개설되었어요!</a>
                         </div>
                         <div class="check-date">
-                            <div class="signal-delete ${alram.id}">삭제</div>
+                            <div class="signal-delete ${alram.id}">읽음</div>
                             <div class="signal-date">${changeDate(alram.created_date)}</div>
                         </div>
                     </div>
-                    <div class="signal-bottom-text">활동을 확인해주세요!.</div>
+                    <a href="http://127.0.0.1:10000/activity/detail/?id=${alram.target_id}" class="signal-bottom-text">활동을 확인해주세요!.</a>
                 </div>
             </div>
 `}
@@ -167,14 +167,14 @@ const showList = async (alram) => {
                     <div class="signal-top-box">
                         <div class="type-title">
                             <div class="signal-type">모임</div>
-                            <div class="target-title">당신이 가입된 모임에 공지사항이 작성되었어요!</div>
+                            <a href="http://127.0.0.1:10000/club/detail/?id=${alram.target_id}&view=notice" class="target-title">당신이 가입된 모임에 공지사항이 작성되었어요!</a>
                         </div>
                         <div class="check-date">
-                            <div class="signal-delete ${alram.id}">삭제</div>
+                            <div class="signal-delete ${alram.id}">읽음</div>
                             <div class="signal-date">${changeDate(alram.created_date)}</div>
                         </div>
                     </div>
-                    <div class="signal-bottom-text">공지사항을 확인해주세요.</div>
+                    <a href="http://127.0.0.1:10000/club/detail/?id=${alram.target_id}&view=notice" class="signal-bottom-text">공지사항을 확인해주세요.</a>
                 </div>
             </div>
 `}
@@ -185,14 +185,14 @@ const showList = async (alram) => {
                     <div class="signal-top-box">
                         <div class="type-title">
                             <div class="signal-type">모임</div>
-                            <div class="target-title">당신이 가입된 모임에 틴플레이가 작성되었어요!</div>
+                            <a href="http://127.0.0.1:10000/teenplay/club/select/${alram.target_id}" class="target-title">당신이 가입된 모임에 틴플레이가 작성되었어요!</a>
                         </div>
                         <div class="check-date">
-                            <div class="signal-delete ${alram.id}">삭제</div>
+                            <div class="signal-delete ${alram.id}">읽음</div>
                             <div class="signal-date">${changeDate(alram.created_date)}</div>
                         </div>
                     </div>
-                    <div class="signal-bottom-text">틴플레이를 확인해주세요!.</div>
+                    <a href="http://127.0.0.1:10000/teenplay/club/select/${alram.target_id}" class="signal-bottom-text">틴플레이를 확인해주세요!.</a>
                 </div>
             </div>
 `}
@@ -203,14 +203,14 @@ const showList = async (alram) => {
                     <div class="signal-top-box">
                         <div class="type-title">
                             <div class="signal-type">모임</div>
-                            <div class="target-title">당신이 신청한 모임에서 소식이 왔어요!</div>
+                            <a href="http://127.0.0.1:10000/club/detail/?id=${alram.target_id}"  class="target-title">당신이 신청한 모임에서 소식이 왔어요!</a>
                         </div>
                         <div class="check-date">
-                            <div class="signal-delete ${alram.id}">삭제</div>
+                            <div class="signal-delete ${alram.id}">읽음</div>
                             <div class="signal-date">${changeDate(alram.created_date)}</div>
                         </div>
                     </div>
-                    <div class="signal-bottom-text">모임 가입이 신청되었습니다!.</div>
+                    <a href="http://127.0.0.1:10000/club/detail/?id=${alram.target_id}" class="signal-bottom-text">모임에 가입되었습니다!.</a>
                 </div>
             </div>
 `}
@@ -224,7 +224,7 @@ const showList = async (alram) => {
                             <div class="target-title">당신이 신청한 모임에서 소식이 왔어요!</div>
                         </div>
                         <div class="check-date">
-                            <div class="signal-delete ${alram.id}">삭제</div>
+                            <div class="signal-delete ${alram.id}">읽음</div>
                             <div class="signal-date">${changeDate(alram.created_date)}</div>
                         </div>
                     </div>
@@ -239,14 +239,86 @@ const showList = async (alram) => {
                     <div class="signal-top-box">
                         <div class="type-title">
                             <div class="signal-type">활동</div>
-                            <div class="target-title">당신이 신청한 모임에서 소식이 왔어요!</div>
+                            <a href="http://127.0.0.1:10000/member/activity-member/?activity_id=${alram.target_id}"  class="target-title">누군가 당신의 활동을 신쳥했어요!!</a>
                         </div>
                         <div class="check-date">
-                            <div class="signal-delete ${alram.id}">삭제</div>
+                            <div class="signal-delete ${alram.id}">읽음</div>
                             <div class="signal-date">${changeDate(alram.created_date)}</div>
                         </div>
                     </div>
-                    <div class="signal-bottom-text">활동 신청이 접수 되었습니다.</div>
+                    <div href="http://127.0.0.1:10000/member/activity-member/?activity_id=${alram.target_id}" class="signal-bottom-text">참가신청을 확인해주세요.</div>
+                </div>
+            </div>
+`}
+            if(alram.alarm_type === 12){
+            text += `
+             <div class="signal-container">
+                <div class="signal-box">
+                    <div class="signal-top-box">
+                        <div class="type-title">
+                            <div class="signal-type">활동</div>
+                            <a href="http://127.0.0.1:10000/activity/detail/?id=${alram.target_id}" class="target-title">당신이 신청한 활동에서 소식이왔어요!</a>
+                        </div>
+                        <div class="check-date">
+                            <div class="signal-delete ${alram.id}">읽음</div>
+                            <div class="signal-date">${changeDate(alram.created_date)}</div>
+                        </div>
+                    </div>
+                    <a href="http://127.0.0.1:10000/activity/detail/?id=${alram.target_id}" class="signal-bottom-text">신청하신 활동의 참가가 승인되었습니다!.</a>
+                </div>
+            </div>
+`}
+            if(alram.alarm_type === 13){
+            text += `
+             <div class="signal-container">
+                <div class="signal-box">
+                    <div class="signal-top-box">
+                        <div class="type-title">
+                            <div class="signal-type">활동</div>
+                            <div class="target-title">당신이 신청한 활동에서 소식이왔어요!</div>
+                        </div>
+                        <div class="check-date">
+                            <div class="signal-delete ${alram.id}">읽음</div>
+                            <div class="signal-date">${changeDate(alram.created_date)}</div>
+                        </div>
+                    </div>
+                    <a href="http://127.0.0.1:10000/activity/detail/?id=${alram.target_id}" class="signal-bottom-text">신청하신 활동의 참가가 거절되었습니다!.</a>
+                </div>
+            </div>
+`}
+            if(alram.alarm_type === 14){
+            text += `
+             <div class="signal-container">
+                <div class="signal-box">
+                    <div class="signal-top-box">
+                        <div class="type-title">
+                            <div class="signal-type">틴친</div>
+                            <div class="target-title">당신이 신청한 틴친에게서 소식이왔어요!</div>
+                        </div>
+                        <div class="check-date">
+                            <div class="signal-delete ${alram.id}">읽음</div>
+                            <div class="signal-date">${changeDate(alram.created_date)}</div>
+                        </div>
+                    </div>
+                    <div class="signal-bottom-text">요청하신 틴친요청이 승인되었습니다.</div>
+                </div>
+            </div>
+`}
+            if(alram.alarm_type === 15){
+            text += `
+             <div class="signal-container">
+                <div class="signal-box">
+                    <div class="signal-top-box">
+                        <div class="type-title">
+                            <div class="signal-type">틴친</div>
+                            <div class="target-title">당신이 신청한 틴친에게서 소식이왔어요!</div>
+                        </div>
+                        <div class="check-date">
+                            <div class="signal-delete ${alram.id}">읽음</div>
+                            <div class="signal-date">${changeDate(alram.created_date)}</div>
+                        </div>
+                    </div>
+                    <div class="signal-bottom-text">요청하신 틴친요청이 거절되었습니다.</div>
                 </div>
             </div>
 `}
@@ -269,16 +341,16 @@ tbody.addEventListener("click", async (e) =>{
             const text = await alramService.getList(member_id, page, showList);
             tbody.innerHTML = text;
             signalDeleteModal.style.display = "none"
+            await alramService.getList(member_id, page + 1).then((alram) => {
+            if (alram.length !== 0){
+            moreButton.style.display = "flex";
+    }
+});
         } )
 
 
     }
 })
-
-
-
-
-
 
 
 alramService.getList(member_id, page, showList).then((text) => {
@@ -287,6 +359,9 @@ alramService.getList(member_id, page, showList).then((text) => {
 
 
 alramService.getList(member_id, page, showList);
+
+
+
 
 const changeDate = (dateStr) => {
     const days = ['일', '월', '화', '수', '목', '금', '토'];
