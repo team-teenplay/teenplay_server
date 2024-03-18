@@ -214,7 +214,7 @@ const showList = (teenchin) =>{
     console.log(teenchin)
     if (teenchin.length ===0){
             text +=
-            `<div class="signal-none">아직 새로운 알림이 없습니다.</div>`
+            `<div class="signal-none">아직 새로운 틴친신청이 없습니다.</div>`
         }
     else{
 
@@ -248,7 +248,7 @@ const showList = (teenchin) =>{
                     </div>
                     <div class="teenchin-btn-container">
                         <div class="teenchin-btn-box">
-                            <button class="teenchin-btn ${teenchin.id}" type="button">
+                            <button class="teenchin-btn ${teenchin.sender_id}" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="check-svg" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                 </svg>
@@ -294,7 +294,7 @@ const showList = (teenchin) =>{
                     </div>
                     <div class="teenchin-btn-container">
                         <div class="teenchin-btn-box">
-                            <button class="teenchin-btn ${teenchin.id}" type="button">
+                            <button class="teenchin-btn ${teenchin.sender_id}" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="check-svg" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                 </svg>
@@ -340,7 +340,7 @@ const showList = (teenchin) =>{
                     </div>
                     <div class="teenchin-btn-container">
                         <div class="teenchin-btn-box">
-                            <button class="teenchin-btn ${teenchin.id}" type="button">
+                            <button class="teenchin-btn ${teenchin.receiver_id}" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="check-svg" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                 </svg>
@@ -365,7 +365,7 @@ const showList = (teenchin) =>{
                     <div >
                         <div class="profile-img-contents">
                             <div class="profile-img-box">
-                                <img class="profile-img" src="/upload/${receiver__memberprofile__profile_path}" alt="" />
+                                <img class="profile-img" src="/upload/${teenchin.receiver__memberprofile__profile_path}" alt="" />
                             </div>
                             <div class="profile-img-gap"></div>
                         </div>
@@ -386,7 +386,7 @@ const showList = (teenchin) =>{
                     </div>
                     <div class="teenchin-btn-container">
                         <div class="teenchin-btn-box">
-                            <button class="teenchin-btn ${teenchin.id}" type="button">
+                            <button class="teenchin-btn ${teenchin.receiver_id}" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="check-svg" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                 </svg>
@@ -432,7 +432,7 @@ const showList = (teenchin) =>{
                         </div>
                         <div class="teenchin-btn-container">
                             <div class="teenchin-btn-box">
-                                <button class="teenchin-agree-btn ${teenchin.id}" type="button">
+                                <button class="teenchin-agree-btn ${teenchin.sender_id}" type="button">
                                     <svg aria-label="사람 찾아보기" class="teenchin-agree-svg" fill="currentColor" height="24" role="img" viewBox="0 0 48 48" width="24">
                                         <path
                                             d="M32 25.5c5.2 0 9.5-4.3 9.5-9.5S37.2 6.5 32 6.5s-9.5 4.3-9.5 9.5 4.3 9.5 9.5 9.5zm0-16c3.6 0 6.5 2.9 6.5 6.5s-2.9 6.5-6.5 6.5-6.5-2.9-6.5-6.5 2.9-6.5 6.5-6.5zm5.5 19h-11c-5.5 0-10 4.5-10 10V40c0 .8.7 1.5 1.5 1.5s1.5-.7 1.5-1.5v-1.5c0-3.9 3.1-7 7-7h11c3.9 0 7 3.1 7 7V40c0 .8.7 1.5 1.5 1.5s1.5-.7 1.5-1.5v-1.5c0-5.5-4.5-10-10-10zm-20-4.5c0-.8-.7-1.5-1.5-1.5h-5.5V17c0-.8-.7-1.5-1.5-1.5s-1.5.7-1.5 1.5v5.5H2c-.8 0-1.5.7-1.5 1.5s.7 1.5 1.5 1.5h5.5V31c0 .8.7 1.5 1.5 1.5s1.5-.7 1.5-1.5v-5.5H16c.8 0 1.5-.7 1.5-1.5z"
@@ -480,7 +480,7 @@ const showList = (teenchin) =>{
                         </div>
                         <div class="teenchin-btn-container">
                             <div class="teenchin-btn-box">
-                                <button class="teenchin-agree-btn ${teenchin.id}" type="button">
+                                <button class="teenchin-agree-btn ${teenchin.sender_id}" type="button">
                                     <svg aria-label="사람 찾아보기" class="teenchin-agree-svg" fill="currentColor" height="24" role="img" viewBox="0 0 48 48" width="24">
                                         <path
                                             d="M32 25.5c5.2 0 9.5-4.3 9.5-9.5S37.2 6.5 32 6.5s-9.5 4.3-9.5 9.5 4.3 9.5 9.5 9.5zm0-16c3.6 0 6.5 2.9 6.5 6.5s-2.9 6.5-6.5 6.5-6.5-2.9-6.5-6.5 2.9-6.5 6.5-6.5zm5.5 19h-11c-5.5 0-10 4.5-10 10V40c0 .8.7 1.5 1.5 1.5s1.5-.7 1.5-1.5v-1.5c0-3.9 3.1-7 7-7h11c3.9 0 7 3.1 7 7V40c0 .8.7 1.5 1.5 1.5s1.5-.7 1.5-1.5v-1.5c0-5.5-4.5-10-10-10zm-20-4.5c0-.8-.7-1.5-1.5-1.5h-5.5V17c0-.8-.7-1.5-1.5-1.5s-1.5.7-1.5 1.5v5.5H2c-.8 0-1.5.7-1.5 1.5s.7 1.5 1.5 1.5h5.5V31c0 .8.7 1.5 1.5 1.5s1.5-.7 1.5-1.5v-5.5H16c.8 0 1.5-.7 1.5-1.5z"
@@ -528,7 +528,7 @@ const showList = (teenchin) =>{
                         </div>
                         <div class="teenchin-btn-container">
                             <div class="teenchin-btn-box">
-                                <button class="teenchin-wait-btn ${teenchin.id}" type="button">
+                                <button class="teenchin-wait-btn ${teenchin.receiver_id}" type="button">
                                     <svg class="request-svg" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path
                                             d="M12 2C17.523 2 22 6.478 22 12C22 17.522 17.523 22 12 22C6.477 22 2 17.522 2 12C2 6.478 6.477 2 12 2ZM12 3.667C7.405 3.667 3.667 7.405 3.667 12C3.667 16.595 7.405 20.333 12 20.333C16.595 20.333 20.333 16.595 20.333 12C20.333 7.405 16.595 3.667 12 3.667ZM11.9987 14.5022C12.5502 14.5022 12.9973 14.9494 12.9973 15.5009C12.9973 16.0524 12.5502 16.4996 11.9987 16.4996C11.4471 16.4996 11 16.0524 11 15.5009C11 14.9494 11.4471 14.5022 11.9987 14.5022ZM11.9945 7C12.3742 6.9997 12.6882 7.2816 12.7381 7.64764L12.7451 7.7494L12.7487 12.251C12.749 12.6652 12.4135 13.0013 11.9993 13.0016C11.6196 13.0019 11.3055 12.72 11.2556 12.354L11.2487 12.2522L11.2451 7.7506C11.2447 7.33639 11.5802 7.00033 11.9945 7Z"
@@ -576,7 +576,7 @@ const showList = (teenchin) =>{
                         </div>
                         <div class="teenchin-btn-container">
                             <div class="teenchin-btn-box">
-                                <button class="teenchin-wait-btn ${teenchin.id}" type="button">
+                                <button class="teenchin-wait-btn ${teenchin.receiver_id}" type="button">
                                     <svg class="request-svg" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path
                                             d="M12 2C17.523 2 22 6.478 22 12C22 17.522 17.523 22 12 22C6.477 22 2 17.522 2 12C2 6.478 6.477 2 12 2ZM12 3.667C7.405 3.667 3.667 7.405 3.667 12C3.667 16.595 7.405 20.333 12 20.333C16.595 20.333 20.333 16.595 20.333 12C20.333 7.405 16.595 3.667 12 3.667ZM11.9987 14.5022C12.5502 14.5022 12.9973 14.9494 12.9973 15.5009C12.9973 16.0524 12.5502 16.4996 11.9987 16.4996C11.4471 16.4996 11 16.0524 11 15.5009C11 14.9494 11.4471 14.5022 11.9987 14.5022ZM11.9945 7C12.3742 6.9997 12.6882 7.2816 12.7381 7.64764L12.7451 7.7494L12.7487 12.251C12.749 12.6652 12.4135 13.0013 11.9993 13.0016C11.6196 13.0019 11.3055 12.72 11.2556 12.354L11.2487 12.2522L11.2451 7.7506C11.2447 7.33639 11.5802 7.00033 11.9945 7Z"
