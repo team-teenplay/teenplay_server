@@ -189,28 +189,46 @@ function exitModal() {
 modalLikeExitBtnCopy.addEventListener("click", exitModal);
 modalUnlikeExitBtnCopy.addEventListener("click", exitModal);
 
+const getActivityMemberCount = async (activityId) => {
+    const response = await fetch(`/activity/members/api?id=${activityId}`);
+    const memberCount = await response.json();
+
+    return memberCount;
+}
+
+const getActivityLikeCount = async (activityId) => {
+    const response = await fetch(`/activity/likes/api?id=${activityId}`);
+    const likeCount = await response.json();
+
+    return likeCount;
+}
+
 // 좋아요 버튼 클릭 시 svg 변경되는 이벤트
 HTMLCollection.prototype.forEach = Array.prototype.forEach;
 const likeBtns = document.querySelectorAll(".like-btn");
 const emptyHeartsCopy = document.querySelectorAll(".empty-heart");
 const fullHeartsCopy = document.querySelectorAll(".full-heart");
 const targetActivityIds = document.querySelectorAll("input[name=activity-id]");
+const hitsText = document.querySelectorAll(".hits-text");
 likeBtns.forEach((likeBtn, i) => {
     likeBtn.addEventListener("click", async () => {
         modalWrapCopy.style.display = "block";
         if (emptyHeartsCopy[i].style.display === "none") {
+            await activityLikeCountService.addOrDeleteLike(targetActivityIds[i].value, false);
             modalUnlikeContainerCopy.style.display = "block";
             modalLikeContainerCopy.style.display = "none";
             emptyHeartsCopy[i].style.display = "block";
             fullHeartsCopy[i].style.display = "none";
-            await activityLikeCountService.addOrDeleteLike(targetActivityIds[i].value, false);
         } else {
+            await activityLikeCountService.addOrDeleteLike(targetActivityIds[i].value, true);
             modalUnlikeContainerCopy.style.display = "none";
             modalLikeContainerCopy.style.display = "block";
             emptyHeartsCopy[i].style.display = "none";
             fullHeartsCopy[i].style.display = "block";
-            await activityLikeCountService.addOrDeleteLike(targetActivityIds[i].value, true);
         }
+        const likeCount = await getActivityLikeCount(targetActivityIds[i].value);
+        const memberCount = await getActivityMemberCount(targetActivityIds[i].value);
+        hitsText[i].innerText = `관심 ${likeCount} | 참가 ${memberCount}명`;
     });
 });
 
