@@ -272,6 +272,35 @@ activityData.addEventListener('click', (e) => {
     })
 })
 
+statusName.addEventListener('click', () => {
+    const checkboxes = document.querySelectorAll(".main-comment-list-checkbox");
+
+    checkboxes.forEach((checkbox) => {
+        if (checkbox.checked) {
+            checkbox.checked = false;
+            statusNameText.textContent = '전체';
+            modalDeleteOpenButtons.forEach((deleteButton) => {
+                deleteButton.classList.add("disabled");
+            });
+        } else {
+            checkbox.checked = true;
+            statusNameText.textContent = '전체 중';
+        }
+
+    });
+
+    // 선택된 모든 체크박스 개수를 구합니다.
+    const checkedCount = checkboxes.length;
+
+    // 선택된 모든 체크박스 개수를 텍스트로 표시합니다.
+    totalCount.textContent = checkedCount;
+
+    // 모달 삭제 버튼 활성화 여부를 업데이트합니다.
+    modalDeleteOpenButtons.forEach((deleteButton) => {
+        deleteButton.classList.remove("disabled");
+    });
+});
+
 
 
 
